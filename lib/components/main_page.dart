@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sirc/components/wallet/wallet_view.dart';
 import 'package:sirc/utils/logger.dart';
 
 import 'home_page/home_page_view.dart';
@@ -47,7 +48,7 @@ class _MainPageState extends State<MainPage> {
 
   List<Widget> homePages = [
     HomePage(),
-    HomePage(),
+    WalletPage(),
     HomePage(),
     HomePage(),
     HomePage(),

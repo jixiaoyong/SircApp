@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:sirc/components/home_page.dart';
+import 'package:sirc/components/main_page.dart';
 
 import 'app_routes.dart';
 
