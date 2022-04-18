@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:sirc/components/wallet/wallet_view.dart';
 import 'package:sirc/utils/logger.dart';
 
+import 'history/history_view.dart';
 import 'home_page/home_page_view.dart';
 
 /*
@@ -49,7 +50,7 @@ class _MainPageState extends State<MainPage> {
   List<Widget> homePages = [
     HomePage(),
     WalletPage(),
-    HomePage(),
+    HistoryPage(),
     HomePage(),
     HomePage(),
   ];
@@ -69,7 +70,7 @@ class _MainPageState extends State<MainPage> {
         icon: Icon(
           Icons.av_timer_outlined,
         ),
-        label: 'Time'),
+        label: 'History'),
     BottomNavigationBarItem(
         icon: Icon(
           Icons.person_outline_outlined,

@@ -102,8 +102,7 @@ class WalletPage extends StatelessWidget {
             child: TitleText(
                 text: state.moneyTypes[state.currentClickBtnIndex.value]),
           ),
-          ...List.generate(state.moneyOperateList.length, (index) {
-            var data = state.moneyOperateList[index];
+          ...state.moneyOperateList.map((data) {
             return Container(
               padding: EdgeInsets.all(10.dp),
               margin: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 20.dp),
@@ -119,36 +118,36 @@ class WalletPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10.dp)),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Image.network(data.userIcon!, width: 50.dp, height: 50.dp),
-                  Padding(
-                    padding: EdgeInsets.only(left: 10.dp),
-                    child: Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(data.moneyActionName!,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                  SizedBox(width: 20.dp),
+                  // Notice: Expanded/Flexible only works in Row/Column, not in Stack
+                  // otherwise, it will be a bug: 'Incorrect use of ParentDataWidget.'
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(data.moneyActionName!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              color: Colors.black,
+                            )),
+                        Padding(
+                          padding: EdgeInsets.only(top: 8.dp),
+                          child: Text(data.time!,
                               style: TextStyle(
-                                fontSize: 18.sp,
-                                color: Colors.black,
-                              )),
-                          Padding(
-                            padding: EdgeInsets.only(top: 8.dp),
-                            child: Text(data.time!,
-                                style: TextStyle(
-                                    fontSize: 10.sp, color: Colors.grey)),
-                          ),
-                        ],
-                      ),
+                                  fontSize: 10.sp, color: Colors.grey)),
+                        ),
+                      ],
                     ),
                   ),
-                  const Spacer(),
                   Text(
-                      "${state.currentClickBtnIndex == 0 ? "-" : "+"}\$${(data.moneyAmount!).toStringAsFixed(2)}",
+                      "${state.currentClickBtnIndex == 0 ? "-" : "+"} \$${(data.moneyAmount!).toStringAsFixed(2)}",
                       style: TextStyle(
                           fontSize: 20.sp,
                           color: Colors.black,
@@ -156,7 +155,7 @@ class WalletPage extends StatelessWidget {
                 ],
               ),
             );
-          })
+          }).toList(),
         ])),
       );
     });
