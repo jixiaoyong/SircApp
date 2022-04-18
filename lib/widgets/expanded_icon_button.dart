@@ -52,7 +52,7 @@ class _ExpandedIconButtonState extends State<ExpandedIconButton>
     _trueWidth = widget.height;
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(seconds: 1),
     );
 
     _controller.addListener(() {
