@@ -5,6 +5,7 @@ import 'package:sirc/utils/logger.dart';
 
 import 'history/history_view.dart';
 import 'home_page/home_page_view.dart';
+import 'person/person_view.dart';
 
 /*
 * @description: TODO
@@ -51,7 +52,7 @@ class _MainPageState extends State<MainPage> {
     HomePage(),
     WalletPage(),
     HistoryPage(),
-    HomePage(),
+    PersonPage(),
     HomePage(),
   ];
 

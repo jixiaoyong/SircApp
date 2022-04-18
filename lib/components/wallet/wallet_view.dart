@@ -21,8 +21,8 @@ class WalletPage extends StatelessWidget {
     final state = Get.find<WalletLogic>().state;
 
     return Obx(() {
-      return SafeArea(
-        child: SingleChildScrollView(
+      return SingleChildScrollView(
+        child: SafeArea(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Center(

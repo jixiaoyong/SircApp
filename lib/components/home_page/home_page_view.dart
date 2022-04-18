@@ -16,8 +16,8 @@ class HomePage extends StatelessWidget {
     final state = Get.find<HomePageLogic>().state;
 
     return Obx(() {
-      return SafeArea(
-        child: SingleChildScrollView(
+      return SingleChildScrollView(
+        child: SafeArea(
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 16.dp),
             child: Column(
