@@ -2,6 +2,10 @@
 
 Finance Mobile Banking App
 
+App Sketch and Design:
+
+![](./doc/imgs/AppSketch.png)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
