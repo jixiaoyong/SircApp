@@ -1,8 +1,10 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/utils/color_extension.dart';
 import 'package:sirc/utils/size_extension.dart';
+import 'package:sirc/widgets/line_graph.dart';
 import 'package:sirc/widgets/title_text.dart';
 
 import 'home_page_logic.dart';
@@ -69,8 +71,8 @@ class HomePage extends StatelessWidget {
                                 decoration: BoxDecoration(
                                     color:
                                         (state.currentBankIndex.value == index
-                                                ? "#ffcbb0ff"
-                                                : "#ffb6c6d5")
+                                            ? "#ff871094"
+                                            : "#ffb6c6d5")
                                             .hexToColor
                                             .withOpacity(0.8),
                                     borderRadius: BorderRadius.circular(10.dp)),
@@ -81,9 +83,10 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 const TitleText(text: "February"),
-                Container(
+                SizedBox(
                   height: 200.dp,
-                  color: Colors.orange.withOpacity(0.8),
+                  width: double.infinity,
+                  child: LineGraph(data: state.dataChange,),
                 ),
                 Row(
                   mainAxisSize: MainAxisSize.max,
