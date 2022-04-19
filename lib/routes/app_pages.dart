@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:sirc/components/initial/initial_view.dart';
 import 'package:sirc/components/language/language_view.dart';
 import 'package:sirc/components/main_page.dart';
 import 'package:sirc/components/notifications/notifications_view.dart';
@@ -14,8 +15,9 @@ import 'app_routes.dart';
 * @date: 22/04/17
 */
 class AppPages {
-  static const INITIAL = AppRoutes.MAIN;
+  static const INITIAL = AppRoutes.INITIAL;
   static final routes = [
+    GetPage(name: AppRoutes.INITIAL, page: () => InitialPage()),
     GetPage(name: AppRoutes.MAIN, page: () => MainPage()),
     GetPage(name: AppRoutes.LANGUAGES, page: () => LanguagePage()),
     GetPage(name: AppRoutes.NOTIFICATIONS, page: () => NotificationsPage()),

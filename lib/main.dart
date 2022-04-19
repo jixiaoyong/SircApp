@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
       statusBarColor: Colors.transparent,
     );
     SystemChrome.setSystemUIOverlayStyle(uiStyle);
+
     return ScreenUtilInit(
         // setup the screen width be 375,then you can use number.dp to set the design size
         designSize: const Size(375, 666),

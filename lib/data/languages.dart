@@ -81,6 +81,15 @@ class Languages extends Translations {
           "Recharge": "Recharge",
           "Bill": "Bill",
           "Others": "Others",
+          "Don't Share Password": "Don't Share Password",
+          "Use strong combinations of letters,numbers and special characters to make your password.":
+              "Use strong combinations of letters,numbers and special characters to make your password.",
+          "Forgot PIN": "Forgot PIN",
+          "Don't take too much tension about PiN\nJust make ono call to bank and change your pin.":
+              "Don't take too much tension about PiN\nJust make ono call to bank and change your pin.",
+          "Manage Account": "Manage Account",
+          "Bank account make more secure keeping transaction active and changing password regularly.":
+              "Bank account make more secure keeping transaction active and changing password regularly.",
         },
         "zh_CN": {
           "MasterCard": "MasterCard卡",
@@ -147,6 +156,15 @@ class Languages extends Translations {
           "Recharge": "充值",
           "Bill": "账单",
           "Others": "其他",
+          "Don't Share Password": "不要分享密码",
+          "Use strong combinations of letters,numbers and special characters to make your password.":
+              "使用复杂的字母、数字和特殊字符组合来制作你的密码。",
+          "Forgot PIN": "忘记密码",
+          "Don't take too much tension about PiN\nJust make ono call to bank and change your pin.":
+              "不要太勉强自己，只需要电话联系银行，然后更改你的密码。",
+          "Manage Account": "管理账户",
+          "Bank account make more secure keeping transaction active and changing password regularly.":
+              "想要银行账户更安全，请保持交易活动，并定期更改密码。",
         }
       };
 }
