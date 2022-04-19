@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/mock/mock_utils.dart';
+import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/title_text.dart';
 
@@ -33,21 +33,26 @@ class MenuPage extends StatelessWidget {
               const TitleText(
                 text: "Settings",
               ),
-              Stack(
-                children: [
-                  const Icon(Icons.notifications_outlined),
-                  Positioned(
-                    top: 5.dp,
-                    right: 1.dp,
-                    child: Container(
-                      height: 8.dp,
-                      width: 8.dp,
-                      decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(10.dp)),
-                    ),
-                  )
-                ],
+              GestureDetector(
+                onTap: () {
+                  Get.toNamed(AppRoutes.NOTIFICATIONS);
+                },
+                child: Stack(
+                  children: [
+                    const Icon(Icons.notifications_outlined),
+                    Positioned(
+                      top: 5.dp,
+                      right: 1.dp,
+                      child: Container(
+                        height: 8.dp,
+                        width: 8.dp,
+                        decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(10.dp)),
+                      ),
+                    )
+                  ],
+                ),
               )
             ],
           ),

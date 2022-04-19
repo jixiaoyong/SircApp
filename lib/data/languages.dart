@@ -73,6 +73,14 @@ class Languages extends Translations {
           "October": "October",
           "November": "November",
           "December": "December",
+          "Category": "Category",
+          "this month": "this month",
+          "this week": "this week",
+          "this year": "this year",
+          "Transfers": "Transfers",
+          "Recharge": "Recharge",
+          "Bill": "Bill",
+          "Others": "Others",
         },
         "zh_CN": {
           "MasterCard": "MasterCard卡",
@@ -131,6 +139,14 @@ class Languages extends Translations {
           "October": "十月",
           "November": "十一月",
           "December": "十二月",
+          "Category": "类别",
+          "this month": "本月",
+          "this week": "本周",
+          "this year": "本年",
+          "Transfers": "转账",
+          "Recharge": "充值",
+          "Bill": "账单",
+          "Others": "其他",
         }
       };
 }

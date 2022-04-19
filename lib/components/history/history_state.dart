@@ -31,12 +31,5 @@ class HistoryState {
 
   final List<Pair<String, double>> dataChange = MockUtils.dataChange.obs;
 
-  final List<MoneyOperateBean> moneyOperateList = List.generate(20, (index) {
-    return MoneyOperateBean(
-        userIcon:
-            'https://blush.design/api/download?shareUri=kKg1Yx6PG&w=800&h=800&fm=png',
-        moneyAmount: MockUtils.random.nextDouble() * 100,
-        time: "Just now".tr,
-        moneyActionName: "Something".tr);
-  });
+  final List<MoneyOperateBean> moneyOperateList = MockUtils.moneyOperateList;
 }
