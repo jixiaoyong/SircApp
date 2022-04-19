@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:sirc/components/language/language_view.dart';
 import 'package:sirc/components/main_page.dart';
 import 'package:sirc/components/notifications/notifications_view.dart';
+import 'package:sirc/components/password/password_view.dart';
 
 import 'app_routes.dart';
 
@@ -18,5 +19,6 @@ class AppPages {
     GetPage(name: AppRoutes.MAIN, page: () => MainPage()),
     GetPage(name: AppRoutes.LANGUAGES, page: () => LanguagePage()),
     GetPage(name: AppRoutes.NOTIFICATIONS, page: () => NotificationsPage()),
+    GetPage(name: AppRoutes.PASSWORD, page: () => PasswordPage()),
   ];
 }

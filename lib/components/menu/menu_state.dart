@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:sirc/bean/triple.dart';
 import 'package:sirc/routes/app_routes.dart';
@@ -19,4 +20,6 @@ class MenuState {
         AppRoutes.FINGERPRINT),
     Triple(Icons.credit_card_outlined, "Add Card".tr, AppRoutes.CARD),
   ];
+
+  var isFingerprintOpen = false.obs;
 }

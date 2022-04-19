@@ -14,4 +14,9 @@ class MenuLogic extends GetxController {
 
   @override
   void onInit() {}
+
+  void changeFingerprint({bool? isOpen}) {
+    var isFingerprintOpen = isOpen ?? !state.isFingerprintOpen.value;
+    state.isFingerprintOpen.value = isFingerprintOpen;
+  }
 }

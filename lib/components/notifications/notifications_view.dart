@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/utils/size_extension.dart';
+import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 
 import 'notifications_logic.dart';
 
@@ -19,17 +20,8 @@ class NotificationsPage extends StatelessWidget {
     final state = Get.find<NotificationsLogic>().state;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Notifications".tr,
-            style: const TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
-        leading: GestureDetector(
-          child: const Icon(Icons.arrow_back, color: Colors.black),
-          onTap: () {
-            Get.back();
-          },
-        ),
-        elevation: 0,
+      appBar: OneTitleWithBackButtonAppBar(
+        title: "Notifications".tr,
       ),
       body: SingleChildScrollView(
         child: Obx(() {
