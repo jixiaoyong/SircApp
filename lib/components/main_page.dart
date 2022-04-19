@@ -5,6 +5,7 @@ import 'package:sirc/utils/logger.dart';
 
 import 'history/history_view.dart';
 import 'home_page/home_page_view.dart';
+import 'menu/menu_view.dart';
 import 'person/person_view.dart';
 import 'slide_menu/slide_menu_view.dart';
 
@@ -56,7 +57,7 @@ class _MainPageState extends State<MainPage> {
     WalletPage(),
     HistoryPage(),
     PersonPage(),
-    HomePage(),
+    MenuPage(),
   ];
 
   List<BottomNavigationBarItem> BnbItems = const [
