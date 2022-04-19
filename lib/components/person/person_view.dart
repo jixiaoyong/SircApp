@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/title_text.dart';
 
@@ -17,6 +18,7 @@ class PersonPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final logic = Get.put(PersonLogic());
     final state = Get.find<PersonLogic>().state;
+    final slideMenuLogic = Get.find<SlideMenuLogic>();
 
     return SingleChildScrollView(
         child: SafeArea(
@@ -32,7 +34,7 @@ class PersonPage extends StatelessWidget {
               children: [
                 IconButton(
                     onPressed: () {
-                      // todo
+                      slideMenuLogic.onMenuTap?.call(true);
                     },
                     icon: const Icon(Icons.more_horiz_rounded))
               ],

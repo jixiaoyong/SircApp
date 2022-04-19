@@ -6,6 +6,7 @@ import 'package:sirc/utils/logger.dart';
 import 'history/history_view.dart';
 import 'home_page/home_page_view.dart';
 import 'person/person_view.dart';
+import 'slide_menu/slide_menu_view.dart';
 
 /*
 * @description: TODO
@@ -29,20 +30,22 @@ class _MainPageState extends State<MainPage> {
     return Obx(() {
       var index = _currentIndex.value;
       LogUtils.d("the page index: $index");
-      return Scaffold(
-        body: IndexedStack(
-          children: homePages,
-          index: index,
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: BnbItems,
-          onTap: (index) {
-            _currentIndex.value = index;
-          },
-          currentIndex: _currentIndex.value,
-          selectedItemColor: Theme.of(context).primaryColorDark,
-          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-          unselectedItemColor: Theme.of(context).primaryColorLight,
+      return SlideMenuPage(
+        child: Scaffold(
+          body: IndexedStack(
+            children: homePages,
+            index: index,
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            items: BnbItems,
+            onTap: (index) {
+              _currentIndex.value = index;
+            },
+            currentIndex: _currentIndex.value,
+            selectedItemColor: Theme.of(context).primaryColorDark,
+            selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+            unselectedItemColor: Theme.of(context).primaryColorLight,
+          ),
         ),
       );
     });
