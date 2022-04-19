@@ -106,8 +106,7 @@ class NotificationsPage extends StatelessWidget {
                               padding: EdgeInsets.symmetric(vertical: 5.dp),
                               child: ListTile(
                                 leading: Container(
-                                  height: 80.dp,
-                                  width: 80.dp,
+                                  width: 60.dp,
                                   decoration: BoxDecoration(
                                       borderRadius:
                                           BorderRadius.circular(10.dp),

@@ -24,7 +24,7 @@ class MenuPage extends StatelessWidget {
     return SingleChildScrollView(
         child: SafeArea(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10.dp),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10.dp),
       child: Obx(() {
         return Column(
           children: [
@@ -87,7 +87,10 @@ class MenuPage extends StatelessWidget {
                       )),
                   trailing: isFingerprint
                       ? CupertinoSwitch(
-                          value: state.isFingerprintOpen.value, onChanged: null)
+                          value: state.isFingerprintOpen.value,
+                          onChanged: (v) {
+                            logic.changeFingerprint(isOpen: v);
+                          })
                       : const Icon(Icons.keyboard_arrow_right),
                   onTap: isFingerprint
                       ? () {
