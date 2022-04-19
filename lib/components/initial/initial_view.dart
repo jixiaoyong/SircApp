@@ -18,6 +18,7 @@ class InitialPage extends StatelessWidget {
   final logic = Get.put(InitialLogic());
   final state = Get.find<InitialLogic>().state;
   final _pageController = PageController(initialPage: 0);
+  var _hasCallGoMainPage = false;
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +144,7 @@ class InitialPage extends StatelessWidget {
         } else if (false == isFirst) {
           // empty page
           widget = Container();
-          Future.delayed(Duration(seconds: 5), () {
+          Future.delayed(const Duration(seconds: 5), () {
             goMainPage();
           });
         }
@@ -153,6 +154,10 @@ class InitialPage extends StatelessWidget {
   }
 
   void goMainPage() {
+    if (_hasCallGoMainPage) {
+      return;
+    }
+    _hasCallGoMainPage = true;
     Get.offAndToNamed(AppRoutes.MAIN);
     logic.markAsNotFirstInitial();
   }
