@@ -1,7 +1,7 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/title_text.dart';
 
@@ -15,7 +15,6 @@ import 'menu_logic.dart';
 * @date: 22/04/19
 */
 class MenuPage extends StatelessWidget {
-  final Random _random = Random(DateTime.now().millisecondsSinceEpoch);
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +70,8 @@ class MenuPage extends StatelessWidget {
                     height: 50.dp,
                     width: 50.dp,
                     decoration: BoxDecoration(
-                        color: Colors.accents
-                            .elementAt(_random.nextInt(Colors.accents.length))
+                        color: Colors.accents.elementAt(
+                            MockUtils.random.nextInt(Colors.accents.length))
                           ..withOpacity(0.5),
                         borderRadius: BorderRadius.circular(50.dp)),
                     child: Icon(
@@ -80,7 +79,9 @@ class MenuPage extends StatelessWidget {
                       color: Colors.white,
                     )),
                 trailing: const Icon(Icons.keyboard_arrow_right),
-                onTap: () {},
+                onTap: () {
+                  Get.toNamed(item.third);
+                },
               ),
             );
           }),

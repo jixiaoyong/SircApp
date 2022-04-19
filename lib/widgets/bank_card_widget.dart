@@ -1,6 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
+import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/utils/size_extension.dart';
 
 /*
@@ -11,8 +11,6 @@ import 'package:sirc/utils/size_extension.dart';
 * @date: 22/04/17
 */
 class BankCardWidget extends StatelessWidget {
-  static var random = Random(DateTime.now().millisecondsSinceEpoch);
-
   final String cardNumber;
   final String bankName;
   final List<Color> backgroundColors;
@@ -53,7 +51,7 @@ class BankCardWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
-              random.nextBool() ? "MasterCard" : "Visa",
+              MockUtils.random.nextBool() ? "MasterCard".tr : "Visa".tr,
               style: TextStyle(fontSize: 20.sp, color: Colors.white),
             ),
           ],

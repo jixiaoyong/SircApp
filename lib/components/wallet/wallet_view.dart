@@ -42,7 +42,7 @@ class WalletPage extends StatelessWidget {
           Center(
             child: Padding(
               padding: EdgeInsets.only(top: 20.dp),
-              child: Text("Available Balance",
+              child: Text("Available Balance".tr,
                   style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
@@ -70,7 +70,7 @@ class WalletPage extends StatelessWidget {
                 height: 50.dp,
                 maxWidth: 200.dp,
                 colors: [Colors.blue, Colors.blueAccent.shade100],
-                text: "Send",
+                text: "Send".tr,
                 isExpanded: state.currentClickBtnIndex.value == 0,
               ),
               ExpandedIconButton(
@@ -81,7 +81,7 @@ class WalletPage extends StatelessWidget {
                 height: 50.dp,
                 maxWidth: 200.dp,
                 colors: [Colors.deepPurple, Colors.deepPurpleAccent.shade100],
-                text: "Receive",
+                text: "Receive".tr,
                 isExpanded: state.currentClickBtnIndex.value == 1,
               ),
               ExpandedIconButton(
@@ -92,7 +92,7 @@ class WalletPage extends StatelessWidget {
                 height: 50.dp,
                 maxWidth: 200.dp,
                 colors: [Colors.orange, Colors.amber.shade400],
-                text: "Total",
+                text: "Total".tr,
                 isExpanded: state.currentClickBtnIndex.value == 2,
               ),
             ],

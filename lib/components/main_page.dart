@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/components/wallet/wallet_view.dart';
-import 'package:sirc/utils/logger.dart';
 
 import 'history/history_view.dart';
 import 'home_page/home_page_view.dart';
@@ -30,7 +29,6 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Obx(() {
       var index = _currentIndex.value;
-      LogUtils.d("the page index: $index");
       return SlideMenuPage(
         child: Scaffold(
           body: IndexedStack(

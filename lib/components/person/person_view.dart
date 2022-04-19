@@ -56,7 +56,7 @@ class PersonPage extends StatelessWidget {
               child: Text("JI,XIAOYONG",
                   style: TextStyle(fontSize: 20.sp, color: Colors.black)),
             ),
-            Text("Total Spending",
+            Text("Total Spending".tr,
                 style: TextStyle(fontSize: 16.sp, color: Colors.grey)),
             Padding(
               padding: EdgeInsets.only(top: 10.dp, bottom: 30.dp),
@@ -145,7 +145,7 @@ class PersonPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const TitleText(text: "General Information"),
+                  TitleText(text: "General Information".tr),
                   ...state.generalInformationList.map((item) {
                     var index = state.generalInformationList.indexOf(item);
                     return Container(

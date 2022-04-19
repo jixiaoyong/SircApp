@@ -9,6 +9,7 @@ import 'package:flutter_ume_kit_perf/flutter_ume_kit_perf.dart'; // 性能插件
 import 'package:flutter_ume_kit_show_code/flutter_ume_kit_show_code.dart'; // 代码查看插件包
 import 'package:flutter_ume_kit_ui/flutter_ume_kit_ui.dart'; // UI 插件包
 import 'package:get/get.dart';
+import 'package:sirc/data/languages.dart';
 
 import 'routes/app_pages.dart';
 
@@ -48,6 +49,9 @@ class MyApp extends StatelessWidget {
         // setup the screen width be 375,then you can use number.dp to set the design size
         designSize: const Size(375, 666),
         builder: (context) => GetMaterialApp(
+              locale: Get.deviceLocale,
+              fallbackLocale: const Locale("en", "US"),
+              translations: Languages(),
               initialRoute: AppPages.INITIAL,
               getPages: AppPages.routes,
             ).build(context));

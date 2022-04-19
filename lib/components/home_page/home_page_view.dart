@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,7 +25,7 @@ class HomePage extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const TitleText(text: "Dashboard"),
+                    TitleText(text: "Dashboard".tr),
                     Expanded(child: Container()),
                     Padding(
                       padding: EdgeInsets.only(right: 10.dp),
@@ -70,9 +69,9 @@ class HomePage extends StatelessWidget {
                                 margin: EdgeInsets.symmetric(horizontal: 5.dp),
                                 decoration: BoxDecoration(
                                     color:
-                                        (state.currentBankIndex.value == index
-                                            ? "#ff871094"
-                                            : "#ffb6c6d5")
+                                    (state.currentBankIndex.value == index
+                                                ? "#ff871094"
+                                                : "#ffb6c6d5")
                                             .hexToColor
                                             .withOpacity(0.8),
                                     borderRadius: BorderRadius.circular(10.dp)),
@@ -82,16 +81,18 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                const TitleText(text: "February"),
+                TitleText(text: "February".tr),
                 SizedBox(
                   height: 200.dp,
                   width: double.infinity,
-                  child: LineGraph(data: state.dataChange,),
+                  child: LineGraph(
+                    data: state.dataChange,
+                  ),
                 ),
                 Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    const TitleText(text: "Transcations"),
+                    TitleText(text: "Translations".tr),
                     const Spacer(),
                     GestureDetector(
                       child: const Icon(Icons.arrow_forward),
@@ -136,8 +137,8 @@ class HomePage extends StatelessWidget {
                               const Spacer(),
                               Text(
                                 index % 2 == 0
-                                    ? "Money Send"
-                                    : "Money Recharge",
+                                    ? "Money Send".tr
+                                    : "Money Recharge".tr,
                                 style: TextStyle(
                                     fontSize: 12.dp, color: Colors.black54),
                               ),

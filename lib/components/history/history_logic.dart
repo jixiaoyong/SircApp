@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import 'package:sirc/widgets/line_graph.dart';
+import 'package:sirc/bean/pair.dart';
+import 'package:sirc/mock/mock_utils.dart';
 
 import 'history_state.dart';
 
@@ -13,15 +14,7 @@ import 'history_state.dart';
 class HistoryLogic extends GetxController {
   final HistoryState state = HistoryState();
 
-  final List<Pair<String, double>> dataChange = [
-    Pair("Mon", 0.3),
-    Pair("Tues", 0.5),
-    Pair("Wed", 0.1),
-    Pair("Thur", 0.6),
-    Pair("Fri", 0.9),
-    Pair("Satu", 0.2),
-    Pair("Sun", 0.8),
-  ].obs;
+  final List<Pair<String, double>> dataChange = MockUtils.dataChange.obs;
 
   void setSelectMonth(String e) {
     state.selectMonth.value = e;

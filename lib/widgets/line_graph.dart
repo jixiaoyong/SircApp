@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sirc/bean/pair.dart';
 import 'package:sirc/utils/size_extension.dart';
 
 /*
@@ -145,11 +146,4 @@ class LinerGraphPainter extends CustomPainter {
   bool shouldRepaint(covariant LinerGraphPainter oldDelegate) =>
       oldDelegate.data != data ||
       oldDelegate.currentPosition != currentPosition;
-}
-
-class Pair<T, U> {
-  Pair(this.first, this.second);
-
-  final T first;
-  final U second;
 }

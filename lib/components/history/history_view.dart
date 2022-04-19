@@ -31,7 +31,7 @@ class HistoryPage extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const TitleText(text: "History"),
+                TitleText(text: "History".tr),
                 Expanded(child: Container()),
                 Padding(
                   padding: EdgeInsets.only(right: 10.dp),
@@ -69,10 +69,10 @@ class HistoryPage extends StatelessWidget {
                                   color: Colors.green,
                                   fontSize: 15.sp,
                                   fontWeight: FontWeight.bold),
-                              children: const [
+                              children: [
                             TextSpan(
-                                text: " Last Month",
-                                style: TextStyle(
+                                text: " Last Month".tr,
+                                style: const TextStyle(
                                     color: Colors.grey,
                                     fontWeight: FontWeight.normal))
                           ])),
@@ -126,10 +126,10 @@ class HistoryPage extends StatelessWidget {
                     color: Colors.black12,
                   ),
                   borderRadius: BorderRadius.circular(10.dp)),
-              child: const TextField(
+              child: TextField(
                 decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: "Search",
+                    hintText: "Search".tr,
                     suffixIcon: Icon(Icons.search)),
               ),
             ),

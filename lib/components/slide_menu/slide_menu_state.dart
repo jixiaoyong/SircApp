@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:sirc/widgets/line_graph.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
+import 'package:sirc/bean/pair.dart';
 
 /*
 * @description: Slide Menu
@@ -11,11 +12,11 @@ import 'package:sirc/widgets/line_graph.dart';
 */
 class SlideMenuState {
   final List<Pair<IconData, String>> slideMenuList = [
-    Pair(Icons.home_outlined, "Home"),
-    Pair(Icons.person_outline, "Profile"),
-    Pair(Icons.history_outlined, "History"),
-    Pair(Icons.notifications_outlined, "Notifications"),
-    Pair(Icons.settings, "Settings"),
-    Pair(Icons.help_outline_outlined, "Help & Support"),
+    Pair(Icons.home_outlined, "Home".tr),
+    Pair(Icons.person_outline, "Profile".tr),
+    Pair(Icons.history_outlined, "History".tr),
+    Pair(Icons.notifications_outlined, "Notifications".tr),
+    Pair(Icons.settings, "Settings".tr),
+    Pair(Icons.help_outline_outlined, "Help & Support".tr),
   ];
 }
