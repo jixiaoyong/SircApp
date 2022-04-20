@@ -4,9 +4,11 @@ import 'package:flutter/src/widgets/icon_data.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/bean/pair.dart';
+import 'package:sirc/components/main_app_logic.dart';
 import 'package:sirc/data/common_keys.dart';
 import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/utils/m5d_utils.dart';
+import 'package:sirc/utils/username_pwd_utils.dart';
 
 import 'sign_in_state.dart';
 
@@ -19,6 +21,7 @@ import 'sign_in_state.dart';
 */
 class SignInLogic extends GetxController {
   final SignInState state = SignInState();
+  final MainAppLogic _appLogic = Get.find();
   SharedPreferences? _prefs;
 
   @override
@@ -29,37 +32,19 @@ class SignInLogic extends GetxController {
 
   void setUserName(String value) {
     state.userName.value = value;
-    if (state.userName.value.length < 3) {
-      state.userNameError.value =
-          "the length of username must be more than 3".tr;
-    } else if (state.userName.value.length > 10) {
-      state.userNameError.value =
-          "the length of username must be less than 10".tr;
-    } else {
-      state.userNameError.value = null;
-    }
+    state.userNameError.value = UsernamePwdUtils.checkUserName(value);
     state.isUserInputValid.value = isUserNameAndPwdValid();
   }
 
   void setUserPwd(String value) {
     state.userPwd.value = value;
-    if (value.length < 6) {
-      state.userPwdError.value =
-          "the length of user password must be more than 6".tr;
-    } else if (value.length > 12) {
-      state.userPwdError.value =
-          "the length of user password must be less than 12".tr;
-    } else {
-      state.userPwdError.value = null;
-    }
+    state.userPwdError.value = UsernamePwdUtils.checkPassword(value);
     state.isUserInputValid.value = isUserNameAndPwdValid();
   }
 
   bool isUserNameAndPwdValid() {
-    return state.userName.value.length >= 3 &&
-        state.userName.value.length <= 10 &&
-        state.userPwd.value.length >= 6 &&
-        state.userPwd.value.length <= 12;
+    return state.userPwdError.value == null &&
+        state.userNameError.value == null;
   }
 
   void login() {
@@ -73,10 +58,12 @@ class SignInLogic extends GetxController {
         final String userPwdMd5 = Md5Utils.generateMd5(state.userPwd.value);
         if (localUserName == state.userName.value &&
             userPwdMd5 == localUserPwdMd5) {
+          _appLogic.setUserInfo(state.userName.value);
           state.isLoading.value = false;
           state.isLoginSuccess.value = true;
           _prefs?.setBool(CommonKeys.IS_LOGIN_SUCCESS, true);
         } else {
+          _appLogic.setUserInfo("");
           state.isLoading.value = false;
           state.isLoginSuccess.value = false;
         }

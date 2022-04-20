@@ -9,8 +9,9 @@ import 'package:get/get_utils/src/extensions/internacionalization.dart';
 */
 
 class UsernamePwdUtils {
-  static String? checkUserName(String userName) {
+  static String? checkUserName(String userNameInput) {
     String? result;
+    var userName = userNameInput.trim();
     if (userName.length < 3) {
       result = "the length of username must be more than 3".tr;
     } else if (userName.length > 10) {
@@ -21,14 +22,15 @@ class UsernamePwdUtils {
     return result;
   }
 
-  static String? checkPassword(String pwd, {String? confirmPwd}) {
-    confirmPwd ??= pwd;
+  static String? checkPassword(String pwdStr, {String? confirmPwd}) {
+    final String pwd = pwdStr.trim();
+    final String confirmPwdStr = (confirmPwd ?? pwd).trim();
     String? result;
     if (pwd.length < 6) {
       result = "the length of user password must be more than 6".tr;
     } else if (pwd.length > 12) {
       result = "the length of user password must be less than 12".tr;
-    } else if (pwd != confirmPwd) {
+    } else if (pwd != confirmPwdStr) {
       result = "the password is not same".tr;
     } else {
       result = null;

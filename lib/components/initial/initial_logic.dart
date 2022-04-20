@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/data/common_keys.dart';
 
+import '../main_app_logic.dart';
 import 'initial_state.dart';
 
 /*
@@ -13,6 +14,7 @@ import 'initial_state.dart';
 */
 class InitialLogic extends GetxController {
   final InitialState state = InitialState();
+  final MainAppLogic _appLogic = Get.put(MainAppLogic(), permanent: true);
 
   SharedPreferences? _prefs;
 
@@ -22,6 +24,10 @@ class InitialLogic extends GetxController {
     _prefs = await SharedPreferences.getInstance();
     state.isFirstInitial.value =
         _prefs?.getBool(CommonKeys.IS_FIRST_INITIAL) ?? true;
+
+    var userName = _prefs?.getString(CommonKeys.USER_NAME);
+    _appLogic.setUserInfo(userName);
+
     super.onInit();
   }
 
