@@ -55,6 +55,7 @@ class MyApp extends StatelessWidget {
               translations: Languages(),
               initialRoute: AppPages.INITIAL,
               getPages: AppPages.routes,
+              theme: Theme.of(context).copyWith(primaryColor: Colors.white),
             ).build(context));
   }
 }

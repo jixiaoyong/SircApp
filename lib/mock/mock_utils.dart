@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:sirc/bean/money_operate_bean.dart';
 import 'package:sirc/bean/pair.dart';
@@ -33,4 +35,10 @@ class MockUtils {
         time: "Just now".tr,
         moneyActionName: "Something".tr);
   });
+
+  static final List<Pair<IconData, Color>> socialList = [
+    Pair(Icons.facebook_outlined, Colors.blue),
+    Pair(Icons.fastfood_sharp, Colors.deepOrange),
+    Pair(Icons.favorite_outlined, Colors.lightBlueAccent),
+  ];
 }

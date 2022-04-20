@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:sirc/components/enter/sign_in/sign_in_view.dart';
+import 'package:sirc/components/enter/sign_up/sign_up_view.dart';
 import 'package:sirc/components/initial/initial_view.dart';
 import 'package:sirc/components/language/language_view.dart';
 import 'package:sirc/components/main_page.dart';
@@ -18,6 +20,8 @@ class AppPages {
   static const INITIAL = AppRoutes.INITIAL;
   static final routes = [
     GetPage(name: AppRoutes.INITIAL, page: () => InitialPage()),
+    GetPage(name: AppRoutes.SIGN_IN, page: () => SignInPage()),
+    GetPage(name: AppRoutes.SIGN_UP, page: () => SignUpPage()),
     GetPage(name: AppRoutes.MAIN, page: () => MainPage()),
     GetPage(name: AppRoutes.LANGUAGES, page: () => LanguagePage()),
     GetPage(name: AppRoutes.NOTIFICATIONS, page: () => NotificationsPage()),

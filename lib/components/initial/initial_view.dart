@@ -28,9 +28,7 @@ class InitialPage extends StatelessWidget {
       child: Obx(() {
         var isFirst = state.isFirstInitial.value;
         // first splash page
-        Widget? widget = Container(
-          child: Center(child: Image.asset(A.assets_ic_launcher)),
-        );
+        Widget? widget = Center(child: Image.asset(A.assets_ic_launcher));
         if (true == isFirst) {
           // first initial page
           widget = Stack(
@@ -143,7 +141,6 @@ class InitialPage extends StatelessWidget {
           );
         } else if (false == isFirst) {
           // empty page
-          widget = Container();
           Future.delayed(const Duration(seconds: 5), () {
             goMainPage();
           });
@@ -153,12 +150,24 @@ class InitialPage extends StatelessWidget {
     );
   }
 
-  void goMainPage() {
+  Future<void> goMainPage() async {
     if (_hasCallGoMainPage) {
       return;
     }
     _hasCallGoMainPage = true;
-    Get.offAndToNamed(AppRoutes.MAIN);
-    logic.markAsNotFirstInitial();
+
+    var isLoginSuccess = false;
+    if (!logic.isUserLoggedIn()) {
+      isLoginSuccess = await Get.toNamed(AppRoutes.SIGN_IN);
+    } else {
+      isLoginSuccess = true;
+    }
+
+    if (isLoginSuccess) {
+      Get.offAndToNamed(AppRoutes.MAIN);
+      logic.markAsNotFirstInitial();
+    } else {
+      _hasCallGoMainPage = false;
+    }
   }
 }

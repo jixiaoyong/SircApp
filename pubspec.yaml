@@ -41,6 +41,8 @@ dependencies:
   logger: ^1.1.0
   # 本地存储
   shared_preferences: ^2.0.13
+  # Implementations of SHA, MD5, and HMAC cryptographic functions
+  crypto: ^3.0.1
 
 dev_dependencies:
   flutter_test:

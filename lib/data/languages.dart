@@ -90,6 +90,15 @@ class Languages extends Translations {
           "Manage Account": "Manage Account",
           "Bank account make more secure keeping transaction active and changing password regularly.":
               "Bank account make more secure keeping transaction active and changing password regularly.",
+          "Sign In": "Sign In",
+          "Sign Up": "Sign Up",
+          "Forgot Password": "Forgot Password",
+          "Enter your email address so we can send you a link to reset your password.":
+              "Enter your email address so we can send you a link to reset your password.",
+          "Username": "Username",
+          "Password": "Password",
+          "Login Failed": "Login Failed",
+          "Loading...": "Loading...",
         },
         "zh_CN": {
           "MasterCard": "MasterCard卡",
@@ -165,6 +174,15 @@ class Languages extends Translations {
           "Manage Account": "管理账户",
           "Bank account make more secure keeping transaction active and changing password regularly.":
               "想要银行账户更安全，请保持交易活动，并定期更改密码。",
+          "Sign In": "登录",
+          "Sign Up": "注册",
+          "Forgot Password": "忘记密码",
+          "Enter your email address so we can send you a link to reset your password.":
+              "输入你的电子邮件地址，我们可以发送一个链接到重置密码。",
+          "Username": "用户名",
+          "Password": "密码",
+          "Login Failed": "登录失败",
+          "Loading...": "加载中...",
         }
       };
 }
