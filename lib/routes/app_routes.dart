@@ -15,4 +15,5 @@ abstract class AppRoutes {
   static const PASSWORD = "/password";
   static const FINGERPRINT = "/fingerprint";
   static const CARD = "/card";
+  static const LOGOUT = "/logout";
 }

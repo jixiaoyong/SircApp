@@ -19,6 +19,8 @@ class MenuState {
     Triple(Icons.fingerprint_outlined, "Fingerprint Login".tr,
         AppRoutes.FINGERPRINT),
     Triple(Icons.credit_card_outlined, "Add Card".tr, AppRoutes.CARD),
+    Triple(Icons.credit_card_outlined, "Add Card".tr, AppRoutes.CARD),
+    Triple(Icons.logout, "Logout".tr, AppRoutes.LOGOUT),
   ];
 
   var isFingerprintOpen = false.obs;

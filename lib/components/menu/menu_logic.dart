@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'menu_state.dart';
 
@@ -12,11 +13,20 @@ import 'menu_state.dart';
 class MenuLogic extends GetxController {
   final MenuState state = MenuState();
 
+  SharedPreferences? _prefs;
+
   @override
-  void onInit() {}
+  Future<void> onInit() async {
+    _prefs = await SharedPreferences.getInstance();
+    super.onInit();
+  }
 
   void changeFingerprint({bool? isOpen}) {
     var isFingerprintOpen = isOpen ?? !state.isFingerprintOpen.value;
     state.isFingerprintOpen.value = isFingerprintOpen;
+  }
+
+  void logout() {
+    _prefs?.clear();
   }
 }

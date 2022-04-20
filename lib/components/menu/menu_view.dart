@@ -92,13 +92,38 @@ class MenuPage extends StatelessWidget {
                             logic.changeFingerprint(isOpen: v);
                           })
                       : const Icon(Icons.keyboard_arrow_right),
-                  onTap: isFingerprint
-                      ? () {
-                          logic.changeFingerprint();
-                        }
-                      : () {
-                          Get.toNamed(item.third);
-                        },
+                  onTap: () {
+                    if (isFingerprint) {
+                      logic.changeFingerprint();
+                    } else if (AppRoutes.LOGOUT == item.third) {
+                      Get.dialog(AlertDialog(
+                        title: Text("Logout".tr),
+                        content: Text(
+                            "Are you sure you want to logout?\nThis will CLEAN ALL DATA"
+                                .tr),
+                        actions: [
+                          FlatButton(
+                            child: const Text("Cancel"),
+                            onPressed: () {
+                              Get.back();
+                            },
+                          ),
+                          FlatButton(
+                            child: const Text(
+                              "Logout & Clean Data",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            onPressed: () {
+                              logic.logout();
+                              Get.offAndToNamed(AppRoutes.INITIAL);
+                            },
+                          )
+                        ],
+                      ));
+                    } else {
+                      Get.toNamed(item.third);
+                    }
+                  },
                 ),
               );
             }),
