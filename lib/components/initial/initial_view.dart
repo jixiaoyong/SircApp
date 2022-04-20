@@ -156,14 +156,14 @@ class InitialPage extends StatelessWidget {
     }
     _hasCallGoMainPage = true;
 
-    var isLoginSuccess = false;
+    bool? isLoginSuccess = false;
     if (!logic.isUserLoggedIn()) {
       isLoginSuccess = await Get.toNamed(AppRoutes.SIGN_IN);
     } else {
       isLoginSuccess = true;
     }
 
-    if (isLoginSuccess) {
+    if (isLoginSuccess == true) {
       Get.offAndToNamed(AppRoutes.MAIN);
       logic.markAsNotFirstInitial();
     } else {

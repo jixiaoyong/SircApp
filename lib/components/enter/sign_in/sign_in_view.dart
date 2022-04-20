@@ -77,6 +77,7 @@ class _SignInPageState extends State<SignInPage> {
           elevation: 0,
           centerTitle: true,
           systemOverlayStyle: SystemUiOverlayStyle.dark,
+          iconTheme: const IconThemeData(color: Colors.black),
         ),
         backgroundColor: Colors.white,
         body: Obx(() {
