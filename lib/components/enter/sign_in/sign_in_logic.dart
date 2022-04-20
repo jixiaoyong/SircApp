@@ -75,6 +75,7 @@ class SignInLogic extends GetxController {
             userPwdMd5 == localUserPwdMd5) {
           state.isLoading.value = false;
           state.isLoginSuccess.value = true;
+          _prefs?.setBool(CommonKeys.IS_LOGIN_SUCCESS, true);
         } else {
           state.isLoading.value = false;
           state.isLoginSuccess.value = false;

@@ -8,6 +8,7 @@
 class CommonKeys {
   // is first time to launch app
   static const String IS_FIRST_INITIAL = 'isFirstInitial';
+  static const String IS_LOGIN_SUCCESS = 'isLoginSuccess';
 
   static const String USER_NAME = 'user_name';
 

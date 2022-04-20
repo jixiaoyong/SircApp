@@ -210,7 +210,7 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                   ),
                 ),
-                TitleText(text: "Or Sign With".tr),
+                TitleText(text: "Or Sign In With".tr),
                 SizedBox(
                   height: 50.dp,
                   width: double.infinity,

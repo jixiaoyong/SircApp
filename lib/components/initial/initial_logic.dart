@@ -32,8 +32,7 @@ class InitialLogic extends GetxController {
 
   // is user has logged in,not matter whether pwd is correct or not
   bool isUserLoggedIn() {
-    var userName = _prefs?.getString(CommonKeys.USER_NAME);
-    var password = _prefs?.getString(CommonKeys.USER_PWD);
-    return userName != null && password != null;
+    var isLoginSuccess = _prefs?.getBool(CommonKeys.IS_LOGIN_SUCCESS);
+    return isLoginSuccess == true;
   }
 }
