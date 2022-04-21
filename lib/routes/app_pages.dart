@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:sirc/components/card/add_card/add_card_view.dart';
 import 'package:sirc/components/enter/forget_pwd/forget_pwd_view.dart';
 import 'package:sirc/components/enter/set_pwd/set_pwd_view.dart';
 import 'package:sirc/components/enter/sign_in/sign_in_view.dart';
@@ -30,5 +31,6 @@ class AppPages {
     GetPage(name: AppRoutes.LANGUAGES, page: () => LanguagePage()),
     GetPage(name: AppRoutes.NOTIFICATIONS, page: () => NotificationsPage()),
     GetPage(name: AppRoutes.PASSWORD, page: () => PasswordPage()),
+    GetPage(name: AppRoutes.ADD_CARD, page: () => AddCardPage()),
   ];
 }

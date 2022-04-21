@@ -18,7 +18,7 @@ class MenuState {
     Triple(Icons.lock_outlined, "Change Password".tr, AppRoutes.PASSWORD),
     Triple(Icons.fingerprint_outlined, "Fingerprint Login".tr,
         AppRoutes.FINGERPRINT),
-    Triple(Icons.credit_card_outlined, "Add Card".tr, AppRoutes.CARD),
+    Triple(Icons.credit_card_outlined, "Add Card".tr, AppRoutes.ADD_CARD),
     Triple(Icons.logout, "Logout".tr, AppRoutes.LOGOUT),
   ];
 
