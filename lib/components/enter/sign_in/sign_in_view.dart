@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/size_extension.dart';
+import 'package:sirc/widgets/common_text_button.dart';
 import 'package:sirc/widgets/title_text.dart';
 
 import 'sign_in_logic.dart';
@@ -91,7 +92,8 @@ class _SignInPageState extends State<SignInPage> {
               padding: EdgeInsets.symmetric(vertical: 20.dp),
               // the body height is the height of screen reduced by
               // the height of the app bar and top margin
-              height: MediaQuery.of(context).size.height - kToolbarHeight - 16.dp,
+              height:
+                  MediaQuery.of(context).size.height - kToolbarHeight - 16.dp,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -167,8 +169,12 @@ class _SignInPageState extends State<SignInPage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          // todo go to forget password page
+                        onTap: () async {
+                          var result = await Get.toNamed(AppRoutes.FORGET_PWD);
+                          if (true == result) {
+                            Get.snackbar("Set Password Succeed",
+                                "Please login with your new password.".tr);
+                          }
                         },
                         child: Text("Forget passwords?".tr,
                             textAlign: TextAlign.end,
@@ -179,41 +185,12 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                     ],
                   ),
-                  GestureDetector(
-                    onTap: !isButtonEnabled
-                        ? null
-                        : () {
-                            logic.login();
-                          },
-                    child: Container(
-                      height: 50.dp,
-                      margin: EdgeInsets.only(top: 30.dp, bottom: 50.dp),
-                      decoration: !isButtonEnabled
-                          ? BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.dp),
-                              color: Colors.grey[200],
-                              border: Border.all(color: Colors.grey, width: 1),
-                            )
-                          : BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.purple.shade400.withOpacity(0.7),
-                                  Colors.deepPurpleAccent.shade400
-                                      .withOpacity(0.7)
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(8.dp)),
-                      child: Center(
-                        child: Text("Login".tr,
-                            style: TextStyle(
-                                color: !isButtonEnabled
-                                    ? Colors.grey
-                                    : Colors.white,
-                                fontSize: 16.dp,
-                                fontWeight: FontWeight.w500)),
-                      ),
-                    ),
-                  ),
+                  CommonTextButton(
+                      isButtonEnabled: isButtonEnabled,
+                      onTap: () {
+                        logic.login();
+                      },
+                      text: "Login".tr),
                   TitleText(text: "Or Sign In With".tr),
                   SizedBox(
                     height: 50.dp,

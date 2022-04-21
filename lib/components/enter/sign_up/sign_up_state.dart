@@ -16,10 +16,12 @@ class SignUpState {
   final List<Pair<IconData, Color>> socialList = MockUtils.socialList;
 
   var userName = "".obs;
+  var userEmail = "".obs;
   var userPwd = "".obs;
   var userConfirmPwd = "".obs;
 
   Rx<String?> userNameError = Rx(null);
+  Rx<String?> userEmailError = Rx(null);
   Rx<String?> userPwdError = Rx(null);
   Rx<String?> userConfirmPwdError = Rx(null);
 

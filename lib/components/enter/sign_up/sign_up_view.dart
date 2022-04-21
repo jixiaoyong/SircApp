@@ -89,6 +89,7 @@ class _SignUpPageState extends State<SignUpPage> {
           var isLoginInProgress = state.isLoading.value == true;
           var isButtonEnabled =
               !isLoginInProgress && state.isUserInputValid.value == true;
+          final marginBetweenFields = _screenHeight * 0.05;
 
           return SingleChildScrollView(
             child: Container(
@@ -101,7 +102,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    height: _screenHeight / 12,
+                    height: 10.dp,
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -135,7 +136,39 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 50.dp),
+                    margin: EdgeInsets.only(top: marginBetweenFields),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.dp),
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Colors.black12,
+                              offset: Offset(0, 4),
+                              blurRadius: 8)
+                        ],
+                        color: Colors.white),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: "Email Address".tr,
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide:
+                              const BorderSide(color: Colors.black12, width: 0),
+                        ),
+                        labelText: "Email Address".tr,
+                        errorText: state.userEmailError.value,
+                        suffixIcon: const Icon(
+                          Icons.email_outlined,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      onChanged: (value) {
+                        logic.setUserEmail(value);
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: marginBetweenFields),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.dp),
                         boxShadow: const [
@@ -169,7 +202,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 50.dp),
+                    margin: EdgeInsets.only(top: marginBetweenFields),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.dp),
                         boxShadow: const [

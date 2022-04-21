@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:sirc/components/enter/forget_pwd/forget_pwd_view.dart';
+import 'package:sirc/components/enter/set_pwd/set_pwd_view.dart';
 import 'package:sirc/components/enter/sign_in/sign_in_view.dart';
 import 'package:sirc/components/enter/sign_up/sign_up_view.dart';
 import 'package:sirc/components/initial/initial_view.dart';
@@ -22,6 +24,8 @@ class AppPages {
     GetPage(name: AppRoutes.INITIAL, page: () => InitialPage()),
     GetPage(name: AppRoutes.SIGN_IN, page: () => SignInPage()),
     GetPage(name: AppRoutes.SIGN_UP, page: () => SignUpPage()),
+    GetPage(name: AppRoutes.FORGET_PWD, page: () => ForgetPwdPage()),
+    GetPage(name: AppRoutes.SET_PWD, page: () => SetPwdPage()),
     GetPage(name: AppRoutes.MAIN, page: () => MainPage()),
     GetPage(name: AppRoutes.LANGUAGES, page: () => LanguagePage()),
     GetPage(name: AppRoutes.NOTIFICATIONS, page: () => NotificationsPage()),

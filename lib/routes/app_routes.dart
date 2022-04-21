@@ -9,6 +9,8 @@ abstract class AppRoutes {
   static const INITIAL = "/";
   static const SIGN_IN = "/sign_in";
   static const SIGN_UP = "/sign_up";
+  static const FORGET_PWD = "/forget_pwd";
+  static const SET_PWD = "/set_pwd";
   static const MAIN = "/main";
   static const LANGUAGES = "/languages";
   static const NOTIFICATIONS = "/notifications";

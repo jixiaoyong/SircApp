@@ -27,7 +27,4 @@ class SignInState {
 
   final List<Pair<IconData, Color>> socialList = MockUtils.socialList;
 
-  SignInState() {
-    ///Initialize variables
-  }
 }

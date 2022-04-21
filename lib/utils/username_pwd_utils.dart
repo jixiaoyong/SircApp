@@ -37,4 +37,22 @@ class UsernamePwdUtils {
     }
     return result;
   }
+
+  static String? checkUserEmail(String value) {
+    String? result;
+    final String email = value.trim();
+    if (email.length < 5) {
+      // for minimum length email example: a@b.cc
+      result = "the length of user email must be more than 5".tr;
+    } else if (email.length > 30) {
+      result = "the length of user email must be less than 30".tr;
+    } else if (!RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(email)) {
+      result = "the email format is not correct".tr;
+    } else {
+      result = null;
+    }
+    return result;
+  }
 }

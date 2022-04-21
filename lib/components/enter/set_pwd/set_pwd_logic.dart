@@ -1,25 +1,21 @@
-import 'dart:ui';
-
-import 'package:flutter/src/widgets/icon_data.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sirc/bean/pair.dart';
 import 'package:sirc/data/common_keys.dart';
 import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/utils/m5d_utils.dart';
 import 'package:sirc/utils/username_pwd_utils.dart';
 
-import 'sign_up_state.dart';
+import 'set_pwd_state.dart';
 
 /*
 * @description:
 *
 * @author: jixiaoyong
 * @email: jixiaoyong1995@gmail.com
-* @date: 22/04/20
+* @date: 22/04/21
 */
-class SignUpLogic extends GetxController {
-  final SignUpState state = SignUpState();
+class SetPwdLogic extends GetxController {
+  final SetPwdState state = SetPwdState();
 
   SharedPreferences? _prefs;
 
@@ -29,16 +25,8 @@ class SignUpLogic extends GetxController {
     super.onInit();
   }
 
-  void setUserName(String value) {
-    state.userName.value = value;
-    state.userNameError.value = UsernamePwdUtils.checkUserName(value);
-    state.isUserInputValid.value = isUserNameAndPwdValid();
-  }
-
-  void setUserEmail(String value) {
-    state.userEmail.value = value;
-    state.userEmailError.value = UsernamePwdUtils.checkUserEmail(value);
-    state.isUserInputValid.value = isUserNameAndPwdValid();
+  void setUserName(String userName) {
+    state.userName = Get.parameters[CommonKeys.USER_NAME] ?? "";
   }
 
   void setUserPwd(String value) {
@@ -61,10 +49,8 @@ class SignUpLogic extends GetxController {
   }
 
   bool isUserNameAndPwdValid() {
-    if (state.userNameError.value != null ||
-        state.userPwdError.value != null ||
-        state.userConfirmPwdError.value != null ||
-        state.userEmailError.value != null) {
+    if (state.userPwdError.value != null ||
+        state.userConfirmPwdError.value != null) {
       return false;
     } else if (state.userConfirmPwd.value != state.userPwd.value) {
       return false;
@@ -73,21 +59,14 @@ class SignUpLogic extends GetxController {
     }
   }
 
-  void logUpWith(Pair<IconData, Color> item) {}
-
-  void register() {
-    if (isUserNameAndPwdValid()) {
-      state.isLoading.value = true;
-
-      // mock register
-      Future.delayed(Duration(seconds: MockUtils.random.nextInt(10) + 3), () {
-        final String userPwdMd5 = Md5Utils.generateMd5(state.userPwd.value);
-        _prefs?.setString(CommonKeys.USER_NAME, state.userName.value);
-        _prefs?.setString(CommonKeys.USER_PWD, userPwdMd5);
-
-        state.isLoading.value = false;
-        state.isRegisterSuccess.value = true;
-      });
-    }
+  void resetPwd() {
+    state.isWaitSetPwdResult.value = true;
+    // pretend to set password
+    Future.delayed(Duration(seconds: MockUtils.random.nextInt(5) + 5), () {
+      _prefs?.setString(CommonKeys.USER_NAME, state.userName);
+      _prefs?.setString(
+          CommonKeys.USER_PWD, Md5Utils.generateMd5(state.userPwd.value));
+      state.isWaitSetPwdResult.value = false;
+    });
   }
 }
