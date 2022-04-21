@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sirc/components/wallet/wallet_view.dart';
+import 'package:sirc/components/main_app_state.dart';
 
-import 'history/history_view.dart';
-import 'home_page/home_page_view.dart';
-import 'menu/menu_view.dart';
-import 'person/person_view.dart';
+import 'main_app_logic.dart';
 import 'slide_menu/slide_menu_view.dart';
 
 /*
@@ -16,31 +13,32 @@ import 'slide_menu/slide_menu_view.dart';
 * @date: 22/04/17
 */
 class MainPage extends StatefulWidget {
-  MainPage({Key? key}) : super(key: key);
+  const MainPage({Key? key}) : super(key: key);
 
   @override
   _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  final _currentIndex = 0.obs;
+  final MainAppLogic _appLogic = GetInstance().putOrFind(() => MainAppLogic());
+  final MainAppState _appState = Get.find<MainAppLogic>().state;
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      var index = _currentIndex.value;
+      var currentIndex = _appState.currentIndex.value;
       return SlideMenuPage(
         child: Scaffold(
           body: IndexedStack(
-            children: homePages,
-            index: index,
+            children: _appState.homePages,
+            index: currentIndex,
           ),
           bottomNavigationBar: BottomNavigationBar(
-            items: BnbItems,
+            items: _appState.bnbItems.value,
             onTap: (index) {
-              _currentIndex.value = index;
+              _appLogic.changeIndex(index);
             },
-            currentIndex: _currentIndex.value,
+            currentIndex: currentIndex,
             selectedItemColor: Theme.of(context).primaryColorDark,
             selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
             unselectedItemColor: Theme.of(context).primaryColorLight,
@@ -49,36 +47,4 @@ class _MainPageState extends State<MainPage> {
       );
     });
   }
-
-  List<Widget> homePages = [
-    HomePage(),
-    WalletPage(),
-    HistoryPage(),
-    PersonPage(),
-    MenuPage(),
-  ];
-
-  List<BottomNavigationBarItem> BnbItems = const [
-    BottomNavigationBarItem(
-        icon: Icon(
-          Icons.home_outlined,
-        ),
-        label: 'Home'),
-    BottomNavigationBarItem(
-        icon: Icon(
-          Icons.account_balance_wallet_outlined,
-        ),
-        label: 'Wallet'),
-    BottomNavigationBarItem(
-        icon: Icon(
-          Icons.av_timer_outlined,
-        ),
-        label: 'History'),
-    BottomNavigationBarItem(
-        icon: Icon(
-          Icons.person_outline_outlined,
-        ),
-        label: 'Person'),
-    BottomNavigationBarItem(icon: Icon(Icons.menu_outlined), label: 'Menu'),
-  ];
 }

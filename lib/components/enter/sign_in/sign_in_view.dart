@@ -172,7 +172,7 @@ class _SignInPageState extends State<SignInPage> {
                         onTap: () async {
                           var result = await Get.toNamed(AppRoutes.FORGET_PWD);
                           if (true == result) {
-                            Get.snackbar("Set Password Succeed",
+                            Get.snackbar("Set Password Succeed".tr,
                                 "Please login with your new password.".tr);
                           }
                         },
@@ -238,7 +238,7 @@ class _SignInPageState extends State<SignInPage> {
                               TextStyle(color: Colors.black, fontSize: 12.dp),
                           children: [
                         TextSpan(
-                            text: " Sign Up".tr,
+                            text: " ${"Sign Up".tr}",
                             style: TextStyle(
                                 color: Colors.purple,
                                 fontSize: 12.dp,

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/data/common_keys.dart';
@@ -28,7 +29,19 @@ class InitialLogic extends GetxController {
     var userName = _prefs?.getString(CommonKeys.USER_NAME);
     _appLogic.setUserInfo(userName);
 
+    initialLocalLanguage();
+
     super.onInit();
+  }
+
+  void initialLocalLanguage() {
+    var localLanguage = _prefs?.getString(CommonKeys.LOCAL_LANGUAGE);
+    if (localLanguage != null && localLanguage.isNotEmpty) {
+      var locationStrArr = localLanguage.split("_");
+      var locale = Locale(locationStrArr.first, locationStrArr.last);
+      Get.locale = locale;
+      _appLogic.setLocalLanguage(locale);
+    }
   }
 
   void markAsNotFirstInitial() {

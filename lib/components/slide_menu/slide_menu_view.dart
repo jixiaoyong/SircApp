@@ -99,7 +99,7 @@ class _SlideMenuPageState extends State<SlideMenuPage>
                     style: TextStyle(color: Colors.white, fontSize: 12.sp),
                   ),
                   Padding(padding: EdgeInsets.all(20.dp)),
-                  ...state.slideMenuList.map((item) {
+                  ...state.slideMenuList.value.map((item) {
                     return Container(
                       margin: EdgeInsets.symmetric(vertical: 10.dp),
                       child: Row(

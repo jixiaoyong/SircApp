@@ -27,7 +27,7 @@ class HistoryState {
     'December'.tr
   ];
 
-  var selectMonth = 'January'.obs;
+  var selectMonth = 'January'.tr.obs;
 
   final List<Pair<String, double>> dataChange = MockUtils.dataChange.obs;
 

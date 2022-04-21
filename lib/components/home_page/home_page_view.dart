@@ -52,7 +52,10 @@ class HomePage extends StatelessWidget {
                       padding: EdgeInsets.fromLTRB(10.dp, 50.dp, 10.dp, 15.dp),
                       child: PageView.builder(
                         itemBuilder: (context, index) {
-                          return state.banks[index];
+                          return Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10.dp),
+                            child: state.banks[index],
+                          );
                         },
                         itemCount: state.banks.length,
                         onPageChanged: (index) {

@@ -47,7 +47,7 @@ class _SignUpPageState extends State<SignUpPage> {
         Get.until(
           ModalRoute.withName(AppRoutes.SIGN_IN),
         );
-        Get.snackbar("Register Succeed", "Please Sign In");
+        Get.snackbar("Register Succeed".tr, "Please Sign In".tr);
       } else {
         Get.dialog(
           AlertDialog(
@@ -91,13 +91,10 @@ class _SignUpPageState extends State<SignUpPage> {
               !isLoginInProgress && state.isUserInputValid.value == true;
           final marginBetweenFields = _screenHeight * 0.05;
 
-          return SingleChildScrollView(
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 16.dp),
-              padding: EdgeInsets.symmetric(vertical: 20.dp),
-              // the body height is the height of screen reduced by
-              // the height of the app bar and top margin
-              height: _screenHeight - kToolbarHeight - 16.dp,
+          return Container(
+            margin: EdgeInsets.fromLTRB(16.dp, 16.dp, 16.dp, 0),
+            padding: EdgeInsets.fromLTRB(20.dp, 20.dp, 20.dp, 0),
+            child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -243,7 +240,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           },
                     child: Container(
                       height: 50.dp,
-                      margin: EdgeInsets.only(top: 30.dp, bottom: 50.dp),
+                      margin: EdgeInsets.only(top: 30.dp, bottom: 20.dp),
                       decoration: !isButtonEnabled
                           ? BoxDecoration(
                               borderRadius: BorderRadius.circular(8.dp),
@@ -309,22 +306,24 @@ class _SignUpPageState extends State<SignUpPage> {
                       ],
                     ),
                   ),
-                  Expanded(child: Container()),
-                  RichText(
-                      text: TextSpan(
-                          text: "I have already an account".tr,
-                          style:
-                              TextStyle(color: Colors.black, fontSize: 12.dp),
-                          children: [
-                        TextSpan(
-                            text: " Sign In".tr,
-                            style: TextStyle(
-                                color: Colors.purple,
-                                fontSize: 12.dp,
-                                fontWeight: FontWeight.w500),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () => Get.back())
-                      ]))
+                  Padding(
+                    padding: EdgeInsets.only(top: 20.dp, bottom: 50.dp),
+                    child: RichText(
+                        text: TextSpan(
+                            text: "I have already an account".tr,
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 12.dp),
+                            children: [
+                          TextSpan(
+                              text: " ${"Sign In".tr}",
+                              style: TextStyle(
+                                  color: Colors.purple,
+                                  fontSize: 12.dp,
+                                  fontWeight: FontWeight.w500),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () => Get.back())
+                        ])),
+                  )
                 ],
               ),
             ),

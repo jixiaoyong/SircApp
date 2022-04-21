@@ -146,8 +146,9 @@ class PersonPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TitleText(text: "General Information".tr),
-                  ...state.generalInformationList.map((item) {
-                    var index = state.generalInformationList.indexOf(item);
+                  ...state.generalInformationList.value.map((item) {
+                    var index =
+                        state.generalInformationList.value.indexOf(item);
                     return Container(
                       padding: EdgeInsets.symmetric(
                           vertical: 10.dp, horizontal: 20.dp),
@@ -172,7 +173,8 @@ class PersonPage extends StatelessWidget {
                               const Icon(Icons.arrow_forward_ios_rounded)
                             ],
                           ),
-                          if (index != state.generalInformationList.length - 1)
+                          if (index !=
+                              state.generalInformationList.value.length - 1)
                             Container(
                               height: 1,
                               margin: EdgeInsets.only(top: 10.dp),

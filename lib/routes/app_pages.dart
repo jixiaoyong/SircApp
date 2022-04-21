@@ -27,7 +27,7 @@ class AppPages {
     GetPage(name: AppRoutes.SIGN_UP, page: () => SignUpPage()),
     GetPage(name: AppRoutes.FORGET_PWD, page: () => ForgetPwdPage()),
     GetPage(name: AppRoutes.SET_PWD, page: () => SetPwdPage()),
-    GetPage(name: AppRoutes.MAIN, page: () => MainPage()),
+    GetPage(name: AppRoutes.MAIN, page: () => const MainPage()),
     GetPage(name: AppRoutes.LANGUAGES, page: () => LanguagePage()),
     GetPage(name: AppRoutes.NOTIFICATIONS, page: () => NotificationsPage()),
     GetPage(name: AppRoutes.PASSWORD, page: () => PasswordPage()),

@@ -10,6 +10,8 @@ class CommonKeys {
   static const String IS_FIRST_INITIAL = 'isFirstInitial';
   static const String IS_LOGIN_SUCCESS = 'isLoginSuccess';
 
+  // the language of app
+  static const String LOCAL_LANGUAGE = 'localLanguage';
   static const String USER_NAME = 'user_name';
 
   // the md5 of user password

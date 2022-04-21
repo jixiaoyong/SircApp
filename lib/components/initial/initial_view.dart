@@ -122,7 +122,7 @@ class InitialPage extends StatelessWidget {
                                         ])),
                                     child: Center(
                                       child: Text(
-                                        "Get Started".tr,
+                                        "Get Start".tr,
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 20.sp),

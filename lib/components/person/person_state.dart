@@ -19,10 +19,13 @@ class PersonState {
 
   final List<MoneyOperateBean> moneyOperateList = MockUtils.moneyOperateList;
 
-  final List<Pair<IconData, String>> generalInformationList = [
-    Pair(Icons.email_outlined, "E-mail".tr),
-    Pair(Icons.phone_outlined, "Phone Number".tr),
-    Pair(Icons.location_on_outlined, "Local Address".tr),
-    Pair(Icons.credit_card_outlined, "Card Credit".tr),
-  ];
+  final Rx<List<Pair<IconData, String>>> generalInformationList =
+      Rx(generateInfoList());
+
+  static List<Pair<IconData, String>> generateInfoList() => [
+        Pair(Icons.email_outlined, "E-mail".tr),
+        Pair(Icons.phone_outlined, "Phone Number".tr),
+        Pair(Icons.location_on_outlined, "Local Address".tr),
+        Pair(Icons.credit_card_outlined, "Card Credit".tr),
+      ];
 }

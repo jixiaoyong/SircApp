@@ -43,7 +43,8 @@ class LanguagePage extends StatelessWidget {
                 var locationStrArr =
                     languages.languagesName[index].second.split("_");
                 var locale = Locale(locationStrArr.first, locationStrArr.last);
-                logic.updateLanguage(locale);
+                logic.updateLanguage(
+                    locale, languages.languagesName[index].second);
                 Get.back();
               },
             );

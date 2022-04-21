@@ -13,14 +13,17 @@ import 'package:sirc/routes/app_routes.dart';
 * @date: 22/04/19
 */
 class MenuState {
-  final List<Triple<IconData, String, String>> menuItems = [
-    Triple(Icons.language_outlined, "Language".tr, AppRoutes.LANGUAGES),
-    Triple(Icons.lock_outlined, "Change Password".tr, AppRoutes.PASSWORD),
-    Triple(Icons.fingerprint_outlined, "Fingerprint Login".tr,
-        AppRoutes.FINGERPRINT),
-    Triple(Icons.credit_card_outlined, "Add Card".tr, AppRoutes.ADD_CARD),
-    Triple(Icons.logout, "Logout".tr, AppRoutes.LOGOUT),
-  ];
+  final Rx<List<Triple<IconData, String, String>>> menuItems =
+      Rx(generateMenus());
 
   var isFingerprintOpen = false.obs;
+
+  static List<Triple<IconData, String, String>> generateMenus() => [
+        Triple(Icons.language_outlined, "Language".tr, AppRoutes.LANGUAGES),
+        Triple(Icons.lock_outlined, "Change Password".tr, AppRoutes.PASSWORD),
+        Triple(Icons.fingerprint_outlined, "Fingerprint Login".tr,
+            AppRoutes.FINGERPRINT),
+        Triple(Icons.credit_card_outlined, "Add Card".tr, AppRoutes.ADD_CARD),
+        Triple(Icons.logout, "Logout".tr, AppRoutes.LOGOUT),
+      ];
 }

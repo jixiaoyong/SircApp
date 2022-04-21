@@ -31,8 +31,8 @@ class MenuPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const TitleText(
-                  text: "Settings",
+                TitleText(
+                  text: "Settings".tr,
                 ),
                 GestureDetector(
                   onTap: () {
@@ -57,7 +57,7 @@ class MenuPage extends StatelessWidget {
                 )
               ],
             ),
-            ...state.menuItems.map((item) {
+            ...state.menuItems.value.map((item) {
               final bool isFingerprint = item.third == AppRoutes.FINGERPRINT;
               return Container(
                 margin: EdgeInsets.symmetric(vertical: 10.dp),
@@ -98,20 +98,18 @@ class MenuPage extends StatelessWidget {
                     } else if (AppRoutes.LOGOUT == item.third) {
                       Get.dialog(AlertDialog(
                         title: Text("Logout".tr),
-                        content: Text(
-                            "Are you sure you want to logout?\nThis will CLEAN ALL DATA"
-                                .tr),
+                        content: Text("SureToLogout".tr),
                         actions: [
                           FlatButton(
-                            child: const Text("Cancel"),
+                            child: Text("Cancel".tr),
                             onPressed: () {
                               Get.back();
                             },
                           ),
                           FlatButton(
-                            child: const Text(
-                              "Logout & Clean Data",
-                              style: TextStyle(color: Colors.red),
+                            child: Text(
+                              "Logout & Clean Data".tr,
+                              style: const TextStyle(color: Colors.red),
                             ),
                             onPressed: () {
                               logic.logout();

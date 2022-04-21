@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:sirc/bean/pair.dart';
 
 /*
-* @description: 翻译文件
+* @description: Translate File
 *
 * @author: jixiaoyong
 * @email: jixiaoyong1995@gmail.com
@@ -22,6 +22,7 @@ class Languages extends Translations {
           "Home": "Home",
           "Wallet": "Wallet",
           "Search": "Search",
+          "Menu": "Menu",
           " Last Month": " Last Month",
           "History": "History",
           "Person": "Person",
@@ -81,6 +82,7 @@ class Languages extends Translations {
           "Recharge": "Recharge",
           "Bill": "Bill",
           "Others": "Others",
+          "Login": "Login",
           "Don't Share Password": "Don't Share Password",
           "Use strong combinations of letters,numbers and special characters to make your password.":
               "Use strong combinations of letters,numbers and special characters to make your password.",
@@ -99,6 +101,49 @@ class Languages extends Translations {
           "Password": "Password",
           "Login Failed": "Login Failed",
           "Loading...": "Loading...",
+          "Logout": "Logout",
+          "Old Password": "Old Password",
+          "New Password": "New Password",
+          "Confirm Password": "Confirm Password",
+          "SureToLogout":
+              "Are you sure you want to logout?\nThis will CLEAN ALL DATA",
+          "Logout & Clean Data": "Logout & Clean Data",
+          "Cancel": "Cancel",
+          "Get Start": "Get Start",
+          "Set Password Succeed": "Set Password Succeed",
+          "Please login with your new password.":
+              "Please login with your new password.",
+          "Forget passwords?": "Forget passwords?",
+          "Or Sign In With": "Or Sign In With",
+          "I don't have an account": "I don't have an account",
+          "Register Succeed": "Register Succeed",
+          "Register Failed": "Register Failed",
+          "Please Sign In": "Please Sign In",
+          "Or Sign Up With": "Or Sign Up With",
+          "I have already an account": "I have already an account",
+          "Register": "Register",
+          "Email Address": "Email Address",
+          "Forget Password": "Forget Password",
+          "Enter your email address to reset your password":
+              "Enter your email address to reset your password",
+          "verify": "verify",
+          "Submit": "Submit",
+          "the email format is not correct": "the email format is not correct",
+          "the length of user email must be less than 30":
+              "the length of user email must be less than 30",
+          "the length of user email must be more than 5":
+              "the length of user email must be more than 5",
+          "the password is not same": "the password is not same",
+          "the length of user password must be less than 12":
+              "the length of user password must be less than 12",
+          "the length of user password must be more than 6":
+              "the length of user password must be more than 6",
+          "the length of username must be less than 10":
+              "the length of username must be less than 10",
+          "the length of username must be more than 3":
+              "the length of username must be more than 3",
+          "Please enter the verify code we sent to your email:":
+              "Please enter the verify code we sent to your email:",
         },
         "zh_CN": {
           "MasterCard": "MasterCard卡",
@@ -181,8 +226,45 @@ class Languages extends Translations {
               "输入你的电子邮件地址，我们可以发送一个链接到重置密码。",
           "Username": "用户名",
           "Password": "密码",
+          "Old Password": "旧密码",
+          "New Password": "新密码",
+          "Confirm Password": "确认密码",
           "Login Failed": "登录失败",
           "Loading...": "加载中...",
+          "Logout": "退出登录",
+          "Logout & Clean Data": "退出登录并清除数据",
+          "Cancel": "取消",
+          "SureToLogout": "您确定要退出吗？\n这将清除所有数据！",
+          "Get Start": "开始",
+          "Set Password Succeed": "设置密码成功",
+          "Please login with your new password.": "请使用您的新密码登录。",
+          "Forget passwords?": "忘记密码？",
+          "Or Sign In With": "或通过下述方式登录",
+          "I don't have an account": "我没有账户",
+          "Login": "登录",
+          "Register Succeed": "注册成功",
+          "Register Failed": "注册失败",
+          "Please Sign In": "请登录",
+          "Or Sign Up With": "或通过下述方式注册",
+          "I have already an account": "我已经有一个帐户",
+          "Register": "注册",
+          "Email Address": "电子邮件",
+          "Forget Password": "忘记密码",
+          "Enter your email address to reset your password":
+              "输入您的电子邮件地址来重置您的密码",
+          "verify": "获取验证码",
+          "Submit": "提交",
+          "the email format is not correct": "电子邮件格式不正确",
+          "the length of user email must be less than 30": "用户电子邮件长度必须小于30",
+          "the length of user email must be more than 5": "用户电子邮件长度必须大于5",
+          "the password is not same": "密码不一样",
+          "the length of user password must be less than 12": "用户密码长度必须小于12",
+          "the length of user password must be more than 6": "用户密码长度必须大于6",
+          "the length of username must be less than 10": "用户名长度必须小于10",
+          "the length of username must be more than 3": "用户名长度必须大于3",
+          "Please enter the verify code we sent to your email:":
+              "请输入我们发送到您邮箱的验证码：",
+          "Menu": "菜单"
         }
       };
 }

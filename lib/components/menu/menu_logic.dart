@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../main_app_logic.dart';
 import 'menu_state.dart';
 
 /*
@@ -12,12 +13,17 @@ import 'menu_state.dart';
 */
 class MenuLogic extends GetxController {
   final MenuState state = MenuState();
+  final MainAppLogic _appLogic = Get.find();
 
   SharedPreferences? _prefs;
 
   @override
   Future<void> onInit() async {
     _prefs = await SharedPreferences.getInstance();
+    // listen to the local change, and update the menu state
+    _appLogic.listenLocalChange((p0) {
+      state.menuItems.value = MenuState.generateMenus();
+    });
     super.onInit();
   }
 
