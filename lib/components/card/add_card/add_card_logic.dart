@@ -1,4 +1,4 @@
-import 'package:flutter/src/gestures/drag_details.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:sirc/components/main_app_logic.dart';
 
@@ -22,13 +22,13 @@ class AddCardLogic extends GetxController {
     super.onInit();
   }
 
-  void onBankCardPanUpdate(DragUpdateDetails? details) {
-    if (details == null) {
+  void onBankCardPanUpdate(Offset? offset) {
+    if (offset == null) {
       state.cardRotateAngle.value = AddCardState.CARD_MIN_ROTATE_ANGLE;
       return;
     }
 
-    var dy = details.delta.dy;
+    var dy = offset.dy;
 
     // scroll direction is vertical, so we rotate the card
     final dragOffsetPercent = -dy / AddCardState.CARD_MAX_DRAG_OFFSET;

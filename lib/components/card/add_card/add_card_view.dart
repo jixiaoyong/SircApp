@@ -50,10 +50,10 @@ class AddCardPage extends StatelessWidget {
                       width: double.infinity,
                       padding: EdgeInsets.all(35.dp),
                       child: GestureDetector(
-                        onPanUpdate: (details) {
-                          logic.onBankCardPanUpdate(details);
+                        onVerticalDragUpdate: (details) {
+                          logic.onBankCardPanUpdate(details.delta);
                         },
-                        onPanEnd: (details) {
+                        onVerticalDragEnd: (details) {
                           logic.onBankCardPanUpdate(null);
                         },
                         child: Transform.rotate(
@@ -134,7 +134,7 @@ class AddCardPage extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 20.dp,bottom: 20.dp),
+                      padding: EdgeInsets.only(top: 20.dp, bottom: 20.dp),
                       child: Row(
                         children: [
                           Padding(
