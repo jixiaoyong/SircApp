@@ -147,6 +147,9 @@ class Languages extends Translations {
           "Name On Card": "Name On Card",
           "Card Number": "Card Number",
           "Expire Date": "Expire Date",
+          "Please type in your name": "Please type in your name",
+          "Please enter bank card number": "Please enter bank card number",
+          "Please enter an expiration date": "Please enter an expiration date",
         },
         "zh_CN": {
           "MasterCard": "MasterCard卡",
@@ -271,6 +274,9 @@ class Languages extends Translations {
           "Name On Card": "卡片上的名字",
           "Card Number": "卡号",
           "Expire Date": "到期日期",
+          "Please type in your name": "请输入您的姓名",
+          "Please enter bank card number": "请输入银行卡号",
+          "Please enter an expiration date": "请输入有效期",
         }
       };
 }

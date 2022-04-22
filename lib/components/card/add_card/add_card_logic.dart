@@ -47,7 +47,7 @@ class AddCardLogic extends GetxController {
   void setOwnerName(String value) {
     state.ownerName.value = value;
     if (value.isEmpty) {
-      state.ownerNameError.value = 'Please type in your name';
+      state.ownerNameError.value = 'Please type in your name'.tr;
     } else {
       state.ownerNameError.value = null;
     }
@@ -56,7 +56,7 @@ class AddCardLogic extends GetxController {
   void setCardNumber(String value) {
     state.cardNumber.value = value;
     if (value.isEmpty) {
-      state.cardNumberError.value = 'Please enter bank card number';
+      state.cardNumberError.value = 'Please enter bank card number'.tr;
     } else {
       state.cardNumberError.value = null;
     }
@@ -67,7 +67,7 @@ class AddCardLogic extends GetxController {
     state.expireDate.value = value.substring(0, 2) + '/' + value.substring(2);
     // state.expireDate.value = value;
     if (value.isEmpty) {
-      state.expireDateError.value = 'Please enter an expiration date';
+      state.expireDateError.value = 'Please enter an expiration date'.tr;
     } else {
       state.expireDateError.value = null;
     }
@@ -76,13 +76,15 @@ class AddCardLogic extends GetxController {
   void setCvv(String value) {
     state.cvv.value = value;
     if (value.isEmpty) {
-      state.cvvError.value = 'Please enter CVV';
+      state.cvvError.value = 'error';
     } else {
       state.cvvError.value = null;
     }
   }
 
-  void addCard() {}
+  void addCard() {
+    // todo add card logic
+  }
 
   isUserInputValid() {
     return state.ownerNameError.value == null &&

@@ -44,12 +44,12 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 250.dp,
+                height: 255.dp,
                 child: Stack(
                   children: [
                     FootlightsForBankCard(),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(10.dp, 50.dp, 10.dp, 15.dp),
+                      padding: EdgeInsets.fromLTRB(10.dp, 40.dp, 10.dp, 25.dp),
                       child: PageView.builder(
                         itemBuilder: (context, index) {
                           return Padding(
@@ -64,7 +64,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                        bottom: 20.dp,
+                        bottom: 30.dp,
                         right: 0,
                         left: 0,
                         child: Row(

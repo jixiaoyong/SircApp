@@ -2,10 +2,37 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sirc/utils/size_extension.dart';
 
-class FootlightsForBankCard extends StatelessWidget {
+class FootlightsForBankCard extends StatefulWidget {
+  @override
+  State<FootlightsForBankCard> createState() => _FootlightsForBankCardState();
+}
+
+class _FootlightsForBankCardState extends State<FootlightsForBankCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  double _percentage = 0.0;
+
+  @override
+  void initState() {
+    _controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 5));
+    _controller.addListener(() {
+      setState(() {
+        _percentage = _controller.value;
+      });
+    });
+    _controller.repeat(reverse: true);
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+
+    final double width = MediaQuery.of(context).size.width;
+    final double smallBallSize = width * (0.15 + 0.1 * _percentage);
+    final double bigBallSize = width * (0.5 - 0.2 * _percentage);
 
     return Container(
       height: double.infinity,
@@ -27,11 +54,11 @@ class FootlightsForBankCard extends StatelessWidget {
       child: Stack(
         children: [
           Positioned(
-            right: -50.dp,
+            right: (90 * _percentage - 50).dp,
             top: 20.dp,
             child: Container(
-              height: 200.dp,
-              width: 200.dp,
+              height: bigBallSize,
+              width: bigBallSize,
               decoration: BoxDecoration(
                   gradient: RadialGradient(colors: [
                     Colors.orangeAccent.withOpacity(0.2),
@@ -41,11 +68,11 @@ class FootlightsForBankCard extends StatelessWidget {
             ),
           ),
           Positioned(
-            left: 5.dp,
-            bottom: 10.dp,
+            left: (50 * _percentage - 30).dp,
+            bottom: (15 * _percentage + 5).dp,
             child: Container(
-              height: 150.dp,
-              width: 150.dp,
+              height: smallBallSize,
+              width: smallBallSize,
               decoration: BoxDecoration(
                   gradient: RadialGradient(colors: [
                     Colors.purple.withOpacity(0.2),
@@ -57,5 +84,11 @@ class FootlightsForBankCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
