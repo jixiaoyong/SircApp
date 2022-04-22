@@ -1,0 +1,50 @@
+name: Flutter Web CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      my_secret: ${{secrets.GITHUB_TOKEN}}
+    steps:
+      - uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: beta
+      - run: flutter config --enable-web
+      - run: flutter pub get
+      #     - run: flutter test
+      - run: flutter build web --web-renderer html --release
+      - name: Archive Production Artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: web-build
+          path: build/web
+      - name: Download Artifact
+        uses: actions/download-artifact@master
+        with:
+          name: web-build
+      - name: Display structure of build files
+        run: ls -R
+        working-directory: ./web
+      - name: Deploy to GH Pages
+        run: |
+          cd build/web
+          git init
+          # type configurations: your user.email and user.name followed lines 
+          # git config --global user.email your_email 
+          # git config --global user.name your_name 
+          git config --global user.email jixiaoyong1995@gmail.com
+          git config --global user.name jixiaoyong
+          git status
+          # change this remote url for examle your remote url is https://github.com/onatcipli/flutter_web.git then the following:
+          git remote add origin https://${{secrets.GITHUB_TOKEN}}@github.com/jixiaoyong/SircApp.git
+          git checkout -b web
+          git add --all
+          git commit -m "update web page"
+          git push origin web -f
