@@ -14,22 +14,31 @@ import 'package:sirc/utils/size_extension.dart';
 * @date: 22/04/17
 */
 class BankCardWidget extends StatelessWidget {
-  final String cardNumber;
+  String cardNumber;
   final String bankName;
   final String ownerName;
   final String expirationDate;
-  final List<Color> backgroundColors;
+  final String? cardType;
   final double? height;
   final double? width;
+
+  final isMasterCard = MockUtils.random.nextBool();
 
   BankCardWidget(
       {required this.bankName,
       required this.cardNumber,
-      required this.backgroundColors,
       required this.ownerName,
       required this.expirationDate,
+      this.cardType,
       this.height,
-      this.width});
+      this.width}) {
+    // format card number
+    cardNumber = cardNumber.replaceAll(' ', '').trim();
+    // insert space in card number every 4 characters
+    cardNumber = cardNumber.replaceAllMapped(RegExp(r'([\s\S]{4})'), (match) {
+      return '${match.group(1)} ';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,42 +55,69 @@ class BankCardWidget extends StatelessWidget {
               border:
                   Border.all(color: Colors.white.withOpacity(0.5), width: 2.dp),
               borderRadius: BorderRadius.circular(20.dp)),
-          child:
+          child: Stack(
+            children: [
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-              bankName,
-              style: TextStyle(
-                  fontSize: 30.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontStyle: FontStyle.italic),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 10.dp),
-              child: Image.asset(
-                A.assets_imgs_bank_chip,
-                height: 45.dp,
-                fit: BoxFit.fitHeight,
-              ),
-            ),
-            Expanded(
-              child: Center(
-                child: Text(
-                  cardNumber,
-                  style: TextStyle(fontSize: 20.sp, color: Colors.white),
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
                 Text(
-                  MockUtils.random.nextBool() ? "MasterCard".tr : "Visa".tr,
-                  style: TextStyle(fontSize: 20.sp, color: Colors.white),
+                  bankName,
+                  style: TextStyle(
+                      fontSize: 30.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontStyle: FontStyle.italic),
                 ),
-              ],
-            )
-          ]),
+                Padding(
+                  padding: EdgeInsets.only(top: 1.dp, bottom: 5.dp),
+                  child: Image.asset(
+                    A.assets_imgs_bank_chip,
+                    height: 45.dp,
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 8.dp, bottom: 10.dp),
+                  child: Text(
+                    cardNumber,
+                    style: TextStyle(
+                        fontSize: 20.sp,
+                        color: Colors.white.withOpacity(0.8),
+                        letterSpacing: 1.5),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 8.dp, top: 3.dp),
+                  child: Text(
+                    ownerName,
+                    style: TextStyle(
+                        fontSize: 15.sp, color: Colors.white.withOpacity(0.5)),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 8.dp, top: 3.dp),
+                  child: Text(
+                    expirationDate,
+                    style: TextStyle(
+                        fontSize: 15.sp,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ]),
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      cardType ?? (isMasterCard ? "MasterCard".tr : "Visa".tr),
+                      style: TextStyle(fontSize: 20.sp, color: Colors.white),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

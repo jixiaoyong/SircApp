@@ -144,6 +144,9 @@ class Languages extends Translations {
               "the length of username must be more than 3",
           "Please enter the verify code we sent to your email:":
               "Please enter the verify code we sent to your email:",
+          "Name On Card": "Name On Card",
+          "Card Number": "Card Number",
+          "Expire Date": "Expire Date",
         },
         "zh_CN": {
           "MasterCard": "MasterCard卡",
@@ -264,7 +267,10 @@ class Languages extends Translations {
           "the length of username must be more than 3": "用户名长度必须大于3",
           "Please enter the verify code we sent to your email:":
               "请输入我们发送到您邮箱的验证码：",
-          "Menu": "菜单"
+          "Menu": "菜单",
+          "Name On Card": "卡片上的名字",
+          "Card Number": "卡号",
+          "Expire Date": "到期日期",
         }
       };
 }
