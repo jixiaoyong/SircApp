@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:sirc/utils/size_extension.dart';
 
 class FootlightsForBankCard extends StatefulWidget {
+  final double? screenWidth;
+
+  const FootlightsForBankCard({Key? key, this.screenWidth}) : super(key: key);
+
   @override
   State<FootlightsForBankCard> createState() => _FootlightsForBankCardState();
 }
@@ -30,7 +34,8 @@ class _FootlightsForBankCardState extends State<FootlightsForBankCard>
   Widget build(BuildContext context) {
     var backgroundColor = Theme.of(context).scaffoldBackgroundColor;
 
-    final double width = MediaQuery.of(context).size.width;
+    final double width =
+        widget.screenWidth ?? MediaQuery.of(context).size.width;
     final double smallBallSize = width * (0.15 + 0.1 * _percentage);
     final double bigBallSize = width * (0.5 - 0.2 * _percentage);
 

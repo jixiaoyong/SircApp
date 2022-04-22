@@ -29,8 +29,7 @@ class MockUtils {
   static final List<MoneyOperateBean> moneyOperateList =
       List.generate(20, (index) {
     return MoneyOperateBean(
-        userIcon:
-            'https://blush.design/api/download?shareUri=kKg1Yx6PG&w=800&h=800&fm=png',
+        userIcon: 'https://s3.bmp.ovh/imgs/2022/04/22/4ff72bd176a1b613.png',
         moneyAmount: MockUtils.random.nextDouble() * 100,
         time: "Just now".tr,
         moneyActionName: "Something".tr);

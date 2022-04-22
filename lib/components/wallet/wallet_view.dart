@@ -4,6 +4,7 @@ import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
 import 'package:sirc/utils/color_extension.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/expanded_icon_button.dart';
+import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
 
 import 'wallet_logic.dart';
@@ -34,10 +35,9 @@ class WalletPage extends StatelessWidget {
                   onTap: () => slideMenuLogic.onMenuTap?.call(true),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(50.dp),
-                    child: Image.network(
-                      "https://img2.doubanio.com/view/group_topic/l/public/p486842201.webp",
-                      width: 50.dp,
-                      height: 50.dp,
+                    child: NetworkWebImage(
+                      "https://s3.bmp.ovh/imgs/2022/04/22/b352d638990f1e84.webp",
+                      size: Size(50.dp, 50.dp),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -124,7 +124,7 @@ class WalletPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Image.network(data.userIcon!, width: 50.dp, height: 50.dp),
+                  NetworkWebImage(data.userIcon!, size: Size.square(50.dp)),
                   SizedBox(width: 20.dp),
                   // Notice: Expanded/Flexible only works in Row/Column, not in Stack
                   // otherwise, it will be a bug: 'Incorrect use of ParentDataWidget.'

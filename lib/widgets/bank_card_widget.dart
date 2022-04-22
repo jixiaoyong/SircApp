@@ -61,13 +61,13 @@ class BankCardWidget extends StatelessWidget {
                 Text(
                   bankName,
                   style: TextStyle(
-                      fontSize: 30.sp,
+                      fontSize: 28.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                       fontStyle: FontStyle.italic),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 1.dp, bottom: 5.dp),
+                  padding: EdgeInsets.only(top: 1.dp, bottom: 4.dp),
                   child: Image.asset(
                     A.assets_imgs_bank_chip,
                     height: 45.dp,
@@ -75,7 +75,7 @@ class BankCardWidget extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 8.dp, bottom: 10.dp),
+                  padding: EdgeInsets.only(left: 8.dp, bottom: 8.dp),
                   child: Text(
                     cardNumber,
                     style: TextStyle(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/utils/color_extension.dart';
 import 'package:sirc/utils/size_extension.dart';
+import 'package:sirc/widgets/network_web_image.dart';
 
 import 'slide_menu_logic.dart';
 
@@ -15,8 +16,10 @@ import 'slide_menu_logic.dart';
 */
 class SlideMenuPage extends StatefulWidget {
   Widget child;
+  final double? screenWidth;
 
-  SlideMenuPage({Key? key, required this.child}) : super(key: key);
+  SlideMenuPage({Key? key, required this.child, this.screenWidth})
+      : super(key: key);
 
   @override
   State<SlideMenuPage> createState() => _SlideMenuPageState();
@@ -53,7 +56,7 @@ class _SlideMenuPageState extends State<SlideMenuPage>
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    double _screenWidth = screenSize.width;
+    double _screenWidth = widget.screenWidth ?? screenSize.width;
     double _screenHeight = screenSize.height;
 
     return Material(
@@ -79,10 +82,9 @@ class _SlideMenuPageState extends State<SlideMenuPage>
                     padding: EdgeInsets.only(top: 20.dp),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(50.dp),
-                      child: Image.network(
-                        "https://img2.doubanio.com/view/group_topic/l/public/p486842201.webp",
-                        width: 70.dp,
-                        height: 70.dp,
+                      child: NetworkWebImage(
+                        "https://s3.bmp.ovh/imgs/2022/04/22/b352d638990f1e84.webp",
+                        size: Size.square(70.dp),
                         fit: BoxFit.cover,
                       ),
                     ),

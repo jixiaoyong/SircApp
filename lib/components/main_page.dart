@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/components/main_app_state.dart';
+import 'package:sirc/data/common_date.dart';
 
 import 'main_app_logic.dart';
 import 'slide_menu/slide_menu_view.dart';
@@ -28,6 +29,7 @@ class _MainPageState extends State<MainPage> {
     return Obx(() {
       var currentIndex = _appState.currentIndex.value;
       return SlideMenuPage(
+        screenWidth: CommonData.realScreenWidth,
         child: Scaffold(
           body: IndexedStack(
             children: _appState.homePages,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sirc/data/common_date.dart';
 import 'package:sirc/gen_a/A.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/size_extension.dart';
@@ -111,6 +112,7 @@ class InitialPage extends StatelessWidget {
                                   },
                                   child: Container(
                                     height: 50.dp,
+                                    width: CommonData.realScreenWidth - 60.dp,
                                     margin: EdgeInsets.fromLTRB(
                                         30.dp, 30.dp, 30.dp, 0),
                                     decoration: BoxDecoration(

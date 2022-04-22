@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
 import 'package:sirc/utils/size_extension.dart';
+import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
 
 import 'person_logic.dart';
@@ -40,15 +41,14 @@ class PersonPage extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: EdgeInsets.only(top: 20.dp),
+                padding: EdgeInsets.only(top: 20.dp),
                 child: GestureDetector(
                   onTap: () => slideMenuLogic.onMenuTap?.call(true),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(50.dp),
-                    child: Image.network(
-                      "https://img2.doubanio.com/view/group_topic/l/public/p486842201.webp",
-                      width: 100.dp,
-                      height: 100.dp,
+                    child: NetworkWebImage(
+                      "https://s3.bmp.ovh/imgs/2022/04/22/b352d638990f1e84.webp",
+                      size: Size(100.dp, 100.dp),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -103,10 +103,11 @@ class PersonPage extends StatelessWidget {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(50.dp),
                             child: Container(
-                              color: Colors.white,
-                              child: Image.network(data.userIcon!,
-                                  width: 50.dp, height: 50.dp),
-                            ),
+                                color: Colors.white,
+                                child: NetworkWebImage(
+                                  data.userIcon!,
+                                  size: Size.square(50.dp),
+                                )),
                           ),
                           Padding(
                             padding: EdgeInsets.only(top: 5.dp),

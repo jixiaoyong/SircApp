@@ -7,12 +7,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 * @date: 22/04/17
 */
 extension SizeExtension on num {
+  static double dpScale = 1;
+
   /// 屏幕适配
   /// 控件大小适配
   /// 需要将设计稿宽度设置为375，然后导入本拓展，直接使用设计稿中的宽高值.dp即可
   /// import 'package:xiaojinka/utils/size_extension.dart';
   double get dp {
-    return this.w;
+    return this.w * dpScale;
   }
 
   /// 屏幕适配
@@ -20,6 +22,6 @@ extension SizeExtension on num {
   /// 需要将设计稿宽度设置为375，然后导入本拓展，直接使用设计稿中的字体大小.sp即可
   /// import 'package:xiaojinka/utils/size_extension.dart';
   double get sp {
-    return ScreenUtil().setSp(this);
+    return ScreenUtil().setSp(this) * dpScale;
   }
 }

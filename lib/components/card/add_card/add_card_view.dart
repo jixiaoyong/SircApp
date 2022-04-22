@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:sirc/components/card/add_card/add_card_state.dart';
+import 'package:sirc/data/common_date.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/bank_card_widget.dart';
 import 'package:sirc/widgets/common_text_button.dart';
@@ -45,7 +46,9 @@ class AddCardPage extends StatelessWidget {
                 height: 300.dp,
                 child: Stack(
                   children: [
-                    FootlightsForBankCard(),
+                    FootlightsForBankCard(
+                      screenWidth: CommonData.realScreenWidth,
+                    ),
                     Container(
                       width: double.infinity,
                       padding: EdgeInsets.all(35.dp),

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/utils/size_extension.dart';
+import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 
 import 'notifications_logic.dart';
@@ -113,10 +114,9 @@ class NotificationsPage extends StatelessWidget {
                                       color: Colors.blueAccent
                                           .withOpacity(1 / (subIndex + 1))),
                                   child: Center(
-                                    child: Image.network(
+                                    child: NetworkWebImage(
                                       subItem.userIcon ?? "",
-                                      height: 40.dp,
-                                      width: 40.dp,
+                                      size: Size(40.dp, 40.dp),
                                       fit: BoxFit.cover,
                                     ),
                                   ),

@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
+import 'package:sirc/data/common_date.dart';
 import 'package:sirc/utils/color_extension.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/footlights_for_bank_card.dart';
 import 'package:sirc/widgets/line_graph.dart';
+import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
 
 import 'home_page_logic.dart';
@@ -15,6 +17,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final logic = Get.put(HomePageLogic());
     final state = Get.find<HomePageLogic>().state;
+    state.pageController = PageController(initialPage: 0);
+
     final slideMenuLogic = Get.find<SlideMenuLogic>();
 
     return Obx(() {
@@ -36,10 +40,9 @@ class HomePage extends StatelessWidget {
                         onTap: () => slideMenuLogic.onMenuTap?.call(true),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(50.dp),
-                          child: Image.network(
-                            "https://img2.doubanio.com/view/group_topic/l/public/p486842201.webp",
-                            width: 50.dp,
-                            height: 50.dp,
+                          child: NetworkWebImage(
+                            "https://s3.bmp.ovh/imgs/2022/04/22/b352d638990f1e84.webp",
+                            size: Size(50.dp, 50.dp),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -52,10 +55,13 @@ class HomePage extends StatelessWidget {
                 height: 255.dp,
                 child: Stack(
                   children: [
-                    FootlightsForBankCard(),
+                    FootlightsForBankCard(
+                      screenWidth: CommonData.realScreenWidth,
+                    ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(0, 40.dp, 0, 25.dp),
                       child: PageView.builder(
+                        controller: state.pageController,
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20.dp),
@@ -75,18 +81,24 @@ class HomePage extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(state.banks.length, (index) {
-                            return Container(
-                              width: 10.dp,
-                              height: 10.dp,
-                              margin: EdgeInsets.symmetric(horizontal: 5.dp),
-                              decoration: BoxDecoration(
-                                  color: (state.currentBankIndex.value == index
-                                          ? Colors.white
-                                          : "#ffb6c6d5".hexToColor)
-                                      .withOpacity(0.6),
-                                  borderRadius: BorderRadius.circular(10.dp)),
+                            return GestureDetector(
+                              onTap: () {
+                                logic.jumpToPage(index);
+                              },
+                              child: Container(
+                                width: 10.dp,
+                                height: 10.dp,
+                                margin: EdgeInsets.symmetric(horizontal: 5.dp),
+                                decoration: BoxDecoration(
+                                    color:
+                                        (state.currentBankIndex.value == index
+                                                ? Colors.white
+                                                : "#ffb6c6d5".hexToColor)
+                                            .withOpacity(0.6),
+                                    borderRadius: BorderRadius.circular(10.dp)),
+                              ),
                             );
-                          }),
+                          }, growable: false),
                         ))
                   ],
                 ),

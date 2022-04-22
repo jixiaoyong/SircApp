@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:sirc/bean/pair.dart';
@@ -6,6 +7,7 @@ import 'package:sirc/widgets/bank_card_widget.dart';
 
 class HomePageState {
   var currentBankIndex = 0.obs;
+  late PageController pageController;
 
   final List<Pair<String, double>> dataChange = MockUtils.dataChange.obs;
 
