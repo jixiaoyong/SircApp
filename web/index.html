@@ -14,7 +14,12 @@
     This is a placeholder for base href that will be replaced by the value of
     the `--base-href` argument provided to `flutter build`.
   -->
-  <base href="$FLUTTER_BASE_HREF">
+  <!--
+    Remove this line, because it needs you input base href in flutter build
+    if you forget to do this, and your web app isn't in the root of your web server,
+    then you will get error.So, we just remove this line.
+    -->
+  <!--  <base href="$FLUTTER_BASE_HREF">-->
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
@@ -26,7 +31,7 @@
   <meta name="apple-mobile-web-app-title" content="finance_mobile_banking_app">
   <link rel="apple-touch-icon" href="icons/ic_launcher.png">
 
-  <title>finance_mobile_banking_app</title>
+  <title>Sirc App</title>
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
