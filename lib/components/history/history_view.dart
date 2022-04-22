@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/line_graph.dart';
 import 'package:sirc/widgets/title_text.dart';
@@ -19,6 +20,7 @@ class HistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final logic = Get.put(HistoryLogic());
     final state = Get.find<HistoryLogic>().state;
+    var slideMenuLogic = Get.find<SlideMenuLogic>();
 
     return Obx(() {
       return SingleChildScrollView(
@@ -34,17 +36,19 @@ class HistoryPage extends StatelessWidget {
                 TitleText(text: "History".tr),
                 Expanded(child: Container()),
                 Padding(
-                  padding: EdgeInsets.only(right: 10.dp),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(50.dp),
-                    child: Image.network(
-                      "https://img2.doubanio.com/view/group_topic/l/public/p486842201.webp",
-                      width: 50.dp,
-                      height: 50.dp,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                )
+                    padding: EdgeInsets.only(right: 10.dp),
+                    child: GestureDetector(
+                      onTap: () => slideMenuLogic.onMenuTap?.call(true),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50.dp),
+                        child: Image.network(
+                          "https://img2.doubanio.com/view/group_topic/l/public/p486842201.webp",
+                          width: 50.dp,
+                          height: 50.dp,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ))
               ],
             ),
             Row(

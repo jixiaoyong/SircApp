@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
 import 'package:sirc/utils/color_extension.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/footlights_for_bank_card.dart';
@@ -14,6 +15,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final logic = Get.put(HomePageLogic());
     final state = Get.find<HomePageLogic>().state;
+    final slideMenuLogic = Get.find<SlideMenuLogic>();
 
     return Obx(() {
       return SingleChildScrollView(
@@ -30,13 +32,16 @@ class HomePage extends StatelessWidget {
                     Expanded(child: Container()),
                     Padding(
                       padding: EdgeInsets.only(right: 10.dp),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(50.dp),
-                        child: Image.network(
-                          "https://img2.doubanio.com/view/group_topic/l/public/p486842201.webp",
-                          width: 50.dp,
-                          height: 50.dp,
-                          fit: BoxFit.cover,
+                      child: GestureDetector(
+                        onTap: () => slideMenuLogic.onMenuTap?.call(true),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(50.dp),
+                          child: Image.network(
+                            "https://img2.doubanio.com/view/group_topic/l/public/p486842201.webp",
+                            width: 50.dp,
+                            height: 50.dp,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     )
@@ -49,11 +54,11 @@ class HomePage extends StatelessWidget {
                   children: [
                     FootlightsForBankCard(),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(10.dp, 40.dp, 10.dp, 25.dp),
+                      padding: EdgeInsets.fromLTRB(0, 40.dp, 0, 25.dp),
                       child: PageView.builder(
                         itemBuilder: (context, index) {
                           return Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10.dp),
+                            padding: EdgeInsets.symmetric(horizontal: 20.dp),
                             child: state.banks[index],
                           );
                         },
@@ -76,9 +81,9 @@ class HomePage extends StatelessWidget {
                               margin: EdgeInsets.symmetric(horizontal: 5.dp),
                               decoration: BoxDecoration(
                                   color: (state.currentBankIndex.value == index
-                                          ? Colors.blue
+                                          ? Colors.white
                                           : "#ffb6c6d5".hexToColor)
-                                      .withOpacity(0.8),
+                                      .withOpacity(0.6),
                                   borderRadius: BorderRadius.circular(10.dp)),
                             );
                           }),

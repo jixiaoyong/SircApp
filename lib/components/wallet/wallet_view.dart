@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
 import 'package:sirc/utils/color_extension.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/expanded_icon_button.dart';
@@ -19,6 +20,7 @@ class WalletPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final logic = Get.put(WalletLogic());
     final state = Get.find<WalletLogic>().state;
+    final slideMenuLogic = Get.find<SlideMenuLogic>();
 
     return Obx(() {
       return SingleChildScrollView(
@@ -27,17 +29,19 @@ class WalletPage extends StatelessWidget {
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Center(
             child: Padding(
-              padding: EdgeInsets.only(right: 10.dp),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(50.dp),
-                child: Image.network(
-                  "https://img2.doubanio.com/view/group_topic/l/public/p486842201.webp",
-                  width: 50.dp,
-                  height: 50.dp,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+                padding: EdgeInsets.only(right: 10.dp),
+                child: GestureDetector(
+                  onTap: () => slideMenuLogic.onMenuTap?.call(true),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(50.dp),
+                    child: Image.network(
+                      "https://img2.doubanio.com/view/group_topic/l/public/p486842201.webp",
+                      width: 50.dp,
+                      height: 50.dp,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                )),
           ),
           Center(
             child: Padding(

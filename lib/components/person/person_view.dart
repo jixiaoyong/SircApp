@@ -41,16 +41,18 @@ class PersonPage extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.only(top: 20.dp),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(50.dp),
-                child: Image.network(
-                  "https://img2.doubanio.com/view/group_topic/l/public/p486842201.webp",
-                  width: 100.dp,
-                  height: 100.dp,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+                child: GestureDetector(
+                  onTap: () => slideMenuLogic.onMenuTap?.call(true),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(50.dp),
+                    child: Image.network(
+                      "https://img2.doubanio.com/view/group_topic/l/public/p486842201.webp",
+                      width: 100.dp,
+                      height: 100.dp,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                )),
             Padding(
               padding: EdgeInsets.fromLTRB(0, 10.dp, 0, 8.dp),
               child: Text("JI,XIAOYONG",
