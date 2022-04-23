@@ -1,4 +1,4 @@
-# sirc
+# sirc ![SircApp](https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg)
 
 A Finance Mobile Banking App.
 

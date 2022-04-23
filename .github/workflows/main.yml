@@ -1,4 +1,4 @@
-name: Flutter Web CI
+name: SircApp Web CI
 
 on:
   push:
@@ -43,13 +43,13 @@ jobs:
           git config --global user.name jixiaoyong
           
           # clone the web branch from github, and delete all files in web branch
-          git clone https://${{secrets.GH_DEPLOY}}@github.com/jixiaoyong/SircApp.git
+          git clone https://${{secrets.GH_DEPLOY}}@github.com/jixiaoyong/SircApp.git .
           git log -n 1 --pretty=format:"%h - %cn(%ce), %cd : %s" > ../last_commit.txt
-          git checkout -b web
+          git checkout -b web origin/web
           
           # remove all files except .git
           shopt -s extglob
-          rm -v !(".git")
+          rm -rfv !(".git")
           
           # copy the build files to the web branch
           cp -rf ../web/* .
