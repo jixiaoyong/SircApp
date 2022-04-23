@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import 'package:sirc/data/languages.dart';
 import 'package:sirc/utils/size_extension.dart' as sizeExt;
 
+import 'components/not_found/not_found_view.dart';
 import 'data/common_date.dart';
 import 'routes/app_pages.dart';
 import 'utils/logger.dart';
@@ -25,7 +26,16 @@ void main() {
 
   if (kDebugMode) {
     PluginManager.instance // 注册插件
-      ..register(const WidgetInfoInspector())..register(const WidgetDetailInspector())..register(const ColorSucker())..register(AlignRuler())..register(Performance())..register(const ShowCode())..register(const MemoryInfoPage())..register(CpuInfoPage())..register(const DeviceInfoPanel())..register(Console());
+      ..register(const WidgetInfoInspector())
+      ..register(const WidgetDetailInspector())
+      ..register(const ColorSucker())
+      ..register(AlignRuler())
+      ..register(Performance())
+      ..register(const ShowCode())
+      ..register(const MemoryInfoPage())
+      ..register(CpuInfoPage())
+      ..register(const DeviceInfoPanel())
+      ..register(Console());
     runApp(const UMEWidget(child: myApp, enable: true)); // 初始化
   } else {
     runApp(myApp);
@@ -67,6 +77,8 @@ class MyApp extends StatelessWidget {
       );
     } else {
       CommonData.realScreenWidth = widthLogical;
+      LogUtils.d(
+          'widthLogical: $widthLogical, heightLogical: $heightLogical, ');
       return buildAppScreen();
     }
     // return app;
@@ -81,6 +93,11 @@ class MyApp extends StatelessWidget {
 
           return GetMaterialApp(
             title: "Sirc App",
+            onUnknownRoute: (RouteSettings settings) {
+              return MaterialPageRoute(
+                builder: (context) => const NotFoundPage(),
+              );
+            },
             locale: Get.deviceLocale,
             fallbackLocale: const Locale("en", "US"),
             translations: Languages(),

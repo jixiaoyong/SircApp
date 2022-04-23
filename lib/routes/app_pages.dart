@@ -7,6 +7,7 @@ import 'package:sirc/components/enter/sign_up/sign_up_view.dart';
 import 'package:sirc/components/initial/initial_view.dart';
 import 'package:sirc/components/language/language_view.dart';
 import 'package:sirc/components/main_page.dart';
+import 'package:sirc/components/not_found/not_found_view.dart';
 import 'package:sirc/components/notifications/notifications_view.dart';
 import 'package:sirc/components/password/password_view.dart';
 
@@ -32,5 +33,6 @@ class AppPages {
     GetPage(name: AppRoutes.NOTIFICATIONS, page: () => NotificationsPage()),
     GetPage(name: AppRoutes.PASSWORD, page: () => PasswordPage()),
     GetPage(name: AppRoutes.ADD_CARD, page: () => AddCardPage()),
+    GetPage(name: AppRoutes.NOT_FOUND, page: () => const NotFoundPage()),
   ];
 }

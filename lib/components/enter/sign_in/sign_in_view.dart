@@ -86,19 +86,21 @@ class _SignInPageState extends State<SignInPage> {
           var isButtonEnabled =
               !isLoginInProgress && state.isUserInputValid.value == true;
 
+          final logicScreenHeight =
+              MediaQuery.of(context).size.height - kToolbarHeight - 16.dp;
+
           return SingleChildScrollView(
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 16.dp),
               padding: EdgeInsets.symmetric(vertical: 20.dp),
               // the body height is the height of screen reduced by
               // the height of the app bar and top margin
-              height:
-                  MediaQuery.of(context).size.height - kToolbarHeight - 16.dp,
+              // height:
+              //     MediaQuery.of(context).size.height - kToolbarHeight - 16.dp,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    height: 100.dp,
+                    height: 0.15 * logicScreenHeight,
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -230,7 +232,9 @@ class _SignInPageState extends State<SignInPage> {
                       ],
                     ),
                   ),
-                  Expanded(child: Container()),
+                  Container(
+                    height: logicScreenHeight * 0.08,
+                  ),
                   RichText(
                       text: TextSpan(
                           text: "I don't have an account".tr,

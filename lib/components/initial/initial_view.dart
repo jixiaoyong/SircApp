@@ -24,6 +24,7 @@ class InitialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var initialInfoLength = state.initialTips.length;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Material(
       child: Obx(() {
@@ -41,13 +42,13 @@ class InitialPage extends StatelessWidget {
                 return Container(
                   color: Colors.white,
                   padding: EdgeInsets.only(
-                    /*  top: 0.2 * screenHeight,*/ right: 20.dp, left: 20.dp),
+                      top: screenHeight * 0.1, right: 20.dp, left: 20.dp),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
                         item.first,
-                        height: 300.dp,
+                        height: screenHeight * 0.4,
                         fit: BoxFit.cover,
                       ),
                       SizedBox(
@@ -87,7 +88,8 @@ class InitialPage extends StatelessWidget {
                             ? GestureDetector(
                                 onTap: () {
                                   _pageController.nextPage(
-                                      duration: Duration(milliseconds: 300),
+                                      duration:
+                                          const Duration(milliseconds: 300),
                                       curve: Curves.easeInOut);
                                 },
                                 child: Container(

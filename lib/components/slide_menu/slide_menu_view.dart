@@ -118,37 +118,38 @@ class _SlideMenuPageState extends State<SlideMenuPage>
                       ),
                     );
                   }),
-                  Padding(padding: EdgeInsets.all(50.dp)),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 20.dp)),
+                  GestureDetector(
+                    onTap: () {
+                      _controller.reverse();
+                    },
+                    child: Container(
+                      width: 50.dp,
+                      height: 50.dp,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(50.dp),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.white.withOpacity(0.7),
+                                blurRadius: 15.dp,
+                                spreadRadius: 0.5)
+                          ]),
+                      child: Icon(
+                        Icons.exit_to_app_outlined,
+                        color: "#ff7784ff".hexToColor,
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
           ),
-          Positioned(
-            bottom: 80.dp,
-            left: 25.dp,
-            child: GestureDetector(
-              onTap: () {
-                _controller.reverse();
-              },
-              child: Container(
-                width: 50.dp,
-                height: 50.dp,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(50.dp),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.white.withOpacity(0.7),
-                          blurRadius: 15.dp,
-                          spreadRadius: 0.5)
-                    ]),
-                child: Icon(
-                  Icons.exit_to_app_outlined,
-                  color: "#ff7784ff".hexToColor,
-                ),
-              ),
-            ),
-          ),
+          // Positioned(
+          //   bottom: 40.dp,
+          //   left: 25.dp,
+          //   child: ,
+          // ),
           Transform(
             transform: Matrix4.identity()
               // translate y  = (height - child.height*scaleValue) / 2
