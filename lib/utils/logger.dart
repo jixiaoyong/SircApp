@@ -7,11 +7,19 @@ import 'package:logger/logger.dart';
 * @date: 22/04/17
 */
 class LogUtils {
-  static final _logger = Logger(
+  static Logger _logger = Logger(
     filter: null,
     printer: PrettyPrinter(),
     output: null,
   );
+
+  static void forceOpenLog() {
+    _logger = Logger(
+      filter: ProductionFilter(),
+      printer: PrettyPrinter(),
+      output: null,
+    );
+  }
 
   static void v(dynamic message, [dynamic error, StackTrace? stackTrace]) {
     _logger.v(message, error, stackTrace);

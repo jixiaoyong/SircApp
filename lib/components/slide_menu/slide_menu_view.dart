@@ -145,11 +145,6 @@ class _SlideMenuPageState extends State<SlideMenuPage>
               ),
             ),
           ),
-          // Positioned(
-          //   bottom: 40.dp,
-          //   left: 25.dp,
-          //   child: ,
-          // ),
           Transform(
             transform: Matrix4.identity()
               // translate y  = (height - child.height*scaleValue) / 2
