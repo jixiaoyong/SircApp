@@ -55,4 +55,4 @@ jobs:
           git add --all
           # read commit message from ../last_commit.txt
           git commit -F ../last_commit.txt
-          git push origin web
+          git push
