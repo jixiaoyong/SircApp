@@ -24,7 +24,7 @@ import 'utils/logger.dart';
 void main() {
   const myApp = MyApp();
 
-  LogUtils.forceOpenLog();
+  // LogUtils.forceOpenLog();
 
   if (kDebugMode) {
     PluginManager.instance // 注册插件

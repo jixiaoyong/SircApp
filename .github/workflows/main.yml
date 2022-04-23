@@ -34,17 +34,25 @@ jobs:
         working-directory: ./web
       - name: Deploy to GH Pages
         run: |
-          cd build/web
-          git init
-          # type configurations: your user.email and user.name followed lines 
-          # git config --global user.email your_email 
-          # git config --global user.name your_name 
+          cd build
+          mkdir publish
+          cd publish
+          
+          # configure git
           git config --global user.email jixiaoyong1995@gmail.com
           git config --global user.name jixiaoyong
-          git status
-          # change this remote url for examle your remote url is https://github.com/onatcipli/flutter_web.git then the following:
+          
+          # clone the web branch from github, and delete all files in web branch
           git remote add origin https://${{secrets.GH_DEPLOY}}@github.com/jixiaoyong/SircApp.git
+          git log -n 1 --pretty=format:"%h - %cn(%ce), %cd : %s" > ../last_commit.txt
           git checkout -b web
+          rm -rf *
+          
+          # copy the build files to the web branch
+          cp -rf ../web/* .
+          
+          # commit and push
           git add --all
-          git commit -m "automatic update web page"
-          git push origin web -f
+          # read commit message from ../last_commit.txt
+          git commit -F ../last_commit.txt
+          git push origin web
