@@ -163,7 +163,7 @@ class Languages extends Translations {
           "Available Balance": "可用余额",
           "Send": "发送",
           "Dashboard": "仪表盘",
-          "Translations": "翻译",
+          "Translations": "收支明细",
           "Money Send": "发送",
           "Money Recharge": "充值",
           "Receive": "接收",
