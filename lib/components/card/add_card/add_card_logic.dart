@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:sirc/components/main_app_logic.dart';
+import 'package:sirc/widgets/date_format.dart';
 
 import 'add_card_state.dart';
 
@@ -62,14 +63,16 @@ class AddCardLogic extends GetxController {
     }
   }
 
-  void setExpireDate(String value) {
+  void setExpireDate(DateTime value) {
+    state.expireDate = value;
     // add / to the second character of value
-    state.expireDate.value = value.substring(0, 2) + '/' + value.substring(2);
-    // state.expireDate.value = value;
-    if (value.isEmpty) {
-      state.expireDateError.value = 'Please enter an expiration date'.tr;
-    } else {
+    state.expireDateString.value =
+    "${DateFormat.mToMMInt(value.month)}/${DateFormat.yyyyToYYInt(value.year)}";
+
+    if (state.expireDateString.value?.isNotEmpty == true) {
       state.expireDateError.value = null;
+    } else {
+      state.expireDateError.value = 'Please enter an expiration date'.tr;
     }
   }
 

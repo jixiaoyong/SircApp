@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_ume/flutter_ume.dart'; // UME 框架
 import 'package:flutter_ume_kit_console/flutter_ume_kit_console.dart'; // debugPrint 插件包
@@ -111,6 +112,15 @@ class MyApp extends StatelessWidget {
                 builder: (context) => const NotFoundPage(),
               );
             },
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale("en", ""),
+              Locale("zh", "CN"),
+            ],
             locale: Get.deviceLocale,
             fallbackLocale: const Locale("en", "US"),
             translations: Languages(),

@@ -19,8 +19,15 @@ import 'package:sirc/utils/size_extension.dart';
 class VerifyCodeWidget extends StatefulWidget {
   int verifyCodeCount;
   final ValueChanged<String>? onChanged;
+  final IndexedWidgetBuilder? itemBuilder;
+  final IndexedWidgetBuilder? separatorBuilder;
 
-  VerifyCodeWidget({Key? key, this.verifyCodeCount = 6, this.onChanged})
+  VerifyCodeWidget(
+      {Key? key,
+      this.verifyCodeCount = 6,
+      this.onChanged,
+      this.itemBuilder,
+      this.separatorBuilder})
       : super(key: key);
 
   @override
@@ -67,6 +74,8 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
                     _currentVerifyIndex = -1;
                   });
                   if (value.length > widget.verifyCodeCount) {
+                    _verifyCodeController.text =
+                        value.substring(0, widget.verifyCodeCount);
                     return;
                   }
                 }
@@ -97,7 +106,7 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
         SizedBox(
           height: 50.dp,
           width: double.infinity,
-          child: ListView.builder(
+          child: ListView.separated(
             itemBuilder: (context, index) {
               var item = index >= _verifyCode.length ? "" : _verifyCode[index];
               return GestureDetector(
@@ -121,33 +130,37 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
                         extentOffset: _currentVerifyIndex + 1);
                   }
                 },
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 2.dp),
-                  height: 50.dp,
-                  width: 50.dp,
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: _currentVerifyIndex == index
-                              ? Colors.blue
-                              : Colors.grey),
-                      borderRadius: BorderRadius.all(Radius.circular(10.dp))),
-                  child: Center(
-                    child: Text(
-                      item,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
+                child: widget.itemBuilder?.call(context, index) ??
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 2.dp),
+                      height: 50.dp,
+                      width: 50.dp,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: _currentVerifyIndex == index
+                                  ? Colors.blue
+                                  : Colors.grey),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(10.dp))),
+                      child: Center(
+                        child: Text(
+                          item,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
               );
             },
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
             itemCount: widget.verifyCodeCount,
+            separatorBuilder:
+                widget.separatorBuilder ?? (context, index) => Container(),
           ),
         )
       ],

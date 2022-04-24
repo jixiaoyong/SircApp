@@ -33,7 +33,8 @@ class AddCardState {
   Rx<String> cardType = Rx("Visa");
 
   Rx<String> cardNumber = Rx("");
-  Rx<String> expireDate = Rx("");
+  Rx<String?> expireDateString = Rx(null);
+  DateTime? expireDate = null;
   Rx<String> cvv = Rx("");
 
   Rx<String?> ownerNameError = Rx(null);

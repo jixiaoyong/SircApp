@@ -43,6 +43,9 @@ dependencies:
   shared_preferences: ^2.0.13
   # Implementations of SHA, MD5, and HMAC cryptographic functions
   crypto: ^3.0.1
+  flutter_localizations: # localizations
+    sdk: flutter
+  month_picker_dialog: ^0.4.0
 
 dev_dependencies:
   flutter_test:

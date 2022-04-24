@@ -44,7 +44,7 @@ jobs:
           
           # clone the web branch from github, and delete all files in web branch
           git clone https://${{secrets.GH_DEPLOY}}@github.com/jixiaoyong/SircApp.git .
-          git log -n 1 --pretty=format:"%h - %cn(%ce), %cd : %s" > ../last_commit.txt
+          git log -n 1 --pretty=format:"%h - %cn(%ce): %s" > ../last_commit.txt
           git checkout -b web origin/web
           
           # remove all files except .git
