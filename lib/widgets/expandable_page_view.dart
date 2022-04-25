@@ -30,6 +30,9 @@ class ExpandablePageView extends StatefulWidget {
   // the listener of page scroll percentage
   final ValueChanged<double>? onPageScrollPercent;
 
+  // indicator position offset to widget: dx means left offset, dy means bottom offset
+  final Offset indicatorOffset;
+
   ExpandablePageView({
     Key? key,
     this.childAspectRatio = 1.0,
@@ -37,6 +40,7 @@ class ExpandablePageView extends StatefulWidget {
     required this.pageCount,
     this.indicatorBuilder,
     this.onPageScrollPercent,
+    this.indicatorOffset = const Offset(0.0, 0.0),
   }) : super(key: key);
 
   @override
@@ -110,48 +114,63 @@ class _ExpandablePageViewState extends State<ExpandablePageView> {
 
   @override
   Widget build(BuildContext context) {
+    final isIndicatorVisible =
+        widget.indicatorBuilder != null && widget.pageCount > 1;
+    final pageViewPaddingBottom =
+    widget.indicatorOffset.dy < 0 && isIndicatorVisible
+        ? -widget.indicatorOffset.dy
+        : 0.0;
+    final indicatorPaddingBottom =
+    widget.indicatorOffset.dy > 0 && isIndicatorVisible
+        ? widget.indicatorOffset.dy
+        : 0.0;
+
     return LayoutBuilder(builder: (context, constraints) {
       final indicatorBuilder = widget.indicatorBuilder;
       return SizedBox(
         height: _currentPageHeight == 0
             ? constraints.minHeight
-            : _currentPageHeight,
+            : _currentPageHeight + pageViewPaddingBottom,
         child: Stack(
           fit: StackFit.passthrough,
           children: [
-            PageView.builder(
-              physics: const ClampingScrollPhysics(),
-              controller: _pageViewController,
-              itemBuilder: (context, index) {
-                return OverflowBox(
-                  minHeight: 0,
-                  maxHeight: double.infinity,
-                  alignment: Alignment.topCenter,
-                  child: SizeReportableContainer(
-                    onSizeChange: (size) {
-                      if (size != null) {
-                        _viewPageHeightList[index] = size.height;
-                        if (index == currentPage) {
-                          _currentPageHeight = size.height;
+            Padding(
+              padding: EdgeInsets.only(bottom: pageViewPaddingBottom),
+              child: PageView.builder(
+                physics: const ClampingScrollPhysics(),
+                controller: _pageViewController,
+                itemBuilder: (context, index) {
+                  return OverflowBox(
+                    minHeight: 0,
+                    maxHeight: double.infinity,
+                    alignment: Alignment.topCenter,
+                    child: SizeReportableContainer(
+                      onSizeChange: (size) {
+                        if (size != null) {
+                          _viewPageHeightList[index] = size.height;
+                          if (index == currentPage) {
+                            _currentPageHeight = size.height;
+                          }
+                          setState(() {});
+                          LogUtils.d(
+                              "index: $index, size: $size, _viewPageHeightList: $_viewPageHeightList");
                         }
-                        LogUtils.d(
-                            "index: $index, size: $size, _viewPageHeightList: $_viewPageHeightList");
-                      }
-                    },
-                    child: widget.pageBuilder(context, index),
-                  ),
-                );
-              },
-              itemCount: widget.pageCount,
+                      },
+                      child: widget.pageBuilder(context, index),
+                    ),
+                  );
+                },
+                itemCount: widget.pageCount,
+              ),
             ),
-            if (indicatorBuilder != null)
+            if (isIndicatorVisible)
               Positioned(
-                bottom: 0,
-                left: 0,
+                bottom: indicatorPaddingBottom,
+                left: widget.indicatorOffset.dx,
                 right: 0,
                 child: Row(
                   children: [
-                    indicatorBuilder(context, (index) {
+                    indicatorBuilder!(context, (index) {
                       _pageViewController.jumpToPage(index);
                     }, _pageScrollPercentage)
                   ],
@@ -171,21 +190,18 @@ class _ExpandablePageViewState extends State<ExpandablePageView> {
 class ScrollableIndicator extends StatelessWidget {
   final ValueChanged<int> onPageSelected;
   final double scrollPercentage;
-  final double indicatorHeight;
-  final double indicatorBackgroundWidth;
-  final double indicatorWidth;
+  final Size indicatorSize;
+  final Size indicatorBackgroundSize;
   final Color indicatorColor;
   final Color indicatorBackgroundColor;
 
-  ScrollableIndicator(
-      {Key? key,
-      required this.onPageSelected,
-      required this.scrollPercentage,
-      this.indicatorHeight = 10,
-      this.indicatorBackgroundWidth = 100,
-      this.indicatorWidth = 50,
-      this.indicatorColor = Colors.black,
-      this.indicatorBackgroundColor = Colors.white})
+  ScrollableIndicator({Key? key,
+    required this.onPageSelected,
+    required this.scrollPercentage,
+    this.indicatorSize = const Size(50, 10),
+    this.indicatorBackgroundSize = const Size(100, 10),
+    this.indicatorColor = Colors.black,
+    this.indicatorBackgroundColor = Colors.white})
       : super(key: key);
 
   @override
@@ -194,23 +210,25 @@ class ScrollableIndicator extends StatelessWidget {
         double scrollPercentage) {
       return Container(
         margin: const EdgeInsets.all(10),
-        width: indicatorBackgroundWidth,
+        width: indicatorBackgroundSize.width,
+        height: indicatorBackgroundSize.height,
         decoration: BoxDecoration(
-          color: indicatorColor,
-          borderRadius: BorderRadius.all(Radius.circular(indicatorHeight / 2)),
+          color: indicatorBackgroundColor,
+          borderRadius: BorderRadius.all(
+              Radius.circular(indicatorBackgroundSize.height / 2)),
         ),
         child: Row(
           children: [
             Container(
               margin: EdgeInsets.only(
                   left: scrollPercentage *
-                      (indicatorBackgroundWidth - indicatorWidth)),
-              width: indicatorWidth,
-              height: indicatorHeight,
+                      (indicatorBackgroundSize.width - indicatorSize.width)),
+              width: indicatorSize.width,
+              height: indicatorSize.height,
               decoration: BoxDecoration(
-                color: indicatorBackgroundColor,
+                color: indicatorColor,
                 borderRadius:
-                    BorderRadius.all(Radius.circular(indicatorHeight / 2)),
+                BorderRadius.all(Radius.circular(indicatorSize.height / 2)),
               ),
             )
           ],

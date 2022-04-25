@@ -4,12 +4,43 @@ import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:sirc/bean/pair.dart';
 import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/widgets/bank_card_widget.dart';
+import 'package:sirc/widgets/jingang_widget.dart';
 
 class HomePageState {
   var currentBankIndex = 0.obs;
   late PageController pageController;
 
   final List<Pair<String, double>> dataChange = MockUtils.dataChange.obs;
+
+  /// all of those icon come form https://icons8.com/, thanks to them
+  final list = [
+    ImgText("https://img.icons8.com/office/80/000000/bonds.png", "Bonds"),
+    ImgText("https://img.icons8.com/office/80/000000/billing.png", "Billing"),
+    ImgText("https://img.icons8.com/office/80/000000/cash.png", "Cash"),
+    ImgText(
+        "https://img.icons8.com/office/80/000000/money-bag.png", "Money Bag"),
+    ImgText("https://img.icons8.com/office/80/000000/wallet.png", "Wallet"),
+    ImgText("https://img.icons8.com/office/80/000000/bounced-check.png",
+        "Bounced Check"),
+    ImgText("https://img.icons8.com/office/80/000000/tax.png", "Tax"),
+    ImgText("https://img.icons8.com/office/80/000000/purchase-order.png",
+        "Purchase Order"),
+    ImgText("https://img.icons8.com/office/80/000000/payment-history.png",
+        "Payment History"),
+    ImgText("https://img.icons8.com/office/80/000000/card-in-use.png",
+        "Card In Use"),
+    ImgText("https://img.icons8.com/office/80/000000/card-security.png",
+        "Card Security"),
+    ImgText(
+        "https://img.icons8.com/office/80/000000/bank-card-front-side--v1.png",
+        "Bank Card Front Side"),
+    ImgText("https://img.icons8.com/office/80/000000/bank-card-missing.png",
+        "bank card missing"),
+    ImgText("https://img.icons8.com/office/80/000000/credit-control.png",
+        "Credit Control"),
+    ImgText(
+        "https://img.icons8.com/office/80/000000/commodity.png", "Commodity"),
+  ];
 
   final List<BankCardWidget> banks = [
     BankCardWidget(

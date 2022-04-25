@@ -32,9 +32,9 @@ main() {
                 children: [
                   Image.network(
                     data.imageUrl,
-                    height: 50,
-                    width: 50,
-                    fit: BoxFit.cover,
+                    height: 40,
+                    width: 40,
+                    fit: BoxFit.fitHeight,
                   ),
                   Text(
                     data.title,
@@ -43,7 +43,6 @@ main() {
                 ],
               ),
             );
-            ;
           },
         ),
       ),
@@ -67,6 +66,10 @@ class JingangWidget<T> extends StatefulWidget {
   final IndicatorBuilder? indicatorBuilder;
   final double childAspectRatio;
   final int childCountPerPage;
+  final int childCountPerRow;
+
+  // indicator position offset to widget: dx means left offset, dy means bottom offset
+  final Offset indicatorOffset;
 
   final ExpandablePageItemBuilder itemBuilder;
 
@@ -76,7 +79,9 @@ class JingangWidget<T> extends StatefulWidget {
       required this.data,
       required this.itemBuilder,
       this.indicatorBuilder,
+      this.indicatorOffset = const Offset(0, 0),
       this.childAspectRatio = 0.55,
+      this.childCountPerRow = 6,
       this.childCountPerPage = 12})
       : super(key: key);
 
@@ -90,19 +95,19 @@ class _JingangWidgetState extends State<JingangWidget> {
     var childCount = widget.data.length;
 
     return Container(
-      color: Colors.grey,
       child: ExpandablePageView(
         pageBuilder: (context, index) {
           final int childIndexStart = index * widget.childCountPerPage;
           final int childIndexExpectEnd =
               childIndexStart + widget.childCountPerPage - 1;
-          final int childIndexEnd = childIndexExpectEnd > childCount
+          final int childIndexEnd = childIndexExpectEnd > childCount - 1
               ? childCount - 1
               : childIndexExpectEnd;
           return GridView.builder(
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 6, childAspectRatio: 0.55),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: widget.childCountPerRow,
+                childAspectRatio: widget.childAspectRatio),
             itemBuilder: (context, subIndex) {
               // the index of the child in the total children
               final int childIndex = childIndexStart + subIndex;
@@ -114,7 +119,8 @@ class _JingangWidgetState extends State<JingangWidget> {
           );
         },
         pageCount: (widget.data.length / widget.childCountPerPage).ceil(),
-        childAspectRatio: 0.55,
+        childAspectRatio: widget.childAspectRatio,
+        indicatorOffset: widget.indicatorOffset,
         indicatorBuilder: widget.indicatorBuilder ??
             (context, onPageSelected, scrollPercentage) {
               return ScrollableIndicator(

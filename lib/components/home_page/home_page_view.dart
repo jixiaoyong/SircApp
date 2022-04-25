@@ -5,7 +5,9 @@ import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
 import 'package:sirc/data/common_date.dart';
 import 'package:sirc/utils/color_extension.dart';
 import 'package:sirc/utils/size_extension.dart';
+import 'package:sirc/widgets/expandable_page_view.dart';
 import 'package:sirc/widgets/footlights_for_bank_card.dart';
+import 'package:sirc/widgets/jingang_widget.dart';
 import 'package:sirc/widgets/line_graph.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
@@ -101,6 +103,51 @@ class HomePage extends StatelessWidget {
                           }, growable: false),
                         ))
                   ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10.dp),
+                child: JingangWidget(
+                  childAspectRatio: 0.7,
+                  data: state.list,
+                  indicatorOffset: Offset(0, -20.dp),
+                  itemBuilder:
+                      (BuildContext context, int index, int pageIndex, data) {
+                    return Container(
+                      margin: const EdgeInsets.all(5),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.network(
+                            data.imageUrl,
+                            height: 40,
+                            width: 40,
+                            fit: BoxFit.fitHeight,
+                          ),
+                          Text(
+                            data.title,
+                            overflow: TextOverflow.clip,
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 11.sp,
+                                color: "#ffb6c6d5".hexToColor,
+                                fontWeight: FontWeight.w500),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                  indicatorBuilder:
+                      (context, onPageSelected, scrollPercentage) {
+                    return ScrollableIndicator(
+                      onPageSelected: onPageSelected,
+                      scrollPercentage: scrollPercentage,
+                      indicatorColor: Colors.indigoAccent.withOpacity(0.6),
+                      indicatorBackgroundColor:
+                          Colors.indigoAccent.withOpacity(0.25),
+                    );
+                  },
                 ),
               ),
               Container(
