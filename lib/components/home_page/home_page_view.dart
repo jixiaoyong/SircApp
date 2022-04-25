@@ -15,13 +15,14 @@ import 'package:sirc/widgets/title_text.dart';
 import 'home_page_logic.dart';
 
 class HomePage extends StatelessWidget {
+  final logic = Get.put(HomePageLogic());
+  final state = Get.find<HomePageLogic>().state;
+
   @override
   Widget build(BuildContext context) {
-    final logic = Get.put(HomePageLogic());
-    final state = Get.find<HomePageLogic>().state;
-    state.pageController = PageController(initialPage: 0);
-
     final slideMenuLogic = Get.find<SlideMenuLogic>();
+    state.pageController =
+        PageController(initialPage: 0, viewportFraction: 0.8);
 
     return Obx(() {
       return SingleChildScrollView(
@@ -61,12 +62,12 @@ class HomePage extends StatelessWidget {
                       screenWidth: CommonData.realScreenWidth,
                     ),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0, 40.dp, 0, 25.dp),
+                      padding: EdgeInsets.fromLTRB(0, 40.dp, 0, 35.dp),
                       child: PageView.builder(
                         controller: state.pageController,
                         itemBuilder: (context, index) {
                           return Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20.dp),
+                            padding: EdgeInsets.symmetric(horizontal: 10.dp),
                             child: state.banks[index],
                           );
                         },
@@ -93,10 +94,10 @@ class HomePage extends StatelessWidget {
                                 margin: EdgeInsets.symmetric(horizontal: 5.dp),
                                 decoration: BoxDecoration(
                                     color:
-                                        (state.currentBankIndex.value == index
-                                                ? Colors.white
-                                                : "#ffb6c6d5".hexToColor)
-                                            .withOpacity(0.6),
+                                    (state.currentBankIndex.value == index
+                                        ? Colors.white
+                                        : "#ffb6c6d5".hexToColor)
+                                        .withOpacity(0.6),
                                     borderRadius: BorderRadius.circular(10.dp)),
                               ),
                             );
@@ -145,7 +146,7 @@ class HomePage extends StatelessWidget {
                       scrollPercentage: scrollPercentage,
                       indicatorColor: Colors.indigoAccent.withOpacity(0.6),
                       indicatorBackgroundColor:
-                          Colors.indigoAccent.withOpacity(0.25),
+                      Colors.indigoAccent.withOpacity(0.25),
                     );
                   },
                 ),
