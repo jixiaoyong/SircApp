@@ -50,8 +50,8 @@ dependencies:
   # webview
   webview_flutter: ^3.0.2
   # extension library of image. The Flutter sdk version that this library dependencies is too height for me
-  extended_image: ^5.1.2
-
+  extended_image: ^6.0.2+1
+  js: 
 dev_dependencies:
   flutter_test:
     sdk: flutter
