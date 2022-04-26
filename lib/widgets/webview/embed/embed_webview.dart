@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sirc/utils/logger.dart';
-import 'package:sirc/widgets/webview/embed/web_platform.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
+import 'embed_webview_stub.dart';
 import 'webview_utils.dart';
 
 /*
@@ -55,29 +53,8 @@ class EmbedWebView extends StatefulWidget {
 }
 
 class _EmbedWebViewState extends State<EmbedWebView> {
-  double _heights = 10;
+  // double _heights = 10;
   double _screenMaxHeightPx = double.infinity;
-
-  WebViewController? webViewController;
-  WebViewPlatform? cachePlatform;
-  WebView? _webView;
-
-  @override
-  void initState() {
-    super.initState();
-    if (!kIsWeb && Platform.isAndroid) {
-      cachePlatform = WebView.platform;
-      WebView.platform = SurfaceAndroidWebView();
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    if (!kIsWeb && cachePlatform != null) {
-      WebView.platform = cachePlatform;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,86 +75,15 @@ class _EmbedWebViewState extends State<EmbedWebView> {
       constraints: BoxConstraints(maxHeight: _screenMaxHeightPx),
       child: SingleChildScrollView(
         child: GestureDetector(
-          onHorizontalDragUpdate: (value) {},
-          child: kIsWeb
-              ? SizedBox(
-                  width: widget.width,
-                  child: WebView4WebPlatform(
-                      widget.width * MediaQuery.of(context).devicePixelRatio,
-                      webViewContentHtml),
-                )
-              : SizedBox(
-                  width: widget.width,
-                  height: _heights,
-                  child: _buildWebView(webViewContentHtml),
-                ),
-        ),
+            onHorizontalDragUpdate: (value) {},
+            child: SizedBox(
+              width: widget.width,
+              child: getEmbedWebViewAuto(
+                webViewContentHtml,
+                widget.width * MediaQuery.of(context).devicePixelRatio,
+              ),
+            )),
       ),
     );
-  }
-
-  WebView _buildWebView(String webViewContentHtml) {
-    if (_webView == null) {
-      LogUtils.d("_webView == null");
-      _webView = WebView(
-        onWebViewCreated: (WebViewController webViewController) async {
-          this.webViewController = webViewController;
-          await _refreshWebViewContent(webViewController, webViewContentHtml);
-        },
-        onPageFinished: (some) async {
-          LogUtils.d("WebView height:onPageFinished");
-          await _onPageFinished();
-        },
-        javascriptMode: JavascriptMode.unrestricted,
-      );
-    } else {
-      LogUtils.d("_webView != null");
-      webViewController?.currentUrl().then((value) {
-        var newUrl = Uri.dataFromString(webViewContentHtml,
-                mimeType: 'text/html', encoding: Encoding.getByName("utf-8"))
-            .toString();
-
-        if (newUrl != value) {
-          _refreshWebViewContent(webViewController!, webViewContentHtml);
-        }
-      });
-    }
-    return _webView!;
-  }
-
-  Future<void> _refreshWebViewContent(
-      WebViewController webViewController, String webViewContentHtml) async {
-    await webViewController.loadUrl(Uri.dataFromString(webViewContentHtml,
-            mimeType: 'text/html', encoding: Encoding.getByName("utf-8"))
-        .toString());
-  }
-
-  Future<void> _onPageFinished() async {
-    double devicePixelRatio = double.parse(await webViewController
-            ?.evaluateJavascript("window.devicePixelRatio") ??
-        "0.0");
-
-    double webViewWidth = double.parse(await webViewController
-                ?.evaluateJavascript("document.body.scrollWidth") ??
-            "0.0") *
-        devicePixelRatio;
-    var widthPx = widget.width * MediaQuery.of(context).devicePixelRatio;
-
-    var webWidgetScale = webViewWidth / widthPx;
-
-    double height = double.parse(await webViewController?.evaluateJavascript(
-                "document.getElementById('webContent').clientHeight") ??
-            "0.0") *
-        devicePixelRatio;
-
-    height = (height / webWidgetScale) + 1;
-
-    if (height == _heights) {
-      return;
-    }
-    setState(() {
-      LogUtils.d("WebView height:$height");
-      _heights = height / MediaQuery.of(context).devicePixelRatio;
-    });
   }
 }

@@ -45,19 +45,9 @@ class AboutPage extends StatelessWidget {
           Container(
             width: 200,
             height: 200.dp,
-            color: Colors.grey,
+            color: Colors.blue,
+            child: const Center(child: Text("To be continued...",style: TextStyle(color: Colors.white),)),
           ),
-          // MaterialButton(onPressed: (){
-          //   html.HtmlElement? elem = html.document
-          //       .getElementsByTagName('flt-platform-view')
-          //       .first as html.HtmlElement?;
-          //   html.Element? ifrelem = elem?.shadowRoot
-          //       ?.getElementById('iframe');
-          //   LogUtils.d(
-          //       " ifrelem?.clientHeight : ${ifrelem?.clientHeight}  "
-          //           "ifrelem?.scrollHeight : ${ifrelem?.scrollHeight}"
-          //           " ifrelem?.offsetHeight : ${ifrelem?.offsetHeight}");
-          // })
         ],
       ),
     );
