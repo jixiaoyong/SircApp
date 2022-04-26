@@ -1,3 +1,4 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
 /*
@@ -24,17 +25,38 @@ class NetworkWebImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.network(
+    return ExtendedImage.network(
       url,
       width: size?.width,
       height: size?.height,
       fit: fit,
-      errorBuilder: (context, url, error) {
-        return Icon(
-          Icons.error_outline,
-          size: size?.height,
-          color: Colors.grey.withOpacity(0.5),
-        );
+      cache: true,
+      loadStateChanged: (state) {
+        switch (state.extendedImageLoadState) {
+          case LoadState.loading:
+            return SizedBox(
+              width: size?.width,
+              height: size?.height,
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.blue.withOpacity(0.6),
+                ),
+              ),
+            );
+          case LoadState.completed:
+            return ExtendedRawImage(
+              image: state.extendedImageInfo?.image,
+              width: size?.width,
+              height: size?.height,
+              fit: fit,
+            );
+          case LoadState.failed:
+            return const Center(
+              child: Text('Failed to load image'),
+            );
+          default:
+            return Container();
+        }
       },
     );
 

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/src/widgets/icon_data.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,6 +29,18 @@ class SignInLogic extends GetxController {
   Future<void> onInit() async {
     _prefs = await SharedPreferences.getInstance();
     super.onInit();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    if (kDebugMode) {
+      setUserName("jixiaoyong");
+      setUserPwd("123456");
+      final String userPwdMd5 = Md5Utils.generateMd5(state.userPwd.value);
+      _prefs?.setString(CommonKeys.USER_NAME, state.userName.value);
+      _prefs?.setString(CommonKeys.USER_PWD, userPwdMd5);
+    }
   }
 
   void setUserName(String value) {

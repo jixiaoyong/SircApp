@@ -1,4 +1,7 @@
+import 'package:flutter/src/widgets/icon_data.dart';
 import 'package:get/get.dart';
+import 'package:sirc/bean/pair.dart';
+import 'package:sirc/routes/app_routes.dart';
 
 import '../main_app_logic.dart';
 import 'slide_menu_state.dart';
@@ -22,6 +25,13 @@ class SlideMenuLogic extends GetxController {
       state.slideMenuList.value = SlideMenuState.generateSlideMenuList();
     });
     super.onInit();
+  }
+
+  void onMenuItemClick(Pair<IconData, String> item) {
+    // usually we need to deal with the click event one by one, this is just a demo
+    if ("About".tr == item.second) {
+      Get.toNamed(AppRoutes.ABOUT);
+    }
   }
 }
 

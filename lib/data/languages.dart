@@ -41,7 +41,7 @@ class Languages extends Translations {
           "Profile": "Profile",
           "Notifications": "Notifications",
           "Settings": "Settings",
-          "Help & Support": "Help & Support",
+          "About": "About us",
           "Total Spending": "Total Spending",
           "General Information": "General Information",
           "E-mail": "E-mail",
@@ -150,6 +150,8 @@ class Languages extends Translations {
           "Please type in your name": "Please type in your name",
           "Please enter bank card number": "Please enter bank card number",
           "Please enter an expiration date": "Please enter an expiration date",
+          "AboutUsDescription":
+              """<p style="text-align: center;"><span style="font-size: 19px;"><strong>Sirc&nbsp;</strong></span><img src="https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg" alt="" data-href="https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg" width='400px' style=""></p><p style="text-align: center;"><br></p><p style="text-align: center;"><span style="color: rgb(41, 44, 50); font-size: 19px;">an&nbsp;open-source&nbsp;Flutter&nbsp;financial&nbsp;application.</span></p><p style="text-align: center;"><span style="color: rgb(41, 44, 50); font-size: 19px;">Made&nbsp;With&nbsp;❤️&nbsp;by&nbsp;JI,XIAOYONG.</span></p><p><br></p>"""
         },
         "zh_CN": {
           "MasterCard": "MasterCard卡",
@@ -175,7 +177,7 @@ class Languages extends Translations {
           "Profile": "个人资料",
           "Notifications": "通知",
           "Settings": "设置",
-          "Help & Support": "帮助和支持",
+          "About": "关于我们",
           "Total Spending": "总支出",
           "General Information": "一般信息",
           "E-mail": "电子邮件",
@@ -277,6 +279,8 @@ class Languages extends Translations {
           "Please type in your name": "请输入您的姓名",
           "Please enter bank card number": "请输入银行卡号",
           "Please enter an expiration date": "请输入有效期",
+          "AboutUsDescription":
+              """<p style="text-align: center;"><span style="font-size: 19px;"><strong>Sirc&nbsp;</strong></span><img src="https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg" alt="" data-href="https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg" width='400px'  style=""></p><p style="text-align: center;"><br></p><p style="text-align: center;"><span style="color: rgb(41, 44, 50); font-size: 19px;">一款使用Flutter开发的开源金融类应用。</span></p><p style="text-align: center;"><span style="color: rgb(41, 44, 50); font-size: 19px;">Made&nbsp;With&nbsp;❤️&nbsp;by&nbsp;JI,XIAOYONG.</span></p><p><br></p>"""
         }
       };
 }

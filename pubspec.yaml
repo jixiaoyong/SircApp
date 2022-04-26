@@ -45,7 +45,12 @@ dependencies:
   crypto: ^3.0.1
   flutter_localizations: # localizations
     sdk: flutter
+  # date picker that only include year and month
   month_picker_dialog: ^0.4.0
+  # webview
+  webview_flutter: ^3.0.2
+  # extension library of image. The Flutter sdk version that this library dependencies is too height for me
+  extended_image: ^5.1.2
 
 dev_dependencies:
   flutter_test:

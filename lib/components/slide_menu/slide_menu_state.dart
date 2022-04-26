@@ -21,6 +21,6 @@ class SlideMenuState {
         Pair(Icons.history_outlined, "History".tr),
         Pair(Icons.notifications_outlined, "Notifications".tr),
         Pair(Icons.settings, "Settings".tr),
-        Pair(Icons.help_outline_outlined, "Help & Support".tr),
+        Pair(Icons.help_outline_outlined, "About".tr),
       ];
 }

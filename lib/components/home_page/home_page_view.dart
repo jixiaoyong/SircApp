@@ -94,10 +94,10 @@ class HomePage extends StatelessWidget {
                                 margin: EdgeInsets.symmetric(horizontal: 5.dp),
                                 decoration: BoxDecoration(
                                     color:
-                                    (state.currentBankIndex.value == index
-                                        ? Colors.white
-                                        : "#ffb6c6d5".hexToColor)
-                                        .withOpacity(0.6),
+                                        (state.currentBankIndex.value == index
+                                                ? Colors.white
+                                                : "#ffb6c6d5".hexToColor)
+                                            .withOpacity(0.6),
                                     borderRadius: BorderRadius.circular(10.dp)),
                               ),
                             );
@@ -111,32 +111,32 @@ class HomePage extends StatelessWidget {
                 child: JingangWidget(
                   childAspectRatio: 0.7,
                   data: state.list,
-                  indicatorOffset: Offset(0, -20.dp),
+                  indicatorOffset: Offset(0, -2.dp),
                   itemBuilder:
                       (BuildContext context, int index, int pageIndex, data) {
-                    return Container(
-                      margin: const EdgeInsets.all(5),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Image.network(
-                            data.imageUrl,
-                            height: 40,
-                            width: 40,
-                            fit: BoxFit.fitHeight,
-                          ),
-                          Text(
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        NetworkWebImage(
+                          data.imageUrl,
+                          size: Size(40.dp, 40.dp),
+                          fit: BoxFit.fitHeight,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 2.dp),
+                          child: Text(
                             data.title,
                             overflow: TextOverflow.clip,
                             maxLines: 2,
                             textAlign: TextAlign.center,
                             style: TextStyle(
+                                height: 1,
                                 fontSize: 11.sp,
                                 color: "#ffb6c6d5".hexToColor,
                                 fontWeight: FontWeight.w500),
-                          )
-                        ],
-                      ),
+                          ),
+                        )
+                      ],
                     );
                   },
                   indicatorBuilder:
@@ -146,7 +146,7 @@ class HomePage extends StatelessWidget {
                       scrollPercentage: scrollPercentage,
                       indicatorColor: Colors.indigoAccent.withOpacity(0.6),
                       indicatorBackgroundColor:
-                      Colors.indigoAccent.withOpacity(0.25),
+                          Colors.indigoAccent.withOpacity(0.25),
                     );
                   },
                 ),

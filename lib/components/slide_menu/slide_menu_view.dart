@@ -102,19 +102,25 @@ class _SlideMenuPageState extends State<SlideMenuPage>
                   ),
                   Padding(padding: EdgeInsets.all(20.dp)),
                   ...state.slideMenuList.value.map((item) {
-                    return Container(
-                      margin: EdgeInsets.symmetric(vertical: 10.dp),
-                      child: Row(
-                        children: [
-                          Icon(
-                            item.first,
-                            color: Colors.white,
-                          ),
-                          Text(
-                            " ${item.second}",
-                            style: const TextStyle(color: Colors.white),
-                          )
-                        ],
+                    return GestureDetector(
+                      onTap: () {
+                        // deal with menu item click
+                        logic.onMenuItemClick(item);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.symmetric(vertical: 10.dp),
+                        child: Row(
+                          children: [
+                            Icon(
+                              item.first,
+                              color: Colors.white,
+                            ),
+                            Text(
+                              " ${item.second}",
+                              style: const TextStyle(color: Colors.white),
+                            )
+                          ],
+                        ),
                       ),
                     );
                   }),
