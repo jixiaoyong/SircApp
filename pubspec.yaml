@@ -51,7 +51,10 @@ dependencies:
   webview_flutter: ^3.0.2
   # extension library of image. The Flutter sdk version that this library dependencies is too height for me
   extended_image: ^6.0.2+1
+  # use for show web view in flutter_web
   js: 
+  # open url
+  url_launcher: ^6.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
