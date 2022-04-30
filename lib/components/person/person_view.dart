@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
 import 'package:sirc/utils/size_extension.dart';
+import 'package:sirc/utils/number_extension.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
 
@@ -49,7 +50,7 @@ class PersonPage extends StatelessWidget {
                     child: NetworkWebImage(
                       state.userAvatar.value,
                       size: Size(100.dp, 100.dp),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitHeight,
                     ),
                   ),
                 )),
@@ -72,12 +73,13 @@ class PersonPage extends StatelessWidget {
               height: 200.dp,
               child: ListView.builder(
                 itemBuilder: (context, index) {
+                  var heroTag = "heroTag_$index";
                   var data = state.moneyOperateList[index];
                   var textColor =
                       currentIndex == index ? Colors.white : Colors.black;
                   return GestureDetector(
                     onTap: () {
-                      logic.onClick(index);
+                      logic.onClick(index,heroTag);
                     },
                     child: Container(
                       height: 200.dp,
@@ -100,19 +102,20 @@ class PersonPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(50.dp),
-                            child: Container(
-                                color: Colors.white,
-                                child: NetworkWebImage(
-                                  data.userIcon!,
-                                  size: Size.square(50.dp),
-                                )),
+                          Hero(
+                            tag: heroTag,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(50.dp),
+                              child: NetworkWebImage(
+                                data.userIcon!,
+                                size: Size.square(50.dp),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                           Padding(
                             padding: EdgeInsets.only(top: 5.dp),
-                            child: Text(
-                                "${index % 3 == 0 ? "-" : "+"} \$${(data.moneyAmount!).toStringAsFixed(2)}",
+                            child: Text(data.moneyAmount.toFormatedMoneyStr,
                                 style: TextStyle(
                                     fontSize: 18.sp,
                                     color: textColor,

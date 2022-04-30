@@ -12,9 +12,8 @@ import 'package:sirc/mock/mock_utils.dart';
 * @date: 22/04/18
 */
 class HistoryState {
+  var userAvatar = "".obs;
 
-    var userAvatar = "".obs;
-    
   final List<String> monthEnglishNameList = [
     'January'.tr,
     'February'.tr,
@@ -34,5 +33,8 @@ class HistoryState {
 
   final List<Pair<String, double>> dataChange = MockUtils.dataChange.obs;
 
-  final List<MoneyOperateBean> moneyOperateList = MockUtils.moneyOperateList;
+  final List<MoneyOperateBean> moneyOperateList = MockUtils.moneyOperateList
+      .map((e) => e
+        ..userIcon = "https://s3.bmp.ovh/imgs/2022/04/30/c82e5993e4047df6.jpeg")
+      .toList();
 }

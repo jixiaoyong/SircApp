@@ -21,7 +21,7 @@ class NetworkWebImage extends StatelessWidget {
   final String url;
   final BoxFit? fit;
 
-  NetworkWebImage(this.url, {this.size, this.fit});
+  const NetworkWebImage(this.url, {this.size, this.fit});
 
   @override
   Widget build(BuildContext context) {
@@ -59,34 +59,5 @@ class NetworkWebImage extends StatelessWidget {
         }
       },
     );
-
-    // wait for a better solution
-    // if (kIsWeb) {
-    //   // this soulution is not good, when there are many images in the same page,
-    //   // it will cause a lot of error. so we should use a better solution.
-    //
-    //   // https://github.com/flutter/flutter/issues/41563
-    //   // ignore: undefined_prefixed_name
-    //   ui.platformViewRegistry.registerViewFactory(
-    //     url,
-    //     (int _) => ImageElement()
-    //       ..src = url
-    //       ..crossOrigin = 'Anonymous',
-    //   );
-    //   return SizedBox(
-    //     width: size?.width,
-    //     height: size?.height,
-    //     child: HtmlElementView(
-    //       viewType: url,
-    //     ),
-    //   );
-    // } else {
-    //   return Image.network(
-    //     url,
-    //     width: size?.width,
-    //     height: size?.height,
-    //     fit: fit,
-    //   );
-    // }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:sirc/components/main_app_logic.dart';
+import 'package:sirc/routes/app_routes.dart';
 
 import 'person_state.dart';
 
@@ -25,7 +26,11 @@ class PersonLogic extends GetxController {
     super.onInit();
   }
 
-  void onClick(int index) {
+  void onClick(int index, String heroTag) {
     state.currentIndex.value = index;
+    Get.toNamed(AppRoutes.HISTORY_DETAILS, arguments: {
+      "data": state.moneyOperateList[index],
+      "heroTag": heroTag,
+    });
   }
 }

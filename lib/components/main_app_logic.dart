@@ -17,7 +17,7 @@ class MainAppLogic extends GetxController {
   // just for mock, we set a default value
   var userAvatar = 'https://s3.bmp.ovh/imgs/2022/04/22/b352d638990f1e84.webp'.obs;
 
-  final Rx<Locale?> _currentLocal = Rx(null);
+  final Rx<Locale?> _currentLocal = Rx(null); 
 
   @override
   void onInit() {

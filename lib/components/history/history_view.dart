@@ -1,11 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
+import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/line_graph.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
+import 'package:sirc/utils/number_extension.dart';
 
 import 'history_logic.dart';
 
@@ -134,62 +135,74 @@ class HistoryPage extends StatelessWidget {
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "Search".tr,
-                    suffixIcon: Icon(Icons.search)),
+                    suffixIcon: const Icon(Icons.search)),
               ),
             ),
             ...state.moneyOperateList.map((data) {
-              return Container(
-                padding: EdgeInsets.all(10.dp),
-                margin:
-                    EdgeInsets.symmetric(vertical: 10.dp, horizontal: 10.dp),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black12.withOpacity(0.1),
-                          offset: const Offset(0, 0),
-                          blurRadius: 10.dp,
-                          spreadRadius: 10.dp)
-                    ],
-                    borderRadius: BorderRadius.circular(10.dp)),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    NetworkWebImage(
-                      data.userIcon!,
-                      size: Size.square(50.dp),
-                    ),
-                    SizedBox(width: 10.dp),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(data.moneyActionName!,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 18.sp,
-                                color: Colors.black,
-                              )),
-                          Padding(
-                            padding: EdgeInsets.only(top: 8.dp),
-                            child: Text(data.time!,
-                                style: TextStyle(
-                                    fontSize: 10.sp, color: Colors.grey)),
+              final String heroTag = "hero_history_${data.hashCode}";
+              return GestureDetector(
+                onTap: () => Get.toNamed(AppRoutes.HISTORY_DETAILS,
+                    arguments: {"data": data, "heroTag": heroTag}),
+                child: Container(
+                  padding: EdgeInsets.all(10.dp),
+                  margin:
+                      EdgeInsets.symmetric(vertical: 10.dp, horizontal: 10.dp),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black12.withOpacity(0.1),
+                            offset: const Offset(0, 0),
+                            blurRadius: 10.dp,
+                            spreadRadius: 10.dp)
+                      ],
+                      borderRadius: BorderRadius.circular(10.dp)),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Hero(
+                        tag: heroTag,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5.dp),
+                          child: NetworkWebImage(
+                            data.userIcon!,
+                            size: Size.square(50.dp),
+                            fit: BoxFit.fitHeight,
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                    // const Spacer(),
-                    Text("+ \$${(data.moneyAmount!).toStringAsFixed(2)}",
-                        style: TextStyle(
-                            fontSize: 20.sp,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold)),
-                  ],
+                      SizedBox(width: 10.dp),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(data.moneyActionName!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 18.sp,
+                                  color: Colors.black,
+                                )),
+                            Padding(
+                              padding: EdgeInsets.only(top: 8.dp),
+                              child: Text(data.time!,
+                                  style: TextStyle(
+                                      fontSize: 10.sp, color: Colors.grey)),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // const Spacer(),
+                      Text(data.moneyAmount.toFormatedMoneyStr,
+                          style: TextStyle(
+                              fontSize: 20.sp,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                    ],
+                  ),
                 ),
               );
             }).toList(),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
+import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/color_extension.dart';
 import 'package:sirc/utils/size_extension.dart';
+import 'package:sirc/utils/number_extension.dart';
 import 'package:sirc/widgets/expanded_icon_button.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
@@ -36,7 +38,7 @@ class WalletPage extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(50.dp),
                     child: NetworkWebImage(
-                       state.userAvatar.value,
+                      state.userAvatar.value,
                       size: Size(50.dp, 50.dp),
                       fit: BoxFit.cover,
                     ),
@@ -107,56 +109,70 @@ class WalletPage extends StatelessWidget {
                 text: state.moneyTypes[state.currentClickBtnIndex.value]),
           ),
           ...state.moneyOperateList.map((data) {
-            return Container(
-              padding: EdgeInsets.all(10.dp),
-              margin: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 20.dp),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.black12,
-                        offset: const Offset(0, 0),
-                        blurRadius: 10.dp,
-                        spreadRadius: 10.dp)
-                  ],
-                  borderRadius: BorderRadius.circular(10.dp)),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  NetworkWebImage(data.userIcon!, size: Size.square(50.dp)),
-                  SizedBox(width: 20.dp),
-                  // Notice: Expanded/Flexible only works in Row/Column, not in Stack
-                  // otherwise, it will be a bug: 'Incorrect use of ParentDataWidget.'
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(data.moneyActionName!,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              color: Colors.black,
-                            )),
-                        Padding(
-                          padding: EdgeInsets.only(top: 8.dp),
-                          child: Text(data.time!,
-                              style: TextStyle(
-                                  fontSize: 10.sp, color: Colors.grey)),
-                        ),
-                      ],
+            var heroTag = "heroTag_${data.hashCode}";
+            return GestureDetector(
+              onTap: () => Get.toNamed(AppRoutes.HISTORY_DETAILS,
+                  arguments: {"data": data, "heroTag": heroTag}),
+              child: Container(
+                padding: EdgeInsets.all(10.dp),
+                margin:
+                    EdgeInsets.symmetric(vertical: 10.dp, horizontal: 20.dp),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black12,
+                          offset: const Offset(0, 0),
+                          blurRadius: 10.dp,
+                          spreadRadius: 10.dp)
+                    ],
+                    borderRadius: BorderRadius.circular(10.dp)),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Hero(
+                      tag: heroTag,
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5.dp),
+                          child: NetworkWebImage(
+                            data.userIcon!,
+                            size: Size.square(50.dp),
+                            fit: BoxFit.fitHeight,
+                          )),
                     ),
-                  ),
-                  Text(
-                      "${state.currentClickBtnIndex == 0 ? "-" : "+"} \$${(data.moneyAmount!).toStringAsFixed(2)}",
-                      style: TextStyle(
-                          fontSize: 20.sp,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold)),
-                ],
+                    SizedBox(width: 20.dp),
+                    // Notice: Expanded/Flexible only works in Row/Column, not in Stack
+                    // otherwise, it will be a bug: 'Incorrect use of ParentDataWidget.'
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(data.moneyActionName!,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                color: Colors.black,
+                              )),
+                          Padding(
+                            padding: EdgeInsets.only(top: 8.dp),
+                            child: Text(data.time!,
+                                style: TextStyle(
+                                    fontSize: 10.sp, color: Colors.grey)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(data.moneyAmount.toFormatedMoneyStr,
+                        style: TextStyle(
+                            fontSize: 20.sp,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold)),
+                  ],
+                ),
               ),
             );
           }).toList(),

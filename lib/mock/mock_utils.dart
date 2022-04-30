@@ -30,7 +30,9 @@ class MockUtils {
       List.generate(20, (index) {
     return MoneyOperateBean(
         userIcon: 'https://s3.bmp.ovh/imgs/2022/04/22/4ff72bd176a1b613.png',
-        moneyAmount: MockUtils.random.nextDouble() * 100,
+        moneyAmount: MockUtils.random.nextDouble() *
+            100 *
+            (MockUtils.random.nextBool() ? 1 : -1),
         time: "Just now".tr,
         moneyActionName: "Something".tr);
   });

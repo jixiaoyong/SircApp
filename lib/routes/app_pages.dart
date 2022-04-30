@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
+import 'package:sirc/bean/money_operate_bean.dart';
 import 'package:sirc/components/about/about_view.dart';
 import 'package:sirc/components/card/add_card/add_card_view.dart';
 import 'package:sirc/components/enter/forget_pwd/forget_pwd_view.dart';
 import 'package:sirc/components/enter/set_pwd/set_pwd_view.dart';
 import 'package:sirc/components/enter/sign_in/sign_in_view.dart';
 import 'package:sirc/components/enter/sign_up/sign_up_view.dart';
+import 'package:sirc/components/history/details/history_details.dart';
 import 'package:sirc/components/initial/initial_view.dart';
 import 'package:sirc/components/language/language_view.dart';
 import 'package:sirc/components/main_page.dart';
@@ -36,5 +38,11 @@ class AppPages {
     GetPage(name: AppRoutes.ADD_CARD, page: () => AddCardPage()),
     GetPage(name: AppRoutes.ABOUT, page: () => AboutPage()),
     GetPage(name: AppRoutes.NOT_FOUND, page: () => const NotFoundPage()),
+    GetPage(
+        name: AppRoutes.HISTORY_DETAILS,
+        page: () => HistoryDetails(
+              data: Get.arguments["data"],
+              heroTag: Get.arguments["heroTag"],
+            )),
   ];
 }
