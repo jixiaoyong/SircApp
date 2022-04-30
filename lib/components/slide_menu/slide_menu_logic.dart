@@ -24,11 +24,15 @@ class SlideMenuLogic extends GetxController {
     _mainAppLogic.listenLocalChange((p0) {
       state.slideMenuList.value = SlideMenuState.generateSlideMenuList();
     });
+
+    state.username = _mainAppLogic.userName;
+    state.email = _mainAppLogic.userEmail;
+    state.avatar = _mainAppLogic.userAvatar;
     super.onInit();
   }
 
   void onMenuItemClick(Pair<IconData, String> item) {
-    // usually we need to deal with the click event one by one, this is just a demo
+    // usually we need to deal with all the click event one by one, this is just a demo
     if ("About".tr == item.second) {
       Get.toNamed(AppRoutes.ABOUT);
     }

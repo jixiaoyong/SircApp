@@ -12,6 +12,7 @@ import 'package:sirc/mock/mock_utils.dart';
 */
 class WalletState {
   var availableBalance = 35.269;
+  var userAvatar = "".obs;
 
   var currentClickBtnIndex = 0.obs;
 

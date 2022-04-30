@@ -16,4 +16,5 @@ class CommonKeys {
 
   // the md5 of user password
   static const String USER_PWD = 'user_pwd';
+  static const String USER_EMAIL = 'user_email';
 }

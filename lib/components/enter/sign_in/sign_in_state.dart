@@ -10,7 +10,6 @@ import 'package:sirc/mock/mock_utils.dart';
 * @email: jixiaoyong1995@gmail.com
 * @date: 22/04/20
 */
-
 class SignInState {
   var userName = "".obs;
   var userPwd = "".obs;

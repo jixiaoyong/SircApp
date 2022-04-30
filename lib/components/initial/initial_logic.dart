@@ -27,7 +27,8 @@ class InitialLogic extends GetxController {
         _prefs?.getBool(CommonKeys.IS_FIRST_INITIAL) ?? true;
 
     var userName = _prefs?.getString(CommonKeys.USER_NAME);
-    _appLogic.setUserInfo(userName);
+    var userEmail = _prefs?.getString(CommonKeys.USER_EMAIL);
+    _appLogic.setUserInfo(userName, userEmail);
 
     initialLocalLanguage();
 

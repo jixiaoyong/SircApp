@@ -63,6 +63,7 @@ class SetPwdLogic extends GetxController {
     state.isWaitSetPwdResult.value = true;
     // pretend to set password
     Future.delayed(Duration(seconds: MockUtils.random.nextInt(5) + 5), () {
+      // reset password success
       _prefs?.setString(CommonKeys.USER_NAME, state.userName);
       _prefs?.setString(
           CommonKeys.USER_PWD, Md5Utils.generateMd5(state.userPwd.value));

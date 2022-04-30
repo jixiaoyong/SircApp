@@ -15,6 +15,7 @@ import 'package:sirc/mock/mock_utils.dart';
 */
 class PersonState {
   var userName = "".obs;
+  var userAvatar = "".obs;
   var currentIndex = 0.obs;
 
   final List<MoneyOperateBean> moneyOperateList = MockUtils.moneyOperateList;

@@ -43,7 +43,7 @@ class HistoryPage extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(50.dp),
                         child: NetworkWebImage(
-                          "https://s3.bmp.ovh/imgs/2022/04/22/b352d638990f1e84.webp",
+                          state.userAvatar.value,
                           size: Size(50.dp, 50.dp),
                           fit: BoxFit.cover,
                         ),

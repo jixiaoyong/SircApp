@@ -12,6 +12,9 @@ import 'package:sirc/mock/mock_utils.dart';
 * @date: 22/04/18
 */
 class HistoryState {
+
+    var userAvatar = "".obs;
+    
   final List<String> monthEnglishNameList = [
     'January'.tr,
     'February'.tr,

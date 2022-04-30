@@ -18,6 +18,7 @@ class PersonLogic extends GetxController {
   @override
   void onInit() {
     state.userName = _mainAppLogic.userName;
+    state.userAvatar = _mainAppLogic.userAvatar;
     _mainAppLogic.listenLocalChange((p0) {
       state.generalInformationList.value = PersonState.generateInfoList();
     });

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
@@ -13,7 +12,13 @@ import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
 
 import 'home_page_logic.dart';
-
+/*
+* @description: Home page
+*
+* @author: jixiaoyong
+* @email: jixiaoyong1995@gmail.com
+* @date: 22/04/19
+*/
 class HomePage extends StatelessWidget {
   final logic = Get.put(HomePageLogic());
   final state = Get.find<HomePageLogic>().state;
@@ -44,7 +49,7 @@ class HomePage extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(50.dp),
                           child: NetworkWebImage(
-                            "https://s3.bmp.ovh/imgs/2022/04/22/b352d638990f1e84.webp",
+                            state.userAvatar.value,
                             size: Size(50.dp, 50.dp),
                             fit: BoxFit.cover,
                           ),

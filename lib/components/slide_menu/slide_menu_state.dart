@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:sirc/bean/pair.dart';
 
 /*
@@ -12,8 +10,13 @@ import 'package:sirc/bean/pair.dart';
 * @date: 22/04/19
 */
 class SlideMenuState {
+  var username = "".obs;
+  var email = "".obs;
+  var avatar = "".obs;
+
   final Rx<List<Pair<IconData, String>>> slideMenuList =
       Rx(generateSlideMenuList());
+
 
   static generateSlideMenuList() => [
         Pair(Icons.home_outlined, "Home".tr),

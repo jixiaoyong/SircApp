@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/src/widgets/icon_data.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/bean/pair.dart';
@@ -23,6 +23,9 @@ import 'sign_in_state.dart';
 class SignInLogic extends GetxController {
   final SignInState state = SignInState();
   final MainAppLogic _appLogic = Get.find();
+  final TextEditingController nameTextFieldController = TextEditingController();
+  final TextEditingController pwdTextFieldController = TextEditingController();
+
   SharedPreferences? _prefs;
 
   @override
@@ -35,24 +38,31 @@ class SignInLogic extends GetxController {
   void onReady() {
     super.onReady();
     if (kDebugMode) {
-      setUserName("jixiaoyong");
-      setUserPwd("123456");
+      // mock login data
+      setUserName("jixiaoyong", false);
+      setUserPwd("123456", false);
       final String userPwdMd5 = Md5Utils.generateMd5(state.userPwd.value);
       _prefs?.setString(CommonKeys.USER_NAME, state.userName.value);
       _prefs?.setString(CommonKeys.USER_PWD, userPwdMd5);
     }
   }
 
-  void setUserName(String value) {
+  void setUserName(String value, [bool isUserInput = true]) {
     state.userName.value = value;
     state.userNameError.value = UsernamePwdUtils.checkUserName(value);
     state.isUserInputValid.value = isUserNameAndPwdValid();
+    if (!isUserInput) {
+      nameTextFieldController.text = value;
+    }
   }
 
-  void setUserPwd(String value) {
+  void setUserPwd(String value, [bool isUserInput = true]) {
     state.userPwd.value = value;
     state.userPwdError.value = UsernamePwdUtils.checkPassword(value);
     state.isUserInputValid.value = isUserNameAndPwdValid();
+    if (!isUserInput) {
+      pwdTextFieldController.text = value;
+    }
   }
 
   bool isUserNameAndPwdValid() {
@@ -71,12 +81,12 @@ class SignInLogic extends GetxController {
         final String userPwdMd5 = Md5Utils.generateMd5(state.userPwd.value);
         if (localUserName == state.userName.value &&
             userPwdMd5 == localUserPwdMd5) {
-          _appLogic.setUserInfo(state.userName.value);
+          _appLogic.setUserInfo(state.userName.value,null);
           state.isLoading.value = false;
           state.isLoginSuccess.value = true;
           _prefs?.setBool(CommonKeys.IS_LOGIN_SUCCESS, true);
         } else {
-          _appLogic.setUserInfo("");
+          _appLogic.setUserInfo("",null);
           state.isLoading.value = false;
           state.isLoginSuccess.value = false;
         }

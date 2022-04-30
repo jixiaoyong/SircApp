@@ -47,7 +47,7 @@ class PersonPage extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(50.dp),
                     child: NetworkWebImage(
-                      "https://s3.bmp.ovh/imgs/2022/04/22/b352d638990f1e84.webp",
+                      state.userAvatar.value,
                       size: Size(100.dp, 100.dp),
                       fit: BoxFit.cover,
                     ),
@@ -55,7 +55,7 @@ class PersonPage extends StatelessWidget {
                 )),
             Padding(
               padding: EdgeInsets.fromLTRB(0, 10.dp, 0, 8.dp),
-              child: Text("JI,XIAOYONG",
+              child: Text(state.userName.value,
                   style: TextStyle(fontSize: 20.sp, color: Colors.black)),
             ),
             Text("Total Spending".tr,

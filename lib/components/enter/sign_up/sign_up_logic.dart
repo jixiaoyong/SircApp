@@ -1,9 +1,10 @@
 import 'dart:ui';
 
-import 'package:flutter/src/widgets/icon_data.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/bean/pair.dart';
+import 'package:sirc/components/enter/sign_in/sign_in_logic.dart';
 import 'package:sirc/data/common_keys.dart';
 import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/utils/m5d_utils.dart';
@@ -19,6 +20,7 @@ import 'sign_up_state.dart';
 * @date: 22/04/20
 */
 class SignUpLogic extends GetxController {
+  final SignInLogic _signInLogic = Get.find();
   final SignUpState state = SignUpState();
 
   SharedPreferences? _prefs;
@@ -81,9 +83,14 @@ class SignUpLogic extends GetxController {
 
       // mock register
       Future.delayed(Duration(seconds: MockUtils.random.nextInt(10) + 3), () {
+        // register success
+        _signInLogic.setUserName(state.userName.value,false);
+        _signInLogic.setUserPwd(state.userPwd.value,false);
+
         final String userPwdMd5 = Md5Utils.generateMd5(state.userPwd.value);
         _prefs?.setString(CommonKeys.USER_NAME, state.userName.value);
         _prefs?.setString(CommonKeys.USER_PWD, userPwdMd5);
+        _prefs?.setString(CommonKeys.USER_EMAIL, state.userEmail.value);
 
         state.isLoading.value = false;
         state.isRegisterSuccess.value = true;

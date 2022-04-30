@@ -1,0 +1,6 @@
+{
+    "dart.hotReloadOnSave": "manual",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "commentTranslate.source": "Baidu",
+    "dart.hotReloadProgress": "statusBar"
+}

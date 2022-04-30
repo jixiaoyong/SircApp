@@ -16,6 +16,8 @@ import 'sign_up_logic.dart';
 * @date: 22/04/20
 */
 class SignUpPage extends StatefulWidget {
+  const SignUpPage({Key? key}) : super(key: key);
+
   @override
   State<SignUpPage> createState() => _SignUpPageState();
 }
@@ -233,11 +235,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: !isButtonEnabled
-                        ? null
-                        : () {
-                            logic.register();
-                          },
+                    onTap: !isButtonEnabled ? null : () => logic.register(),
                     child: Container(
                       height: 50.dp,
                       margin: EdgeInsets.only(top: 30.dp, bottom: 20.dp),

@@ -113,6 +113,7 @@ class _SignInPageState extends State<SignInPage> {
                         ],
                         color: Colors.white),
                     child: TextField(
+                      controller: logic.nameTextFieldController,
                       decoration: InputDecoration(
                         hintText: "Username".tr,
                         hintStyle: const TextStyle(color: Colors.grey),
@@ -145,6 +146,7 @@ class _SignInPageState extends State<SignInPage> {
                         ],
                         color: Colors.white),
                     child: TextField(
+                      controller: logic.pwdTextFieldController,
                       decoration: InputDecoration(
                         hintText: "Password".tr,
                         hintStyle: const TextStyle(color: Colors.grey),

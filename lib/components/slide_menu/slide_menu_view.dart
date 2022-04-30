@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/utils/color_extension.dart';
@@ -83,7 +82,7 @@ class _SlideMenuPageState extends State<SlideMenuPage>
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(50.dp),
                       child: NetworkWebImage(
-                        "https://s3.bmp.ovh/imgs/2022/04/22/b352d638990f1e84.webp",
+                        state.avatar.value,
                         size: Size.square(70.dp),
                         fit: BoxFit.cover,
                       ),
@@ -92,12 +91,12 @@ class _SlideMenuPageState extends State<SlideMenuPage>
                   Padding(
                     padding: EdgeInsets.only(top: 10.dp, bottom: 12.dp),
                     child: Text(
-                      "JI,XIAOYONG",
+                      state.username.value,
                       style: TextStyle(color: Colors.white, fontSize: 16.sp),
                     ),
                   ),
                   Text(
-                    "jixiaoyong1995@gmail.com",
+                    state.email.value,
                     style: TextStyle(color: Colors.white, fontSize: 12.sp),
                   ),
                   Padding(padding: EdgeInsets.all(20.dp)),

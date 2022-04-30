@@ -8,6 +8,7 @@ import 'package:sirc/widgets/jingang_widget.dart';
 
 class HomePageState {
   var currentBankIndex = 0.obs;
+  var userAvatar = "".obs;
   late PageController pageController;
 
   final List<Pair<String, double>> dataChange = MockUtils.dataChange.obs;
@@ -62,4 +63,5 @@ class HomePageState {
       expirationDate: "11/22",
     ),
   ];
+
 }
