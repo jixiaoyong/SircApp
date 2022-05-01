@@ -75,13 +75,13 @@ class HomePage extends StatelessWidget {
           var bgColor = Colors.grey.shade200;
           return ListView.builder(itemBuilder: (context, index) {
             return Container(
-              height: 100,
+              height: 100.dp,
               margin: EdgeInsets.all(10.dp),
               child: Row(
                 children: [
                   Container(
-                    width: 100,
-                    height: 100,
+                    width: 100.dp,
+                    height: 100.dp,
                     decoration: BoxDecoration(
                         color: bgColor,
                         borderRadius: BorderRadius.circular(10)),
@@ -98,38 +98,41 @@ class HomePage extends StatelessWidget {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.dp),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 30.dp,
-                            decoration: BoxDecoration(
-                                color: bgColor,
-                                borderRadius: BorderRadius.circular(5.dp)),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: 10.dp,
-                              right: 30.dp,
-                            ),
-                            child: Container(
-                              height: 20.dp,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 10.dp, vertical: 5.dp),
+                      child: SizedBox(
+                        height: 100.dp,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              height: 30.dp,
                               decoration: BoxDecoration(
                                   color: bgColor,
                                   borderRadius: BorderRadius.circular(5.dp)),
                             ),
-                          ),
-                          Spacer(),
-                          Padding(
-                            padding: EdgeInsets.only(right: 120.dp),
-                            child: Container(
-                              height: 20.dp,
-                              decoration: BoxDecoration(
-                                  color: bgColor,
-                                  borderRadius: BorderRadius.circular(5.dp)),
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(right: 30.dp, bottom: 15.dp),
+                              child: Container(
+                                height: 15.dp,
+                                decoration: BoxDecoration(
+                                    color: bgColor,
+                                    borderRadius: BorderRadius.circular(5.dp)),
+                              ),
                             ),
-                          )
-                        ],
+                            Padding(
+                              padding: EdgeInsets.only(right: 120.dp),
+                              child: Container(
+                                height: 10.dp,
+                                decoration: BoxDecoration(
+                                    color: bgColor,
+                                    borderRadius: BorderRadius.circular(5.dp)),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   )
