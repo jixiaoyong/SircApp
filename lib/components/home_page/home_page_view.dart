@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:sirc/bean/pair.dart';
 import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
 import 'package:sirc/data/common_date.dart';
 import 'package:sirc/utils/color_extension.dart';
@@ -12,6 +14,7 @@ import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
 
 import 'home_page_logic.dart';
+
 /*
 * @description: Home page
 *
@@ -26,14 +29,124 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final slideMenuLogic = Get.find<SlideMenuLogic>();
+
     state.pageController =
         PageController(initialPage: 0, viewportFraction: 0.8);
 
-    return Obx(() {
-      return SingleChildScrollView(
-        child: SafeArea(
+    var _tabs = state.tabDatas;
+    return DefaultTabController(
+      length: _tabs.length,
+      child: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return [
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  sliverAppBarBody(slideMenuLogic),
+                ],
+              ),
+            ),
+            SliverAppBar(
+              pinned: true,
+              toolbarHeight: 0,
+              // elevation: 0,
+              primary: false,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              bottom: TabBar(
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.grey,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicator: UnderlineTabIndicator(
+                    borderSide: BorderSide(
+                        color: Colors.indigoAccent.withOpacity(0.6),
+                        width: 3.dp),
+                    insets: EdgeInsets.symmetric(horizontal: 50.dp),
+                  ),
+                  tabs: _tabs.map((e) {
+                    return Tab(
+                      text: e.first,
+                    );
+                  }).toList()),
+            ),
+          ];
+        },
+        body: TabBarView(
+            children: _tabs.map((e) {
+          var bgColor = Colors.grey.shade200;
+          return ListView.builder(itemBuilder: (context, index) {
+            return Container(
+              height: 100,
+              margin: EdgeInsets.all(10.dp),
+              child: Row(
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                        color: bgColor,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Center(
+                      child: Text(
+                        "${e.first} $index",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.sp,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.dp),
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 30.dp,
+                            decoration: BoxDecoration(
+                                color: bgColor,
+                                borderRadius: BorderRadius.circular(5.dp)),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: 10.dp,
+                              right: 30.dp,
+                            ),
+                            child: Container(
+                              height: 20.dp,
+                              decoration: BoxDecoration(
+                                  color: bgColor,
+                                  borderRadius: BorderRadius.circular(5.dp)),
+                            ),
+                          ),
+                          Spacer(),
+                          Padding(
+                            padding: EdgeInsets.only(right: 120.dp),
+                            child: Container(
+                              height: 20.dp,
+                              decoration: BoxDecoration(
+                                  color: bgColor,
+                                  borderRadius: BorderRadius.circular(5.dp)),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            );
+          });
+        }).toList()),
+      ),
+    );
+  }
+
+  Widget sliverAppBarBody(SlideMenuLogic slideMenuLogic) {
+    return Obx(() => SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.dp),
@@ -83,7 +196,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                        bottom: 30.dp,
+                        bottom: 20.dp,
                         right: 0,
                         left: 0,
                         child: Row(
@@ -180,7 +293,7 @@ class HomePage extends StatelessWidget {
                         )
                       ],
                     ),
-                    Container(
+                    SizedBox(
                       height: 150.dp,
                       child: ListView.builder(
                         itemBuilder: (context, index) {
@@ -208,7 +321,7 @@ class HomePage extends StatelessWidget {
                                     size: 50.dp,
                                   ),
                                   Text(
-                                    r"-$20",
+                                    r"-",
                                     style: TextStyle(
                                         fontSize: 20.dp,
                                         fontWeight: FontWeight.bold,
@@ -230,13 +343,62 @@ class HomePage extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                       ),
                     ),
+                    TitleText(text: "Articles".tr),
                   ],
                 ),
-              )
+              ),
             ],
           ),
+        ));
+  }
+}
+
+// HomeTabList(
+// data: state.tabDatas,
+// onTap: (index) {
+// // todo deal with tab click
+// })
+
+class HomeTabList extends StatefulWidget {
+  final List<Pair<String, int>> data;
+  final ValueChanged<int> onTap;
+
+  const HomeTabList({Key? key, required this.data, required this.onTap})
+      : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _HomeTabListState();
+  }
+}
+
+class _HomeTabListState extends State<HomeTabList>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    _tabController = TabController(length: widget.data.length, vsync: this);
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TabBar(
+        labelColor: Colors.black,
+        controller: _tabController,
+        unselectedLabelColor: Colors.grey,
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicator: UnderlineTabIndicator(
+          borderSide: BorderSide(
+              color: Colors.indigoAccent.withOpacity(0.6), width: 3.dp),
+          insets: EdgeInsets.symmetric(horizontal: 50.dp),
         ),
-      );
-    });
+        tabs: widget.data.map((e) {
+          return Tab(
+            text: e.first,
+          );
+        }).toList());
   }
 }

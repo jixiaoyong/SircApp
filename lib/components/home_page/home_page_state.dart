@@ -9,9 +9,18 @@ import 'package:sirc/widgets/jingang_widget.dart';
 class HomePageState {
   var currentBankIndex = 0.obs;
   var userAvatar = "".obs;
+  var homeAppBarFlexibleWidgetHeight = 0.0.obs;
+
   late PageController pageController;
 
   final List<Pair<String, double>> dataChange = MockUtils.dataChange.obs;
+
+  /// fake tab data: (Name,Id)
+  final List<Pair<String, int>> tabDatas = [
+    Pair("Follow".tr, 0x0),
+    Pair("Hot".tr, 0x1),
+    Pair("Explore".tr, 0x2)
+  ];
 
   /// all of those icon come form https://icons8.com/, thanks to them
   final list = [
@@ -63,5 +72,4 @@ class HomePageState {
       expirationDate: "11/22",
     ),
   ];
-
 }

@@ -23,4 +23,8 @@ class HomePageLogic extends GetxController {
     state.pageController.animateToPage(index,
         duration: const Duration(milliseconds: 200), curve: Curves.easeIn);
   }
+
+  void onFlexibleSpaceBarSizeChange(Size size) {
+    state.homeAppBarFlexibleWidgetHeight.value = size.height;
+  }
 }

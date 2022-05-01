@@ -11,7 +11,7 @@ class SizeReportableContainer extends StatefulWidget {
   final Widget child;
   final ValueChanged<Size?> onSizeChange;
 
-  SizeReportableContainer(
+  const SizeReportableContainer(
       {Key? key, required this.child, required this.onSizeChange})
       : super(key: key);
 
@@ -36,8 +36,11 @@ class _SizeReportableContainerState extends State<SizeReportableContainer> {
         widget.onSizeChange(size);
       }
     });
-    return Container(
-      child: widget.child,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        widget.child,
+      ],
     );
   }
 }

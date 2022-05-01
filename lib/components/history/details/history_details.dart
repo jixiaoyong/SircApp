@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sirc/data/common_date.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 
@@ -39,7 +40,7 @@ class HistoryDetails extends StatelessWidget {
             tag: heroTag,
             child: NetworkWebImage(
               data.userIcon!,
-              size: Size.square(MediaQuery.of(context).size.width),
+              size: Size.square(CommonData.realScreenWidth),
               fit: BoxFit.cover,
             ),
           ),
