@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:sirc/bean/pair.dart';
 import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
@@ -46,101 +45,128 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            SliverAppBar(
-              pinned: true,
-              toolbarHeight: 0,
-              // elevation: 0,
-              primary: false,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              bottom: TabBar(
-                  labelColor: Colors.black,
-                  unselectedLabelColor: Colors.grey,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  indicator: UnderlineTabIndicator(
-                    borderSide: BorderSide(
-                        color: Colors.indigoAccent.withOpacity(0.6),
-                        width: 3.dp),
-                    insets: EdgeInsets.symmetric(horizontal: 50.dp),
-                  ),
-                  tabs: _tabs.map((e) {
-                    return Tab(
-                      text: e.first,
-                    );
-                  }).toList()),
+            SliverOverlapAbsorber(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              sliver: SliverAppBar(
+                pinned: true,
+                toolbarHeight: 0,
+                // elevation: 0,
+                primary: false,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                bottom: TabBar(
+                    labelColor: Colors.black,
+                    unselectedLabelColor: Colors.grey,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicator: UnderlineTabIndicator(
+                      borderSide: BorderSide(
+                          color: Colors.indigoAccent.withOpacity(0.6),
+                          width: 3.dp),
+                      insets: EdgeInsets.symmetric(horizontal: 50.dp),
+                    ),
+                    tabs: _tabs.map((e) {
+                      return Tab(
+                        text: e.first,
+                      );
+                    }).toList()),
+              ),
             ),
           ];
         },
         body: TabBarView(
             children: _tabs.map((e) {
-          var bgColor = Colors.grey.shade200;
-          return ListView.builder(itemBuilder: (context, index) {
-            return Container(
-              height: 100.dp,
-              margin: EdgeInsets.all(10.dp),
-              child: Row(
-                children: [
-                  Container(
-                    width: 100.dp,
-                    height: 100.dp,
-                    decoration: BoxDecoration(
-                        color: bgColor,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Center(
-                      child: Text(
-                        "${e.first} $index",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20.sp,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.bold),
-                      ),
+          return SafeArea(
+            top: false,
+            bottom: false,
+            child: Builder(builder: (context) {
+              return CustomScrollView(
+                key: PageStorageKey<String>(e.second.toString()),
+                slivers: [
+                  SliverOverlapInjector(
+                    // This is the flip side of the SliverOverlapAbsorber
+                    // above.
+                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                        context),
+                  ),
+                  SliverFixedExtentList(
+                    itemExtent: 120.dp,
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                        return buildTabViewListItem(e, index);
+                      },
+                      childCount: 30,
                     ),
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 10.dp, vertical: 5.dp),
-                      child: SizedBox(
-                        height: 100.dp,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              height: 30.dp,
-                              decoration: BoxDecoration(
-                                  color: bgColor,
-                                  borderRadius: BorderRadius.circular(5.dp)),
-                            ),
-                            Padding(
-                              padding:
-                                  EdgeInsets.only(right: 30.dp, bottom: 15.dp),
-                              child: Container(
-                                height: 15.dp,
-                                decoration: BoxDecoration(
-                                    color: bgColor,
-                                    borderRadius: BorderRadius.circular(5.dp)),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(right: 120.dp),
-                              child: Container(
-                                height: 10.dp,
-                                decoration: BoxDecoration(
-                                    color: bgColor,
-                                    borderRadius: BorderRadius.circular(5.dp)),
-                              ),
-                            )
-                          ],
-                        ),
+                ],
+              );
+            }),
+          );
+        }).toList()),
+      ),
+    );
+  }
+
+  Widget buildTabViewListItem(Pair<String, int> e, int index) {
+    var bgColor = Colors.grey.shade200;
+    return Container(
+      margin: EdgeInsets.all(10.dp),
+      height: 100.dp,
+      child: Row(
+        children: [
+          Container(
+            width: 100.dp,
+            height: 100.dp,
+            decoration: BoxDecoration(
+                color: bgColor, borderRadius: BorderRadius.circular(10)),
+            child: Center(
+              child: Text(
+                "${e.first} $index",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.sp,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 5.dp),
+              child: SizedBox(
+                height: 100.dp,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      height: 30.dp,
+                      decoration: BoxDecoration(
+                          color: bgColor,
+                          borderRadius: BorderRadius.circular(5.dp)),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 30.dp, bottom: 15.dp),
+                      child: Container(
+                        height: 15.dp,
+                        decoration: BoxDecoration(
+                            color: bgColor,
+                            borderRadius: BorderRadius.circular(5.dp)),
                       ),
                     ),
-                  )
-                ],
+                    Padding(
+                      padding: EdgeInsets.only(right: 120.dp),
+                      child: Container(
+                        height: 10.dp,
+                        decoration: BoxDecoration(
+                            color: bgColor,
+                            borderRadius: BorderRadius.circular(5.dp)),
+                      ),
+                    )
+                  ],
+                ),
               ),
-            );
-          });
-        }).toList()),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -292,7 +318,9 @@ class HomePage extends StatelessWidget {
                         const Spacer(),
                         GestureDetector(
                           child: const Icon(Icons.arrow_forward),
-                          onTap: () {},
+                          onTap: () {
+                            // todo add some logic
+                          },
                         )
                       ],
                     ),
@@ -324,7 +352,7 @@ class HomePage extends StatelessWidget {
                                     size: 50.dp,
                                   ),
                                   Text(
-                                    r"-",
+                                    r"-$20",
                                     style: TextStyle(
                                         fontSize: 20.dp,
                                         fontWeight: FontWeight.bold,
@@ -355,12 +383,6 @@ class HomePage extends StatelessWidget {
         ));
   }
 }
-
-// HomeTabList(
-// data: state.tabDatas,
-// onTap: (index) {
-// // todo deal with tab click
-// })
 
 class HomeTabList extends StatefulWidget {
   final List<Pair<String, int>> data;
