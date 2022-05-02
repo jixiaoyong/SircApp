@@ -58,7 +58,6 @@ class EmbedWebView4FlutterWeb extends StatefulWidget {
 }
 
 class EmbedWebView4FlutterWebState extends State<EmbedWebView4FlutterWeb> {
-  late String _url;
   late html.IFrameElement _iframeElement;
   double _iframeElementHeight = 10;
   double _iframeElementWidth = 10;
@@ -99,7 +98,6 @@ class EmbedWebView4FlutterWebState extends State<EmbedWebView4FlutterWeb> {
   }
 
   void updateHeight(double height) {
-    print("js call $height");
     setState(() {
       _iframeElementHeight = height;
     });

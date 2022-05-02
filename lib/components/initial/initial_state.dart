@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:sirc/bean/triple.dart';
 import 'package:sirc/gen_a/A.dart';
 

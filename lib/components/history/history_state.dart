@@ -34,7 +34,7 @@ class HistoryState {
   final List<Pair<String, double>> dataChange = MockUtils.dataChange.obs;
 
   final List<MoneyOperateBean> moneyOperateList = MockUtils.moneyOperateList
-      .map((e) => e
-        ..userIcon = "https://s3.bmp.ovh/imgs/2022/04/30/c82e5993e4047df6.jpeg")
+      .map((e) => e.copyWith(
+          userIcon: "https://s3.bmp.ovh/imgs/2022/04/30/c82e5993e4047df6.jpeg"))
       .toList();
 }

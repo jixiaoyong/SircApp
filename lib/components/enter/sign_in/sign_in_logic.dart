@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -81,12 +79,12 @@ class SignInLogic extends GetxController {
         final String userPwdMd5 = Md5Utils.generateMd5(state.userPwd.value);
         if (localUserName == state.userName.value &&
             userPwdMd5 == localUserPwdMd5) {
-          _appLogic.setUserInfo(state.userName.value,null);
+          _appLogic.setUserInfo(state.userName.value, null);
           state.isLoading.value = false;
           state.isLoginSuccess.value = true;
           _prefs?.setBool(CommonKeys.IS_LOGIN_SUCCESS, true);
         } else {
-          _appLogic.setUserInfo("",null);
+          _appLogic.setUserInfo("", null);
           state.isLoading.value = false;
           state.isLoginSuccess.value = false;
         }

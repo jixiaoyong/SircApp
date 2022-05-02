@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -84,8 +82,8 @@ class SignUpLogic extends GetxController {
       // mock register
       Future.delayed(Duration(seconds: MockUtils.random.nextInt(10) + 3), () {
         // register success
-        _signInLogic.setUserName(state.userName.value,false);
-        _signInLogic.setUserPwd(state.userPwd.value,false);
+        _signInLogic.setUserName(state.userName.value, false);
+        _signInLogic.setUserPwd(state.userPwd.value, false);
 
         final String userPwdMd5 = Md5Utils.generateMd5(state.userPwd.value);
         _prefs?.setString(CommonKeys.USER_NAME, state.userName.value);

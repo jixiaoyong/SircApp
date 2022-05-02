@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,7 +6,6 @@ import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 import 'package:sirc/widgets/webview/embed/embed_webview.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 import 'about_logic.dart';
 

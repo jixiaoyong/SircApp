@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:sirc/bean/money_operate_bean.dart';
@@ -18,7 +17,10 @@ class PersonState {
   var userAvatar = "".obs;
   var currentIndex = 0.obs;
 
-  final List<MoneyOperateBean> moneyOperateList = MockUtils.moneyOperateList;
+  final List<MoneyOperateBean> moneyOperateList = MockUtils.moneyOperateList
+      .map((e) => e.copyWith(
+          userIcon: "https://s3.bmp.ovh/imgs/2022/05/02/cc4abc259d3d1171.png"))
+      .toList();
 
   final Rx<List<Pair<IconData, String>>> generalInformationList =
       Rx(generateInfoList());

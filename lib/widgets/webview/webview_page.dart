@@ -36,12 +36,12 @@ class WebViewPage extends StatefulWidget {
   bool needSurfaceAndroidWebView;
 
   WebViewPage(
-    this.url, {
+    this.url, {Key? key, 
     this.title,
     this.javascriptChannels,
     this.needAppBar = true,
     this.needSurfaceAndroidWebView = false,
-  }) {
+  }) : super(key: key) {
     LogUtils.d("WebViewPage open url: $url");
   }
 
@@ -80,7 +80,7 @@ class WebViewPageState extends State<WebViewPage> {
         ?.map((e) => e.getRealMessageChannel(context))
         .toSet();
     _innerJsChannels = realJavascriptChannels;
-    var bodyWidget;
+    Widget bodyWidget;
     if (widget.needAppBar) {
       bodyWidget = Scaffold(
         appBar: AppBar(
@@ -89,7 +89,7 @@ class WebViewPageState extends State<WebViewPage> {
             style: const TextStyle(color: Colors.black),
           ),
           centerTitle: true,
-          brightness: Brightness.light,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           elevation: 0.5,
           leading: IconButton(
               onPressed: () {
@@ -169,14 +169,13 @@ class WebViewPageState extends State<WebViewPage> {
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                        child: const EndlessRotatingIndicator(
+                  children: const [
+                    EndlessRotatingIndicator(
                       child: Icon(
-                        Icons.refresh,
-                        color: Colors.white,
+                    Icons.refresh,
+                    color: Colors.white,
                       ),
-                    ))
+                    )
                   ],
                 ),
               )

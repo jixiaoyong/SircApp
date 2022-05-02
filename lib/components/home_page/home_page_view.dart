@@ -25,6 +25,8 @@ class HomePage extends StatelessWidget {
   final logic = Get.put(HomePageLogic());
   final state = Get.find<HomePageLogic>().state;
 
+  HomePage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final slideMenuLogic = Get.find<SlideMenuLogic>();

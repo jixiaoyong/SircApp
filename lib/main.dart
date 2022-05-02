@@ -13,7 +13,7 @@ import 'package:flutter_ume_kit_show_code/flutter_ume_kit_show_code.dart'; // �
 import 'package:flutter_ume_kit_ui/flutter_ume_kit_ui.dart'; // UI 插件包
 import 'package:get/get.dart';
 import 'package:sirc/data/languages.dart';
-import 'package:sirc/utils/size_extension.dart' as sizeExt;
+import 'package:sirc/utils/size_extension.dart' as size_ext;
 
 import 'components/not_found/not_found_view.dart';
 import 'data/common_date.dart';
@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
       final appWidth = heightLogical * 9 / 16;
       final horizontalPadding = (widthLogical - appWidth) / 2;
 
-      sizeExt.SizeExtension.dpScale = appWidth / widthLogical;
+      size_ext.SizeExtension.dpScale = appWidth / widthLogical;
       CommonData.realScreenWidth = appWidth;
 
       LogUtils.d(

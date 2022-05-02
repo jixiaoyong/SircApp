@@ -16,7 +16,7 @@ class WebJavaScriptChannelWrapper {
   WebViewController? webViewController;
 
   WebJavaScriptChannelWrapper(
-      {required this.name, required this.onMessageReceived}) {}
+      {required this.name, required this.onMessageReceived});
 
   JavascriptChannel getRealMessageChannel(BuildContext context) {
     return JavascriptChannel(

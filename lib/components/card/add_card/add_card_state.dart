@@ -34,7 +34,7 @@ class AddCardState {
 
   Rx<String> cardNumber = Rx("");
   Rx<String?> expireDateString = Rx(null);
-  DateTime? expireDate = null;
+  DateTime? expireDate;
   Rx<String> cvv = Rx("");
 
   Rx<String?> ownerNameError = Rx(null);

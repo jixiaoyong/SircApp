@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:sirc/utils/size_extension.dart';
 
@@ -48,8 +46,7 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Stack(
+    return Stack(
       children: [
         TextSelectionTheme(
           data:
@@ -164,6 +161,6 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
           ),
         )
       ],
-    ));
+    );
   }
 }

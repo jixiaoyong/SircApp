@@ -15,6 +15,7 @@ Widget getEmbedWebView(String srcDoc, [double? width, double? height]) =>
 
 class FlutterWebview4AndroidIos extends StatefulWidget {
   String webViewContent;
+
   // widget width, unit is px
   double width = 0;
   double? maxHeight = 0;
@@ -34,7 +35,6 @@ class FlutterWebview4AndroidIos extends StatefulWidget {
 class _FlutterWebview4AndroidIosState extends State<FlutterWebview4AndroidIos> {
   double _heights = 10;
   double? _widgetWidth;
-  double _screenMaxHeightPx = double.infinity;
 
   WebViewController? webViewController;
   WebViewPlatform? cachePlatform;

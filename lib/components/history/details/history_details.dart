@@ -5,7 +5,6 @@ import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 
 import '../../../bean/money_operate_bean.dart';
 import '../../../widgets/network_web_image.dart';
-import '../../../utils/number_extension.dart';
 
 /*
  * @Author: jixiaoyong
