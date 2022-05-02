@@ -80,23 +80,23 @@ class MyApp extends StatelessWidget {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
         color: Colors.grey.shade100,
-        child: buildAppScreen(),
+        child: buildAppScreen(context),
       );
     } else {
       // notice: In some device(eg. Mi 10 pro), the size can be zero here,
       // so we need to query the size again after the widget is shown in the screen
       // see the code in buildAppScreen() method 👇
       CommonData.realScreenWidth = widthLogical;
-      return buildAppScreen();
+      return buildAppScreen(context);
     }
     // return app;
   }
 
-  ScreenUtilInit buildAppScreen() {
+  ScreenUtilInit buildAppScreen(BuildContext context) {
     return ScreenUtilInit(
         // setup the screen width be 375,then you can use number.dp to set the design size
         designSize: const Size(375, 666),
-        builder: (context) {
+        builder: (child) {
           if (!kIsWeb) {
             // In some mobile device(e.g. Mi 10 pro), the CommonData.realScreenWidth
             // may be zero, so we need to query the size again after the widget

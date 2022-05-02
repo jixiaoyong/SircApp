@@ -33,16 +33,16 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.4
   get: ^4.6.1
   # 屏幕适配
-  flutter_screenutil: ^5.4.0
+  flutter_screenutil: 5.5.1
   # 日志打印工具
   logger: ^1.1.0
   # 本地存储
   shared_preferences: ^2.0.13
   # Implementations of SHA, MD5, and HMAC cryptographic functions
-  crypto: ^3.0.1
+  crypto: ^3.0.2
   flutter_localizations: # localizations
     sdk: flutter
   # date picker that only include year and month
@@ -50,9 +50,9 @@ dependencies:
   # webview
   webview_flutter: ^3.0.2
   # extension library of image. The Flutter sdk version that this library dependencies is too height for me
-  extended_image: ^6.0.2+1
+  extended_image: ^6.0.3
   # use for show web view in flutter_web
-  js: 
+  js:
   # open url
   url_launcher: ^6.1.0
 dev_dependencies:
