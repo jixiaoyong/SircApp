@@ -97,13 +97,6 @@ class MyApp extends StatelessWidget {
         // setup the screen width be 375,then you can use number.dp to set the design size
         designSize: const Size(375, 666),
         builder: (child) {
-          if (!kIsWeb) {
-            // In some mobile device(e.g. Mi 10 pro), the CommonData.realScreenWidth
-            // may be zero, so we need to query the size again after the widget
-            // is shown in the screen
-            final size = MediaQuery.of(context).size;
-            CommonData.realScreenWidth = size.width;
-          }
 
           return GetMaterialApp(
             title: "Sirc App",
@@ -121,6 +114,17 @@ class MyApp extends StatelessWidget {
               Locale("en", ""),
               Locale("zh", "CN"),
             ],
+            onReady: () {
+              if (!kIsWeb) {
+                // In some mobile device(e.g. Mi 10 pro), the CommonData.realScreenWidth
+                // may be zero, so we need to query the size again after the widget
+                // is shown in the screen
+                // NOTICE: May cause exception "No MediaQuery widget ancestor found."
+                // if the code below execute before the material app is loaded.
+                final size = MediaQuery.of(context).size;
+                CommonData.realScreenWidth = size.width;
+              }
+            },
             locale: Get.deviceLocale,
             fallbackLocale: const Locale("en", "US"),
             translations: Languages(),
