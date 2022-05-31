@@ -37,26 +37,20 @@ jobs:
           cd build
           mkdir publish
           cd publish
-          
           # configure git
           git config --global user.email jixiaoyong1995@gmail.com
           git config --global user.name jixiaoyong
-          
           # clone the web branch from github, and delete all files in web branch
           git clone https://${{secrets.GH_DEPLOY}}@github.com/jixiaoyong/SircApp.git .
           git log -n 1 --pretty=format:"%h - %cn(%ce): %s" > ../last_commit.txt
           git checkout -b web origin/web
-          
           # remove all files except .git
           shopt -s extglob
           rm -rfv !(".git")
-          
           # copy the build files to the web branch
           cp -rf ../web/* .
-          
           # commit and push
           git add --all
-          
           # read commit message from ../last_commit.txt
           git commit -F ../last_commit.txt
           git push
