@@ -30,7 +30,27 @@ class InitialPage extends StatelessWidget {
       child: Obx(() {
         var isFirst = state.isFirstInitial.value;
         // first splash page
-        Widget? widget = Center(child: Image.asset(A.assets_ic_launcher));
+        Widget? widget = Column(
+          children: [
+            const Spacer(),
+            Center(child: Image.asset(A.assets_ic_launcher)),
+            const Spacer(),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10.0),
+              margin: const EdgeInsets.all(10.0),
+              decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              child: Center(
+                  child: Text("假装这里有广告>>>",
+                      style: TextStyle(
+                          fontSize: 15.sp,
+                          color: Colors.white.withOpacity(0.8)))),
+            ),
+          ],
+        );
         if (true == isFirst) {
           // first initial page
           widget = SizedBox(
@@ -129,8 +149,7 @@ class InitialPage extends StatelessWidget {
                                     child: Text(
                                       "Get Start".tr,
                                       style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20.sp),
+                                          color: Colors.white, fontSize: 20.sp),
                                     ),
                                   ),
                                 ),
