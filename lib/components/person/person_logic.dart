@@ -33,4 +33,12 @@ class PersonLogic extends GetxController {
       "heroTag": heroTag,
     });
   }
+
+  void onClickInformation(int index) {
+    state.currentIndex.value = index;
+    // just show ABOUT_US page
+    Get.toNamed(
+      AppRoutes.ABOUT,
+    );
+  }
 }

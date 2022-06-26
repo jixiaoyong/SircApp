@@ -44,7 +44,7 @@ class InitialPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               child: Center(
-                  child: Text("假装这里有广告>>>",
+                  child: Text("something like ads".tr,
                       style: TextStyle(
                           fontSize: 15.sp,
                           color: Colors.white.withOpacity(0.8)))),

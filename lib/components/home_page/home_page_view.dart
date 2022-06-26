@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/bean/pair.dart';
+import 'package:sirc/components/home_page/home_page_state.dart';
 import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
 import 'package:sirc/data/common_date.dart';
 import 'package:sirc/utils/color_extension.dart';
 import 'package:sirc/utils/size_extension.dart';
+import 'package:sirc/utils/toast.dart';
 import 'package:sirc/widgets/expandable_page_view.dart';
 import 'package:sirc/widgets/footlights_for_bank_card.dart';
 import 'package:sirc/widgets/jingang_widget.dart';
@@ -43,7 +45,10 @@ class HomePage extends StatelessWidget {
             SliverToBoxAdapter(
               child: Column(
                 children: [
-                  sliverAppBarBody(slideMenuLogic),
+                  HomeTopBodyWidget(
+                      state: state,
+                      logic: logic,
+                      slideMenuLogic: slideMenuLogic),
                 ],
               ),
             ),
@@ -51,7 +56,7 @@ class HomePage extends StatelessWidget {
               handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
               sliver: SliverAppBar(
                 pinned: true,
-                toolbarHeight: 0,
+                toolbarHeight: MediaQuery.of(context).viewPadding.top,
                 // elevation: 0,
                 primary: false,
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -93,7 +98,12 @@ class HomePage extends StatelessWidget {
                     itemExtent: 120.dp,
                     delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
-                        return buildTabViewListItem(e, index);
+                        return GestureDetector(
+                            onTap: () {
+                              Toast.showDefaultToast();
+                            },
+                            child: HomeTabViewListItemWidget(
+                                item: e, index: index));
                       },
                       childCount: 30,
                     ),
@@ -106,12 +116,25 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget buildTabViewListItem(Pair<String, int> e, int index) {
+class HomeTabViewListItemWidget extends StatelessWidget {
+  const HomeTabViewListItemWidget({
+    Key? key,
+    required this.item,
+    required this.index,
+  }) : super(key: key);
+
+  final Pair<String, int> item;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
     var bgColor = Colors.grey.shade200;
     return Container(
       margin: EdgeInsets.all(10.dp),
       height: 100.dp,
+      color: Colors.transparent,
       child: Row(
         children: [
           Container(
@@ -121,7 +144,7 @@ class HomePage extends StatelessWidget {
                 color: bgColor, borderRadius: BorderRadius.circular(10)),
             child: Center(
               child: Text(
-                "${e.first} $index",
+                "${item.first} $index",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 20.sp,
@@ -172,8 +195,22 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget sliverAppBarBody(SlideMenuLogic slideMenuLogic) {
+class HomeTopBodyWidget extends StatelessWidget {
+  const HomeTopBodyWidget({
+    Key? key,
+    required this.state,
+    required this.logic,
+    required this.slideMenuLogic,
+  }) : super(key: key);
+
+  final HomePageState state;
+  final HomePageLogic logic;
+  final SlideMenuLogic slideMenuLogic;
+
+  @override
+  Widget build(BuildContext context) {
     return Obx(() => SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -243,10 +280,10 @@ class HomePage extends StatelessWidget {
                                 margin: EdgeInsets.symmetric(horizontal: 5.dp),
                                 decoration: BoxDecoration(
                                     color:
-                                        (state.currentBankIndex.value == index
-                                                ? Colors.white
-                                                : "#ffb6c6d5".hexToColor)
-                                            .withOpacity(0.6),
+                                    (state.currentBankIndex.value == index
+                                        ? Colors.white
+                                        : "#ffb6c6d5".hexToColor)
+                                        .withOpacity(0.6),
                                     borderRadius: BorderRadius.circular(10.dp)),
                               ),
                             );
@@ -263,29 +300,34 @@ class HomePage extends StatelessWidget {
                   indicatorOffset: Offset(0, -2.dp),
                   itemBuilder:
                       (BuildContext context, int index, int pageIndex, data) {
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        NetworkWebImage(
-                          data.imageUrl,
-                          size: Size(40.dp, 40.dp),
-                          fit: BoxFit.fitHeight,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 2.dp),
-                          child: Text(
-                            data.title,
-                            overflow: TextOverflow.clip,
-                            maxLines: 2,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                height: 1,
-                                fontSize: 11.sp,
-                                color: "#ffb6c6d5".hexToColor,
-                                fontWeight: FontWeight.w500),
+                    return GestureDetector(
+                      onTap: () {
+                        Toast.showDefaultToast();
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          NetworkWebImage(
+                            data.imageUrl,
+                            size: Size(40.dp, 40.dp),
+                            fit: BoxFit.fitHeight,
                           ),
-                        )
-                      ],
+                          Padding(
+                            padding: EdgeInsets.only(top: 2.dp),
+                            child: Text(
+                              data.title,
+                              overflow: TextOverflow.clip,
+                              maxLines: 2,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  height: 1,
+                                  fontSize: 11.sp,
+                                  color: "#ffb6c6d5".hexToColor,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          )
+                        ],
+                      ),
                     );
                   },
                   indicatorBuilder:
@@ -295,7 +337,7 @@ class HomePage extends StatelessWidget {
                       scrollPercentage: scrollPercentage,
                       indicatorColor: Colors.indigoAccent.withOpacity(0.6),
                       indicatorBackgroundColor:
-                          Colors.indigoAccent.withOpacity(0.25),
+                      Colors.indigoAccent.withOpacity(0.25),
                     );
                   },
                 ),
@@ -376,7 +418,13 @@ class HomePage extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                       ),
                     ),
-                    TitleText(text: "Articles".tr),
+                    Text(
+                      "Articles".tr,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20.sp),
+                    )
                   ],
                 ),
               ),

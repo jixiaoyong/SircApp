@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/components/slide_menu/slide_menu_logic.dart';
-import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/utils/number_extension.dart';
+import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
 
@@ -79,7 +79,7 @@ class PersonPage extends StatelessWidget {
                       currentIndex == index ? Colors.white : Colors.black;
                   return GestureDetector(
                     onTap: () {
-                      logic.onClick(index,heroTag);
+                      logic.onClick(index, heroTag);
                     },
                     child: Container(
                       height: 200.dp,
@@ -155,38 +155,46 @@ class PersonPage extends StatelessWidget {
                   ...state.generalInformationList.value.map((item) {
                     var index =
                         state.generalInformationList.value.indexOf(item);
-                    return Container(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.dp, horizontal: 20.dp),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
+                    return GestureDetector(
+                      onTap: () {
+                        logic.onClickInformation(
+                          index,
+                        );
+                      },
+                      child: Container(
+                        color: Colors.transparent,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.dp, horizontal: 20.dp),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey.shade200,
+                                        borderRadius:
+                                            BorderRadius.circular(5.dp)),
+                                    padding: EdgeInsets.all(5.dp),
+                                    child: Icon(item.first)),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 10.dp),
+                                  child: Text(item.second),
+                                ),
+                                const Spacer(),
+                                const Icon(Icons.arrow_forward_ios_rounded)
+                              ],
+                            ),
+                            if (index !=
+                                state.generalInformationList.value.length - 1)
                               Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.grey.shade200,
-                                      borderRadius:
-                                          BorderRadius.circular(5.dp)),
-                                  padding: EdgeInsets.all(5.dp),
-                                  child: Icon(item.first)),
-                              Padding(
-                                padding: EdgeInsets.only(left: 10.dp),
-                                child: Text(item.second),
-                              ),
-                              const Spacer(),
-                              const Icon(Icons.arrow_forward_ios_rounded)
-                            ],
-                          ),
-                          if (index !=
-                              state.generalInformationList.value.length - 1)
-                            Container(
-                              height: 1,
-                              margin: EdgeInsets.only(top: 10.dp),
-                              color: Colors.grey.withOpacity(0.2),
-                            )
-                        ],
+                                height: 1,
+                                margin: EdgeInsets.only(top: 10.dp),
+                                color: Colors.grey.withOpacity(0.2),
+                              )
+                          ],
+                        ),
                       ),
                     );
                   }).toList(),

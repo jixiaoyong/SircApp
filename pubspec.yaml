@@ -57,6 +57,8 @@ dependencies:
   url_launcher: ^6.1.0
   # show splash
   flutter_native_splash: ^2.1.6
+  # toast
+  toast: ^0.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

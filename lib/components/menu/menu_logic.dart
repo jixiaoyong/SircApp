@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sirc/mock/mock_utils.dart';
 
 import '../main_app_logic.dart';
 import 'menu_state.dart';
@@ -22,6 +24,20 @@ class MenuLogic extends GetxController {
     _prefs = await SharedPreferences.getInstance();
     // listen to the local change, and update the menu state
     _appLogic.listenLocalChange((p0) {
+      state.menuItems.value = MenuState.generateMenus();
+    });
+    state.menuItems.listen((menuItems) {
+      state.menuColors.value = menuItems
+          .map((e) => Color.fromARGB(
+                255,
+                MockUtils.random.nextInt(255),
+                MockUtils.random.nextInt(255),
+                MockUtils.random.nextInt(255),
+              ))
+          .toList();
+    });
+    // mock data
+    Future(() {
       state.menuItems.value = MenuState.generateMenus();
     });
     super.onInit();

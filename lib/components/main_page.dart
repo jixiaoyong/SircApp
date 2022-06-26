@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/components/main_app_state.dart';
 import 'package:sirc/data/common_date.dart';
+import 'package:sirc/utils/toast.dart';
 
 import 'main_app_logic.dart';
 import 'slide_menu/slide_menu_view.dart';
@@ -26,6 +27,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    Toast.init(context);
     return Obx(() {
       var currentIndex = _appState.currentIndex.value;
       return SlideMenuPage(

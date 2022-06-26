@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/title_text.dart';
@@ -58,6 +57,7 @@ class MenuPage extends StatelessWidget {
               ],
             ),
             ...state.menuItems.value.map((item) {
+              var index = state.menuItems.value.indexOf(item);
               final bool isFingerprint = item.third == AppRoutes.FINGERPRINT;
               return Container(
                 margin: EdgeInsets.symmetric(vertical: 10.dp),
@@ -77,8 +77,7 @@ class MenuPage extends StatelessWidget {
                       height: 50.dp,
                       width: 50.dp,
                       decoration: BoxDecoration(
-                          color: Colors.accents.elementAt(
-                              MockUtils.random.nextInt(Colors.accents.length))
+                          color: state.menuColors.value[index]
                             ..withOpacity(0.5),
                           borderRadius: BorderRadius.circular(50.dp)),
                       child: Icon(
@@ -87,10 +86,10 @@ class MenuPage extends StatelessWidget {
                       )),
                   trailing: isFingerprint
                       ? CupertinoSwitch(
-                          value: state.isFingerprintOpen.value,
-                          onChanged: (v) {
-                            logic.changeFingerprint(isOpen: v);
-                          })
+                      value: state.isFingerprintOpen.value,
+                      onChanged: (v) {
+                        logic.changeFingerprint(isOpen: v);
+                      })
                       : const Icon(Icons.keyboard_arrow_right),
                   onTap: () {
                     if (isFingerprint) {

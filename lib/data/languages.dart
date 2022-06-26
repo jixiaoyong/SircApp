@@ -156,6 +156,8 @@ class Languages extends Translations {
           "Follow": "Follow",
           "Explore": "Explore",
           "Articles": "Articles",
+          "still working on it": "still working on it",
+          "something like ads": "something like ads>>>",
         },
         "zh_CN": {
           "MasterCard": "MasterCard卡",
@@ -289,6 +291,8 @@ class Languages extends Translations {
           "Hot": "热门",
           "Explore": "探索",
           "Articles": "文章",
+          "still working on it": "仍在努力开发中",
+          "something like ads": "假装这里有广告>>>",
         }
       };
 }

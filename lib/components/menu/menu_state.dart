@@ -12,8 +12,9 @@ import 'package:sirc/routes/app_routes.dart';
 * @date: 22/04/19
 */
 class MenuState {
-  final Rx<List<Triple<IconData, String, String>>> menuItems =
-      Rx(generateMenus());
+  final Rx<List<Triple<IconData, String, String>>> menuItems = Rx([]);
+
+  final Rx<List<Color>> menuColors = Rx([]);
 
   var isFingerprintOpen = false.obs;
 
