@@ -16,7 +16,7 @@ class NotFoundPage extends StatelessWidget {
         children: [
           const Icon(Icons.details, size: 100),
           const Text('Not Found'),
-          RaisedButton(
+          OutlinedButton(
             child: const Text('Go to Home'),
             onPressed: () => Get.offAllNamed(AppRoutes.INITIAL),
           ),

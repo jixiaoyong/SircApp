@@ -46,7 +46,9 @@ dependencies:
   flutter_localizations: # localizations
     sdk: flutter
   # date picker that only include year and month
-  month_picker_dialog: ^0.4.0
+  #  month_picker_dialog: ^0.4.0
+  month_picker_dialog:
+    git: https://github.com/jixiaoyong/month_picker_dialog.git
   # webview
   webview_flutter: ^3.0.2
   # extension library of image. The Flutter sdk version that this library dependencies is too height for me

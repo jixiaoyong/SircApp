@@ -86,10 +86,10 @@ class MenuPage extends StatelessWidget {
                       )),
                   trailing: isFingerprint
                       ? CupertinoSwitch(
-                      value: state.isFingerprintOpen.value,
-                      onChanged: (v) {
-                        logic.changeFingerprint(isOpen: v);
-                      })
+                          value: state.isFingerprintOpen.value,
+                          onChanged: (v) {
+                            logic.changeFingerprint(isOpen: v);
+                          })
                       : const Icon(Icons.keyboard_arrow_right),
                   onTap: () {
                     if (isFingerprint) {
@@ -99,13 +99,13 @@ class MenuPage extends StatelessWidget {
                         title: Text("Logout".tr),
                         content: Text("SureToLogout".tr),
                         actions: [
-                          FlatButton(
+                          OutlinedButton(
                             child: Text("Cancel".tr),
                             onPressed: () {
                               Get.back();
                             },
                           ),
-                          FlatButton(
+                          OutlinedButton(
                             child: Text(
                               "Logout & Clean Data".tr,
                               style: const TextStyle(color: Colors.red),
