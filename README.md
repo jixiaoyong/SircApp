@@ -1,8 +1,8 @@
-# SircApp ![SircApp](https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg) [![CodeFactor](https://www.codefactor.io/repository/github/jixiaoyong/sircapp/badge)](https://www.codefactor.io/repository/github/jixiaoyong/sircapp)
+# SircApp ![SircApp](https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg)
 
 A Finance Mobile Banking App.
 
-You can try this app online at [xiaoyong.ml/SircApp/](https://xiaoyong.ml/SircApp/).
+You can try this app online at [https://jixiaoyong.github.io/SircApp](https://jixiaoyong.github.io/SircApp/).
 
 ## Getting Started
 
