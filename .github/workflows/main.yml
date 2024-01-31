@@ -6,8 +6,23 @@ on:
   pull_request:
     branches: [ master ]
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   build:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     env:
       my_secret: ${{secrets.GITHUB_TOKEN}}
@@ -18,39 +33,12 @@ jobs:
           flutter-version: '3.3.5'
       - run: flutter config --enable-web
       - run: flutter pub get
-      #     - run: flutter test
       - run: flutter build web --web-renderer html --release
-      - name: Archive Production Artifact
-        uses: actions/upload-artifact@master
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: web-build
+          # Upload entire web artifact
           path: build/web
-      - name: Download Artifact
-        uses: actions/download-artifact@master
-        with:
-          name: web-build
-      - name: Display structure of build files
-        run: ls -R
-        working-directory: ./web
-      - name: Deploy to GH Pages
-        run: |
-          cd build
-          mkdir publish
-          cd publish
-          # configure git
-          git config --global user.email jixiaoyong1995@gmail.com
-          git config --global user.name jixiaoyong
-          # clone the web branch from github, and delete all files in web branch
-          git clone https://${{secrets.GH_DEPLOY}}@github.com/jixiaoyong/SircApp.git .
-          git log -n 1 --pretty=format:"%h - %cn(%ce): %s" > ../last_commit.txt
-          git checkout -b web origin/web
-          # remove all files except .git
-          shopt -s extglob
-          rm -rfv !(".git")
-          # copy the build files to the web branch
-          cp -rf ../web/* .
-          # commit and push
-          git add --all
-          # read commit message from ../last_commit.txt
-          git commit -F ../last_commit.txt
-          git push
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
