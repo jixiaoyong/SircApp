@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/data/common_keys.dart';
 
+import '../../routes/app_routes.dart';
 import '../main_app_logic.dart';
 import 'initial_state.dart';
 
@@ -33,6 +34,31 @@ class InitialLogic extends GetxController {
     initialLocalLanguage();
 
     super.onInit();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+
+    if (true != state.isFirstInitial.value) {
+      Future.delayed(const Duration(seconds: 3), () {
+        goMainPage();
+      });
+    }
+  }
+
+  Future<void> goMainPage() async {
+    bool? isLoginSuccess = isUserLoggedIn();
+    if (!isLoginSuccess) {
+      isLoginSuccess = await Get.toNamed(AppRoutes.SIGN_IN);
+    }
+
+    if (isLoginSuccess == true) {
+      Get.offAndToNamed(AppRoutes.MAIN);
+      markAsNotFirstInitial();
+    } else {
+      Get.offAndToNamed(AppRoutes.SIGN_IN);
+    }
   }
 
   void initialLocalLanguage() {

@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:sirc/bean/money_operate_bean.dart';
 import 'package:sirc/components/about/about_view.dart';
 import 'package:sirc/components/card/add_card/add_card_view.dart';
 import 'package:sirc/components/enter/forget_pwd/forget_pwd_view.dart';
@@ -28,7 +27,7 @@ class AppPages {
   static final routes = [
     GetPage(name: AppRoutes.INITIAL, page: () => InitialPage()),
     GetPage(name: AppRoutes.SIGN_IN, page: () => SignInPage()),
-    GetPage(name: AppRoutes.SIGN_UP, page: () => SignUpPage()),
+    GetPage(name: AppRoutes.SIGN_UP, page: () => const SignUpPage()),
     GetPage(name: AppRoutes.FORGET_PWD, page: () => ForgetPwdPage()),
     GetPage(name: AppRoutes.SET_PWD, page: () => SetPwdPage()),
     GetPage(name: AppRoutes.MAIN, page: () => const MainPage()),

@@ -162,11 +162,6 @@ class InitialPage extends StatelessWidget {
               itemCount: initialInfoLength,
             ),
           );
-        } else if (false == isFirst) {
-          // empty page
-          Future.delayed(const Duration(seconds: 5), () {
-            goMainPage();
-          });
         }
         return widget;
       }),
@@ -179,11 +174,9 @@ class InitialPage extends StatelessWidget {
     }
     _hasCallGoMainPage = true;
 
-    bool? isLoginSuccess = false;
-    if (!logic.isUserLoggedIn()) {
+    bool isLoginSuccess = logic.isUserLoggedIn();
+    if (!isLoginSuccess) {
       isLoginSuccess = await Get.toNamed(AppRoutes.SIGN_IN);
-    } else {
-      isLoginSuccess = true;
     }
 
     if (isLoginSuccess == true) {

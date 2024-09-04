@@ -23,7 +23,7 @@ class InitialState {
     Triple(
         A.assets_imgs_initial_pin_error,
         "Forgot PIN".tr,
-        "Don't take too much tension about PiN\nJust make ono call to bank and change your pin."
+        "Don't take too much tension about PiN\nJust make one call to the bank and change your pin."
             .tr),
     Triple(
         A.assets_imgs_initial_exchange,
