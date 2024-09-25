@@ -126,7 +126,7 @@ class _SignInPageState extends State<SignInPage> {
                         errorText: state.userNameError.value,
                         suffixIcon: const Icon(
                           Icons.person_outline,
-                          color: Colors.grey,
+                          color: Colors.redAccent,
                         ),
                       ),
                       onChanged: (value) {

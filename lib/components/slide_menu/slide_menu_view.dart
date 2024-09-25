@@ -35,7 +35,7 @@ class _SlideMenuPageState extends State<SlideMenuPage>
   @override
   void initState() {
     _controller = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
+        vsync: this, duration: const Duration(milliseconds: 200));
     _controller.addListener(() {
       setState(() {
         _percentage = _controller.value;
