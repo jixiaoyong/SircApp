@@ -10,6 +10,7 @@
  * Copyright (c) 2022 by jixiaoyong, All Rights Reserved. 
  */
 extension NumberExt on num? {
+  /// 保留两位小数
   String get toFormatedMoneyStr =>
       "${(this ?? 0) >= 0 ? "+" : "-"} \$${(this ?? 0).abs().toStringAsFixed(2)}";
 }

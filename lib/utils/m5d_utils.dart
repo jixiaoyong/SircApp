@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
 /*
-* @description: TODO
+* @description: 计算md5值
 *
 * @author: jixiaoyong
 * @email: jixiaoyong1995@gmail.com

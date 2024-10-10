@@ -1,7 +1,7 @@
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
 /*
-* @description: TODO
+* @description: 校验用户名和密码等的工具
 *
 * @author: jixiaoyong
 * @email: jixiaoyong1995@gmail.com
