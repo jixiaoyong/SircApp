@@ -14,7 +14,7 @@ import 'package:sirc/utils/size_extension.dart';
 * @date: 22/04/17
 */
 class BankCardWidget extends StatelessWidget {
-  String cardNumber;
+  final String cardNumber;
   final String bankName;
   final String ownerName;
   final String expirationDate;
@@ -24,18 +24,20 @@ class BankCardWidget extends StatelessWidget {
 
   final isMasterCard = MockUtils.random.nextBool();
 
-  BankCardWidget(
-      {required this.bankName,
-      required this.cardNumber,
-      required this.ownerName,
-      required this.expirationDate,
-      this.cardType,
-      this.height,
-      this.width}) {
-    // format card number
-    cardNumber = cardNumber.replaceAll(' ', '').trim();
-    // insert space in card number every 4 characters
-    cardNumber = cardNumber.replaceAllMapped(RegExp(r'([\s\S]{4})'), (match) {
+  BankCardWidget({
+    super.key,
+    required this.bankName,
+    required String cardNumber,
+    required this.ownerName,
+    required this.expirationDate,
+    this.cardType,
+    this.height,
+    this.width,
+  }) : cardNumber = _formatCardNumber(cardNumber);
+
+  static String _formatCardNumber(String raw) {
+    final clean = raw.replaceAll(' ', '').trim();
+    return clean.replaceAllMapped(RegExp(r'([\s\S]{4})'), (match) {
       return '${match.group(1)} ';
     });
   }
@@ -49,73 +51,90 @@ class BankCardWidget extends StatelessWidget {
         child: Container(
           height: height ?? 200.dp,
           width: width,
-          padding: EdgeInsets.all(10.dp),
+          padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
           decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.2),
               border:
                   Border.all(color: Colors.white.withOpacity(0.5), width: 2.dp),
               borderRadius: BorderRadius.circular(20.dp)),
-          child: Stack(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(
-                  bankName,
-                  style: TextStyle(
-                      fontSize: 28.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontStyle: FontStyle.italic),
+              Text(
+                bankName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                    fontSize: 26.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontStyle: FontStyle.italic),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 2.dp),
+                child: Image.asset(
+                  A.assets_imgs_bank_chip,
+                  height: 32.dp,
+                  fit: BoxFit.fitHeight,
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: 1.dp, bottom: 4.dp),
-                  child: Image.asset(
-                    A.assets_imgs_bank_chip,
-                    height: 45.dp,
-                    fit: BoxFit.fitHeight,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 8.dp, bottom: 8.dp),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.dp),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
                   child: Text(
                     cardNumber,
                     style: TextStyle(
                         fontSize: 20.sp,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withOpacity(0.85),
                         letterSpacing: 1.5),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 8.dp, top: 3.dp),
-                  child: Text(
-                    ownerName,
-                    style: TextStyle(
-                        fontSize: 15.sp, color: Colors.white.withOpacity(0.5)),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 8.dp, top: 3.dp),
-                  child: Text(
-                    expirationDate,
-                    style: TextStyle(
-                        fontSize: 15.sp,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ]),
-              Positioned(
-                right: 0,
-                bottom: 0,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.dp),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              ownerName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: Colors.white.withOpacity(0.7)),
+                            ),
+                          ),
+                          SizedBox(width: 12.dp),
+                          Text(
+                            expirationDate,
+                            style: TextStyle(
+                                fontSize: 14.sp,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 8.dp),
                     Text(
                       cardType ?? (isMasterCard ? "MasterCard".tr : "Visa".tr),
-                      style: TextStyle(fontSize: 20.sp, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 18.sp,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),

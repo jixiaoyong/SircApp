@@ -76,7 +76,8 @@ class _ExpandablePageViewState extends State<ExpandablePageView> {
         if (_pageViewController.position.userScrollDirection ==
             ScrollDirection.reverse) {
           currentPage = pageIndexPercent.floor();
-          final currentPageHeight = _viewPageHeightList[currentPage]!;
+          final currentPageHeight =
+              _viewPageHeightList[currentPage] ?? _currentPageHeight;
 
           var currentPageScrollPercentage =
               pageIndexPercent - pageIndexPercent.floor();
@@ -88,7 +89,8 @@ class _ExpandablePageViewState extends State<ExpandablePageView> {
                   (nextPageHeight - currentPageHeight);
         } else {
           currentPage = pageIndexPercent.ceil();
-          final currentPageHeight = _viewPageHeightList[currentPage]!;
+          final currentPageHeight =
+              _viewPageHeightList[currentPage] ?? _currentPageHeight;
 
           var currentPageScrollPercentage =
               pageIndexPercent.ceil() - pageIndexPercent;
@@ -102,7 +104,8 @@ class _ExpandablePageViewState extends State<ExpandablePageView> {
       } else {
         // handle the case where the page is just on the edge
         currentPage = pageIndexPercent.toInt();
-        _currentPageHeight = _viewPageHeightList[currentPage]!;
+        _currentPageHeight =
+            _viewPageHeightList[currentPage] ?? _currentPageHeight;
       }
 
       setState(() {});

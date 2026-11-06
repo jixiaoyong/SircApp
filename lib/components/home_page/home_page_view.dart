@@ -248,7 +248,7 @@ class HomeTopBodyWidget extends StatelessWidget {
                       screenWidth: CommonData.realScreenWidth,
                     ),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0, 40.dp, 0, 35.dp),
+                      padding: EdgeInsets.fromLTRB(0, 20.dp, 0, 35.dp),
                       child: PageView.builder(
                         controller: state.pageController,
                         itemBuilder: (context, index) {
