@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -33,34 +33,31 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.4
-  get: ^4.6.1
+  cupertino_icons: ^1.0.8
+  get: ^4.6.6
   # 屏幕适配
-  flutter_screenutil: 5.5.1
+  flutter_screenutil: ^5.9.3
   # 日志打印工具
-  logger: ^1.1.0
+  logger: ^2.4.0
   # 本地存储
-  shared_preferences: ^2.0.13
+  shared_preferences: ^2.3.2
   # Implementations of SHA, MD5, and HMAC cryptographic functions
-  crypto: ^3.0.2
+  crypto: ^3.0.5
   flutter_localizations: # localizations
     sdk: flutter
   # date picker that only include year and month
   #  month_picker_dialog: ^0.4.0
-  month_picker_dialog:
-    git: https://github.com/jixiaoyong/month_picker_dialog.git
+  month_picker_dialog: 5.1.3
   # webview
-  webview_flutter: ^3.0.2
+  webview_flutter: ^4.8.0
   # extension library of image. The Flutter sdk version that this library dependencies is too height for me
-  extended_image: ^6.0.3
+  extended_image: ^8.2.0
   # use for show web view in flutter_web
   js:
   # open url
-  url_launcher: ^6.1.0
+  url_launcher: ^6.3.0
   # show splash
-  flutter_native_splash: ^2.1.6
-  # toast
-  toast: ^0.3.0
+  flutter_native_splash: ^2.4.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -70,7 +67,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^1.0.4
+  flutter_lints: ^4.0.0
   # ume调试工具
 #  flutter_ume: ^0.3.0+1 # null-safety 版本: ^0.2.1
 #  flutter_ume_kit_ui: ^0.3.0+1  # null-safety 版本: ^0.2.1

@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -14,13 +12,13 @@ Widget getEmbedWebView(String srcDoc, [double? width, double? height]) =>
     );
 
 class FlutterWebview4AndroidIos extends StatefulWidget {
-  String webViewContent;
+  final String webViewContent;
 
   // widget width, unit is px
-  double width = 0;
-  double? maxHeight = 0;
+  final double width;
+  final double? maxHeight;
 
-  FlutterWebview4AndroidIos(
+  const FlutterWebview4AndroidIos(
       {Key? key,
       required this.webViewContent,
       this.width = 0,
@@ -36,86 +34,77 @@ class _FlutterWebview4AndroidIosState extends State<FlutterWebview4AndroidIos> {
   double _heights = 10;
   double? _widgetWidth;
 
-  WebViewController? webViewController;
-  WebViewPlatform? cachePlatform;
-  WebView? _webView;
+  late final WebViewController _controller;
 
   @override
   void initState() {
     super.initState();
-    if (!kIsWeb && Platform.isAndroid) {
-      cachePlatform = WebView.platform;
-      WebView.platform = SurfaceAndroidWebView();
-    }
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (String url) async {
+            LogUtils.d("WebView height:onPageFinished");
+            await _onPageFinished();
+          },
+        ),
+      );
+    _refreshWebViewContent(widget.webViewContent);
   }
 
   @override
-  Widget build(BuildContext context) {
-    _widgetWidth = widget.width / MediaQuery.of(context).devicePixelRatio;
-    return SizedBox(
-      width: _widgetWidth,
-      height: _heights,
-      child: _buildWebView(widget.webViewContent),
+  void didUpdateWidget(covariant FlutterWebview4AndroidIos oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.webViewContent != widget.webViewContent) {
+      _refreshWebViewContent(widget.webViewContent);
+    }
+  }
+
+  Future<void> _refreshWebViewContent(String webViewContentHtml) async {
+    await _controller.loadRequest(
+      Uri.dataFromString(
+        webViewContentHtml,
+        mimeType: 'text/html',
+        encoding: Encoding.getByName("utf-8"),
+      ),
     );
   }
 
-  WebView _buildWebView(String webViewContentHtml) {
-    if (_webView == null) {
-      LogUtils.d("_webView == null");
-      _webView = WebView(
-        onWebViewCreated: (WebViewController webViewController) async {
-          this.webViewController = webViewController;
-          await _refreshWebViewContent(webViewController, webViewContentHtml);
-        },
-        onPageFinished: (some) async {
-          LogUtils.d("WebView height:onPageFinished");
-          await _onPageFinished();
-        },
-        javascriptMode: JavascriptMode.unrestricted,
-      );
-    } else {
-      LogUtils.d("_webView != null");
-      webViewController?.currentUrl().then((value) {
-        var newUrl = Uri.dataFromString(webViewContentHtml,
-                mimeType: 'text/html', encoding: Encoding.getByName("utf-8"))
-            .toString();
-
-        if (newUrl != value) {
-          _refreshWebViewContent(webViewController!, webViewContentHtml);
-        }
-      });
+  Future<double> _evaluateDouble(String javascript) async {
+    try {
+      final result = await _controller.runJavaScriptReturningResult(javascript);
+      if (result is num) {
+        return result.toDouble();
+      }
+      final str = result.toString().replaceAll('"', '').trim();
+      return double.tryParse(str) ?? 0.0;
+    } catch (e) {
+      LogUtils.e("runJavaScriptReturningResult error: $e");
+      return 0.0;
     }
-    return _webView!;
-  }
-
-  Future<void> _refreshWebViewContent(
-      WebViewController webViewController, String webViewContentHtml) async {
-    await webViewController.loadUrl(Uri.dataFromString(webViewContentHtml,
-            mimeType: 'text/html', encoding: Encoding.getByName("utf-8"))
-        .toString());
   }
 
   Future<void> _onPageFinished() async {
-    double devicePixelRatio = double.parse(await webViewController
-            ?.evaluateJavascript("window.devicePixelRatio") ??
-        "0.0");
+    double devicePixelRatio =
+        await _evaluateDouble("window.devicePixelRatio");
+    if (devicePixelRatio == 0.0) {
+      devicePixelRatio = 1.0;
+    }
 
-    double webViewWidth = double.parse(await webViewController
-                ?.evaluateJavascript("document.body.scrollWidth") ??
-            "0.0") *
-        devicePixelRatio;
+    double scrollWidth =
+        await _evaluateDouble("document.body.scrollWidth");
+    double webViewWidth = scrollWidth * devicePixelRatio;
     var widthPx = widget.width;
 
-    var webWidgetScale = webViewWidth / widthPx;
+    var webWidgetScale = widthPx > 0 ? (webViewWidth / widthPx) : 1.0;
 
-    double height = double.parse(await webViewController?.evaluateJavascript(
-                "document.getElementById('webContent').scrollHeight") ??
-            "0.0") *
-        devicePixelRatio;
+    double scrollHeight = await _evaluateDouble(
+        "document.getElementById('webContent').scrollHeight");
+    double height = scrollHeight * devicePixelRatio;
 
     height = (height / webWidgetScale) + 1;
 
-    if (height == _heights) {
+    if (!mounted || height == _heights) {
       return;
     }
     setState(() {
@@ -126,10 +115,12 @@ class _FlutterWebview4AndroidIosState extends State<FlutterWebview4AndroidIos> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    if (!kIsWeb && cachePlatform != null) {
-      WebView.platform = cachePlatform;
-    }
+  Widget build(BuildContext context) {
+    _widgetWidth = widget.width / MediaQuery.of(context).devicePixelRatio;
+    return SizedBox(
+      width: _widgetWidth,
+      height: _heights,
+      child: WebViewWidget(controller: _controller),
+    );
   }
 }

@@ -5,6 +5,7 @@ import 'package:sirc/gen_a/A.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 import 'package:sirc/widgets/webview/embed/embed_webview.dart';
+import 'package:sirc/widgets/webview/webview_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'about_logic.dart';
@@ -17,6 +18,8 @@ import 'about_logic.dart';
 * @date: 22/04/25
 */
 class AboutPage extends StatelessWidget {
+  const AboutPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final logic = Get.put(AboutLogic());
@@ -52,7 +55,7 @@ class AboutPage extends StatelessWidget {
                   text: TextSpan(
                 children: [
                   TextSpan(
-                      text: "This is an open source project,which host on ".tr,
+                      text: "This is an open-source project hosted on ".tr,
                       children: [
                         TextSpan(
                             text: "Github.com/jixiaoyong/SircApp",
@@ -63,28 +66,29 @@ class AboutPage extends StatelessWidget {
                       ]),
                   const TextSpan(
                     text:
-                        ", support android/iOS/Web platform.\nYou may want try the online version:",
+                        ", supporting Android, iOS, and Web platforms.\nYou can try the online version: ",
                   ),
                   TextSpan(
-                      text: "xiaoyong.ml/SircApp/",
+                      text: "jixiaoyong.github.io/SircApp",
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () => openUrl("https://xiaoyong.ml/SircApp/"),
+                        ..onTap = () =>
+                            openUrl("https://jixiaoyong.github.io/SircApp"),
                       style: const TextStyle(color: Colors.blue)),
                   const TextSpan(
                     text:
                         "\n\nIt is developed by jixiaoyong. The design is based on ",
                   ),
                   TextSpan(
-                      text: "a picture",
+                      text: "a picture ",
                       recognizer: TapGestureRecognizer()
                         ..onTap =
                             () => openUrl("https://huaban.com/pins/4619822724"),
                       style: const TextStyle(color: Colors.blue)),
                   const TextSpan(
-                    text: 'be found in the internet.',
+                    text: 'found on the internet.',
                   ),
                   const TextSpan(
-                    text: '\n\nIf you have any question, please contact me:',
+                    text: '\n\nIf you have any questions, please contact me:',
                   ),
                 ],
                 style: TextStyle(
@@ -99,8 +103,9 @@ class AboutPage extends StatelessWidget {
               openUrl("https://github.com/jixiaoyong");
             }),
             buildItemWidget(
-                Icons.rocket_outlined, "Blog", "https://xiaoyong.ml/blog", () {
-              openUrl("https://xiaoyong.ml/blog");
+                Icons.rocket_outlined, "Blog", "https://jixiaoyong.github.io",
+                () {
+              openUrl("https://jixiaoyong.github.io");
             }),
             buildItemWidget(
                 Icons.email_outlined, "Email", "jixiaoyong1995@gmail.com", () {
@@ -109,12 +114,20 @@ class AboutPage extends StatelessWidget {
             const Spacer(),
             Padding(
               padding: EdgeInsets.all(10.dp),
-              child: Text(
-                "Copyright (c) 2022 by jixiaoyong, All Rights Reserved.",
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Colors.grey,
-                ),
+              child: Builder(
+                builder: (context) {
+                  final int currentYear = DateTime.now().year;
+                  final String copyrightYear =
+                      currentYear > 2022 ? "2022~$currentYear" : "2022";
+                  return Text(
+                    "Copyright (c) $copyrightYear by jixiaoyong, \nAll Rights Reserved.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Colors.grey,
+                    ),
+                  );
+                },
               ),
             )
           ],
@@ -160,6 +173,10 @@ class AboutPage extends StatelessWidget {
   }
 
   void openUrl(String url) {
-    launchUrl(Uri.parse(url));
+    if (url.startsWith("mailto:")) {
+      launchUrl(Uri.parse(url));
+      return;
+    }
+    Get.to(() => WebViewPage(url));
   }
 }

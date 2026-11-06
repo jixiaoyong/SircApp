@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 * @date: 22/04/19
 */
 class OneTitleWithBackButtonAppBar extends StatelessWidget
-    with PreferredSizeWidget {
+    implements PreferredSizeWidget {
   var title;
 
   OneTitleWithBackButtonAppBar({

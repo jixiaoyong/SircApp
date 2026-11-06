@@ -1,4 +1,5 @@
 {
+    "dart.flutterSdkPath": ".fvm/flutter_sdk",
     "dart.hotReloadOnSave": "manual",
     "javascript.updateImportsOnFileMove.enabled": "always",
     "commentTranslate.source": "Baidu",

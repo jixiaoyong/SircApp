@@ -4,12 +4,18 @@ A Finance Mobile Banking App.
 
 You can try this app online at [https://jixiaoyong.github.io/SircApp](https://jixiaoyong.github.io/SircApp/).
 
+## Environment
+
+- **Flutter**: `3.24.0`
+- **Dart**: `3.5.0`
+- **FVM**: Supported (`fvm use 3.24.0`)
+
 ## Getting Started
 
 To learn how to build this app by yourself, follow the steps below:
 
 1. Clone the repository.
-2. Install the flutter dependencies.
+2. Install the flutter dependencies (`fvm flutter pub get` or `flutter pub get`).
 3. Build the app.
 4. Run the app.
 

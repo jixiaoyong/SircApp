@@ -58,13 +58,15 @@ class MyApp extends StatelessWidget {
 
     // physical size, unit is pixel, may be zero,
     // The MediaQueryData not exist in here, so we can't use MediaQuery.of(context).size
-    final size = window.physicalSize;
+    final view = View.maybeOf(context) ??
+        WidgetsBinding.instance.platformDispatcher.views.first;
+    final size = view.physicalSize;
     // logical size, which is the size we want to use in flutter
-    final widthLogical = size.width / window.devicePixelRatio;
-    final heightLogical = size.height / window.devicePixelRatio;
+    final widthLogical = size.width / view.devicePixelRatio;
+    final heightLogical = size.height / view.devicePixelRatio;
 
     LogUtils.d(
-        "windows size: $size window.devicePixelRatio: ${window.devicePixelRatio}");
+        "windows size: $size devicePixelRatio: ${view.devicePixelRatio}");
 
     // consider to adapter the web screen which usually has a ultra width
     if (kIsWeb && widthLogical > heightLogical) {
@@ -97,7 +99,7 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
         // setup the screen width be 375,then you can use number.dp to set the design size
         designSize: const Size(375, 666),
-        builder: (child) {
+        builder: (context, child) {
 
           return GetMaterialApp(
             title: "Sirc App",
@@ -131,7 +133,10 @@ class MyApp extends StatelessWidget {
             translations: Languages(),
             initialRoute: AppPages.INITIAL,
             getPages: AppPages.routes,
-            theme: Theme.of(context).copyWith(primaryColor: Colors.white),
+            theme: Theme.of(context).copyWith(
+              primaryColor: Colors.white,
+              useMaterial3: false,
+            ),
           ).build(context);
         });
   }

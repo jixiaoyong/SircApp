@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
@@ -32,11 +30,12 @@ class WebViewPage extends StatefulWidget {
   Set<WebJavaScriptChannelWrapper>? javascriptChannels;
   bool needAppBar;
 
-  // 是否使用SurfaceAndroidWebView，以兼容Android 12 输入法等情况
+  // 是否使用SurfaceAndroidWebView，以兼容Android 12 输入法等情况（4.x已内置适配，保留字段兼容）
   bool needSurfaceAndroidWebView;
 
   WebViewPage(
-    this.url, {Key? key, 
+    this.url, {
+    Key? key,
     this.title,
     this.javascriptChannels,
     this.needAppBar = true,
@@ -53,33 +52,52 @@ class WebViewPage extends StatefulWidget {
 
 class WebViewPageState extends State<WebViewPage> {
   int progress = 0;
-  WebViewController? _viewController;
-  Set<JavascriptChannel>? _innerJsChannels = {};
-  var cachedWebViewPlatform = WebView.platform;
+  late final WebViewController _controller;
 
   @override
   void initState() {
     super.initState();
-    // 华为手机不要切换webview到SurfaceAndroidWebView，会导致闪屏
-    if (Platform.isAndroid && widget.needSurfaceAndroidWebView) {
-      WebView.platform = SurfaceAndroidWebView();
-      LogUtils.d("switch webview to ${WebView.platform}");
-    }
-    LogUtils.d("current webview is ${WebView.platform}");
-  }
+    _controller = WebViewController()
+      ..setJavaScriptMode(
+        widget.javascriptChannels?.isNotEmpty == true
+            ? JavaScriptMode.unrestricted
+            : JavaScriptMode.disabled,
+      )
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progressValue) {
+            if (mounted) {
+              setState(() {
+                progress = progressValue;
+              });
+            }
+          },
+          onPageFinished: (String url) async {
+            if (widget.title == null || widget.title!.isEmpty) {
+              final pageTitle = await _controller.getTitle();
+              if (mounted && pageTitle != null && pageTitle.isNotEmpty) {
+                setState(() {
+                  widget.title = pageTitle;
+                });
+              }
+            }
+          },
+        ),
+      );
 
-  @override
-  void dispose() {
-    if (Platform.isAndroid) WebView.platform = cachedWebViewPlatform;
-    super.dispose();
+    if (widget.javascriptChannels != null) {
+      for (final channel in widget.javascriptChannels!) {
+        channel.registerToController(_controller, () => context);
+      }
+    }
+
+    if (widget.url != null && widget.url!.isNotEmpty) {
+      _controller.loadRequest(Uri.parse(widget.url!));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    var realJavascriptChannels = widget.javascriptChannels
-        ?.map((e) => e.getRealMessageChannel(context))
-        .toSet();
-    _innerJsChannels = realJavascriptChannels;
     Widget bodyWidget;
     if (widget.needAppBar) {
       bodyWidget = Scaffold(
@@ -92,8 +110,13 @@ class WebViewPageState extends State<WebViewPage> {
           systemOverlayStyle: SystemUiOverlayStyle.dark,
           elevation: 0.5,
           leading: IconButton(
-              onPressed: () {
-                Get.back();
+              onPressed: () async {
+                final bool canGoBack = await _controller.canGoBack();
+                if (canGoBack) {
+                  await _controller.goBack();
+                } else {
+                  Get.back();
+                }
               },
               icon: const Icon(
                 Icons.arrow_back_ios_rounded,
@@ -111,52 +134,27 @@ class WebViewPageState extends State<WebViewPage> {
       bodyWidget = buildWebViewContent();
     }
 
-    return WillPopScope(
-        child: bodyWidget,
-        onWillPop: () async {
-          var canGoBack = await _viewController?.canGoBack() ?? false;
-          if (canGoBack) {
-            _viewController?.goBack();
-            return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
+        if (didPop) return;
+        final bool canGoBack = await _controller.canGoBack();
+        if (canGoBack) {
+          await _controller.goBack();
+        } else {
+          if (context.mounted) {
+            Navigator.of(context).pop(result);
           }
-          return true;
-        });
+        }
+      },
+      child: bodyWidget,
+    );
   }
 
   Stack buildWebViewContent() {
     return Stack(
       children: [
-        WebView(
-          initialUrl: widget.url,
-          javascriptMode: widget.javascriptChannels?.isNotEmpty == true
-              ? JavascriptMode.unrestricted
-              : JavascriptMode.disabled,
-          onWebViewCreated: (webViewController) async {
-            _viewController = webViewController;
-            widget.javascriptChannels?.forEach((element) {
-              if (element is WebJavaScriptChannelWrapper) {
-                element.webViewController = _viewController;
-                return;
-              }
-            });
-          },
-          onProgress: (_progress) {
-            setState(() {
-              progress = _progress;
-            });
-          },
-          onPageFinished: (url) {
-            if (true != widget.title?.isNotEmpty) {
-              _viewController?.getTitle().then((value) {
-                setState(() {
-                  widget.title = value;
-                });
-              });
-            }
-          },
-          gestureNavigationEnabled: true,
-          javascriptChannels: _innerJsChannels,
-        ),
+        WebViewWidget(controller: _controller),
         Visibility(
           visible: progress < 100,
           child: Column(
@@ -172,8 +170,8 @@ class WebViewPageState extends State<WebViewPage> {
                   children: const [
                     EndlessRotatingIndicator(
                       child: Icon(
-                    Icons.refresh,
-                    color: Colors.white,
+                        Icons.refresh,
+                        color: Colors.white,
                       ),
                     )
                   ],

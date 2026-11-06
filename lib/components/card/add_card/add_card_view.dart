@@ -149,7 +149,13 @@ class AddCardPage extends StatelessWidget {
                                                   nowDate.year - 1),
                                               lastDate: DateTime.utc(
                                                   nowDate.year + 20),
-                                              locale: Get.locale);
+                                              monthPickerDialogSettings:
+                                                  MonthPickerDialogSettings(
+                                                dialogSettings:
+                                                    PickerDialogSettings(
+                                                  locale: Get.locale,
+                                                ),
+                                              ));
                                       if (selectedDate != null) {
                                         logic.setExpireDate(selectedDate);
                                       }
