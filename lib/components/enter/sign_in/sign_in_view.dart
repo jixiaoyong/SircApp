@@ -17,6 +17,8 @@ import 'sign_in_logic.dart';
 * @date: 22/04/20
 */
 class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
+
   @override
   State<SignInPage> createState() => _SignInPageState();
 }

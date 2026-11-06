@@ -4,7 +4,7 @@ import 'package:sirc/utils/size_extension.dart';
 class FootlightsForBankCard extends StatefulWidget {
   final double? screenWidth;
 
-  const FootlightsForBankCard({Key? key, this.screenWidth}) : super(key: key);
+  const FootlightsForBankCard({super.key, this.screenWidth});
 
   @override
   State<FootlightsForBankCard> createState() => _FootlightsForBankCardState();

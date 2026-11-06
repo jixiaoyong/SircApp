@@ -15,6 +15,8 @@ import 'menu_logic.dart';
 * @date: 22/04/19
 */
 class MenuPage extends StatelessWidget {
+  const MenuPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final logic = Get.put(MenuLogic());

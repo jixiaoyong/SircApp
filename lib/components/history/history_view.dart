@@ -18,6 +18,8 @@ import 'history_logic.dart';
 * @date: 22/04/18
 */
 class HistoryPage extends StatelessWidget {
+  const HistoryPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final logic = Get.put(HistoryLogic());
@@ -99,8 +101,8 @@ class HistoryPage extends StatelessWidget {
                   child: DropdownButton<String>(
                     items: state.monthEnglishNameList.map((e) {
                       return DropdownMenuItem<String>(
-                        child: Text(e),
                         value: e,
+                        child: Text(e),
                       );
                     }).toList(),
                     value: state.selectMonth.value,
@@ -205,7 +207,7 @@ class HistoryPage extends StatelessWidget {
                   ),
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       )));

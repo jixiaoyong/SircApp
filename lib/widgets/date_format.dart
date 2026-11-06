@@ -13,7 +13,7 @@ class DateFormat {
 
   // format m to mm
   static String mToMM(String m) {
-    return m.length == 1 ? "0" + m : m;
+    return m.length == 1 ? "0$m" : m;
   }
 
   // format yyyy to yy

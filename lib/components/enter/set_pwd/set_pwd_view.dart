@@ -15,6 +15,8 @@ import 'set_pwd_logic.dart';
 * @date: 22/04/21
 */
 class SetPwdPage extends StatefulWidget {
+  const SetPwdPage({super.key});
+
   @override
   State<SetPwdPage> createState() => _SetPwdPageState();
 }

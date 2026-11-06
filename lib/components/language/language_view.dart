@@ -11,6 +11,8 @@ import 'package:sirc/data/languages.dart';
 * @date: 22/04/19
 */
 class LanguagePage extends StatelessWidget {
+  const LanguagePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final languages = Languages();

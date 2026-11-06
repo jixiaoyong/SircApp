@@ -12,6 +12,7 @@ import 'package:sirc/gen_a/A.dart';
 class InitialState {
   // is first time app open
   Rx<bool?> isFirstInitial = Rx(null);
+  bool hasCallGoMainPage = false;
 
   // image path; title; subtitle
   final List<Triple<String, String, String>> initialTips = [

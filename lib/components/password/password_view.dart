@@ -13,6 +13,8 @@ import 'password_logic.dart';
 * @date: 22/04/19
 */
 class PasswordPage extends StatelessWidget {
+  const PasswordPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final logic = Get.put(PasswordLogic());

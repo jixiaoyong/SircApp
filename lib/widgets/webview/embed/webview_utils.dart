@@ -104,9 +104,9 @@ class WebViewUtils {
       localFontSize = font_size;
     }
 
-    String _webContentSuffix = webContentSuffix;
+    String formattedSuffix = webContentSuffix;
     if (forceExpandImageWidget) {
-      _webContentSuffix =
+      formattedSuffix =
           "".replaceAll(r"<!--${EXPAND_IMG_WIDTH_JS}-->", expandImageSize);
     }
 
@@ -114,7 +114,7 @@ class WebViewUtils {
         KeyWebBackgroundColor, backgroundColor ?? "#ffffff");
     return (webContentPrefixFormatted +
             contentFormatted +
-            _webContentSuffix.replaceAll(KeyLineHeight, lineHeight ?? "1.8em"))
+            formattedSuffix.replaceAll(KeyLineHeight, lineHeight ?? "1.8em"))
         .replaceAll(
             RegExp("font-size:[ ]*[0-9]*px"), "font-size:$localFontSize ")
         .replaceAll(

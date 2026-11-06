@@ -8,19 +8,17 @@ class CommonTextFiled extends StatelessWidget {
   final String? errorText;
   final int? maxLength;
 
-  String? hint;
+  final String? hint;
 
-  CommonTextFiled({
-    Key? key,
+  const CommonTextFiled({
+    super.key,
     required this.label,
-    this.hint,
+    String? hint,
     this.onChanged,
     this.keyboardType,
     this.errorText,
     this.maxLength,
-  }) : super(key: key) {
-    hint = hint ?? label;
-  }
+  })  : hint = hint ?? label;
 
   @override
   Widget build(BuildContext context) {

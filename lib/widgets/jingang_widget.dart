@@ -72,15 +72,14 @@ class JingangWidget<T> extends StatefulWidget {
 
   // item builder
   const JingangWidget(
-      {Key? key,
+      {super.key,
       required this.data,
       required this.itemBuilder,
       this.indicatorBuilder,
       this.indicatorOffset = const Offset(0, 0),
       this.childAspectRatio = 0.55,
       this.childCountPerRow = 6,
-      this.childCountPerPage = 12})
-      : super(key: key);
+      this.childCountPerPage = 12});
 
   @override
   State<JingangWidget> createState() => _JingangWidgetState();

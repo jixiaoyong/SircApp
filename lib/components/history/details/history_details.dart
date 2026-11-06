@@ -20,8 +20,7 @@ import '../../../widgets/network_web_image.dart';
 class HistoryDetails extends StatelessWidget {
   final MoneyOperateBean data;
   final String heroTag;
-  const HistoryDetails({Key? key, required this.data, required this.heroTag})
-      : super(key: key);
+  const HistoryDetails({super.key, required this.data, required this.heroTag});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +29,7 @@ class HistoryDetails extends StatelessWidget {
         (data.moneyAmount ?? 0).abs().toStringAsFixed(2).split(".");
 
     return Scaffold(
-      appBar: OneTitleWithBackButtonAppBar(
+      appBar: const OneTitleWithBackButtonAppBar(
         title: "Details",
       ),
       body: Column(

@@ -12,8 +12,7 @@ class SizeReportableContainer extends StatefulWidget {
   final ValueChanged<Size?> onSizeChange;
 
   const SizeReportableContainer(
-      {Key? key, required this.child, required this.onSizeChange})
-      : super(key: key);
+      {super.key, required this.child, required this.onSizeChange});
 
   @override
   State<SizeReportableContainer> createState() =>
@@ -21,12 +20,12 @@ class SizeReportableContainer extends StatefulWidget {
 }
 
 class _SizeReportableContainerState extends State<SizeReportableContainer> {
-  Size? _oldSize = null;
+  Size? _oldSize;
 
   @override
   Widget build(BuildContext context) {
     // get the size of the child
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (!mounted) {
         return;
       }

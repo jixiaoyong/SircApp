@@ -30,5 +30,5 @@ class WebJavaScriptChannelWrapper {
   }
 }
 
-typedef void WebJavascriptMessageHandlerWrapper(JavaScriptMessage message,
+typedef WebJavascriptMessageHandlerWrapper = void Function(JavaScriptMessage message,
     WebViewController? webViewController, BuildContext context);

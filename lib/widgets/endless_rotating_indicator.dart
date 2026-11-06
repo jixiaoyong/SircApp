@@ -15,11 +15,10 @@ class EndlessRotatingIndicator extends StatefulWidget {
   final Duration duration;
 
   const EndlessRotatingIndicator(
-      {Key? key,
+      {super.key,
       required this.child,
       this.size = const Size(50, 50),
-      this.duration = const Duration(seconds: 1)})
-      : super(key: key);
+      this.duration = const Duration(seconds: 1)});
 
   @override
   State<EndlessRotatingIndicator> createState() =>

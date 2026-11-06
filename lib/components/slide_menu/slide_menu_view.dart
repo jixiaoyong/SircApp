@@ -14,11 +14,10 @@ import 'slide_menu_logic.dart';
 * @date: 22/04/19
 */
 class SlideMenuPage extends StatefulWidget {
-  Widget child;
+  final Widget child;
   final double? screenWidth;
 
-  SlideMenuPage({Key? key, required this.child, this.screenWidth})
-      : super(key: key);
+  const SlideMenuPage({super.key, required this.child, this.screenWidth});
 
   @override
   State<SlideMenuPage> createState() => _SlideMenuPageState();
@@ -55,8 +54,8 @@ class _SlideMenuPageState extends State<SlideMenuPage>
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    double _screenWidth = widget.screenWidth ?? screenSize.width;
-    double _screenHeight = screenSize.height;
+    double screenWidth = widget.screenWidth ?? screenSize.width;
+    double screenHeight = screenSize.height;
 
     return Material(
       child: Stack(
@@ -153,8 +152,8 @@ class _SlideMenuPageState extends State<SlideMenuPage>
           Transform(
             transform: Matrix4.identity()
               // translate y  = (height - child.height*scaleValue) / 2
-              ..translate(_screenWidth * 0.55 * _percentage,
-                  0.18 * _percentage * _screenHeight)
+              ..translate(screenWidth * 0.55 * _percentage,
+                  0.18 * _percentage * screenHeight)
               ..scale(1.0 - (_percentage * 0.36)),
             child: Container(
               decoration: BoxDecoration(
@@ -164,8 +163,8 @@ class _SlideMenuPageState extends State<SlideMenuPage>
           ),
           Transform(
             transform: Matrix4.identity()
-              ..translate(_screenWidth * 0.6 * _percentage,
-                  0.15 * _percentage * _screenHeight)
+              ..translate(screenWidth * 0.6 * _percentage,
+                  0.15 * _percentage * screenHeight)
               ..scale(1.0 - (_percentage * 0.3)),
             child: Container(
               decoration: BoxDecoration(boxShadow: [

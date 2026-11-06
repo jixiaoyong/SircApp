@@ -15,22 +15,20 @@ class ExpandedIconButton extends StatefulWidget {
   final double maxWidth;
   final List<Color> colors;
   final String text;
-  double? minWidth;
-  bool? isExpanded = false;
+  final double? minWidth;
+  final bool? isExpanded;
 
-  ExpandedIconButton(
-      {Key? key,
-      required this.icon,
-      required this.onPressed,
-      required this.height,
-      required this.maxWidth,
-      this.minWidth,
-      required this.colors,
-      required this.text,
-      this.isExpanded})
-      : super(key: key) {
-    minWidth ??= height;
-  }
+  const ExpandedIconButton({
+    super.key,
+    required this.icon,
+    required this.onPressed,
+    required this.height,
+    required this.maxWidth,
+    double? minWidth,
+    required this.colors,
+    required this.text,
+    this.isExpanded = false,
+  })  : minWidth = minWidth ?? height;
 
   @override
   State<ExpandedIconButton> createState() => _ExpandedIconButtonState();

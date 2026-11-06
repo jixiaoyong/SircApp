@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sirc/utils/size_extension.dart';
@@ -15,6 +14,8 @@ import 'notifications_logic.dart';
 * @date: 22/04/19
 */
 class NotificationsPage extends StatelessWidget {
+  const NotificationsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final logic = Get.put(NotificationsLogic());
@@ -50,8 +51,8 @@ class NotificationsPage extends StatelessWidget {
                         value: state.currentCategoryIndex.value,
                         items: state.categories.map((e) {
                           return DropdownMenuItem(
-                            child: Text(e),
                             value: state.categories.indexOf(e),
+                            child: Text(e),
                           );
                         }).toList(),
                         onChanged: (value) {

@@ -53,9 +53,9 @@ class MainAppState {
 
   List<Widget> homePages = [
     HomePage(),
-    WalletPage(),
-    HistoryPage(),
-    PersonPage(),
-    MenuPage(),
+    const WalletPage(),
+    const HistoryPage(),
+    const PersonPage(),
+    const MenuPage(),
   ];
 }

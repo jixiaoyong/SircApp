@@ -15,14 +15,14 @@ class LineGraph extends StatefulWidget {
   /// percentage change which value in 0~1
   final List<Pair<String, double>> data;
 
-  const LineGraph({Key? key, required this.data}) : super(key: key);
+  const LineGraph({super.key, required this.data});
 
   @override
   State<LineGraph> createState() => _LineGraphState();
 }
 
 class _LineGraphState extends State<LineGraph> {
-  Offset? _currentPosition = null;
+  Offset? _currentPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class _LineGraphState extends State<LineGraph> {
 }
 
 class LinerGraphPainter extends CustomPainter {
-  static double _lineWidth = 2.0.dp;
+  static final double _lineWidth = 2.0.dp;
   static double _maxPercentage = 1.0;
   static double _minPercentage = 0.0;
 
@@ -59,12 +59,12 @@ class LinerGraphPainter extends CustomPainter {
     final double width = size.width;
     final double height = size.height;
 
-    final double _bottomAxisXFFontHeight = 0.2 * height;
-    final availableHeight = height - _bottomAxisXFFontHeight;
+    final double bottomAxisXFFontHeight = 0.2 * height;
+    final availableHeight = height - bottomAxisXFFontHeight;
 
     final double percentageCount = (_maxPercentage - _minPercentage) * 10 + 1;
-    final double _axisYStep = availableHeight / percentageCount;
-    final double _axisXStep = width / (data.length - 1);
+    final double axisYStep = availableHeight / percentageCount;
+    final double axisXStep = width / (data.length - 1);
 
     final paint = Paint()
       ..color = Colors.blue
@@ -82,8 +82,8 @@ class LinerGraphPainter extends CustomPainter {
     final path = Path();
     var lastPoint = Offset(0, availableHeight);
     for (var i = 0; i < data.length; i++) {
-      final x = _axisXStep * i;
-      final y = availableHeight - data[i].second * _axisYStep * 10;
+      final x = axisXStep * i;
+      final y = availableHeight - data[i].second * axisYStep * 10;
       if (i == 0) {
         path.moveTo(x, y);
       } else {
@@ -111,8 +111,8 @@ class LinerGraphPainter extends CustomPainter {
 
       // draw the current tap position
       if (currentPosition != null &&
-          currentPosition!.dx >= x - _axisXStep / 2 &&
-          currentPosition!.dx <= x + _axisXStep / 2) {
+          currentPosition!.dx >= x - axisXStep / 2 &&
+          currentPosition!.dx <= x + axisXStep / 2) {
         canvas.drawCircle(Offset(x, y), 5.dp, circlePaint);
 
         // draw the percentage text

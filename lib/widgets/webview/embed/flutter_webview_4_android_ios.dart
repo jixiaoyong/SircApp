@@ -19,11 +19,10 @@ class FlutterWebview4AndroidIos extends StatefulWidget {
   final double? maxHeight;
 
   const FlutterWebview4AndroidIos(
-      {Key? key,
+      {super.key,
       required this.webViewContent,
       this.width = 0,
-      this.maxHeight = 0})
-      : super(key: key);
+      this.maxHeight = 0});
 
   @override
   State<FlutterWebview4AndroidIos> createState() =>

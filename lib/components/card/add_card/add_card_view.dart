@@ -21,6 +21,8 @@ import 'add_card_logic.dart';
 * @date: 22/04/21
 */
 class AddCardPage extends StatelessWidget {
+  const AddCardPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final logic = Get.put(AddCardLogic());

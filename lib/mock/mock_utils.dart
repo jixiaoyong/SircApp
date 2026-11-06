@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:sirc/bean/money_operate_bean.dart';
@@ -26,10 +25,17 @@ class MockUtils {
     Pair("Sun".tr, 0.8),
   ];
 
+  static const List<String> mockAvatarList = [
+    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
+    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80',
+    'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=150&q=80',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
+  ];
+
   static final List<MoneyOperateBean> moneyOperateList =
       List.generate(20, (index) {
     return MoneyOperateBean(
-        userIcon: 'https://s3.bmp.ovh/imgs/2022/04/22/4ff72bd176a1b613.png',
+        userIcon: mockAvatarList[index % mockAvatarList.length],
         moneyAmount: MockUtils.random.nextDouble() *
             100 *
             (MockUtils.random.nextBool() ? 1 : -1),

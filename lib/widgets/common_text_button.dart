@@ -10,11 +10,11 @@ import 'package:sirc/utils/size_extension.dart';
 */
 class CommonTextButton extends StatelessWidget {
   const CommonTextButton({
-    Key? key,
+    super.key,
     required this.isButtonEnabled,
     required this.onTap,
     required this.text,
-  }) : super(key: key);
+  });
 
   final bool isButtonEnabled;
   final GestureTapCallback onTap;

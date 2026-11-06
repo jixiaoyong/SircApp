@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:sirc/utils/size_extension.dart';
 
 /*
@@ -12,8 +11,8 @@ import 'package:sirc/utils/size_extension.dart';
 class TitleText extends StatelessWidget {
   const TitleText({
     required this.text,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final String text;
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 /*
 * @description: a progress indicator that displays a linear gradient
@@ -20,8 +19,8 @@ class GradientProgressIndicator extends StatelessWidget {
 
   final Color backgroundColor;
 
-  GradientProgressIndicator(
-      {this.height = 10.0,
+  const GradientProgressIndicator(
+      {super.key, this.height = 10.0,
       this.width,
       this.progress = 0.0,
       this.foregroundColors = const [Colors.red, Colors.green],
@@ -29,15 +28,15 @@ class GradientProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _width = width ?? MediaQuery.of(context).size.width;
-    final _foregroundWidth = _width * progress;
+    final actualWidth = width ?? MediaQuery.of(context).size.width;
+    final foregroundWidth = actualWidth * progress;
 
     return Container(
       height: height,
-      width: _width,
+      width: actualWidth,
       color: backgroundColor,
       child: Container(
-        width: _foregroundWidth,
+        width: foregroundWidth,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: foregroundColors,

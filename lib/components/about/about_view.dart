@@ -24,7 +24,7 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final logic = Get.put(AboutLogic());
 
-    final _width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: OneTitleWithBackButtonAppBar(
@@ -46,7 +46,7 @@ class AboutPage extends StatelessWidget {
             ),
             EmbedWebView(
               logic.aboutText,
-              _width,
+              width,
               backgroundColor: "#fafafa",
             ),
             Padding(

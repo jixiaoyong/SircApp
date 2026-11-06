@@ -15,7 +15,9 @@ class MainAppLogic extends GetxController {
   var userName = ''.obs;
   var userEmail = ''.obs;
   // just for mock, we set a default value
-  var userAvatar = 'https://s3.bmp.ovh/imgs/2022/04/22/b352d638990f1e84.webp'.obs;
+  var userAvatar =
+      'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80'
+          .obs;
 
   final Rx<Locale?> _currentLocal = Rx(null); 
 

@@ -19,7 +19,8 @@ class PersonState {
 
   final List<MoneyOperateBean> moneyOperateList = MockUtils.moneyOperateList
       .map((e) => e.copyWith(
-          userIcon: "https://s3.bmp.ovh/imgs/2022/05/02/cc4abc259d3d1171.png"))
+          userIcon:
+              "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80"))
       .toList();
 
   final Rx<List<Pair<IconData, String>>> generalInformationList =

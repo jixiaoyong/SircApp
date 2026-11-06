@@ -5,11 +5,11 @@ import 'package:sirc/routes/app_routes.dart';
 import 'not_found_logic.dart';
 
 class NotFoundPage extends StatelessWidget {
-  const NotFoundPage({Key? key}) : super(key: key);
+  const NotFoundPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final logic = Get.put(NotFoundLogic());
+    Get.put(NotFoundLogic());
 
     return Container(
       child: Column(

@@ -16,7 +16,7 @@ import 'sign_up_logic.dart';
 * @date: 22/04/20
 */
 class SignUpPage extends StatefulWidget {
-  const SignUpPage({Key? key}) : super(key: key);
+  const SignUpPage({super.key});
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -73,7 +73,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    var _screenHeight = MediaQuery.of(context).size.height;
+    var screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -91,7 +91,7 @@ class _SignUpPageState extends State<SignUpPage> {
           var isLoginInProgress = state.isLoading.value == true;
           var isButtonEnabled =
               !isLoginInProgress && state.isUserInputValid.value == true;
-          final marginBetweenFields = _screenHeight * 0.05;
+          final marginBetweenFields = screenHeight * 0.05;
 
           return Container(
             margin: EdgeInsets.fromLTRB(16.dp, 16.dp, 16.dp, 0),

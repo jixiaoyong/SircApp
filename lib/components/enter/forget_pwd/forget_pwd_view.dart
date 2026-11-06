@@ -17,6 +17,8 @@ import 'forget_pwd_logic.dart';
 * @date: 22/04/21
 */
 class ForgetPwdPage extends StatefulWidget {
+  const ForgetPwdPage({super.key});
+
   @override
   State<ForgetPwdPage> createState() => _ForgetPwdPageState();
 }

@@ -2,6 +2,7 @@
 /// moneyActionName : ""
 /// moneyAmount : -0.2
 /// time : "2 mins ago"
+library;
 
 class MoneyOperateBean {
   MoneyOperateBean({

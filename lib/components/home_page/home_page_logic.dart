@@ -10,8 +10,8 @@ class HomePageLogic extends GetxController {
   @override
   void onReady() {
     // wait for main app logic init
-    final MainAppLogic _mainAppLogic = Get.find();
-    state.userAvatar = _mainAppLogic.userAvatar;
+    final MainAppLogic mainAppLogic = Get.find();
+    state.userAvatar = mainAppLogic.userAvatar;
     super.onReady();
   }
 

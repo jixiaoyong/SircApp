@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 /*
@@ -11,12 +10,12 @@ import 'package:get/get.dart';
 */
 class OneTitleWithBackButtonAppBar extends StatelessWidget
     implements PreferredSizeWidget {
-  var title;
+  final String title;
 
-  OneTitleWithBackButtonAppBar({
-    Key? key,
-    this.title,
-  }) : super(key: key);
+  const OneTitleWithBackButtonAppBar({
+    super.key,
+    this.title = '',
+  });
 
   @override
   Widget build(BuildContext context) {

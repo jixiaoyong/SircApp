@@ -19,6 +19,8 @@ import 'wallet_logic.dart';
 * @date: 22/04/18
 */
 class WalletPage extends StatelessWidget {
+  const WalletPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final logic = Get.put(WalletLogic());
@@ -175,7 +177,7 @@ class WalletPage extends StatelessWidget {
                 ),
               ),
             );
-          }).toList(),
+          }),
         ])),
       );
     });

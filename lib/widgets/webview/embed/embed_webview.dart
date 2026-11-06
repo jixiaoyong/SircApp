@@ -16,13 +16,13 @@ import 'webview_utils.dart';
 * @date: 2021/11/30
 */
 class EmbedWebView extends StatefulWidget {
-  String webViewContent = "";
-  double width = 0;
-  double? maxHeight = 0;
-  String? fontSize;
-  String? backgroundColor;
-  String? lineHeight;
-  bool forceExpandImageWidget;
+  final String webViewContent;
+  final double width;
+  final double? maxHeight;
+  final String? fontSize;
+  final String? backgroundColor;
+  final String? lineHeight;
+  final bool forceExpandImageWidget;
 
   /// 能够嵌套在页面内部的WebView
   /// @param [webViewContent]: 页面内容，
@@ -34,16 +34,16 @@ class EmbedWebView extends StatefulWidget {
   /// @param [backgroundColor] 网页的背景颜色，格式为#RRGGBB，默认白色
   /// @param [lineHeight] 网页的字体行高，单位em，默认1.8em
   /// @param [forceExpandImageWidget]: force expand image widget's width and height to fit the screen
-  EmbedWebView(this.webViewContent, this.width,
-      {this.maxHeight,
+  EmbedWebView(String webViewContent, this.width,
+      {super.key,
+      this.maxHeight = 0,
       this.fontSize,
       this.backgroundColor,
       this.lineHeight,
-      this.forceExpandImageWidget = false}) {
-    if (webViewContent.isNotEmpty) {
-      webViewContent = Uri.encodeComponent(webViewContent);
-    }
-  }
+      this.forceExpandImageWidget = false})
+      : webViewContent = webViewContent.isNotEmpty
+            ? Uri.encodeComponent(webViewContent)
+            : "";
 
   @override
   State<EmbedWebView> createState() => _EmbedWebViewState();

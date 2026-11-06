@@ -19,7 +19,7 @@ class ExpandablePageView extends StatefulWidget {
   final double childAspectRatio;
 
   // the number of page
-  late final int pageCount;
+  final int pageCount;
 
   final IndexedWidgetBuilder pageBuilder;
 
@@ -32,15 +32,15 @@ class ExpandablePageView extends StatefulWidget {
   // indicator position offset to widget: dx means left offset, dy means bottom offset
   final Offset indicatorOffset;
 
-  ExpandablePageView({
-    Key? key,
+  const ExpandablePageView({
+    super.key,
     this.childAspectRatio = 1.0,
     required this.pageBuilder,
     required this.pageCount,
     this.indicatorBuilder,
     this.onPageScrollPercent,
     this.indicatorOffset = const Offset(0.0, 0.0),
-  }) : super(key: key);
+  });
 
   @override
   _ExpandablePageViewState createState() => _ExpandablePageViewState();
@@ -171,14 +171,14 @@ class _ExpandablePageViewState extends State<ExpandablePageView> {
                 left: widget.indicatorOffset.dx,
                 right: 0,
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     indicatorBuilder!(context, (index) {
                       _pageViewController.jumpToPage(index);
                     }, _pageScrollPercentage)
                   ],
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.end,
                 ),
               ),
           ],
@@ -197,14 +197,13 @@ class ScrollableIndicator extends StatelessWidget {
   final Color indicatorColor;
   final Color indicatorBackgroundColor;
 
-  ScrollableIndicator({Key? key,
+  const ScrollableIndicator({super.key,
     required this.onPageSelected,
     required this.scrollPercentage,
     this.indicatorSize = const Size(50, 10),
     this.indicatorBackgroundSize = const Size(100, 10),
     this.indicatorColor = Colors.black,
-    this.indicatorBackgroundColor = Colors.white})
-      : super(key: key);
+    this.indicatorBackgroundColor = Colors.white});
 
   @override
   Widget build(BuildContext context) {

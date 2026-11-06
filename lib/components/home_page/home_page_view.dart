@@ -27,7 +27,7 @@ class HomePage extends StatelessWidget {
   final logic = Get.put(HomePageLogic());
   final state = Get.find<HomePageLogic>().state;
 
-  HomePage({Key? key}) : super(key: key);
+  HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +36,9 @@ class HomePage extends StatelessWidget {
     state.pageController =
         PageController(initialPage: 0, viewportFraction: 0.8);
 
-    var _tabs = state.tabDatas;
+    var tabs = state.tabDatas;
     return DefaultTabController(
-      length: _tabs.length,
+      length: tabs.length,
       child: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
@@ -70,7 +70,7 @@ class HomePage extends StatelessWidget {
                           width: 3.dp),
                       insets: EdgeInsets.symmetric(horizontal: 50.dp),
                     ),
-                    tabs: _tabs.map((e) {
+                    tabs: tabs.map((e) {
                       return Tab(
                         text: e.first,
                       );
@@ -80,7 +80,7 @@ class HomePage extends StatelessWidget {
           ];
         },
         body: TabBarView(
-            children: _tabs.map((e) {
+            children: tabs.map((e) {
           return SafeArea(
             top: false,
             bottom: false,
@@ -120,10 +120,10 @@ class HomePage extends StatelessWidget {
 
 class HomeTabViewListItemWidget extends StatelessWidget {
   const HomeTabViewListItemWidget({
-    Key? key,
+    super.key,
     required this.item,
     required this.index,
-  }) : super(key: key);
+  });
 
   final Pair<String, int> item;
   final int index;
@@ -199,11 +199,11 @@ class HomeTabViewListItemWidget extends StatelessWidget {
 
 class HomeTopBodyWidget extends StatelessWidget {
   const HomeTopBodyWidget({
-    Key? key,
+    super.key,
     required this.state,
     required this.logic,
     required this.slideMenuLogic,
-  }) : super(key: key);
+  });
 
   final HomePageState state;
   final HomePageLogic logic;
@@ -311,6 +311,7 @@ class HomeTopBodyWidget extends StatelessWidget {
                             data.imageUrl,
                             size: Size(40.dp, 40.dp),
                             fit: BoxFit.fitHeight,
+                            isAvatar: false,
                           ),
                           Padding(
                             padding: EdgeInsets.only(top: 2.dp),
@@ -438,8 +439,7 @@ class HomeTabList extends StatefulWidget {
   final List<Pair<String, int>> data;
   final ValueChanged<int> onTap;
 
-  const HomeTabList({Key? key, required this.data, required this.onTap})
-      : super(key: key);
+  const HomeTabList({super.key, required this.data, required this.onTap});
 
   @override
   State<StatefulWidget> createState() {

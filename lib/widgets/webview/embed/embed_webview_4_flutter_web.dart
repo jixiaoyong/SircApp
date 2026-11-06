@@ -45,8 +45,7 @@ class EmbedWebView4FlutterWeb extends StatefulWidget {
   final double? height;
 
   const EmbedWebView4FlutterWeb(
-      {Key? key, required this.srcDoc, this.width, this.height})
-      : super(key: key);
+      {super.key, required this.srcDoc, this.width, this.height});
 
   @override
   State<StatefulWidget> createState() {
@@ -72,6 +71,9 @@ class EmbedWebView4FlutterWebState extends State<EmbedWebView4FlutterWeb> {
     _iframeElement = html.IFrameElement()
       ..srcdoc = widget.srcDoc
       ..id = iframeId
+      ..style.width = '100%'
+      ..style.height = '100%'
+      ..style.border = 'none'
       ..onLoad.listen((event) async {
         var body = html.querySelector("#$iframeId");
         // inspired by https://stackoverflow.com/a/28278469/8389461
@@ -85,10 +87,7 @@ class EmbedWebView4FlutterWebState extends State<EmbedWebView4FlutterWeb> {
           debugPrint(
               "_iframeElementHeight: $_iframeElementHeight _iframeElementWidth: $_iframeElementWidth");
         });
-      })
-      ..height = "auto"
-      ..width = "auto"
-      ..style.border = 'none';
+      });
 
     // ignore: undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(

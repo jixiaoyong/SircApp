@@ -15,7 +15,7 @@ import 'slide_menu/slide_menu_view.dart';
 * @date: 22/04/17
 */
 class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  const MainPage({super.key});
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -34,8 +34,8 @@ class _MainPageState extends State<MainPage> {
         screenWidth: CommonData.realScreenWidth,
         child: Scaffold(
           body: IndexedStack(
-            children: _appState.homePages,
             index: currentIndex,
+            children: _appState.homePages,
           ),
           bottomNavigationBar: BottomNavigationBar(
             items: _appState.bnbItems.value,

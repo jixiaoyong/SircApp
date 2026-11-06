@@ -16,6 +16,8 @@ import 'person_logic.dart';
 * @date: 22/04/18
 */
 class PersonPage extends StatelessWidget {
+  const PersonPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final logic = Get.put(PersonLogic());
@@ -148,6 +150,16 @@ class PersonPage extends StatelessWidget {
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 20.dp),
               width: double.infinity,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15.dp),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      blurRadius: 10.dp,
+                      spreadRadius: .6.dp,
+                    )
+                  ]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -197,19 +209,9 @@ class PersonPage extends StatelessWidget {
                         ),
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15.dp),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      blurRadius: 10.dp,
-                      spreadRadius: .6.dp,
-                    )
-                  ]),
             )
           ],
         );

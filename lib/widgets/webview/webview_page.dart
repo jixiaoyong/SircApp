@@ -25,22 +25,22 @@ import '../gradient_progress_indicator.dart';
 * @date: 22/04/25
 */
 class WebViewPage extends StatefulWidget {
-  String? title;
-  String? url;
-  Set<WebJavaScriptChannelWrapper>? javascriptChannels;
-  bool needAppBar;
+  final String? title;
+  final String? url;
+  final Set<WebJavaScriptChannelWrapper>? javascriptChannels;
+  final bool needAppBar;
 
   // 是否使用SurfaceAndroidWebView，以兼容Android 12 输入法等情况（4.x已内置适配，保留字段兼容）
-  bool needSurfaceAndroidWebView;
+  final bool needSurfaceAndroidWebView;
 
   WebViewPage(
     this.url, {
-    Key? key,
+    super.key,
     this.title,
     this.javascriptChannels,
     this.needAppBar = true,
     this.needSurfaceAndroidWebView = false,
-  }) : super(key: key) {
+  }) {
     LogUtils.d("WebViewPage open url: $url");
   }
 
@@ -53,10 +53,12 @@ class WebViewPage extends StatefulWidget {
 class WebViewPageState extends State<WebViewPage> {
   int progress = 0;
   late final WebViewController _controller;
+  String? _pageTitle;
 
   @override
   void initState() {
     super.initState();
+    _pageTitle = widget.title;
     _controller = WebViewController()
       ..setJavaScriptMode(
         widget.javascriptChannels?.isNotEmpty == true
@@ -73,11 +75,11 @@ class WebViewPageState extends State<WebViewPage> {
             }
           },
           onPageFinished: (String url) async {
-            if (widget.title == null || widget.title!.isEmpty) {
+            if (_pageTitle == null || _pageTitle!.isEmpty) {
               final pageTitle = await _controller.getTitle();
               if (mounted && pageTitle != null && pageTitle.isNotEmpty) {
                 setState(() {
-                  widget.title = pageTitle;
+                  _pageTitle = pageTitle;
                 });
               }
             }
@@ -97,13 +99,21 @@ class WebViewPageState extends State<WebViewPage> {
   }
 
   @override
+  void didUpdateWidget(covariant WebViewPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.title != oldWidget.title) {
+      _pageTitle = widget.title;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     Widget bodyWidget;
     if (widget.needAppBar) {
       bodyWidget = Scaffold(
         appBar: AppBar(
           title: Text(
-            widget.title ?? "",
+            _pageTitle ?? "",
             style: const TextStyle(color: Colors.black),
           ),
           centerTitle: true,
@@ -162,12 +172,12 @@ class WebViewPageState extends State<WebViewPage> {
               GradientProgressIndicator(
                 progress: progress / 100.0,
               ),
-              Expanded(
+              const Expanded(
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     EndlessRotatingIndicator(
                       child: Icon(
                         Icons.refresh,

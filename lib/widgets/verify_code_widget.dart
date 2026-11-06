@@ -15,18 +15,17 @@ import 'package:sirc/utils/size_extension.dart';
 * @date: 22/04/21
 */
 class VerifyCodeWidget extends StatefulWidget {
-  int verifyCodeCount;
+  final int verifyCodeCount;
   final ValueChanged<String>? onChanged;
   final IndexedWidgetBuilder? itemBuilder;
   final IndexedWidgetBuilder? separatorBuilder;
 
-  VerifyCodeWidget(
-      {Key? key,
+  const VerifyCodeWidget(
+      {super.key,
       this.verifyCodeCount = 6,
       this.onChanged,
       this.itemBuilder,
-      this.separatorBuilder})
-      : super(key: key);
+      this.separatorBuilder});
 
   @override
   _VerifyCodeWidgetState createState() => _VerifyCodeWidgetState();

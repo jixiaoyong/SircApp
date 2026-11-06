@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +46,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +134,6 @@ class MyApp extends StatelessWidget {
             getPages: AppPages.routes,
             theme: Theme.of(context).copyWith(
               primaryColor: Colors.white,
-              useMaterial3: false,
             ),
           ).build(context);
         });
