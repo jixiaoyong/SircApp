@@ -25,7 +25,8 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Sirc App">
 
-  <!-- iOS meta tags & icons -->
+  <!-- iOS & Mobile meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Sirc App">
@@ -241,7 +242,20 @@
       };
 
       if (window._flutter && window._flutter.loader) {
-        window._flutter.loader.load(loadConfig);
+        window._flutter.loader.loadEntrypoint(loadConfig);
+      }
+    });
+
+    // 监听 Flutter 第一帧渲染事件，双重保障平滑移除 Splash
+    window.addEventListener('flutter-first-frame', function () {
+      var loading = document.getElementById('loading');
+      if (loading && !loading.classList.contains('fade-out')) {
+        loading.classList.add('fade-out');
+        setTimeout(function () {
+          if (loading.parentNode) {
+            loading.parentNode.removeChild(loading);
+          }
+        }, 400);
       }
     });
   </script>
