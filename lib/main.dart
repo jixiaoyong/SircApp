@@ -18,7 +18,6 @@ import 'package:sirc/utils/size_extension.dart' as size_ext;
 import 'components/not_found/not_found_view.dart';
 import 'data/common_date.dart';
 import 'routes/app_pages.dart';
-import 'utils/logger.dart';
 
 /// a finance $ banking app
 /// UI copy from https://hbimg.huabanimg.com/71e943643aac8a17dedaee0445a0e27aec8023d212e8d8-5fkAOb
@@ -55,87 +54,85 @@ class MyApp extends StatelessWidget {
     );
     SystemChrome.setSystemUIOverlayStyle(uiStyle);
 
-    // physical size, unit is pixel, may be zero,
-    // The MediaQueryData not exist in here, so we can't use MediaQuery.of(context).size
-    final view = View.maybeOf(context) ??
-        WidgetsBinding.instance.platformDispatcher.views.first;
-    final size = view.physicalSize;
-    // logical size, which is the size we want to use in flutter
-    final widthLogical = size.width / view.devicePixelRatio;
-    final heightLogical = size.height / view.devicePixelRatio;
-
-    LogUtils.d(
-        "windows size: $size devicePixelRatio: ${view.devicePixelRatio}");
-
-    // consider to adapter the web screen which usually has a ultra width
-    if (kIsWeb && widthLogical > heightLogical) {
-      // make the available width to be the height*9/16
-      final appWidth = heightLogical * 9 / 16;
-      final horizontalPadding = (widthLogical - appWidth) / 2;
-
-      size_ext.SizeExtension.dpScale = appWidth / widthLogical;
-      CommonData.realScreenWidth = appWidth;
-
-      LogUtils.d(
-          'widthLogical: $widthLogical, heightLogical: $heightLogical, appWidth: $appWidth, horizontalPadding: $horizontalPadding');
-
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-        color: Colors.grey.shade100,
-        child: buildAppScreen(context),
-      );
-    } else {
-      // notice: In some device(eg. Mi 10 pro), the size can be zero here,
-      // so we need to query the size again after the widget is shown in the screen
-      // see the code in buildAppScreen() method 👇
-      CommonData.realScreenWidth = widthLogical;
-      return buildAppScreen(context);
-    }
-    // return app;
-  }
-
-  ScreenUtilInit buildAppScreen(BuildContext context) {
     return ScreenUtilInit(
-        // setup the screen width be 375,then you can use number.dp to set the design size
-        designSize: const Size(375, 666),
-        builder: (context, child) {
+      designSize: const Size(375, 666),
+      builder: (context, _) {
+        return GetMaterialApp(
+          title: "Sirc App",
+          onUnknownRoute: (RouteSettings settings) {
+            return MaterialPageRoute(
+              builder: (context) => const NotFoundPage(),
+            );
+          },
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale("en", ""),
+            Locale("zh", "CN"),
+          ],
+          locale: Get.deviceLocale,
+          fallbackLocale: const Locale("en", "US"),
+          translations: Languages(),
+          initialRoute: AppPages.INITIAL,
+          getPages: AppPages.routes,
+          theme: Theme.of(context).copyWith(
+            primaryColor: Colors.white,
+          ),
+          builder: (context, child) {
+            final mediaQuery = MediaQuery.of(context);
+            final screenWidth = mediaQuery.size.width;
+            final screenHeight = mediaQuery.size.height;
 
-          return GetMaterialApp(
-            title: "Sirc App",
-            onUnknownRoute: (RouteSettings settings) {
-              return MaterialPageRoute(
-                builder: (context) => const NotFoundPage(),
+            // 判定是否处于 Web 宽屏模式（宽大于高且宽度超出普通手机 430px）
+            final isWebWideScreen =
+                kIsWeb && (screenWidth > screenHeight && screenWidth > 430);
+
+            // 如果处于 Web 宽屏模式，自适应居中在 360~430 之间；拉窄后自动 100% 满屏无缝展示
+            final double appWidth = isWebWideScreen
+                ? (screenHeight * 9 / 16).clamp(360.0, 430.0)
+                : screenWidth;
+
+            // 实时响应窗口尺寸缩放与内部组件联动
+            CommonData.realScreenWidth = appWidth;
+            size_ext.SizeExtension.dpScale = appWidth / screenWidth;
+
+            if (isWebWideScreen) {
+              return Scaffold(
+                backgroundColor: const Color(0xFFF1F5F9),
+                body: Center(
+                  child: Container(
+                    width: appWidth,
+                    height: screenHeight,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 24,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ClipRect(
+                      child: MediaQuery(
+                        data: mediaQuery.copyWith(
+                          size: Size(appWidth, screenHeight),
+                        ),
+                        child: child ?? const SizedBox(),
+                      ),
+                    ),
+                  ),
+                ),
               );
-            },
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale("en", ""),
-              Locale("zh", "CN"),
-            ],
-            onReady: () {
-              if (!kIsWeb) {
-                // In some mobile device(e.g. Mi 10 pro), the CommonData.realScreenWidth
-                // may be zero, so we need to query the size again after the widget
-                // is shown in the screen
-                // NOTICE: May cause exception "No MediaQuery widget ancestor found."
-                // if the code below execute before the material app is loaded.
-                final size = MediaQuery.of(context).size;
-                CommonData.realScreenWidth = size.width;
-              }
-            },
-            locale: Get.deviceLocale,
-            fallbackLocale: const Locale("en", "US"),
-            translations: Languages(),
-            initialRoute: AppPages.INITIAL,
-            getPages: AppPages.routes,
-            theme: Theme.of(context).copyWith(
-              primaryColor: Colors.white,
-            ),
-          ).build(context);
-        });
+            }
+
+            return child ?? const SizedBox();
+          },
+        );
+      },
+    );
   }
 }
