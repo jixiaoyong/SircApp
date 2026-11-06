@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,14 +34,16 @@ class SignInLogic extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    if (kDebugMode) {
-      // mock login data
-      setUserName("jixiaoyong", false);
-      setUserPwd("123456", false);
-      final String userPwdMd5 = Md5Utils.generateMd5(state.userPwd.value);
-      _prefs?.setString(CommonKeys.USER_NAME, state.userName.value);
+    // 默认预置并填充测试账号，便于在 Debug 或 Web 演示环境下直接体验与快速验证
+    var localUserName = _prefs?.getString(CommonKeys.USER_NAME);
+    if (localUserName == null || localUserName.isEmpty) {
+      localUserName = "jixiaoyong";
+      final String userPwdMd5 = Md5Utils.generateMd5("123456");
+      _prefs?.setString(CommonKeys.USER_NAME, localUserName);
       _prefs?.setString(CommonKeys.USER_PWD, userPwdMd5);
     }
+    setUserName(localUserName, false);
+    setUserPwd("123456", false);
   }
 
   void setUserName(String value, [bool isUserInput = true]) {
@@ -74,8 +75,8 @@ class SignInLogic extends GetxController {
 
       // mock login
       Future.delayed(Duration(seconds: MockUtils.random.nextInt(10) + 3), () {
-        final String? localUserName = _prefs?.getString(CommonKeys.USER_NAME);
-        final String? localUserPwdMd5 = _prefs?.getString(CommonKeys.USER_PWD);
+        final String localUserName = _prefs?.getString(CommonKeys.USER_NAME) ?? "jixiaoyong";
+        final String localUserPwdMd5 = _prefs?.getString(CommonKeys.USER_PWD) ?? Md5Utils.generateMd5("123456");
         final String userPwdMd5 = Md5Utils.generateMd5(state.userPwd.value);
         if (localUserName == state.userName.value &&
             userPwdMd5 == localUserPwdMd5) {
