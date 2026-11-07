@@ -27,7 +27,7 @@ class EndlessRotatingIndicator extends StatefulWidget {
 
 class _EndlessRotatingIndicatorState extends State<EndlessRotatingIndicator>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
+  late AnimationController _controller;
 
   @override
   void initState() {

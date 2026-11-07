@@ -81,6 +81,12 @@ class _ExpandedIconButtonState extends State<ExpandedIconButton>
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       height: widget.height,

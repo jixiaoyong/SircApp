@@ -21,24 +21,6 @@ Widget getEmbedWebView(String srcDoc, [double? width, double? height]) =>
 /// @date: 22/04/25
 /// @description:
 /// A widget that displays a WebView in Flutter Web.
-/// The [srcDoc] property must be set to a valid HTML document.
-/// example:
-/// ```html
-/// <!DOCTYPE html>
-/// <html>
-///   <head>
-///     <meta charset="utf-8">
-///     <title>
-///     </title>
-///   </head>
-///
-///   <body>
-///   </body>
-///
-/// </html>
-/// ```
-/// The [width] and [height] properties can be null when you want the widget to
-/// size itself to the size of the WebView content.
 class EmbedWebView4FlutterWeb extends StatefulWidget {
   final String srcDoc;
   final double? width;
@@ -58,15 +40,17 @@ class EmbedWebView4FlutterWeb extends StatefulWidget {
 
 class EmbedWebView4FlutterWebState extends State<EmbedWebView4FlutterWeb> {
   late html.IFrameElement _iframeElement;
-  double _iframeElementHeight = 10;
-  double _iframeElementWidth = 10;
+  late double _iframeElementHeight;
+  late double _iframeElementWidth;
   String iframeId = "MyIframeId";
 
   @override
-  initState() {
+  void initState() {
     super.initState();
 
-    iframeId = iframeId + DateTime.now().millisecondsSinceEpoch.toString();
+    _iframeElementHeight = widget.height ?? 160.0;
+    _iframeElementWidth = widget.width ?? 320.0;
+    iframeId = "$iframeId${DateTime.now().millisecondsSinceEpoch}";
 
     _iframeElement = html.IFrameElement()
       ..srcdoc = widget.srcDoc
@@ -74,42 +58,49 @@ class EmbedWebView4FlutterWebState extends State<EmbedWebView4FlutterWeb> {
       ..style.width = '100%'
       ..style.height = '100%'
       ..style.border = 'none'
+      ..style.pointerEvents = 'none'
       ..onLoad.listen((event) async {
-        var body = html.querySelector("#$iframeId");
-        // inspired by https://stackoverflow.com/a/28278469/8389461
-        var jsIFrame = js.JsObject.fromBrowserObject(body as Object);
-        var documentElement = jsIFrame["contentDocument"]["documentElement"];
-
-        setState(() {
-          _iframeElementHeight = documentElement["scrollHeight"].toDouble();
-          _iframeElementWidth = documentElement["scrollWidth"].toDouble();
-
-          debugPrint(
-              "_iframeElementHeight: $_iframeElementHeight _iframeElementWidth: $_iframeElementWidth");
-        });
+        try {
+          final body = html.querySelector("#$iframeId") ?? _iframeElement;
+          final jsIFrame = js.JsObject.fromBrowserObject(body);
+          final documentElement = jsIFrame["contentDocument"]?["documentElement"];
+          if (documentElement != null) {
+            final h = documentElement["scrollHeight"]?.toDouble();
+            final w = documentElement["scrollWidth"]?.toDouble();
+            if (h != null && h > 20 && mounted) {
+              setState(() {
+                _iframeElementHeight = h;
+                if (w != null && w > 20) _iframeElementWidth = w;
+              });
+            }
+          }
+        } catch (e) {
+          debugPrint("iframe height detect: $e");
+        }
       });
 
     // ignore: undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(
-      'iframeElement',
+      iframeId,
       (int viewId) => _iframeElement,
     );
   }
 
   void updateHeight(double height) {
-    setState(() {
-      _iframeElementHeight = height;
-    });
+    if (mounted) {
+      setState(() {
+        _iframeElementHeight = height;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: widget.height ?? _iframeElementHeight,
-      width: widget.width ?? _iframeElementWidth,
+      height: widget.height ?? (_iframeElementHeight > 20 ? _iframeElementHeight : 160.0),
+      width: widget.width ?? (_iframeElementWidth > 20 ? _iframeElementWidth : double.infinity),
       child: HtmlElementView(
-        viewType: 'iframeElement',
-        onPlatformViewCreated: (id) {},
+        viewType: iframeId,
       ),
     );
   }

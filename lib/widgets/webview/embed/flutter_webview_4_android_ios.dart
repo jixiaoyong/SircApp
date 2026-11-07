@@ -33,7 +33,7 @@ class _FlutterWebview4AndroidIosState extends State<FlutterWebview4AndroidIos> {
   double _heights = 10;
   double? _widgetWidth;
 
-  late final WebViewController _controller;
+  late WebViewController _controller;
 
   @override
   void initState() {

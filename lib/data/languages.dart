@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:sirc/bean/pair.dart';
 
 /*
@@ -8,13 +7,12 @@ import 'package:sirc/bean/pair.dart';
 * @email: jixiaoyong1995@gmail.com
 * @date: 22/04/19
 */
-class Languages extends Translations {
+class Languages {
   final List<Pair<String, String>> languagesName = [
     Pair('中文', "zh_CN"),
     Pair('English', "en_US")
   ];
 
-  @override
   Map<String, Map<String, String>> get keys => {
         "en_US": {
           "MasterCard": "MasterCard",

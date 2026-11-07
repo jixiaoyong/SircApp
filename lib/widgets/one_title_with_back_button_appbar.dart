@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 /*
 * @description: common app bar with one title and back button
@@ -25,7 +24,7 @@ class OneTitleWithBackButtonAppBar extends StatelessWidget
       leading: GestureDetector(
         child: const Icon(Icons.arrow_back, color: Colors.black),
         onTap: () {
-          Get.back();
+          Navigator.of(context).maybePop();
         },
       ),
       elevation: 0,

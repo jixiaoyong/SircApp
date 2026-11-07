@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:sirc/bean/money_operate_bean.dart';
 import 'package:sirc/bean/pair.dart';
+import 'package:sirc/core/localization/app_locale.dart';
 
 /*
 * @description: TODO

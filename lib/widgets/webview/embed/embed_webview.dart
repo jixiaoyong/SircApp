@@ -57,8 +57,8 @@ class _EmbedWebViewState extends State<EmbedWebView> {
   Widget build(BuildContext context) {
     var widthPx = widget.width * MediaQuery.of(context).devicePixelRatio;
     var maxHeight = widget.maxHeight;
-    _screenMaxHeightPx = maxHeight == null
-        ? _screenMaxHeightPx
+    _screenMaxHeightPx = (maxHeight == null || maxHeight <= 0)
+        ? double.infinity
         : maxHeight * MediaQuery.of(context).devicePixelRatio;
     var webViewContentHtml = WebViewUtils.getWebContent(
         widget.webViewContent, widthPx.toInt(),

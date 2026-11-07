@@ -1,4 +1,5 @@
 # Miscellaneous
+.screenshots/
 *.class
 *.log
 *.pyc
