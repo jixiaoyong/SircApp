@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
-import 'package:sirc/core/types/records.dart';
-import 'package:sirc/data/common_date.dart';
+import 'package:sirc/data/common_data.dart';
 import 'package:sirc/features/home/controllers/home_controller.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/utils/color_extension.dart';
@@ -308,9 +307,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
                   height: 200.dp,
                   width: double.infinity,
                   child: LineGraph(
-                    data: homeState.dataChange
-                        .map((e) => e.toPair())
-                        .toList(),
+                    data: homeState.dataChange,
                   ),
                 ),
                 Row(

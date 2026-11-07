@@ -11,10 +11,8 @@ import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/utils/size_extension.dart' as size_ext;
 
-import 'core/router/web_url_sync_observer.dart';
-import 'data/common_date.dart';
-import 'features/settings/presentation/not_found_page.dart';
-import 'routes/app_pages.dart';
+import 'package:sirc/routes/app_router.dart';
+import 'data/common_data.dart';
 
 /// a finance $ banking app
 /// UI copy from https://hbimg.huabanimg.com/71e943643aac8a17dedaee0445a0e27aec8023d212e8d8-5fkAOb
@@ -47,15 +45,10 @@ class MyApp extends ConsumerWidget {
     return ScreenUtilInit(
       designSize: const Size(375, 666),
       builder: (context, _) {
-        return MaterialApp(
-          navigatorKey: rootNavigatorKey,
+        return MaterialApp.router(
+          routerConfig: appRouter,
           scaffoldMessengerKey: rootScaffoldMessengerKey,
           title: "Sirc App",
-          onUnknownRoute: (RouteSettings settings) {
-            return MaterialPageRoute(
-              builder: (context) => const NotFoundPage(),
-            );
-          },
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -64,9 +57,6 @@ class MyApp extends ConsumerWidget {
           ],
           supportedLocales: AppLocalizations.supportedLocales,
           locale: locale,
-          initialRoute: AppPages.INITIAL,
-          onGenerateRoute: AppPages.onGenerateRoute,
-          navigatorObservers: [WebUrlSyncObserver()],
           theme: AppTheme.lightTheme,
           builder: (context, child) {
             final mediaQuery = MediaQuery.of(context);

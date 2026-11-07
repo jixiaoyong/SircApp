@@ -1,10 +1,9 @@
 import 'dart:math' as math;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sirc/bean/money_operate_bean.dart';
+import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
-import 'package:sirc/widgets/date_format.dart';
 import '../../data/wallet_repository.dart';
 import '../../domain/models/bank_card.dart';
 
@@ -17,7 +16,7 @@ class WalletState {
   final int currentFilterIndex; // 0: Last Send, 1: Last Receive, 2: Total
   final int selectedCardIndex;
   final List<BankCard> cards;
-  final List<MoneyOperateBean> transactions;
+  final List<Transaction> transactions;
   final List<String> moneyTypes;
   final String selectedMonth;
   final List<String> monthEnglishNameList;
@@ -46,7 +45,7 @@ class WalletState {
     int? currentFilterIndex,
     int? selectedCardIndex,
     List<BankCard>? cards,
-    List<MoneyOperateBean>? transactions,
+    List<Transaction>? transactions,
     List<String>? moneyTypes,
     String? selectedMonth,
     List<String>? monthEnglishNameList,
@@ -214,7 +213,7 @@ class WalletController extends Notifier<WalletState> {
   }
 
   /// 内部过滤解析
-  Future<List<MoneyOperateBean>> _fetchFilteredTransactions({
+  Future<List<Transaction>> _fetchFilteredTransactions({
     required int filterIndex,
     String? query,
   }) {
@@ -377,8 +376,9 @@ class AddCardController extends Notifier<AddCardState> {
 
   /// 设置卡片有效期
   void setExpireDate(DateTime value) {
-    final str =
-        '${DateFormat.mToMMInt(value.month)}/${DateFormat.yyyyToYYInt(value.year)}';
+    final monthStr = value.month.toString().padLeft(2, '0');
+    final yearStr = (value.year % 100).toString().padLeft(2, '0');
+    final str = '$monthStr/$yearStr';
     final error =
         str.isNotEmpty ? null : 'Please enter an expiration date'.tr;
     state = state.copyWith(

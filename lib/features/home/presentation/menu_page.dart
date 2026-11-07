@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/routes/app_routes.dart';
@@ -54,7 +55,7 @@ class MenuPage extends ConsumerWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pushNamed(AppRoutes.NOTIFICATIONS);
+                      context.push(AppRoutes.NOTIFICATIONS);
                     },
                     child: Stack(
                       children: [
@@ -152,11 +153,7 @@ class MenuPage extends ConsumerWidget {
                                     Navigator.of(dialogContext).pop();
                                   }
                                   if (context.mounted) {
-                                    Navigator.of(context)
-                                        .pushNamedAndRemoveUntil(
-                                      AppRoutes.INITIAL,
-                                      (route) => false,
-                                    );
+                                    context.go(AppRoutes.INITIAL);
                                   }
                                 },
                               ),
@@ -164,7 +161,7 @@ class MenuPage extends ConsumerWidget {
                           ),
                         );
                       } else {
-                        Navigator.of(context).pushNamed(item.$3);
+                        context.push(item.$3);
                       }
                     },
                   ),

@@ -4,7 +4,7 @@ import 'package:sirc/core/network/api_client.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/features/auth/domain/user.dart';
 import 'package:sirc/mock/mock_utils.dart';
-import 'package:sirc/utils/m5d_utils.dart';
+import 'package:sirc/utils/md5_utils.dart';
 
 /// 认证仓储接口与实现：封装用户持久化、账号密码校验（MD5）、找回密码与设置密码等核心业务逻辑
 class AuthRepository {

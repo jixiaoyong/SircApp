@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../bean/money_operate_bean.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import '../../../core/localization/app_locale.dart';
 import '../../../core/storage/storage_service.dart';
 import '../../../gen_a/A.dart';
@@ -44,7 +45,7 @@ class NotificationsState {
         'this year'.tr,
       ];
 
-  List<(IconData icon, String title, List<MoneyOperateBean> items)> get notificationGroups => [
+  List<(IconData icon, String title, List<Transaction> items)> get notificationGroups => [
         (Icons.transform, 'Transfers'.tr, MockUtils.moneyOperateList),
         (Icons.monetization_on_outlined, 'Recharge'.tr, MockUtils.moneyOperateList),
         (Icons.notes_outlined, 'Bill'.tr, MockUtils.moneyOperateList),
@@ -199,7 +200,7 @@ class InitialController extends Notifier<InitialState> {
 
     bool isLogin = isUserLoggedIn();
     if (!isLogin) {
-      final result = await Navigator.of(context).pushNamed(AppRoutes.SIGN_IN);
+      final result = await context.push<bool>(AppRoutes.SIGN_IN);
       isLogin = result == true;
     }
 
@@ -207,7 +208,7 @@ class InitialController extends Notifier<InitialState> {
 
     if (isLogin) {
       markAsNotFirstInitial();
-      Navigator.of(context).pushReplacementNamed(AppRoutes.MAIN);
+      context.go(AppRoutes.MAIN);
     } else {
       setHasCalledGoMainPage(false);
     }

@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:sirc/routes/app_routes.dart';
@@ -196,7 +197,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                 children: [
                   GestureDetector(
                     onTap: () async {
-                      final result = await Navigator.of(context).pushNamed(AppRoutes.FORGET_PWD);
+                      final result = await context.push<bool>(AppRoutes.FORGET_PWD);
                       if (true == result && context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -286,7 +287,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                         fontWeight: FontWeight.w500,
                       ),
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () => Navigator.of(context).pushNamed(AppRoutes.SIGN_UP),
+                        ..onTap = () => context.push(AppRoutes.SIGN_UP),
                     ),
                   ],
                 ),

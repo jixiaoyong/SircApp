@@ -56,9 +56,7 @@ class SignInState {
 class SignInNotifier extends Notifier<SignInState> {
   @override
   SignInState build() {
-    final rawSocial = MockUtils.socialList;
-    final convertedSocial = rawSocial.map((e) => (e.first, e.second)).toList();
-    return SignInState(socialList: convertedSocial);
+    return SignInState(socialList: MockUtils.socialList);
   }
 
   /// 预填充测试账号（若本地未初始化，自动写入默认账号并在进入时加载）
@@ -197,9 +195,7 @@ class SignUpState {
 class SignUpNotifier extends Notifier<SignUpState> {
   @override
   SignUpState build() {
-    final rawSocial = MockUtils.socialList;
-    final convertedSocial = rawSocial.map((e) => (e.first, e.second)).toList();
-    return SignUpState(socialList: convertedSocial);
+    return SignUpState(socialList: MockUtils.socialList);
   }
 
   void setUserName(String value) {

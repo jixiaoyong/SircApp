@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sirc/core/localization/app_locale.dart';
-import 'package:sirc/data/common_keys.dart';
 import 'package:sirc/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/size_extension.dart';
@@ -74,12 +74,12 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
       }
 
       if (previous?.isVerifySuccess != next.isVerifySuccess && next.isVerifySuccess == true) {
-        final resetResult = await Navigator.of(context).pushNamed(
+        final resetResult = await context.push<bool>(
           AppRoutes.SET_PWD,
-          arguments: {CommonKeys.USER_NAME: next.userEmail},
+          extra: next.userEmail,
         );
         if (true == resetResult && context.mounted) {
-          Navigator.of(context).pop(true);
+          context.pop(true);
         }
       }
     });

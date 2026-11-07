@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sirc/core/localization/app_locale.dart';
-import 'package:sirc/core/types/records.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/routes/app_routes.dart';
@@ -44,7 +44,9 @@ class HistoryPage extends ConsumerWidget {
                         if (onMenuTap != null) {
                           onMenuTap!();
                         } else {
-                          ref.read(navigationControllerProvider.notifier).openDrawer();
+                          ref
+                              .read(navigationControllerProvider.notifier)
+                              .openDrawer();
                         }
                       },
                       child: ClipRRect(
@@ -122,7 +124,8 @@ class HistoryPage extends ConsumerWidget {
                           child: Text(e),
                         );
                       }).toList(),
-                      value: state.monthEnglishNameList.contains(state.selectedMonth)
+                      value: state.monthEnglishNameList
+                              .contains(state.selectedMonth)
                           ? state.selectedMonth
                           : (state.monthEnglishNameList.isNotEmpty
                               ? state.monthEnglishNameList.first
@@ -147,8 +150,7 @@ class HistoryPage extends ConsumerWidget {
                   width: double.infinity,
                   child: state.chartData.isNotEmpty
                       ? LineGraph(
-                          data:
-                              state.chartData.map((e) => e.toPair()).toList(),
+                          data: state.chartData,
                         )
                       : const SizedBox.shrink(),
                 ),
@@ -182,9 +184,9 @@ class HistoryPage extends ConsumerWidget {
                 final String heroTag = "hero_history_${data.hashCode}";
                 return GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pushNamed(
+                    context.push(
                       AppRoutes.HISTORY_DETAILS,
-                      arguments: {
+                      extra: {
                         'data': data,
                         'heroTag': heroTag,
                       },

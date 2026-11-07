@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sirc/bean/money_operate_bean.dart';
+import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/core/localization/app_locale.dart';
-import 'package:sirc/data/common_date.dart';
+import 'package:sirc/data/common_data.dart';
 import 'package:sirc/features/wallet/presentation/add_card_page.dart';
 import 'package:sirc/features/wallet/presentation/history_details_page.dart';
 import 'package:sirc/features/wallet/presentation/history_page.dart';
@@ -70,7 +70,7 @@ void main() {
   testWidgets('HistoryDetailsPage renders transaction info and emotion',
       (WidgetTester tester) async {
     setDisplaySize(tester);
-    final testData = MoneyOperateBean(
+    final testData = Transaction(
       userIcon: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde',
       moneyActionName: 'Salary Bonus',
       moneyAmount: 250.75,

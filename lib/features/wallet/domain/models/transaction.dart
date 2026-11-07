@@ -1,21 +1,16 @@
-/// userIcon : ""
-/// moneyActionName : ""
-/// moneyAmount : -0.2
-/// time : "2 mins ago"
-library;
-
-class MoneyOperateBean {
-  MoneyOperateBean({
+/// 交易流水领域实体模型 (Transaction)
+class Transaction {
+  Transaction({
     this.userIcon,
     this.moneyActionName,
     this.moneyAmount,
     this.time,
   });
 
-  MoneyOperateBean.fromJson(dynamic json) {
+  Transaction.fromJson(dynamic json) {
     userIcon = json['userIcon'];
     moneyActionName = json['moneyActionName'];
-    moneyAmount = json['moneyAmount'];
+    moneyAmount = (json['moneyAmount'] as num?)?.toDouble();
     time = json['time'];
   }
 
@@ -24,13 +19,13 @@ class MoneyOperateBean {
   double? moneyAmount;
   String? time;
 
-  MoneyOperateBean copyWith({
+  Transaction copyWith({
     String? userIcon,
     String? moneyActionName,
     double? moneyAmount,
     String? time,
   }) =>
-      MoneyOperateBean(
+      Transaction(
         userIcon: userIcon ?? this.userIcon,
         moneyActionName: moneyActionName ?? this.moneyActionName,
         moneyAmount: moneyAmount ?? this.moneyAmount,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../routes/app_routes.dart';
 
 /*
@@ -21,10 +22,7 @@ class NotFoundPage extends ConsumerWidget {
         OutlinedButton(
           child: const Text('Go to Home'),
           onPressed: () {
-            Navigator.of(context).pushNamedAndRemoveUntil(
-              AppRoutes.INITIAL,
-              (route) => false,
-            );
+            context.go(AppRoutes.INITIAL);
           },
         ),
       ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sirc/bean/money_operate_bean.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/mock/mock_utils.dart';
@@ -21,13 +22,13 @@ class PersonPage extends ConsumerStatefulWidget {
 class _PersonPageState extends ConsumerState<PersonPage> {
   int _selectedMoneyIndex = 0;
 
-  late List<MoneyOperateBean> _moneyOperateList;
+  late List<Transaction> _moneyOperateList;
 
   @override
   void initState() {
     super.initState();
     _moneyOperateList = MockUtils.moneyOperateList
-        .map(
+        .map<Transaction>(
           (e) => e.copyWith(
             userIcon:
                 "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
@@ -122,9 +123,9 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                         setState(() {
                           _selectedMoneyIndex = index;
                         });
-                        Navigator.of(context).pushNamed(
+                        context.push(
                           AppRoutes.HISTORY_DETAILS,
-                          arguments: {
+                          extra: {
                             "data": data,
                             "heroTag": heroTag,
                           },
@@ -229,7 +230,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
 
                       return GestureDetector(
                         onTap: () {
-                          Navigator.of(context).pushNamed(AppRoutes.ABOUT);
+                          context.push(AppRoutes.ABOUT);
                         },
                         child: Container(
                           color: Colors.transparent,

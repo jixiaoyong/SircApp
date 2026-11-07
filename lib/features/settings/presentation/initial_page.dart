@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/localization/app_locale.dart';
-import '../../../data/common_date.dart';
+import '../../../data/common_data.dart';
 import '../../../gen_a/A.dart';
 import '../../../utils/size_extension.dart';
 import '../../../widgets/title_text.dart';

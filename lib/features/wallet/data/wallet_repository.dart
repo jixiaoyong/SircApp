@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sirc/bean/money_operate_bean.dart';
+import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/network/api_client.dart';
 import 'package:sirc/mock/mock_utils.dart';
@@ -27,7 +27,7 @@ abstract class WalletRepository {
   Future<double> getAvailableBalance();
 
   /// 获取交易明细列表（支持分类过滤与模糊搜索）
-  Future<List<MoneyOperateBean>> getTransactions({
+  Future<List<Transaction>> getTransactions({
     TransactionFilter filter = TransactionFilter.total,
     String? query,
   });
@@ -73,8 +73,8 @@ class WalletRepositoryImpl implements WalletRepository {
   ];
 
   // 初始交易记录列表
-  late List<MoneyOperateBean> _transactions =
-      List<MoneyOperateBean>.from(MockUtils.moneyOperateList);
+  late List<Transaction> _transactions =
+      List<Transaction>.from(MockUtils.moneyOperateList);
 
   double _availableBalance = 35.269;
 
@@ -99,7 +99,7 @@ class WalletRepositoryImpl implements WalletRepository {
   }
 
   @override
-  Future<List<MoneyOperateBean>> getTransactions({
+  Future<List<Transaction>> getTransactions({
     TransactionFilter filter = TransactionFilter.total,
     String? query,
   }) async {

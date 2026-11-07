@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/routes/app_routes.dart';
@@ -61,7 +62,7 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
     ref.read(navigationControllerProvider.notifier).closeDrawer();
 
     if (title == "About".tr) {
-      Navigator.of(context).pushNamed(AppRoutes.ABOUT);
+      context.push(AppRoutes.ABOUT);
     } else if (title == "Home".tr) {
       ref.read(navigationControllerProvider.notifier).changeIndex(0);
     } else if (title == "Profile".tr) {
@@ -71,7 +72,7 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
     } else if (title == "Settings".tr) {
       ref.read(navigationControllerProvider.notifier).changeIndex(4);
     } else if (title == "Notifications".tr) {
-      Navigator.of(context).pushNamed(AppRoutes.NOTIFICATIONS);
+      context.push(AppRoutes.NOTIFICATIONS);
     } else {
       Toast.showDefaultToast();
     }

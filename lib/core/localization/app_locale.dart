@@ -6,6 +6,12 @@ import '../../data/languages.dart';
 import '../storage/storage_service.dart';
 
 export 'package:flutter_gen/gen_l10n/app_localizations.dart';
+export '../../data/languages.dart';
+
+extension BuildContextL10n on BuildContext {
+  /// 官方生成的强类型多语言对象快捷获取
+  AppLocalizations get l10n => AppLocalizations.of(this)!;
+}
 
 /// 全局多语言管理
 class AppLocale {
@@ -20,7 +26,7 @@ class AppLocale {
   /// 官方强类型 Localizations 快捷获取
   static AppLocalizations? of(BuildContext context) => AppLocalizations.of(context);
 
-  static final Map<String, Map<String, String>> _translations = Languages().keys;
+  static final Map<String, Map<String, String>> _translations = Languages.keys;
 
   static String translate(String key) {
     final languageCode = _currentLocale.languageCode;

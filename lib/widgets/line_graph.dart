@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sirc/bean/pair.dart';
 import 'package:sirc/utils/size_extension.dart';
+
+/// Dart 3 原生 Record 类型的图表数据点 (label, value)
+typedef ChartDataPoint = (String label, double value);
 
 /*
 * @description: 曲线图
@@ -13,7 +15,7 @@ class LineGraph extends StatefulWidget {
   /// data: [{time : percentage}]
   /// time may be one day or one month
   /// percentage change which value in 0~1
-  final List<Pair<String, double>> data;
+  final List<ChartDataPoint> data;
 
   const LineGraph({super.key, required this.data});
 
@@ -44,11 +46,11 @@ class LinerGraphPainter extends CustomPainter {
   static double _maxPercentage = 1.0;
   static double _minPercentage = 0.0;
 
-  List<Pair<String, double>> data;
+  List<ChartDataPoint> data;
   Offset? currentPosition;
 
   LinerGraphPainter(this.data, this.currentPosition) {
-    var tempPercentage = data.map((e) => e.second).toList();
+    var tempPercentage = data.map((e) => e.$2).toList();
     tempPercentage.sort();
     _maxPercentage = tempPercentage.last;
     _minPercentage = tempPercentage.first;
@@ -82,8 +84,9 @@ class LinerGraphPainter extends CustomPainter {
     final path = Path();
     var lastPoint = Offset(0, availableHeight);
     for (var i = 0; i < data.length; i++) {
+      final (label, percentage) = data[i];
       final x = axisXStep * i;
-      final y = availableHeight - data[i].second * axisYStep * 10;
+      final y = availableHeight - percentage * axisYStep * 10;
       if (i == 0) {
         path.moveTo(x, y);
       } else {
@@ -99,7 +102,7 @@ class LinerGraphPainter extends CustomPainter {
 
       // draw data text
       var text = TextSpan(
-          text: data[i].first,
+          text: label,
           style: TextStyle(
               color: Colors.black,
               fontSize: 12.sp,
@@ -116,7 +119,6 @@ class LinerGraphPainter extends CustomPainter {
         canvas.drawCircle(Offset(x, y), 5.dp, circlePaint);
 
         // draw the percentage text
-        var percentage = data[i].second;
         var percentageText = TextSpan(
             text: '${(percentage * 100).toStringAsFixed(0)}%',
             style: TextStyle(

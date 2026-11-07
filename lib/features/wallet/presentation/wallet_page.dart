@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
@@ -38,7 +39,9 @@ class WalletPage extends ConsumerWidget {
                     if (onMenuTap != null) {
                       onMenuTap!();
                     } else {
-                      ref.read(navigationControllerProvider.notifier).openDrawer();
+                      ref
+                          .read(navigationControllerProvider.notifier)
+                          .openDrawer();
                     }
                   },
                   child: ClipRRect(
@@ -84,7 +87,9 @@ class WalletPage extends ConsumerWidget {
                 ExpandedIconButton(
                   icon: Icons.arrow_forward_rounded,
                   onPressed: () {
-                    ref.read(walletControllerProvider.notifier).setFilterIndex(0);
+                    ref
+                        .read(walletControllerProvider.notifier)
+                        .setFilterIndex(0);
                   },
                   height: 50.dp,
                   maxWidth: 200.dp,
@@ -95,7 +100,9 @@ class WalletPage extends ConsumerWidget {
                 ExpandedIconButton(
                   icon: Icons.arrow_back_rounded,
                   onPressed: () {
-                    ref.read(walletControllerProvider.notifier).setFilterIndex(1);
+                    ref
+                        .read(walletControllerProvider.notifier)
+                        .setFilterIndex(1);
                   },
                   height: 50.dp,
                   maxWidth: 200.dp,
@@ -106,7 +113,9 @@ class WalletPage extends ConsumerWidget {
                 ExpandedIconButton(
                   icon: Icons.more_horiz_rounded,
                   onPressed: () {
-                    ref.read(walletControllerProvider.notifier).setFilterIndex(2);
+                    ref
+                        .read(walletControllerProvider.notifier)
+                        .setFilterIndex(2);
                   },
                   height: 50.dp,
                   maxWidth: 200.dp,
@@ -129,9 +138,9 @@ class WalletPage extends ConsumerWidget {
               final heroTag = "heroTag_${data.hashCode}";
               return GestureDetector(
                 onTap: () {
-                  Navigator.of(context).pushNamed(
+                  context.push(
                     AppRoutes.HISTORY_DETAILS,
-                    arguments: {
+                    extra: {
                       'data': data,
                       'heroTag': heroTag,
                     },

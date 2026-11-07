@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/features/auth/data/auth_repository.dart';
 import 'package:sirc/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:sirc/utils/m5d_utils.dart';
+import 'package:sirc/utils/md5_utils.dart';
 import 'package:sirc/utils/username_pwd_utils.dart';
 
 void main() {

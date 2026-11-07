@@ -1,7 +1,7 @@
 import '../core/localization/app_locale.dart';
 
 /*
-* @description: 校验用户名和密码等的工具
+* @description: 校验用户名和密码等的工具，采用强类型 Languages 门面防拼写错漏
 *
 * @author: jixiaoyong
 * @email: jixiaoyong1995@gmail.com
@@ -12,8 +12,8 @@ class UsernamePwdUtils {
   static String? checkUserName(String userNameInput) {
     final userName = userNameInput.trim();
     return switch (userName.length) {
-      < 3 => "the length of username must be more than 3".tr,
-      > 10 => "the length of username must be less than 10".tr,
+      < 3 => Languages.usernameLengthMin,
+      > 10 => Languages.usernameLengthMax,
       _ => null,
     };
   }
@@ -22,9 +22,9 @@ class UsernamePwdUtils {
     final String pwd = pwdStr.trim();
     final String confirmPwdStr = (confirmPwd ?? pwd).trim();
     return switch (pwd.length) {
-      < 6 => "the length of user password must be more than 6".tr,
-      > 12 => "the length of user password must be less than 12".tr,
-      _ when pwd != confirmPwdStr => "the password is not same".tr,
+      < 6 => Languages.passwordLengthMin,
+      > 12 => Languages.passwordLengthMax,
+      _ when pwd != confirmPwdStr => Languages.passwordNotSame,
       _ => null,
     };
   }
@@ -34,11 +34,10 @@ class UsernamePwdUtils {
     final emailRegex = RegExp(
         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
     return switch (email.length) {
-      < 5 => "the length of user email must be more than 5".tr,
-      > 30 => "the length of user email must be less than 30".tr,
-      _ when !emailRegex.hasMatch(email) => "the email format is not correct".tr,
+      < 5 => Languages.emailLengthMin,
+      > 30 => Languages.emailLengthMax,
+      _ when !emailRegex.hasMatch(email) => Languages.emailFormatNotCorrect,
       _ => null,
     };
   }
 }
-

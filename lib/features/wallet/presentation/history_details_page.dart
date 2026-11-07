@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:sirc/bean/money_operate_bean.dart';
-import 'package:sirc/data/common_date.dart';
+import 'package:sirc/features/wallet/domain/models/transaction.dart';
+import 'package:sirc/data/common_data.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 
 /// 交易详情页面，展示更详尽的单笔交易信息与 Hero 动画
 class HistoryDetailsPage extends StatelessWidget {
-  final MoneyOperateBean data;
+  final Transaction data;
   final String heroTag;
 
   const HistoryDetailsPage({
