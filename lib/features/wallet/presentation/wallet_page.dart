@@ -59,7 +59,7 @@ class WalletPage extends ConsumerWidget {
               child: Padding(
                 padding: EdgeInsets.only(top: 20.dp),
                 child: Text(
-                  "Available Balance".tr,
+                  Languages.availableBalance,
                   style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
@@ -94,7 +94,7 @@ class WalletPage extends ConsumerWidget {
                   height: 50.dp,
                   maxWidth: 200.dp,
                   colors: [Colors.blue, Colors.blueAccent.shade100],
-                  text: "Send".tr,
+                  text: Languages.send,
                   isExpanded: state.currentFilterIndex == 0,
                 ),
                 ExpandedIconButton(
@@ -107,7 +107,7 @@ class WalletPage extends ConsumerWidget {
                   height: 50.dp,
                   maxWidth: 200.dp,
                   colors: [Colors.deepPurple, Colors.deepPurpleAccent.shade100],
-                  text: "Receive".tr,
+                  text: Languages.receive,
                   isExpanded: state.currentFilterIndex == 1,
                 ),
                 ExpandedIconButton(
@@ -120,7 +120,7 @@ class WalletPage extends ConsumerWidget {
                   height: 50.dp,
                   maxWidth: 200.dp,
                   colors: [Colors.orange, Colors.amber.shade400],
-                  text: "Total".tr,
+                  text: Languages.total,
                   isExpanded: state.currentFilterIndex == 2,
                 ),
               ],
@@ -131,7 +131,7 @@ class WalletPage extends ConsumerWidget {
                 text: (state.currentFilterIndex >= 0 &&
                         state.currentFilterIndex < state.moneyTypes.length)
                     ? state.moneyTypes[state.currentFilterIndex]
-                    : "Total".tr,
+                    : Languages.total,
               ),
             ),
             ...state.transactions.map((data) {

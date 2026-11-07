@@ -3,8 +3,8 @@ import '../core/localization/app_locale.dart';
 /*
 * @description: 全局强类型多语言门面，彻底杜绝手写双引号与拼写错误
 *
-* 任何业务使用直接通过 `Languages.key` 调用，
-* 例如 `Languages.mon`, `Languages.login`, `Languages.passwordNotSame`。
+* 任何业务使用直接通过  调用，
+* 例如 , , 。
 * 享受 IDE 代码全量提示与编译期红线防错！
 *
 * @author: jixiaoyong
@@ -14,120 +14,140 @@ import '../core/localization/app_locale.dart';
 class Languages {
   Languages._();
 
-  // 基础导航与页面
-  static String get home => AppLocale.translate("Home");
-  static String get wallet => AppLocale.translate("Wallet");
-  static String get search => AppLocale.translate("Search");
-  static String get menu => AppLocale.translate("Menu");
-  static String get history => AppLocale.translate("History");
-  static String get person => AppLocale.translate("Person");
-  static String get notifications => AppLocale.translate("Notifications");
-  static String get settings => AppLocale.translate("Settings");
-  static String get about => AppLocale.translate("About");
-
-  // 星期
-  static String get mon => AppLocale.translate("Mon");
-  static String get tues => AppLocale.translate("Tues");
-  static String get wed => AppLocale.translate("Wed");
-  static String get thur => AppLocale.translate("Thur");
-  static String get fri => AppLocale.translate("Fri");
-  static String get satu => AppLocale.translate("Satu");
-  static String get sun => AppLocale.translate("Sun");
-
-  // 月份
-  static String get january => AppLocale.translate("January");
-  static String get february => AppLocale.translate("February");
-  static String get march => AppLocale.translate("March");
-  static String get april => AppLocale.translate("April");
-  static String get may => AppLocale.translate("May");
-  static String get june => AppLocale.translate("June");
-  static String get july => AppLocale.translate("July");
-  static String get august => AppLocale.translate("August");
-  static String get september => AppLocale.translate("September");
-  static String get october => AppLocale.translate("October");
-  static String get november => AppLocale.translate("November");
-  static String get december => AppLocale.translate("December");
-
-  // 账户与认证
-  static String get username => AppLocale.translate("Username");
-  static String get password => AppLocale.translate("Password");
-  static String get oldPassword => AppLocale.translate("Old Password");
-  static String get newPassword => AppLocale.translate("New Password");
-  static String get confirmPassword => AppLocale.translate("Confirm Password");
-  static String get changePassword => AppLocale.translate("Change Password");
-  static String get signIn => AppLocale.translate("Sign In");
-  static String get signUp => AppLocale.translate("Sign Up");
-  static String get login => AppLocale.translate("Login");
-  static String get loginFailed => AppLocale.translate("Login Failed");
-  static String get logout => AppLocale.translate("Logout");
-  static String get logoutAndCleanData => AppLocale.translate("Logout & Clean Data");
-  static String get cancel => AppLocale.translate("Cancel");
-  static String get sureToLogout => AppLocale.translate("SureToLogout");
-  static String get forgotPassword => AppLocale.translate("Forgot Password");
-  static String get forgotPin => AppLocale.translate("Forgot PIN");
-  static String get getStart => AppLocale.translate("Get Start");
-  static String get setPasswordSucceed => AppLocale.translate("Set Password Succeed");
-  static String get pleaseLoginWithNewPassword => AppLocale.translate("Please login with your new password.");
-  static String get registerSucceed => AppLocale.translate("Register Succeed");
-  static String get registerFailed => AppLocale.translate("Register Failed");
-  static String get pleaseSignIn => AppLocale.translate("Please Sign In");
-  static String get emailAddress => AppLocale.translate("Email Address");
-  static String get verify => AppLocale.translate("verify");
-  static String get submit => AppLocale.translate("Submit");
-
-  // 表单校验提示
-  static String get emailFormatNotCorrect => AppLocale.translate("the email format is not correct");
-  static String get emailLengthMax => AppLocale.translate("the length of user email must be less than 30");
-  static String get emailLengthMin => AppLocale.translate("the length of user email must be more than 5");
-  static String get passwordNotSame => AppLocale.translate("the password is not same");
-  static String get passwordLengthMax => AppLocale.translate("the length of user password must be less than 12");
-  static String get passwordLengthMin => AppLocale.translate("the length of user password must be more than 6");
-  static String get usernameLengthMax => AppLocale.translate("the length of username must be less than 10");
-  static String get usernameLengthMin => AppLocale.translate("the length of username must be more than 3");
-  static String get pleaseEnterVerifyCode => AppLocale.translate("Please enter the verify code we sent to your email:");
-
-  // 钱包与卡片
-  static String get availableBalance => AppLocale.translate("Available Balance");
-  static String get totalSpending => AppLocale.translate("Total Spending");
-  static String get send => AppLocale.translate("Send");
-  static String get receive => AppLocale.translate("Receive");
-  static String get cardCredit => AppLocale.translate("Card Credit");
-  static String get addCard => AppLocale.translate("Add Card");
-  static String get nameOnCard => AppLocale.translate("Name On Card");
-  static String get cardNumber => AppLocale.translate("Card Number");
-  static String get expireDate => AppLocale.translate("Expire Date");
-  static String get pleaseTypeInYourName => AppLocale.translate("Please type in your name");
-  static String get pleaseEnterBankCardNumber => AppLocale.translate("Please enter bank card number");
-  static String get pleaseEnterExpirationDate => AppLocale.translate("Please enter an expiration date");
-
-  // 业务与明细
-  static String get translations => AppLocale.translate("Translations");
-  static String get justNow => AppLocale.translate("Just now");
-  static String get something => AppLocale.translate("Something");
-  static String get category => AppLocale.translate("Category");
-  static String get thisMonth => AppLocale.translate("this month");
-  static String get thisWeek => AppLocale.translate("this week");
-  static String get thisYear => AppLocale.translate("this year");
-  static String get transfers => AppLocale.translate("Transfers");
-  static String get recharge => AppLocale.translate("Recharge");
-  static String get bill => AppLocale.translate("Bill");
-  static String get others => AppLocale.translate("Others");
-
-  // 其它
-  static String get language => AppLocale.translate("Language");
-  static String get fingerprintLogin => AppLocale.translate("Fingerprint Login");
-  static String get loading => AppLocale.translate("Loading...");
-  static String get profile => AppLocale.translate("Profile");
-  static String get generalInformation => AppLocale.translate("General Information");
-  static String get phoneNumber => AppLocale.translate("Phone Number");
-  static String get localAddress => AppLocale.translate("Local Address");
-  static String get aboutUsDescription => AppLocale.translate("AboutUsDescription");
-  static String get explore => AppLocale.translate("Explore");
-  static String get articles => AppLocale.translate("Articles");
-  static String get hot => AppLocale.translate("Hot");
-  static String get follow => AppLocale.translate("Follow");
-  static String get stillWorkingOnIt => AppLocale.translate("still working on it");
-  static String get somethingLikeAds => AppLocale.translate("something like ads");
+  // === 全局强类型词条 Getters ===
+  static String get about => AppLocale.translate('About');
+  static String get aboutUsDescription => AppLocale.translate('AboutUsDescription');
+  static String get addCard => AppLocale.translate('Add Card');
+  static String get addNewPassword => AppLocale.translate('Add New Password');
+  static String get april => AppLocale.translate('April');
+  static String get articles => AppLocale.translate('Articles');
+  static String get august => AppLocale.translate('August');
+  static String get availableBalance => AppLocale.translate('Available Balance');
+  static String get bill => AppLocale.translate('Bill');
+  static String get cancel => AppLocale.translate('Cancel');
+  static String get cardCredit => AppLocale.translate('Card Credit');
+  static String get cardNumber => AppLocale.translate('Card Number');
+  static String get category => AppLocale.translate('Category');
+  static String get changePassword => AppLocale.translate('Change Password');
+  static String get cid => AppLocale.translate('CID');
+  static String get cnss => AppLocale.translate('CNSS');
+  static String get confirmPassword => AppLocale.translate('Confirm Password');
+  static String get cvv => AppLocale.translate('CVV');
+  static String get dashboard => AppLocale.translate('Dashboard');
+  static String get december => AppLocale.translate('December');
+  static String get dontSharePassword => AppLocale.translate("Don't Share Password");
+  static String get dontSharePasswordDetail => AppLocale.translate("Use strong combinations of letters,numbers and special characters to make your password.");
+  static String get forgotPin => AppLocale.translate('Forgot PIN');
+  static String get forgotPinDetail => AppLocale.translate("Don't take too much tension about PiN\nJust make ono call to bank and change your pin.");
+  static String get manageAccount => AppLocale.translate('Manage Account');
+  static String get manageAccountDetail => AppLocale.translate("Bank account make more secure keeping transaction active and changing password regularly.");
+  static String get dontHaveAccount => AppLocale.translate("I don't have an account");
+  static String get dxss => AppLocale.translate('DXSS');
+  static String get email => AppLocale.translate('E-mail');
+  static String get emailAddress => AppLocale.translate('Email Address');
+  static String get emailFormatNotCorrect => AppLocale.translate('the email format is not correct');
+  static String get emailLengthMax => AppLocale.translate('the length of user email must be less than 30');
+  static String get emailLengthMin => AppLocale.translate('the length of user email must be more than 5');
+  static String get enterEmailToResetPassword => AppLocale.translate('Enter your email address to reset your password');
+  static String get expireDate => AppLocale.translate('Expire Date');
+  static String get explore => AppLocale.translate('Explore');
+  static String get february => AppLocale.translate('February');
+  static String get fingerprintLogin => AppLocale.translate('Fingerprint Login');
+  static String get follow => AppLocale.translate('Follow');
+  static String get forgetPassword => AppLocale.translate('Forget Password');
+  static String get forgetPasswords => AppLocale.translate('Forget passwords?');
+  static String get fri => AppLocale.translate('Fri');
+  static String get generalInformation => AppLocale.translate('General Information');
+  static String get getStart => AppLocale.translate('Get Start');
+  static String get haveAccount => AppLocale.translate('I have already an account');
+  static String get history => AppLocale.translate('History');
+  static String get home => AppLocale.translate('Home');
+  static String get hostedOnGithub => AppLocale.translate('This is an open-source project hosted on ');
+  static String get hot => AppLocale.translate('Hot');
+  static String get january => AppLocale.translate('January');
+  static String get july => AppLocale.translate('July');
+  static String get june => AppLocale.translate('June');
+  static String get justNow => AppLocale.translate('Just now');
+  static String get language => AppLocale.translate('Language');
+  static String get lastMonth => AppLocale.translate(' Last Month');
+  static String get lastReceive => AppLocale.translate('Last Receive');
+  static String get lastSend => AppLocale.translate('Last Send');
+  static String get loading => AppLocale.translate('Loading...');
+  static String get localAddress => AppLocale.translate('Local Address');
+  static String get login => AppLocale.translate('Login');
+  static String get loginFailed => AppLocale.translate('Login Failed');
+  static String get logout => AppLocale.translate('Logout');
+  static String get logoutAndCleanData => AppLocale.translate('Logout & Clean Data');
+  static String get march => AppLocale.translate('March');
+  static String get masterCard => AppLocale.translate('MasterCard');
+  static String get may => AppLocale.translate('May');
+  static String get menu => AppLocale.translate('Menu');
+  static String get mon => AppLocale.translate('Mon');
+  static String get moneyRecharge => AppLocale.translate('Money Recharge');
+  static String get moneySend => AppLocale.translate('Money Send');
+  static String get nameOnCard => AppLocale.translate('Name On Card');
+  static String get newPassword => AppLocale.translate('New Password');
+  static String get notifications => AppLocale.translate('Notifications');
+  static String get november => AppLocale.translate('November');
+  static String get october => AppLocale.translate('October');
+  static String get oldPassword => AppLocale.translate('Old Password');
+  static String get oldPasswordIncorrect => AppLocale.translate('Original password incorrect or update failed');
+  static String get orSignInWith => AppLocale.translate('Or Sign In With');
+  static String get orSignUpWith => AppLocale.translate('Or Sign Up With');
+  static String get others => AppLocale.translate('Others');
+  static String get password => AppLocale.translate('Password');
+  static String get passwordInconsistent => AppLocale.translate('The passwords entered twice do not match');
+  static String get passwordLengthMax => AppLocale.translate('the length of user password must be less than 12');
+  static String get passwordLengthMin => AppLocale.translate('the length of user password must be more than 6');
+  static String get passwordMinLengthPrompt => AppLocale.translate('Password length must not be less than 6 digits');
+  static String get passwordNotSame => AppLocale.translate('the password is not same');
+  static String get person => AppLocale.translate('Person');
+  static String get phoneNumber => AppLocale.translate('Phone Number');
+  static String get pleaseEnterBankCardNumber => AppLocale.translate('Please enter bank card number');
+  static String get pleaseEnterExpirationDate => AppLocale.translate('Please enter an expiration date');
+  static String get pleaseEnterVerifyCode => AppLocale.translate('Please enter the verify code we sent to your email:');
+  static String get pleaseInputConfirmPassword => AppLocale.translate('Please enter the confirmation new password');
+  static String get pleaseInputCurrentPassword => AppLocale.translate('Please enter your current password first');
+  static String get pleaseInputNewPassword => AppLocale.translate('Please enter a new password');
+  static String get pleaseLoginWithNewPassword => AppLocale.translate('Please login with your new password.');
+  static String get pleaseSignIn => AppLocale.translate('Please Sign In');
+  static String get pleaseTypeInYourName => AppLocale.translate('Please type in your name');
+  static String get profile => AppLocale.translate('Profile');
+  static String get receive => AppLocale.translate('Receive');
+  static String get recharge => AppLocale.translate('Recharge');
+  static String get register => AppLocale.translate('Register');
+  static String get registerFailed => AppLocale.translate('Register Failed');
+  static String get registerSucceed => AppLocale.translate('Register Succeed');
+  static String get satu => AppLocale.translate('Satu');
+  static String get search => AppLocale.translate('Search');
+  static String get send => AppLocale.translate('Send');
+  static String get september => AppLocale.translate('September');
+  static String get setPasswordSucceed => AppLocale.translate('Set Password Succeed');
+  static String get settings => AppLocale.translate('Settings');
+  static String get signIn => AppLocale.translate('Sign In');
+  static String get signUp => AppLocale.translate('Sign Up');
+  static String get something => AppLocale.translate('Something');
+  static String get somethingLikeAds => AppLocale.translate('something like ads');
+  static String get stillWorkingOnIt => AppLocale.translate('still working on it');
+  static String get submit => AppLocale.translate('Submit');
+  static String get sun => AppLocale.translate('Sun');
+  static String get sureToLogout => AppLocale.translate('SureToLogout');
+  static String get thisMonth => AppLocale.translate('this month');
+  static String get thisWeek => AppLocale.translate('this week');
+  static String get thisYear => AppLocale.translate('this year');
+  static String get thur => AppLocale.translate('Thur');
+  static String get total => AppLocale.translate('Total');
+  static String get totalSpending => AppLocale.translate('Total Spending');
+  static String get transfers => AppLocale.translate('Transfers');
+  static String get translations => AppLocale.translate('Translations');
+  static String get tues => AppLocale.translate('Tues');
+  static String get username => AppLocale.translate('Username');
+  static String get usernameLengthMax => AppLocale.translate('the length of username must be less than 10');
+  static String get usernameLengthMin => AppLocale.translate('the length of username must be more than 3');
+  static String get verify => AppLocale.translate('verify');
+  static String get visa => AppLocale.translate('Visa');
+  static String get wallet => AppLocale.translate('Wallet');
+  static String get wed => AppLocale.translate('Wed');
 
   // 静态字典映射 (供 AppLocale.translate 查找)
   static Map<String, Map<String, String>> get keys => _keys;
@@ -265,10 +285,19 @@ class Languages {
       "Articles": "Articles",
       "still working on it": "still working on it",
       "something like ads": "something like ads>>>",
+      'The passwords entered twice do not match': 'The passwords entered twice do not match',
+      'Original password incorrect or update failed': 'Original password incorrect or update failed',
+      'Password length must not be less than 6 digits': 'Password length must not be less than 6 digits',
+      'Please enter your current password first': 'Please enter your current password first',
+      'Please enter a new password': 'Please enter a new password',
+      'Please enter the confirmation new password': 'Please enter the confirmation new password',
+      'CVV': 'CVV',
+      'Add New Password': 'Add New Password',
+      'This is an open-source project hosted on ': 'This is an open-source project hosted on ',
     },
     "zh_CN": {
-      "MasterCard": "MasterCard卡",
-      "Visa": "Visa卡",
+      "MasterCard": "万事达卡",
+      "Visa": "维萨卡",
       "Home": "首页",
       "Wallet": "钱包",
       "Search": "搜索",
@@ -398,6 +427,15 @@ class Languages {
       "Articles": "文章",
       "still working on it": "仍在努力开发中",
       "something like ads": "假装这里有广告>>>",
+      'The passwords entered twice do not match': '两次输入的密码不一致',
+      'Original password incorrect or update failed': '原密码不正确或修改失败',
+      'Password length must not be less than 6 digits': '密码长度不能小于6位',
+      'Please enter your current password first': '请先输入现有密码',
+      'Please enter a new password': '请输入新密码',
+      'Please enter the confirmation new password': '请输入确认新密码',
+      'CVV': 'CVV',
+      'Add New Password': '设置新密码',
+      'This is an open-source project hosted on ': '这是一个开源项目，托管于 ',
     }
   };
 }

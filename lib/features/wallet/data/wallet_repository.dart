@@ -48,7 +48,7 @@ class WalletRepositoryImpl implements WalletRepository {
   final List<BankCard> _cards = [
     BankCard(
       id: '1',
-      bankName: 'CNSS'.tr,
+      bankName: Languages.cnss,
       cardNumber: '8932 6283 3243 3232',
       ownerName: 'Juan Perez',
       expirationDate: '02/20',
@@ -56,7 +56,7 @@ class WalletRepositoryImpl implements WalletRepository {
     ),
     BankCard(
       id: '2',
-      bankName: 'DXSS'.tr,
+      bankName: Languages.dxss,
       cardNumber: '8932 3223 3243 3232',
       ownerName: 'Juan Perez',
       expirationDate: '12/29',
@@ -64,7 +64,7 @@ class WalletRepositoryImpl implements WalletRepository {
     ),
     BankCard(
       id: '3',
-      bankName: 'CID'.tr,
+      bankName: Languages.cid,
       cardNumber: '8932 3283 3323 3232',
       ownerName: 'Juan Perez',
       expirationDate: '11/22',
@@ -128,13 +128,13 @@ class WalletRepositoryImpl implements WalletRepository {
   Future<List<(String, double)>> getMonthlyChartData(String month) async {
     // 基础波动数据（Dart 3 原生元组）
     return [
-      ('Mon'.tr, 0.3),
-      ('Tues'.tr, 0.5),
-      ('Wed'.tr, 0.1),
-      ('Thur'.tr, 0.6),
-      ('Fri'.tr, 0.9),
-      ('Satu'.tr, 0.2),
-      ('Sun'.tr, 0.8),
+      (Languages.mon, 0.3),
+      (Languages.tues, 0.5),
+      (Languages.wed, 0.1),
+      (Languages.thur, 0.6),
+      (Languages.fri, 0.9),
+      (Languages.satu, 0.2),
+      (Languages.sun, 0.8),
     ];
   }
 }

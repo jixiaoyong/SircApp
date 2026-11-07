@@ -126,7 +126,7 @@ class BankCardWidget extends StatelessWidget {
                     ),
                     SizedBox(width: 8.dp),
                     Text(
-                      cardType ?? (isMasterCard ? "MasterCard".tr : "Visa".tr),
+                      cardType ?? (isMasterCard ? Languages.masterCard : Languages.visa),
                       style: TextStyle(
                           fontSize: 18.sp,
                           color: Colors.white,

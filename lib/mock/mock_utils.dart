@@ -37,8 +37,8 @@ class MockUtils {
         moneyAmount: MockUtils.random.nextDouble() *
             100 *
             (MockUtils.random.nextBool() ? 1 : -1),
-        time: "Just now".tr,
-        moneyActionName: "Something".tr);
+        time: Languages.justNow,
+        moneyActionName: Languages.something);
   });
 
   static final List<(IconData, Color)> socialList = [

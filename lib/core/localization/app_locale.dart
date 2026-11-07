@@ -43,10 +43,6 @@ class AppLocale {
   }
 }
 
-/// 全局翻译扩展（无缝替代 GetX 的 .tr）
-extension AppTranslate on String {
-  String get tr => AppLocale.translate(this);
-}
 
 class LocaleNotifier extends StateNotifier<Locale> {
   final StorageService _storageService;

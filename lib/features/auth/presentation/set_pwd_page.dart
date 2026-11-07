@@ -51,7 +51,7 @@ class _SetPwdPageState extends ConsumerState<SetPwdPage> {
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: Text("Loading...".tr),
+            title: Text(Languages.loading),
             content: SizedBox(
               height: 50.dp,
               width: 50.dp,
@@ -75,7 +75,7 @@ class _SetPwdPageState extends ConsumerState<SetPwdPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Add New Password".tr,
+          Languages.addNewPassword,
           style: const TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.transparent,
@@ -103,13 +103,13 @@ class _SetPwdPageState extends ConsumerState<SetPwdPage> {
               ),
               child: TextField(
                 decoration: InputDecoration(
-                  hintText: "Password".tr,
+                  hintText: Languages.password,
                   hintStyle: const TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                     borderSide: const BorderSide(color: Colors.black12, width: 0),
                   ),
-                  labelText: "Password".tr,
+                  labelText: Languages.password,
                   errorText: state.userPwdError,
                   suffixIcon: const Icon(
                     Icons.lock_outlined,
@@ -138,13 +138,13 @@ class _SetPwdPageState extends ConsumerState<SetPwdPage> {
               ),
               child: TextField(
                 decoration: InputDecoration(
-                  hintText: "Confirm Password".tr,
+                  hintText: Languages.confirmPassword,
                   hintStyle: const TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                     borderSide: const BorderSide(color: Colors.black12, width: 0),
                   ),
-                  labelText: "Confirm Password".tr,
+                  labelText: Languages.confirmPassword,
                   errorText: state.userConfirmPwdError,
                   suffixIcon: const Icon(
                     Icons.lock_outlined,
@@ -163,7 +163,7 @@ class _SetPwdPageState extends ConsumerState<SetPwdPage> {
               onTap: () {
                 notifier.resetPwd();
               },
-              text: "Submit".tr,
+              text: Languages.submit,
             ),
           ],
         ),

@@ -121,9 +121,7 @@ void main() {
       final state = container.read(homeControllerProvider);
 
       expect(state.currentBankIndex, 0);
-      expect(state.homeAppBarFlexibleWidgetHeight, 0.0);
-      expect(state.dataChange, isNotEmpty);
-      expect(state.tabData.length, 3);
+      expect(state.weeklyPercentages.length, 7);
       expect(state.banks.length, 3);
       expect(state.quickActions.length, 15);
     });
@@ -138,27 +136,15 @@ void main() {
       expect(container.read(homeControllerProvider).currentBankIndex, 2);
     });
 
-    test('onFlexibleSpaceBarSizeChange should update flexible space bar height',
-        () {
+    test('updateWeeklyPercentages should update weekly percentages data', () {
       final controller = container.read(homeControllerProvider.notifier);
+      final newData = [0.1, 0.2, 0.8];
 
-      controller.onFlexibleSpaceBarSizeChange(150.0);
+      controller.updateWeeklyPercentages(newData);
       expect(
-        container.read(homeControllerProvider).homeAppBarFlexibleWidgetHeight,
-        150.0,
+        container.read(homeControllerProvider).weeklyPercentages,
+        equals(newData),
       );
-    });
-
-    test('updateWeeklyData should update line graph records data', () {
-      final controller = container.read(homeControllerProvider.notifier);
-      final newData = [
-        ('Mon', 0.1),
-        ('Tue', 0.2),
-        ('Wed', 0.8),
-      ];
-
-      controller.updateWeeklyData(newData);
-      expect(container.read(homeControllerProvider).dataChange, equals(newData));
     });
   });
 }

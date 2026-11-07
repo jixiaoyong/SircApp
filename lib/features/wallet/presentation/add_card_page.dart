@@ -33,7 +33,7 @@ class AddCardPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Add Card".tr,
+          Languages.addCard,
           style: const TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.transparent,
@@ -93,7 +93,7 @@ class AddCardPage extends ConsumerWidget {
               child: Column(
                 children: [
                   CommonTextFiled(
-                    label: "Name On Card".tr,
+                    label: Languages.nameOnCard,
                     onChanged: (value) {
                       controller.setOwnerName(value);
                     },
@@ -103,7 +103,7 @@ class AddCardPage extends ConsumerWidget {
                   Padding(
                     padding: EdgeInsets.only(top: 20.dp),
                     child: CommonTextFiled(
-                      label: "Card Number".tr,
+                      label: Languages.cardNumber,
                       onChanged: (value) {
                         controller.setCardNumber(value);
                       },
@@ -119,7 +119,7 @@ class AddCardPage extends ConsumerWidget {
                         Padding(
                           padding: EdgeInsets.only(right: 20.dp),
                           child: Text(
-                            "${"Expire Date".tr}:",
+                            "${Languages.expireDate}:",
                             style: TextStyle(
                               fontSize: 16.sp,
                               color: Colors.grey,
@@ -181,7 +181,7 @@ class AddCardPage extends ConsumerWidget {
                         Padding(
                           padding: EdgeInsets.only(right: 20.dp),
                           child: Text(
-                            "${"CVV".tr}:",
+                            "${Languages.cvv}:",
                             style: TextStyle(
                               fontSize: 16.sp,
                               color: Colors.grey,
@@ -200,7 +200,7 @@ class AddCardPage extends ConsumerWidget {
                     ),
                   ),
                   CommonTextButton(
-                    text: "Add Card".tr,
+                    text: Languages.addCard,
                     isButtonEnabled: isButtonEnable && !state.isSubmitting,
                     onTap: () async {
                       final success = await controller.addCard();

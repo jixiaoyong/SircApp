@@ -24,7 +24,7 @@ class PasswordPage extends ConsumerWidget {
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: Text("Loading...".tr),
+            title: Text(Languages.loading),
             content: SizedBox(
               height: 50.dp,
               width: 50.dp,
@@ -42,7 +42,7 @@ class PasswordPage extends ConsumerWidget {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("原密码不正确或修改失败".tr),
+              content: Text(Languages.oldPasswordIncorrect),
               backgroundColor: Colors.red,
             ),
           );
@@ -57,7 +57,7 @@ class PasswordPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: OneTitleWithBackButtonAppBar(
-        title: "Change Password".tr,
+        title: Languages.changePassword,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.dp),
@@ -66,7 +66,7 @@ class PasswordPage extends ConsumerWidget {
           children: [
             TextField(
               decoration: InputDecoration(
-                hintText: "Old Password".tr,
+                hintText: Languages.oldPassword,
                 border: const OutlineInputBorder(),
                 suffix: GestureDetector(
                   onLongPress: () {
@@ -90,7 +90,7 @@ class PasswordPage extends ConsumerWidget {
             ),
             TextField(
               decoration: InputDecoration(
-                hintText: "New Password".tr,
+                hintText: Languages.newPassword,
                 border: const OutlineInputBorder(),
                 errorText: isValidError,
                 suffix: GestureDetector(
@@ -115,7 +115,7 @@ class PasswordPage extends ConsumerWidget {
             ),
             TextField(
               decoration: InputDecoration(
-                hintText: "Confirm Password".tr,
+                hintText: Languages.confirmPassword,
                 errorText: isValidError,
                 border: const OutlineInputBorder(),
                 suffix: GestureDetector(
@@ -158,7 +158,7 @@ class PasswordPage extends ConsumerWidget {
                       },
                 child: Center(
                   child: Text(
-                    "Change Password".tr,
+                    Languages.changePassword,
                     style: TextStyle(
                       color: !isButtonEnabled ? Colors.grey : Colors.white,
                       fontSize: 16.dp,

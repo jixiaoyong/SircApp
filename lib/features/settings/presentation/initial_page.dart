@@ -56,7 +56,7 @@ class _InitialPageState extends ConsumerState<InitialPage> {
 
     final state = ref.watch(initialControllerProvider);
     final isFirst = state.isFirstInitial;
-    const tips = InitialState.initialTips;
+    final tips = InitialState.initialTips;
     final initialInfoLength = tips.length;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -68,7 +68,7 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                 controller: _pageController,
                 itemCount: initialInfoLength,
                 itemBuilder: (context, index) {
-                  final (imagePath, titleKey, subtitleKey) = tips[index];
+                  final (imagePath, title, subtitle) = tips[index];
 
                   return Container(
                     color: Colors.white,
@@ -106,11 +106,11 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                             },
                           ),
                         ),
-                        TitleText(text: titleKey.tr),
+                        TitleText(text: title),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20.dp),
                           child: Text(
-                            subtitleKey.tr,
+                            subtitle,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.grey[500],
@@ -172,7 +172,7 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                   ),
                                   child: Center(
                                     child: Text(
-                                      "Get Start".tr,
+                                      Languages.getStart,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 20.sp,
@@ -202,7 +202,7 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                   ),
                   child: Center(
                     child: Text(
-                      "something like ads".tr,
+                      Languages.somethingLikeAds,
                       style: TextStyle(
                         fontSize: 15.sp,
                         color: Colors.white.withValues(alpha: 0.8),

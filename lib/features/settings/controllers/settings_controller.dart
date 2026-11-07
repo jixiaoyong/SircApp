@@ -40,16 +40,16 @@ class NotificationsState {
   });
 
   List<String> get categories => [
-        'this week'.tr,
-        'this month'.tr,
-        'this year'.tr,
+        Languages.thisWeek,
+        Languages.thisMonth,
+        Languages.thisYear,
       ];
 
   List<(IconData icon, String title, List<Transaction> items)> get notificationGroups => [
-        (Icons.transform, 'Transfers'.tr, MockUtils.moneyOperateList),
-        (Icons.monetization_on_outlined, 'Recharge'.tr, MockUtils.moneyOperateList),
-        (Icons.notes_outlined, 'Bill'.tr, MockUtils.moneyOperateList),
-        (Icons.more_horiz_outlined, 'Others'.tr, MockUtils.moneyOperateList),
+        (Icons.transform, Languages.transfers, MockUtils.moneyOperateList),
+        (Icons.monetization_on_outlined, Languages.recharge, MockUtils.moneyOperateList),
+        (Icons.notes_outlined, Languages.bill, MockUtils.moneyOperateList),
+        (Icons.more_horiz_outlined, Languages.others, MockUtils.moneyOperateList),
       ];
 
   NotificationsState copyWith({
@@ -106,21 +106,21 @@ class InitialState {
   });
 
   /// 引导页提示数据（Dart 3 原生 Records）
-  static const List<(String image, String titleKey, String subtitleKey)> initialTips = [
+  static List<(String image, String title, String subtitle)> get initialTips => [
     (
       A.assets_imgs_initial_password,
-      "Don't Share Password",
-      "Use strong combinations of letters,numbers and special characters to make your password.",
+      Languages.dontSharePassword,
+      Languages.dontSharePasswordDetail,
     ),
     (
       A.assets_imgs_initial_pin_error,
-      "Forgot PIN",
-      "Don't take too much tension about PiN\nJust make ono call to bank and change your pin.",
+      Languages.forgotPin,
+      Languages.forgotPinDetail,
     ),
     (
       A.assets_imgs_initial_exchange,
-      "Manage Account",
-      "Bank account make more secure keeping transaction active and changing password regularly.",
+      Languages.manageAccount,
+      Languages.manageAccountDetail,
     ),
   ];
 

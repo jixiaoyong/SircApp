@@ -26,11 +26,11 @@ class AboutPage extends ConsumerWidget {
     ref.watch(localeProvider);
 
     final width = MediaQuery.of(context).size.width;
-    final aboutText = "AboutUsDescription".tr;
+    final aboutText = Languages.aboutUsDescription;
 
     return Scaffold(
       appBar: OneTitleWithBackButtonAppBar(
-        title: "About".tr,
+        title: Languages.about,
       ),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(
@@ -66,7 +66,7 @@ class AboutPage extends ConsumerWidget {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: "This is an open-source project hosted on ".tr,
+                      text: Languages.hostedOnGithub,
                       children: [
                         TextSpan(
                           text: "Github.com/jixiaoyong/SircApp",

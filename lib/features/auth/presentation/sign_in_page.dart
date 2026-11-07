@@ -56,7 +56,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: Text("Loading...".tr),
+            title: Text(Languages.loading),
             content: SizedBox(
               height: 50.dp,
               width: 50.dp,
@@ -75,7 +75,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: Text("Login Failed".tr),
+              title: Text(Languages.loginFailed),
               content: SizedBox(
                 height: 80.dp,
                 child: Center(
@@ -104,7 +104,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Sign In".tr,
+          Languages.signIn,
           style: const TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.transparent,
@@ -138,13 +138,13 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                 child: TextField(
                   controller: nameTextFieldController,
                   decoration: InputDecoration(
-                    hintText: "Username".tr,
+                    hintText: Languages.username,
                     hintStyle: const TextStyle(color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                       borderSide: const BorderSide(color: Colors.black12, width: 0),
                     ),
-                    labelText: "Username".tr,
+                    labelText: Languages.username,
                     errorText: state.userNameError,
                     suffixIcon: const Icon(
                       Icons.person_outline,
@@ -172,13 +172,13 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                 child: TextField(
                   controller: pwdTextFieldController,
                   decoration: InputDecoration(
-                    hintText: "Password".tr,
+                    hintText: Languages.password,
                     hintStyle: const TextStyle(color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                       borderSide: const BorderSide(color: Colors.black12, width: 0),
                     ),
-                    labelText: "Password".tr,
+                    labelText: Languages.password,
                     errorText: state.userPwdError,
                     suffixIcon: const Icon(
                       Icons.lock_outlined,
@@ -205,9 +205,9 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Set Password Succeed".tr,
+                                Text(Languages.setPasswordSucceed,
                                     style: const TextStyle(fontWeight: FontWeight.bold)),
-                                Text("Please login with your new password.".tr),
+                                Text(Languages.pleaseLoginWithNewPassword),
                               ],
                             ),
                           ),
@@ -215,7 +215,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                       }
                     },
                     child: Text(
-                      "Forget passwords?".tr,
+                      Languages.forgetPasswords,
                       textAlign: TextAlign.end,
                       style: TextStyle(
                         height: 3,
@@ -231,9 +231,9 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                 onTap: () {
                   notifier.login();
                 },
-                text: "Login".tr,
+                text: Languages.login,
               ),
-              TitleText(text: "Or Sign In With".tr),
+              TitleText(text: Languages.orSignInWith),
               SizedBox(
                 height: 50.dp,
                 width: double.infinity,
@@ -276,11 +276,11 @@ class _SignInPageState extends ConsumerState<SignInPage> {
               ),
               RichText(
                 text: TextSpan(
-                  text: "I don't have an account".tr,
+                  text: Languages.dontHaveAccount,
                   style: TextStyle(color: Colors.black, fontSize: 12.dp),
                   children: [
                     TextSpan(
-                      text: " ${"Sign Up".tr}",
+                      text: " ${Languages.signUp}",
                       style: TextStyle(
                         color: Colors.purple,
                         fontSize: 12.dp,

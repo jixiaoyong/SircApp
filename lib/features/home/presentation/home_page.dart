@@ -7,6 +7,7 @@ import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/utils/color_extension.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/utils/toast.dart';
+import 'package:sirc/widgets/bank_card_widget.dart';
 import 'package:sirc/widgets/expandable_page_view.dart';
 import 'package:sirc/widgets/footlights_for_bank_card.dart';
 import 'package:sirc/widgets/jingang_widget.dart';
@@ -44,7 +45,11 @@ class _HomePageState extends ConsumerState<HomePage> {
     final userAvatar = ref.watch(
       navigationControllerProvider.select((s) => s.userAvatar),
     );
-    final tabs = homeState.tabData;
+    final tabs = [
+      (Languages.follow, 0x0),
+      (Languages.hot, 0x1),
+      (Languages.explore, 0x2),
+    ];
 
     return DefaultTabController(
       length: tabs.length,
@@ -147,6 +152,19 @@ class HomeTopBodyWidget extends ConsumerWidget {
   final String userAvatar;
   final PageController pageController;
 
+  String _localizedBankName(String bankName) {
+    switch (bankName) {
+      case 'CNSS':
+        return Languages.cnss;
+      case 'DXSS':
+        return Languages.dxss;
+      case 'CID':
+        return Languages.cid;
+      default:
+        return bankName;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(localeProvider);
@@ -160,7 +178,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                TitleText(text: "Dashboard".tr),
+                TitleText(text: Languages.dashboard),
                 Expanded(child: Container()),
                 Padding(
                   padding: EdgeInsets.only(right: 10.dp),
@@ -195,9 +213,15 @@ class HomeTopBodyWidget extends ConsumerWidget {
                   child: PageView.builder(
                     controller: pageController,
                     itemBuilder: (context, index) {
+                      final card = homeState.banks[index];
                       return Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10.dp),
-                        child: homeState.banks[index],
+                        child: BankCardWidget(
+                          bankName: _localizedBankName(card.bankName),
+                          cardNumber: card.cardNumber,
+                          ownerName: card.ownerName,
+                          expirationDate: card.expirationDate,
+                        ),
                       );
                     },
                     itemCount: homeState.banks.length,
@@ -302,18 +326,37 @@ class HomeTopBodyWidget extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TitleText(text: "February".tr),
-                SizedBox(
-                  height: 200.dp,
-                  width: double.infinity,
-                  child: LineGraph(
-                    data: homeState.dataChange,
-                  ),
+                TitleText(text: Languages.february),
+                Builder(
+                  builder: (context) {
+                    final weekLabels = [
+                      Languages.mon,
+                      Languages.tues,
+                      Languages.wed,
+                      Languages.thur,
+                      Languages.fri,
+                      Languages.satu,
+                      Languages.sun,
+                    ];
+                    return SizedBox(
+                      height: 200.dp,
+                      width: double.infinity,
+                      child: LineGraph(
+                        data: List.generate(
+                          homeState.weeklyPercentages.length,
+                          (index) => (
+                            weekLabels[index % weekLabels.length],
+                            homeState.weeklyPercentages[index],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    TitleText(text: "Translations".tr),
+                    TitleText(text: Languages.translations),
                     const Spacer(),
                     GestureDetector(
                       child: const Icon(Icons.arrow_forward),
@@ -365,8 +408,8 @@ class HomeTopBodyWidget extends ConsumerWidget {
                               const Spacer(),
                               Text(
                                 index % 2 == 0
-                                    ? "Money Send".tr
-                                    : "Money Recharge".tr,
+                                    ? Languages.moneySend
+                                    : Languages.moneyRecharge,
                                 style: TextStyle(
                                   fontSize: 12.dp,
                                   color: Colors.black54,
@@ -381,7 +424,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
                   ),
                 ),
                 Text(
-                  "Articles".tr,
+                  Languages.articles,
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,

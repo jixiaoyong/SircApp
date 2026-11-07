@@ -31,7 +31,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: Text("Loading...".tr),
+            title: Text(Languages.loading),
             content: SizedBox(
               height: 50.dp,
               width: 50.dp,
@@ -55,8 +55,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Register Succeed".tr, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text("Please Sign In".tr),
+                  Text(Languages.registerSucceed, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(Languages.pleaseSignIn),
                 ],
               ),
             ),
@@ -65,7 +65,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: Text("Register Failed".tr),
+              title: Text(Languages.registerFailed),
               content: SizedBox(
                 height: 80.dp,
                 child: Center(
@@ -93,7 +93,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Sign Up".tr,
+          Languages.signUp,
           style: const TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.transparent,
@@ -127,13 +127,13 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 ),
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: "Username".tr,
+                    hintText: Languages.username,
                     hintStyle: const TextStyle(color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                       borderSide: const BorderSide(color: Colors.black12, width: 0),
                     ),
-                    labelText: "Username".tr,
+                    labelText: Languages.username,
                     errorText: state.userNameError,
                     suffixIcon: const Icon(
                       Icons.person_outline,
@@ -160,13 +160,13 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 ),
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: "Email Address".tr,
+                    hintText: Languages.emailAddress,
                     hintStyle: const TextStyle(color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                       borderSide: const BorderSide(color: Colors.black12, width: 0),
                     ),
-                    labelText: "Email Address".tr,
+                    labelText: Languages.emailAddress,
                     errorText: state.userEmailError,
                     suffixIcon: const Icon(
                       Icons.email_outlined,
@@ -193,13 +193,13 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 ),
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: "Password".tr,
+                    hintText: Languages.password,
                     hintStyle: const TextStyle(color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                       borderSide: const BorderSide(color: Colors.black12, width: 0),
                     ),
-                    labelText: "Password".tr,
+                    labelText: Languages.password,
                     errorText: state.userPwdError,
                     suffixIcon: const Icon(
                       Icons.lock_outlined,
@@ -228,13 +228,13 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 ),
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: "Confirm Password".tr,
+                    hintText: Languages.confirmPassword,
                     hintStyle: const TextStyle(color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                       borderSide: const BorderSide(color: Colors.black12, width: 0),
                     ),
-                    labelText: "Confirm Password".tr,
+                    labelText: Languages.confirmPassword,
                     errorText: state.userConfirmPwdError,
                     suffixIcon: const Icon(
                       Icons.lock_outlined,
@@ -270,7 +270,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                         ),
                   child: Center(
                     child: Text(
-                      "Register".tr,
+                      Languages.register,
                       style: TextStyle(
                         color: !isButtonEnabled ? Colors.grey : Colors.white,
                         fontSize: 16.dp,
@@ -280,7 +280,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                   ),
                 ),
               ),
-              TitleText(text: "Or Sign Up With".tr),
+              TitleText(text: Languages.orSignUpWith),
               SizedBox(
                 height: 50.dp,
                 width: double.infinity,
@@ -322,11 +322,11 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 padding: EdgeInsets.only(top: 20.dp, bottom: 50.dp),
                 child: RichText(
                   text: TextSpan(
-                    text: "I have already an account".tr,
+                    text: Languages.haveAccount,
                     style: TextStyle(color: Colors.black, fontSize: 12.dp),
                     children: [
                       TextSpan(
-                        text: " ${"Sign In".tr}",
+                        text: " ${Languages.signIn}",
                         style: TextStyle(
                           color: Colors.purple,
                           fontSize: 12.dp,

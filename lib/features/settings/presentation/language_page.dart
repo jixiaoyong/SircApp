@@ -22,7 +22,7 @@ class LanguagePage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Language".tr, style: const TextStyle(color: Colors.black)),
+        title: Text(Languages.language, style: const TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: GestureDetector(

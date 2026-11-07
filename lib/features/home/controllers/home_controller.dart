@@ -1,9 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sirc/core/localization/app_locale.dart';
-import 'package:sirc/widgets/bank_card_widget.dart';
 import 'package:sirc/widgets/jingang_widget.dart';
 
-/// 首页卡片数据模型
+/// 首页卡片数据模型（纯数据实体，不持有 UI Widget）
 class BankCardItem {
   final String bankName;
   final String cardNumber;
@@ -18,105 +16,60 @@ class BankCardItem {
   });
 }
 
-/// 首页看板状态
+/// 首页看板状态（纯业务数据，不与 UI 组件或特定多语言文本耦合）
 class HomeState {
   final int currentBankIndex;
-  final double homeAppBarFlexibleWidgetHeight;
-  final List<(String day, double percentage)> dataChange;
-  final List<(String name, int id)> tabData;
+  final List<double> weeklyPercentages;
+  final List<BankCardItem> banks;
   final List<ImgText> quickActions;
-  final List<BankCardWidget> banks;
 
   const HomeState({
     this.currentBankIndex = 0,
-    this.homeAppBarFlexibleWidgetHeight = 0.0,
-    required this.dataChange,
-    required this.tabData,
-    required this.quickActions,
+    required this.weeklyPercentages,
     required this.banks,
+    required this.quickActions,
   });
 
   HomeState copyWith({
     int? currentBankIndex,
-    double? homeAppBarFlexibleWidgetHeight,
-    List<(String, double)>? dataChange,
-    List<(String, int)>? tabData,
+    List<double>? weeklyPercentages,
+    List<BankCardItem>? banks,
     List<ImgText>? quickActions,
-    List<BankCardWidget>? banks,
   }) {
     return HomeState(
       currentBankIndex: currentBankIndex ?? this.currentBankIndex,
-      homeAppBarFlexibleWidgetHeight:
-          homeAppBarFlexibleWidgetHeight ?? this.homeAppBarFlexibleWidgetHeight,
-      dataChange: dataChange ?? this.dataChange,
-      tabData: tabData ?? this.tabData,
-      quickActions: quickActions ?? this.quickActions,
+      weeklyPercentages: weeklyPercentages ?? this.weeklyPercentages,
       banks: banks ?? this.banks,
+      quickActions: quickActions ?? this.quickActions,
     );
   }
 }
 
-/// 首页控制器
+/// 首页控制器（纯业务逻辑，不与多语言直接耦合）
 class HomeController extends Notifier<HomeState> {
   @override
   HomeState build() {
-    // 监听全局语言变更，自动重新求值所有本地化文本
-    ref.watch(localeProvider);
-
-    final previousState = stateOrNull;
-    if (previousState != null) {
-      return previousState.copyWith(
-        dataChange: [
-          ("Mon".tr, 0.3),
-          ("Tues".tr, 0.5),
-          ("Wed".tr, 0.1),
-          ("Thur".tr, 0.6),
-          ("Fri".tr, 0.9),
-          ("Satu".tr, 0.2),
-          ("Sun".tr, 0.8),
-        ],
-        tabData: [
-          ("Follow".tr, 0x0),
-          ("Hot".tr, 0x1),
-          ("Explore".tr, 0x2),
-        ],
-        banks: [
-          BankCardWidget(
-            bankName: "CNSS".tr,
-            cardNumber: "8932 6283 3243 3232",
-            ownerName: "Juan Perez",
-            expirationDate: "02/20",
-          ),
-          BankCardWidget(
-            bankName: "DXSS".tr,
-            cardNumber: "8932 3223 3243 3232",
-            ownerName: "Juan Perez",
-            expirationDate: "12/29",
-          ),
-          BankCardWidget(
-            bankName: "CID".tr,
-            cardNumber: "8932 3283 3323 3232",
-            ownerName: "Juan Perez",
-            expirationDate: "11/22",
-          ),
-        ],
-      );
-    }
-
     return HomeState(
-      dataChange: [
-        ("Mon".tr, 0.3),
-        ("Tues".tr, 0.5),
-        ("Wed".tr, 0.1),
-        ("Thur".tr, 0.6),
-        ("Fri".tr, 0.9),
-        ("Satu".tr, 0.2),
-        ("Sun".tr, 0.8),
-      ],
-      tabData: [
-        ("Follow".tr, 0x0),
-        ("Hot".tr, 0x1),
-        ("Explore".tr, 0x2),
+      weeklyPercentages: const [0.3, 0.5, 0.1, 0.6, 0.9, 0.2, 0.8],
+      banks: const [
+        BankCardItem(
+          bankName: "CNSS",
+          cardNumber: "8932 6283 3243 3232",
+          ownerName: "Juan Perez",
+          expirationDate: "02/20",
+        ),
+        BankCardItem(
+          bankName: "DXSS",
+          cardNumber: "8932 3223 3243 3232",
+          ownerName: "Juan Perez",
+          expirationDate: "12/29",
+        ),
+        BankCardItem(
+          bankName: "CID",
+          cardNumber: "8932 3283 3323 3232",
+          ownerName: "Juan Perez",
+          expirationDate: "11/22",
+        ),
       ],
       quickActions: [
         ImgText("https://img.icons8.com/office/80/000000/bonds.png", "Bonds"),
@@ -135,26 +88,6 @@ class HomeController extends Notifier<HomeState> {
         ImgText("https://img.icons8.com/office/80/000000/credit-control.png", "Credit Control"),
         ImgText("https://img.icons8.com/office/80/000000/commodity.png", "Commodity"),
       ],
-      banks: [
-        BankCardWidget(
-          bankName: "CNSS".tr,
-          cardNumber: "8932 6283 3243 3232",
-          ownerName: "Juan Perez",
-          expirationDate: "02/20",
-        ),
-        BankCardWidget(
-          bankName: "DXSS".tr,
-          cardNumber: "8932 3223 3243 3232",
-          ownerName: "Juan Perez",
-          expirationDate: "12/29",
-        ),
-        BankCardWidget(
-          bankName: "CID".tr,
-          cardNumber: "8932 3283 3323 3232",
-          ownerName: "Juan Perez",
-          expirationDate: "11/22",
-        ),
-      ],
     );
   }
 
@@ -165,16 +98,9 @@ class HomeController extends Notifier<HomeState> {
     }
   }
 
-  /// 记录 SliverAppBar 的 FlexibleSpaceBar 高度
-  void onFlexibleSpaceBarSizeChange(double height) {
-    if (state.homeAppBarFlexibleWidgetHeight != height) {
-      state = state.copyWith(homeAppBarFlexibleWidgetHeight: height);
-    }
-  }
-
-  /// 更新收支折线图周数据
-  void updateWeeklyData(List<(String, double)> data) {
-    state = state.copyWith(dataChange: data);
+  /// 更新折线图周百分比数据
+  void updateWeeklyPercentages(List<double> percentages) {
+    state = state.copyWith(weeklyPercentages: percentages);
   }
 }
 

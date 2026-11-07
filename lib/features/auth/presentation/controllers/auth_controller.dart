@@ -657,19 +657,19 @@ class PasswordNotifier extends Notifier<PasswordState> {
     final confirmP = confirmPwd ?? state.confirmPassword;
 
     if (oldP.isEmpty) {
-      return "请先输入现有密码".tr;
+      return Languages.pleaseInputCurrentPassword;
     }
     if (newP.isEmpty) {
-      return "请输入新密码".tr;
+      return Languages.pleaseInputNewPassword;
     }
     if (confirmP.isEmpty) {
-      return "请输入确认新密码".tr;
+      return Languages.pleaseInputConfirmPassword;
     }
     if (newP != confirmP) {
-      return "两次输入的密码不一致".tr;
+      return Languages.passwordInconsistent;
     }
     if (newP.length < 6 || confirmP.length < 6) {
-      return "密码长度不能小于6位".tr;
+      return Languages.passwordMinLengthPrompt;
     }
     return null;
   }

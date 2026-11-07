@@ -35,7 +35,7 @@ class HistoryPage extends ConsumerWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  TitleText(text: "History".tr),
+                  TitleText(text: Languages.history),
                   const Spacer(),
                   Padding(
                     padding: EdgeInsets.only(right: 10.dp),
@@ -90,7 +90,7 @@ class HistoryPage extends ConsumerWidget {
                               ),
                               children: [
                                 TextSpan(
-                                  text: " Last Month".tr,
+                                  text: Languages.lastMonth,
                                   style: const TextStyle(
                                     color: Colors.grey,
                                     fontWeight: FontWeight.normal,
@@ -175,7 +175,7 @@ class HistoryPage extends ConsumerWidget {
                   },
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: "Search".tr,
+                    hintText: Languages.search,
                     suffixIcon: const Icon(Icons.search),
                   ),
                 ),

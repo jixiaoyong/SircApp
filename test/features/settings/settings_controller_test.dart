@@ -39,7 +39,7 @@ void main() {
       final locale = container.read(localeProvider);
       // 默认系统环境语言（测试环境为 en）
       expect(locale.languageCode, isIn(['zh', 'en']));
-      expect('Language'.tr, isIn(['语言', 'Language']));
+      expect(Languages.language, isIn(['语言', 'Language']));
     });
 
     test('切换语言至英文 (en_US) 并持久化保存', () {
@@ -52,8 +52,8 @@ void main() {
       expect(prefs.getString(CommonKeys.LOCAL_LANGUAGE), equals('en_US'));
 
       // 验证翻译扩展即时更新为英文
-      expect('Language'.tr, equals('Language'));
-      expect('Settings'.tr, equals('Settings'));
+      expect(Languages.language, equals('Language'));
+      expect(Languages.settings, equals('Settings'));
     });
 
     test('通过 switchAppLanguage 辅助函数切换至中文', () {
@@ -63,8 +63,8 @@ void main() {
       expect(locale.languageCode, equals('zh'));
       expect(locale.countryCode, equals('CN'));
       expect(prefs.getString(CommonKeys.LOCAL_LANGUAGE), equals('zh_CN'));
-      expect('Notifications'.tr, equals('通知'));
-      expect('Language'.tr, equals('语言'));
+      expect(Languages.notifications, equals('通知'));
+      expect(Languages.language, equals('语言'));
     });
 
     test('supportedLanguages 包含中英语言并采用 Dart 3 原生 Records', () {
@@ -162,12 +162,12 @@ void main() {
     });
 
     test('引导提示数据 initialTips 元组与文案校验', () {
-      const tips = InitialState.initialTips;
+      final tips = InitialState.initialTips;
       expect(tips.length, equals(3));
 
       final (img1, title1, sub1) = tips[0];
       expect(img1, isNotEmpty);
-      expect(title1, equals("Don't Share Password"));
+      expect(title1, equals(Languages.dontSharePassword));
       expect(sub1, isNotEmpty);
     });
   });

@@ -84,34 +84,34 @@ class WalletController extends Notifier<WalletState> {
     ref.watch(localeProvider);
 
     final months = [
-      'January'.tr,
-      'February'.tr,
-      'March'.tr,
-      'April'.tr,
-      'May'.tr,
-      'June'.tr,
-      'July'.tr,
-      'August'.tr,
-      'September'.tr,
-      'October'.tr,
-      'November'.tr,
-      'December'.tr,
+      Languages.january,
+      Languages.february,
+      Languages.march,
+      Languages.april,
+      Languages.may,
+      Languages.june,
+      Languages.july,
+      Languages.august,
+      Languages.september,
+      Languages.october,
+      Languages.november,
+      Languages.december,
     ];
 
     final initialMoneyTypes = [
-      'Last Send'.tr,
-      'Last Receive'.tr,
-      'Total'.tr,
+      Languages.lastSend,
+      Languages.lastReceive,
+      Languages.total,
     ];
 
     final defaultChart = [
-      ('Mon'.tr, 0.3),
-      ('Tues'.tr, 0.5),
-      ('Wed'.tr, 0.1),
-      ('Thur'.tr, 0.6),
-      ('Fri'.tr, 0.9),
-      ('Satu'.tr, 0.2),
-      ('Sun'.tr, 0.8),
+      (Languages.mon, 0.3),
+      (Languages.tues, 0.5),
+      (Languages.wed, 0.1),
+      (Languages.thur, 0.6),
+      (Languages.fri, 0.9),
+      (Languages.satu, 0.2),
+      (Languages.sun, 0.8),
     ];
 
     // 若此前已有加载好的业务数据（如切换语言触发 rebuild），平滑保留数据，仅迁移本地化字段
@@ -357,7 +357,7 @@ class AddCardController extends Notifier<AddCardState> {
   /// 输入持卡人姓名
   void setOwnerName(String value) {
     final trimmed = value.trim();
-    final error = trimmed.isEmpty ? 'Please type in your name'.tr : null;
+    final error = trimmed.isEmpty ? Languages.pleaseTypeInYourName : null;
     state = state.copyWith(
       ownerName: value,
       ownerNameError: () => error,
@@ -367,7 +367,7 @@ class AddCardController extends Notifier<AddCardState> {
   /// 输入卡号
   void setCardNumber(String value) {
     final trimmed = value.trim();
-    final error = trimmed.isEmpty ? 'Please enter bank card number'.tr : null;
+    final error = trimmed.isEmpty ? Languages.pleaseEnterBankCardNumber : null;
     state = state.copyWith(
       cardNumber: value,
       cardNumberError: () => error,
@@ -380,7 +380,7 @@ class AddCardController extends Notifier<AddCardState> {
     final yearStr = (value.year % 100).toString().padLeft(2, '0');
     final str = '$monthStr/$yearStr';
     final error =
-        str.isNotEmpty ? null : 'Please enter an expiration date'.tr;
+        str.isNotEmpty ? null : Languages.pleaseEnterExpirationDate;
     state = state.copyWith(
       expireDate: value,
       expireDateString: () => str,

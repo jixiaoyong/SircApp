@@ -61,17 +61,17 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
     final title = item.$2;
     ref.read(navigationControllerProvider.notifier).closeDrawer();
 
-    if (title == "About".tr) {
+    if (title == Languages.about) {
       context.push(AppRoutes.ABOUT);
-    } else if (title == "Home".tr) {
+    } else if (title == Languages.home) {
       ref.read(navigationControllerProvider.notifier).changeIndex(0);
-    } else if (title == "Profile".tr) {
+    } else if (title == Languages.profile) {
       ref.read(navigationControllerProvider.notifier).changeIndex(3);
-    } else if (title == "History".tr) {
+    } else if (title == Languages.history) {
       ref.read(navigationControllerProvider.notifier).changeIndex(2);
-    } else if (title == "Settings".tr) {
+    } else if (title == Languages.settings) {
       ref.read(navigationControllerProvider.notifier).changeIndex(4);
-    } else if (title == "Notifications".tr) {
+    } else if (title == Languages.notifications) {
       context.push(AppRoutes.NOTIFICATIONS);
     } else {
       Toast.showDefaultToast();
@@ -109,12 +109,12 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
     final double screenHeight = screenSize.height;
 
     final slideMenuList = [
-      (Icons.home_outlined, "Home".tr),
-      (Icons.person_outline, "Profile".tr),
-      (Icons.history_outlined, "History".tr),
-      (Icons.notifications_outlined, "Notifications".tr),
-      (Icons.settings, "Settings".tr),
-      (Icons.help_outline_outlined, "About".tr),
+      (Icons.home_outlined, Languages.home),
+      (Icons.person_outline, Languages.profile),
+      (Icons.history_outlined, Languages.history),
+      (Icons.notifications_outlined, Languages.notifications),
+      (Icons.settings, Languages.settings),
+      (Icons.help_outline_outlined, Languages.about),
     ];
 
     return Material(

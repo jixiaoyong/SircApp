@@ -27,7 +27,7 @@ class NotificationsPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: OneTitleWithBackButtonAppBar(
-        title: "Notifications".tr,
+        title: Languages.notifications,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -38,7 +38,7 @@ class NotificationsPage extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Category".tr,
+                    Languages.category,
                     style: TextStyle(fontSize: 16.sp, color: Colors.grey),
                   ),
                   Container(

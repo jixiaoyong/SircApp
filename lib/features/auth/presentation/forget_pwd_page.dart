@@ -61,7 +61,7 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: Text("Loading...".tr),
+            title: Text(Languages.loading),
             content: SizedBox(
               height: 50.dp,
               width: 50.dp,
@@ -93,7 +93,7 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Forget Password".tr,
+          Languages.forgetPassword,
           style: const TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.transparent,
@@ -108,7 +108,7 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
         child: Column(
           children: [
             Text(
-              "Enter your email address to reset your password".tr,
+              Languages.enterEmailToResetPassword,
               style: const TextStyle(fontSize: 18, color: Colors.grey),
             ),
             Container(
@@ -126,13 +126,13 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
               ),
               child: TextField(
                 decoration: InputDecoration(
-                  hintText: "Email Address".tr,
+                  hintText: Languages.emailAddress,
                   hintStyle: const TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                     borderSide: const BorderSide(color: Colors.black12, width: 0),
                   ),
-                  labelText: "Email Address".tr,
+                  labelText: Languages.emailAddress,
                   errorText: state.userEmailError,
                   suffixIcon: state.userEmail.isNotEmpty && state.userEmailError == null
                       ? Column(
@@ -158,7 +158,7 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
                                   borderRadius: BorderRadius.circular(20.dp),
                                 ),
                                 child: Text(
-                                  "verify".tr +
+                                  Languages.verify +
                                       (state.lastSendVerifyCodeTime > 0
                                           ? ' (${state.lastSendVerifyCodeTime}s)'
                                           : ''),
@@ -188,7 +188,7 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
                   Padding(
                     padding: EdgeInsets.only(top: 50.dp),
                     child: Text(
-                      "Please enter the verify code we sent to your email:".tr,
+                      Languages.pleaseEnterVerifyCode,
                       style: TextStyle(color: Colors.grey, fontSize: 16.sp),
                     ),
                   ),
@@ -207,7 +207,7 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
               onTap: () {
                 notifier.verifyEmailAndResetPwd();
               },
-              text: "Submit".tr,
+              text: Languages.submit,
             ),
           ],
         ),

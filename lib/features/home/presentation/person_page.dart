@@ -43,10 +43,10 @@ class _PersonPageState extends ConsumerState<PersonPage> {
     final navState = ref.watch(navigationControllerProvider);
 
     final generalInformationList = [
-      (Icons.email_outlined, "E-mail".tr),
-      (Icons.phone_outlined, "Phone Number".tr),
-      (Icons.location_on_outlined, "Local Address".tr),
-      (Icons.credit_card_outlined, "Card Credit".tr),
+      (Icons.email_outlined, Languages.email),
+      (Icons.phone_outlined, Languages.phoneNumber),
+      (Icons.location_on_outlined, Languages.localAddress),
+      (Icons.credit_card_outlined, Languages.cardCredit),
     ];
 
     return SingleChildScrollView(
@@ -93,7 +93,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                 ),
               ),
               Text(
-                "Total Spending".tr,
+                Languages.totalSpending,
                 style: TextStyle(fontSize: 16.sp, color: Colors.grey),
               ),
               Padding(
@@ -223,7 +223,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TitleText(text: "General Information".tr),
+                    TitleText(text: Languages.generalInformation),
                     ...generalInformationList.asMap().entries.map((entry) {
                       final index = entry.key;
                       final item = entry.value;

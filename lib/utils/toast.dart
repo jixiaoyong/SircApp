@@ -46,7 +46,7 @@ class Toast {
   }
 
   static showDefaultToast() {
-    Toast.show("still working on it".tr);
+    Toast.show(Languages.stillWorkingOnIt);
   }
 }
 

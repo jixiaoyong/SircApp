@@ -30,15 +30,15 @@ class MenuPage extends ConsumerWidget {
     final isFingerprintOpen = ref.watch(fingerprintEnabledProvider);
 
     final menuItems = [
-      (Icons.language_outlined, "Language".tr, AppRoutes.LANGUAGES),
-      (Icons.lock_outlined, "Change Password".tr, AppRoutes.PASSWORD),
+      (Icons.language_outlined, Languages.language, AppRoutes.LANGUAGES),
+      (Icons.lock_outlined, Languages.changePassword, AppRoutes.PASSWORD),
       (
         Icons.fingerprint_outlined,
-        "Fingerprint Login".tr,
+        Languages.fingerprintLogin,
         AppRoutes.FINGERPRINT
       ),
-      (Icons.credit_card_outlined, "Add Card".tr, AppRoutes.ADD_CARD),
-      (Icons.logout, "Logout".tr, AppRoutes.LOGOUT),
+      (Icons.credit_card_outlined, Languages.addCard, AppRoutes.ADD_CARD),
+      (Icons.logout, Languages.logout, AppRoutes.LOGOUT),
     ];
 
     return SingleChildScrollView(
@@ -51,7 +51,7 @@ class MenuPage extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TitleText(
-                    text: "Settings".tr,
+                    text: Languages.settings,
                   ),
                   GestureDetector(
                     onTap: () {
@@ -131,18 +131,18 @@ class MenuPage extends ConsumerWidget {
                         showDialog(
                           context: context,
                           builder: (dialogContext) => AlertDialog(
-                            title: Text("Logout".tr),
-                            content: Text("SureToLogout".tr),
+                            title: Text(Languages.logout),
+                            content: Text(Languages.sureToLogout),
                             actions: [
                               OutlinedButton(
-                                child: Text("Cancel".tr),
+                                child: Text(Languages.cancel),
                                 onPressed: () {
                                   Navigator.of(dialogContext).pop();
                                 },
                               ),
                               OutlinedButton(
                                 child: Text(
-                                  "Logout & Clean Data".tr,
+                                  Languages.logoutAndCleanData,
                                   style: const TextStyle(color: Colors.red),
                                 ),
                                 onPressed: () async {

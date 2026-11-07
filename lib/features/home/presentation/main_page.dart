@@ -86,23 +86,23 @@ class _MainPageState extends ConsumerState<MainPage> {
           items: [
             BottomNavigationBarItem(
               icon: const Icon(Icons.home_outlined),
-              label: 'Home'.tr,
+              label: Languages.home,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.account_balance_wallet_outlined),
-              label: 'Wallet'.tr,
+              label: Languages.wallet,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.av_timer_outlined),
-              label: 'History'.tr,
+              label: Languages.history,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.person_outline_outlined),
-              label: 'Person'.tr,
+              label: Languages.person,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.menu_outlined),
-              label: 'Menu'.tr,
+              label: Languages.menu,
             ),
           ],
           onTap: (index) {
