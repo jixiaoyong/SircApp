@@ -250,22 +250,14 @@
           });
         };
 
-        // 优先使用 Flutter 3.22+ 现代标准 loader.load，兼顾向下兼容
-        if (typeof loader.load === 'function') {
-          loader.load({
-            serviceWorkerSettings: {
-              serviceWorkerVersion: "3442073148" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */,
-            },
-            onEntrypointLoaded: onLoaded
-          });
-        } else if (typeof loader.loadEntrypoint === 'function') {
-          loader.loadEntrypoint({
-            serviceWorker: {
-              serviceWorkerVersion: "3442073148" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */,
-            },
-            onEntrypointLoaded: onLoaded
-          });
-        }
+        // 使用兼容稳健的 loadEntrypoint API，避免 _flutter.buildConfig 缺失报错
+        var loadConfig = {
+          serviceWorker: {
+            serviceWorkerVersion: "2616360938" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */,
+          },
+          onEntrypointLoaded: onLoaded
+        };
+        loader.loadEntrypoint(loadConfig);
         return true;
       }
 
