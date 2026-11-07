@@ -25,4 +25,8 @@ For more information, please refer to the [official guideline](https://docs.flut
 
 ![](./doc/imgs/AppSketch.png)
 
+## Architecture & Guidelines
+
+- **Localization / 国际化架构**: 采用基于 Dart 抽象类契约的分层多语言方案（支持业务命名空间与双语悬浮预览，详见 [多语言架构规范](doc/localization_architecture_guide.md)）。
+
 

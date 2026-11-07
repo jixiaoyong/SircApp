@@ -16,13 +16,15 @@ class Languages {
 
   // === 全局强类型词条 Getters ===
   static String get about => AppLocale.translate('About');
-  static String get aboutUsDescription => AppLocale.translate('AboutUsDescription');
+  static String get aboutUsDescription =>
+      AppLocale.translate('AboutUsDescription');
   static String get addCard => AppLocale.translate('Add Card');
   static String get addNewPassword => AppLocale.translate('Add New Password');
   static String get april => AppLocale.translate('April');
   static String get articles => AppLocale.translate('Articles');
   static String get august => AppLocale.translate('August');
-  static String get availableBalance => AppLocale.translate('Available Balance');
+  static String get availableBalance =>
+      AppLocale.translate('Available Balance');
   static String get bill => AppLocale.translate('Bill');
   static String get cancel => AppLocale.translate('Cancel');
   static String get cardCredit => AppLocale.translate('Card Credit');
@@ -35,34 +37,47 @@ class Languages {
   static String get cvv => AppLocale.translate('CVV');
   static String get dashboard => AppLocale.translate('Dashboard');
   static String get december => AppLocale.translate('December');
-  static String get dontSharePassword => AppLocale.translate("Don't Share Password");
-  static String get dontSharePasswordDetail => AppLocale.translate("Use strong combinations of letters,numbers and special characters to make your password.");
+  static String get dontSharePassword =>
+      AppLocale.translate("Don't Share Password");
+  static String get dontSharePasswordDetail => AppLocale.translate(
+      "Use strong combinations of letters,numbers and special characters to make your password.");
   static String get forgotPin => AppLocale.translate('Forgot PIN');
-  static String get forgotPinDetail => AppLocale.translate("Don't take too much tension about PiN\nJust make ono call to bank and change your pin.");
+  static String get forgotPinDetail => AppLocale.translate(
+      "Don't take too much tension about PiN\nJust make ono call to bank and change your pin.");
   static String get manageAccount => AppLocale.translate('Manage Account');
-  static String get manageAccountDetail => AppLocale.translate("Bank account make more secure keeping transaction active and changing password regularly.");
-  static String get dontHaveAccount => AppLocale.translate("I don't have an account");
+  static String get manageAccountDetail => AppLocale.translate(
+      "Bank account make more secure keeping transaction active and changing password regularly.");
+  static String get dontHaveAccount =>
+      AppLocale.translate("I don't have an account");
   static String get dxss => AppLocale.translate('DXSS');
   static String get email => AppLocale.translate('E-mail');
   static String get emailAddress => AppLocale.translate('Email Address');
-  static String get emailFormatNotCorrect => AppLocale.translate('the email format is not correct');
-  static String get emailLengthMax => AppLocale.translate('the length of user email must be less than 30');
-  static String get emailLengthMin => AppLocale.translate('the length of user email must be more than 5');
-  static String get enterEmailToResetPassword => AppLocale.translate('Enter your email address to reset your password');
+  static String get emailFormatNotCorrect =>
+      AppLocale.translate('the email format is not correct');
+  static String get emailLengthMax =>
+      AppLocale.translate('the length of user email must be less than 30');
+  static String get emailLengthMin =>
+      AppLocale.translate('the length of user email must be more than 5');
+  static String get enterEmailToResetPassword =>
+      AppLocale.translate('Enter your email address to reset your password');
   static String get expireDate => AppLocale.translate('Expire Date');
   static String get explore => AppLocale.translate('Explore');
   static String get february => AppLocale.translate('February');
-  static String get fingerprintLogin => AppLocale.translate('Fingerprint Login');
+  static String get fingerprintLogin =>
+      AppLocale.translate('Fingerprint Login');
   static String get follow => AppLocale.translate('Follow');
   static String get forgetPassword => AppLocale.translate('Forget Password');
   static String get forgetPasswords => AppLocale.translate('Forget passwords?');
   static String get fri => AppLocale.translate('Fri');
-  static String get generalInformation => AppLocale.translate('General Information');
+  static String get generalInformation =>
+      AppLocale.translate('General Information');
   static String get getStart => AppLocale.translate('Get Start');
-  static String get haveAccount => AppLocale.translate('I have already an account');
+  static String get haveAccount =>
+      AppLocale.translate('I have already an account');
   static String get history => AppLocale.translate('History');
   static String get home => AppLocale.translate('Home');
-  static String get hostedOnGithub => AppLocale.translate('This is an open-source project hosted on ');
+  static String get hostedOnGithub =>
+      AppLocale.translate('This is an open-source project hosted on ');
   static String get hot => AppLocale.translate('Hot');
   static String get january => AppLocale.translate('January');
   static String get july => AppLocale.translate('July');
@@ -77,7 +92,8 @@ class Languages {
   static String get login => AppLocale.translate('Login');
   static String get loginFailed => AppLocale.translate('Login Failed');
   static String get logout => AppLocale.translate('Logout');
-  static String get logoutAndCleanData => AppLocale.translate('Logout & Clean Data');
+  static String get logoutAndCleanData =>
+      AppLocale.translate('Logout & Clean Data');
   static String get march => AppLocale.translate('March');
   static String get masterCard => AppLocale.translate('MasterCard');
   static String get may => AppLocale.translate('May');
@@ -91,27 +107,41 @@ class Languages {
   static String get november => AppLocale.translate('November');
   static String get october => AppLocale.translate('October');
   static String get oldPassword => AppLocale.translate('Old Password');
-  static String get oldPasswordIncorrect => AppLocale.translate('Original password incorrect or update failed');
+  static String get oldPasswordIncorrect =>
+      AppLocale.translate('Original password incorrect or update failed');
   static String get orSignInWith => AppLocale.translate('Or Sign In With');
   static String get orSignUpWith => AppLocale.translate('Or Sign Up With');
   static String get others => AppLocale.translate('Others');
   static String get password => AppLocale.translate('Password');
-  static String get passwordInconsistent => AppLocale.translate('The passwords entered twice do not match');
-  static String get passwordLengthMax => AppLocale.translate('the length of user password must be less than 12');
-  static String get passwordLengthMin => AppLocale.translate('the length of user password must be more than 6');
-  static String get passwordMinLengthPrompt => AppLocale.translate('Password length must not be less than 6 digits');
-  static String get passwordNotSame => AppLocale.translate('the password is not same');
+  static String get passwordInconsistent =>
+      AppLocale.translate('The passwords entered twice do not match');
+  static String get passwordLengthMax =>
+      AppLocale.translate('the length of user password must be less than 12');
+  static String get passwordLengthMin =>
+      AppLocale.translate('the length of user password must be more than 6');
+  static String get passwordMinLengthPrompt =>
+      AppLocale.translate('Password length must not be less than 6 digits');
+  static String get passwordNotSame =>
+      AppLocale.translate('the password is not same');
   static String get person => AppLocale.translate('Person');
   static String get phoneNumber => AppLocale.translate('Phone Number');
-  static String get pleaseEnterBankCardNumber => AppLocale.translate('Please enter bank card number');
-  static String get pleaseEnterExpirationDate => AppLocale.translate('Please enter an expiration date');
-  static String get pleaseEnterVerifyCode => AppLocale.translate('Please enter the verify code we sent to your email:');
-  static String get pleaseInputConfirmPassword => AppLocale.translate('Please enter the confirmation new password');
-  static String get pleaseInputCurrentPassword => AppLocale.translate('Please enter your current password first');
-  static String get pleaseInputNewPassword => AppLocale.translate('Please enter a new password');
-  static String get pleaseLoginWithNewPassword => AppLocale.translate('Please login with your new password.');
+  static String get pleaseEnterBankCardNumber =>
+      AppLocale.translate('Please enter bank card number');
+  static String get pleaseEnterExpirationDate =>
+      AppLocale.translate('Please enter an expiration date');
+  static String get pleaseEnterVerifyCode => AppLocale.translate(
+      'Please enter the verify code we sent to your email:');
+  static String get pleaseInputConfirmPassword =>
+      AppLocale.translate('Please enter the confirmation new password');
+  static String get pleaseInputCurrentPassword =>
+      AppLocale.translate('Please enter your current password first');
+  static String get pleaseInputNewPassword =>
+      AppLocale.translate('Please enter a new password');
+  static String get pleaseLoginWithNewPassword =>
+      AppLocale.translate('Please login with your new password.');
   static String get pleaseSignIn => AppLocale.translate('Please Sign In');
-  static String get pleaseTypeInYourName => AppLocale.translate('Please type in your name');
+  static String get pleaseTypeInYourName =>
+      AppLocale.translate('Please type in your name');
   static String get profile => AppLocale.translate('Profile');
   static String get receive => AppLocale.translate('Receive');
   static String get recharge => AppLocale.translate('Recharge');
@@ -122,13 +152,16 @@ class Languages {
   static String get search => AppLocale.translate('Search');
   static String get send => AppLocale.translate('Send');
   static String get september => AppLocale.translate('September');
-  static String get setPasswordSucceed => AppLocale.translate('Set Password Succeed');
+  static String get setPasswordSucceed =>
+      AppLocale.translate('Set Password Succeed');
   static String get settings => AppLocale.translate('Settings');
   static String get signIn => AppLocale.translate('Sign In');
   static String get signUp => AppLocale.translate('Sign Up');
   static String get something => AppLocale.translate('Something');
-  static String get somethingLikeAds => AppLocale.translate('something like ads');
-  static String get stillWorkingOnIt => AppLocale.translate('still working on it');
+  static String get somethingLikeAds =>
+      AppLocale.translate('something like ads');
+  static String get stillWorkingOnIt =>
+      AppLocale.translate('still working on it');
   static String get submit => AppLocale.translate('Submit');
   static String get sun => AppLocale.translate('Sun');
   static String get sureToLogout => AppLocale.translate('SureToLogout');
@@ -142,8 +175,10 @@ class Languages {
   static String get translations => AppLocale.translate('Translations');
   static String get tues => AppLocale.translate('Tues');
   static String get username => AppLocale.translate('Username');
-  static String get usernameLengthMax => AppLocale.translate('the length of username must be less than 10');
-  static String get usernameLengthMin => AppLocale.translate('the length of username must be more than 3');
+  static String get usernameLengthMax =>
+      AppLocale.translate('the length of username must be less than 10');
+  static String get usernameLengthMin =>
+      AppLocale.translate('the length of username must be more than 3');
   static String get verify => AppLocale.translate('verify');
   static String get visa => AppLocale.translate('Visa');
   static String get wallet => AppLocale.translate('Wallet');
@@ -242,12 +277,14 @@ class Languages {
       "Old Password": "Old Password",
       "New Password": "New Password",
       "Confirm Password": "Confirm Password",
-      "SureToLogout": "Are you sure you want to logout?\nThis will CLEAN ALL DATA",
+      "SureToLogout":
+          "Are you sure you want to logout?\nThis will CLEAN ALL DATA",
       "Logout & Clean Data": "Logout & Clean Data",
       "Cancel": "Cancel",
       "Get Start": "Get Start",
       "Set Password Succeed": "Set Password Succeed",
-      "Please login with your new password.": "Please login with your new password.",
+      "Please login with your new password.":
+          "Please login with your new password.",
       "Forget passwords?": "Forget passwords?",
       "Or Sign In With": "Or Sign In With",
       "I don't have an account": "I don't have an account",
@@ -259,18 +296,26 @@ class Languages {
       "Register": "Register",
       "Email Address": "Email Address",
       "Forget Password": "Forget Password",
-      "Enter your email address to reset your password": "Enter your email address to reset your password",
+      "Enter your email address to reset your password":
+          "Enter your email address to reset your password",
       "verify": "verify",
       "Submit": "Submit",
       "the email format is not correct": "the email format is not correct",
-      "the length of user email must be less than 30": "the length of user email must be less than 30",
-      "the length of user email must be more than 5": "the length of user email must be more than 5",
+      "the length of user email must be less than 30":
+          "the length of user email must be less than 30",
+      "the length of user email must be more than 5":
+          "the length of user email must be more than 5",
       "the password is not same": "the password is not same",
-      "the length of user password must be less than 12": "the length of user password must be less than 12",
-      "the length of user password must be more than 6": "the length of user password must be more than 6",
-      "the length of username must be less than 10": "the length of username must be less than 10",
-      "the length of username must be more than 3": "the length of username must be more than 3",
-      "Please enter the verify code we sent to your email:": "Please enter the verify code we sent to your email:",
+      "the length of user password must be less than 12":
+          "the length of user password must be less than 12",
+      "the length of user password must be more than 6":
+          "the length of user password must be more than 6",
+      "the length of username must be less than 10":
+          "the length of username must be less than 10",
+      "the length of username must be more than 3":
+          "the length of username must be more than 3",
+      "Please enter the verify code we sent to your email:":
+          "Please enter the verify code we sent to your email:",
       "Name On Card": "Name On Card",
       "Card Number": "Card Number",
       "Expire Date": "Expire Date",
@@ -285,15 +330,21 @@ class Languages {
       "Articles": "Articles",
       "still working on it": "still working on it",
       "something like ads": "something like ads>>>",
-      'The passwords entered twice do not match': 'The passwords entered twice do not match',
-      'Original password incorrect or update failed': 'Original password incorrect or update failed',
-      'Password length must not be less than 6 digits': 'Password length must not be less than 6 digits',
-      'Please enter your current password first': 'Please enter your current password first',
+      'The passwords entered twice do not match':
+          'The passwords entered twice do not match',
+      'Original password incorrect or update failed':
+          'Original password incorrect or update failed',
+      'Password length must not be less than 6 digits':
+          'Password length must not be less than 6 digits',
+      'Please enter your current password first':
+          'Please enter your current password first',
       'Please enter a new password': 'Please enter a new password',
-      'Please enter the confirmation new password': 'Please enter the confirmation new password',
+      'Please enter the confirmation new password':
+          'Please enter the confirmation new password',
       'CVV': 'CVV',
       'Add New Password': 'Add New Password',
-      'This is an open-source project hosted on ': 'This is an open-source project hosted on ',
+      'This is an open-source project hosted on ':
+          'This is an open-source project hosted on ',
     },
     "zh_CN": {
       "MasterCard": "万事达卡",

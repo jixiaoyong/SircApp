@@ -75,11 +75,13 @@ void main() {
       );
     });
 
-    test('openDrawer, closeDrawer, and toggleDrawer should control drawer state',
+    test(
+        'openDrawer, closeDrawer, and toggleDrawer should control drawer state',
         () {
       final controller = container.read(navigationControllerProvider.notifier);
 
-      expect(container.read(navigationControllerProvider).isDrawerOpen, isFalse);
+      expect(
+          container.read(navigationControllerProvider).isDrawerOpen, isFalse);
 
       controller.openDrawer();
       expect(container.read(navigationControllerProvider).isDrawerOpen, isTrue);
@@ -89,20 +91,23 @@ void main() {
       expect(container.read(navigationControllerProvider).isDrawerOpen, isTrue);
 
       controller.closeDrawer();
-      expect(container.read(navigationControllerProvider).isDrawerOpen, isFalse);
+      expect(
+          container.read(navigationControllerProvider).isDrawerOpen, isFalse);
 
       // toggle 切换
       controller.toggleDrawer();
       expect(container.read(navigationControllerProvider).isDrawerOpen, isTrue);
 
       controller.toggleDrawer();
-      expect(container.read(navigationControllerProvider).isDrawerOpen, isFalse);
+      expect(
+          container.read(navigationControllerProvider).isDrawerOpen, isFalse);
 
       // setDrawerOpen
       controller.setDrawerOpen(true);
       expect(container.read(navigationControllerProvider).isDrawerOpen, isTrue);
       controller.setDrawerOpen(false);
-      expect(container.read(navigationControllerProvider).isDrawerOpen, isFalse);
+      expect(
+          container.read(navigationControllerProvider).isDrawerOpen, isFalse);
     });
   });
 
