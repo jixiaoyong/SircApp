@@ -209,55 +209,83 @@
   </div>
 
   <script>
-    window.addEventListener('load', function () {
+    (function () {
       var loading = document.getElementById('loading');
+      var isHidden = false;
+
       function hideLoading() {
+        if (isHidden) return;
+        isHidden = true;
         if (loading && !loading.classList.contains('fade-out')) {
           loading.classList.add('fade-out');
           setTimeout(function () {
-            if (loading.parentNode) {
+            if (loading && loading.parentNode) {
               loading.parentNode.removeChild(loading);
             }
           }, 400);
         }
       }
 
-      var loadConfig = {
-        serviceWorker: {
-          serviceWorkerVersion: "1170740738" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */,
-        },
-        onEntrypointLoaded: function (engineInitializer) {
-          engineInitializer.initializeEngine().then(function (appRunner) {
-            var app = appRunner.runApp();
-            if (app && typeof app.then === 'function') {
-              app.then(hideLoading);
-            } else {
-              hideLoading();
-            }
+      // 强制兜底计时器：3.5 秒内无论发生任何异常均平滑移除闪屏层，杜绝页面卡死
+      var failSafeTimer = setTimeout(function () {
+        hideLoading();
+      }, 3500);
+
+      function initFlutterApp() {
+        if (!window._flutter || !window._flutter.loader) {
+          return false;
+        }
+
+        var loader = window._flutter.loader;
+        var onLoaded = function (engineInitializer) {
+          return engineInitializer.initializeEngine().then(function (appRunner) {
+            return appRunner.runApp();
+          }).then(function () {
+            clearTimeout(failSafeTimer);
+            hideLoading();
           }).catch(function (error) {
             console.error('Failed to initialize Flutter engine:', error);
+            clearTimeout(failSafeTimer);
             hideLoading();
           });
+        };
+
+        // 优先使用 Flutter 3.22+ 现代标准 loader.load，兼顾向下兼容
+        if (typeof loader.load === 'function') {
+          loader.load({
+            serviceWorkerSettings: {
+              serviceWorkerVersion: "3442073148" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */,
+            },
+            onEntrypointLoaded: onLoaded
+          });
+        } else if (typeof loader.loadEntrypoint === 'function') {
+          loader.loadEntrypoint({
+            serviceWorker: {
+              serviceWorkerVersion: "3442073148" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */,
+            },
+            onEntrypointLoaded: onLoaded
+          });
         }
-      };
-
-      if (window._flutter && window._flutter.loader) {
-        window._flutter.loader.loadEntrypoint(loadConfig);
+        return true;
       }
-    });
 
-    // 监听 Flutter 第一帧渲染事件，双重保障平滑移除 Splash
-    window.addEventListener('flutter-first-frame', function () {
-      var loading = document.getElementById('loading');
-      if (loading && !loading.classList.contains('fade-out')) {
-        loading.classList.add('fade-out');
-        setTimeout(function () {
-          if (loading.parentNode) {
-            loading.parentNode.removeChild(loading);
-          }
-        }, 400);
+      // 解决 load 事件与异步 defer 脚本的时序竞态问题
+      var attempts = 0;
+      function startApp() {
+        if (initFlutterApp()) return;
+        if (++attempts < 60) {
+          setTimeout(startApp, 50);
+        } else {
+          hideLoading();
+        }
       }
-    });
+
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        startApp();
+      } else {
+        window.addEventListener('load', startApp);
+      }
+    })();
   </script>
 </body>
 </html>
