@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
-import 'package:sirc/features/wallet/presentation/history_details_page.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/color_extension.dart';
 import 'package:sirc/utils/number_extension.dart';
