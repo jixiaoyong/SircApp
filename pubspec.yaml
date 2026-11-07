@@ -46,6 +46,11 @@ dependencies:
   month_picker_dialog: ^6.7.3
   webview_flutter: ^4.8.0
   js:
+  # 自适应高度内嵌 WebView 组件（基于现代 ResizeObserver 标准）
+  embed_webview:
+    git:
+      url: https://github.com/jixiaoyong/embed_webview.git
+      ref: 458bebc817fe915ba598cfd8ae37577f34b7c944
 
   # ==========================================
   # 6. 系统交互与原生支持

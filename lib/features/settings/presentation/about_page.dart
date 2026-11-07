@@ -7,7 +7,7 @@ import '../../../core/localization/app_locale.dart';
 import '../../../gen_a/A.dart';
 import '../../../utils/size_extension.dart';
 import '../../../widgets/one_title_with_back_button_appbar.dart';
-import '../../../widgets/webview/embed/embed_webview.dart';
+import 'package:embed_webview/embed_webview.dart';
 import '../../../widgets/webview/webview_page.dart';
 
 /*
@@ -49,15 +49,12 @@ class AboutPage extends ConsumerWidget {
                 ),
               ),
             ),
-            SizedBox(
-              height: 220.dp,
-              child: IgnorePointer(
-                child: EmbedWebView(
-                  aboutText,
-                  width,
-                  maxHeight: 240,
-                  backgroundColor: "#fafafa",
-                ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.dp),
+              child: EmbedWebView(
+                aboutText,
+                backgroundColor: "#fafafa",
+                onLinkTap: (url) => openUrl(context, url),
               ),
             ),
             Padding(
