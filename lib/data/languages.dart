@@ -1,232 +1,725 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// 该文件由脚本自动维护。如需新增或修改多语言词条：
+// 1. 在 `lib/data/l10n/keys/` 中声明对应模块属性
+// 2. 在 `lib/data/l10n/impl/zh/` 和 `lib/data/l10n/impl/en/` 中实现中英文翻译
+// 3. 执行更新命令：
+//    - 手动单次生成：`dart run tool/build_lang.dart`
+//    - 后台监听实时生成：`dart run tool/build_lang.dart --watch`
+
 import '../core/localization/app_locale.dart';
 
 /*
-* @description: 全局强类型多语言门面，彻底杜绝手写双引号与拼写错误
+* @description: 全局强类型分层多语言门面
 *
-* 任何业务使用直接通过  调用，
-* 例如 , , 。
-* 享受 IDE 代码全量提示与编译期红线防错！
+* 1. 支持业务分层命名空间调用：
+*    例如 Languages.auth.oldPasswordIncorrect、Languages.wallet.availableBalance
+* 2. 完整保留扁平别名调用（平滑兼容历史代码）：
+*    例如 Languages.oldPasswordIncorrect、Languages.cancel
+* 3. 具备双语悬浮预览注释，敲代码时鼠标移至属性即可查看中英真实文案！
 *
-* @author: jixiaoyong
-* @email: jixiaoyong1995@gmail.com
-* @date: 22/04/19
+* 自动生成命令：
+* - 手动执行：dart run tool/build_lang.dart
+* - 实时监听：dart run tool/build_lang.dart --watch
 */
 class Languages {
   Languages._();
 
-  // === 全局强类型词条 Getters ===
-  static String get about => AppLocale.translate('About');
-  static String get aboutUsDescription =>
-      AppLocale.translate('AboutUsDescription');
-  static String get addCard => AppLocale.translate('Add Card');
-  static String get addNewPassword => AppLocale.translate('Add New Password');
-  static String get april => AppLocale.translate('April');
-  static String get articles => AppLocale.translate('Articles');
-  static String get august => AppLocale.translate('August');
-  static String get availableBalance =>
-      AppLocale.translate('Available Balance');
-  static String get bill => AppLocale.translate('Bill');
-  static String get cancel => AppLocale.translate('Cancel');
-  static String get cardCredit => AppLocale.translate('Card Credit');
-  static String get cardNumber => AppLocale.translate('Card Number');
-  static String get category => AppLocale.translate('Category');
-  static String get changePassword => AppLocale.translate('Change Password');
-  static String get cid => AppLocale.translate('CID');
-  static String get cnss => AppLocale.translate('CNSS');
-  static String get confirmPassword => AppLocale.translate('Confirm Password');
-  static String get cvv => AppLocale.translate('CVV');
-  static String get dashboard => AppLocale.translate('Dashboard');
-  static String get december => AppLocale.translate('December');
-  static String get dontSharePassword =>
-      AppLocale.translate("Don't Share Password");
-  static String get dontSharePasswordDetail => AppLocale.translate(
-      "Use strong combinations of letters,numbers and special characters to make your password.");
-  static String get forgotPin => AppLocale.translate('Forgot PIN');
-  static String get forgotPinDetail => AppLocale.translate(
-      "Don't take too much tension about PiN\nJust make ono call to bank and change your pin.");
-  static String get manageAccount => AppLocale.translate('Manage Account');
-  static String get manageAccountDetail => AppLocale.translate(
-      "Bank account make more secure keeping transaction active and changing password regularly.");
-  static String get dontHaveAccount =>
-      AppLocale.translate("I don't have an account");
-  static String get dxss => AppLocale.translate('DXSS');
-  static String get email => AppLocale.translate('E-mail');
-  static String get emailAddress => AppLocale.translate('Email Address');
-  static String get emailFormatNotCorrect =>
-      AppLocale.translate('the email format is not correct');
-  static String get emailLengthMax =>
-      AppLocale.translate('the length of user email must be less than 30');
-  static String get emailLengthMin =>
-      AppLocale.translate('the length of user email must be more than 5');
-  static String get enterEmailToResetPassword =>
-      AppLocale.translate('Enter your email address to reset your password');
-  static String get expireDate => AppLocale.translate('Expire Date');
-  static String get explore => AppLocale.translate('Explore');
-  static String get february => AppLocale.translate('February');
-  static String get fingerprintLogin =>
-      AppLocale.translate('Fingerprint Login');
-  static String get follow => AppLocale.translate('Follow');
-  static String get forgetPassword => AppLocale.translate('Forget Password');
-  static String get forgetPasswords => AppLocale.translate('Forget passwords?');
-  static String get fri => AppLocale.translate('Fri');
-  static String get generalInformation =>
-      AppLocale.translate('General Information');
-  static String get getStart => AppLocale.translate('Get Start');
-  static String get haveAccount =>
-      AppLocale.translate('I have already an account');
-  static String get history => AppLocale.translate('History');
-  static String get home => AppLocale.translate('Home');
-  static String get hostedOnGithub =>
-      AppLocale.translate('This is an open-source project hosted on ');
-  static String get hot => AppLocale.translate('Hot');
-  static String get january => AppLocale.translate('January');
-  static String get july => AppLocale.translate('July');
-  static String get june => AppLocale.translate('June');
-  static String get justNow => AppLocale.translate('Just now');
-  static String get language => AppLocale.translate('Language');
-  static String get lastMonth => AppLocale.translate(' Last Month');
-  static String get lastReceive => AppLocale.translate('Last Receive');
-  static String get lastSend => AppLocale.translate('Last Send');
-  static String get loading => AppLocale.translate('Loading...');
-  static String get localAddress => AppLocale.translate('Local Address');
-  static String get login => AppLocale.translate('Login');
-  static String get loginFailed => AppLocale.translate('Login Failed');
-  static String get logout => AppLocale.translate('Logout');
-  static String get logoutAndCleanData =>
-      AppLocale.translate('Logout & Clean Data');
-  static String get march => AppLocale.translate('March');
-  static String get masterCard => AppLocale.translate('MasterCard');
-  static String get may => AppLocale.translate('May');
-  static String get menu => AppLocale.translate('Menu');
-  static String get mon => AppLocale.translate('Mon');
-  static String get moneyRecharge => AppLocale.translate('Money Recharge');
-  static String get moneySend => AppLocale.translate('Money Send');
-  static String get nameOnCard => AppLocale.translate('Name On Card');
-  static String get newPassword => AppLocale.translate('New Password');
-  static String get notifications => AppLocale.translate('Notifications');
-  static String get november => AppLocale.translate('November');
-  static String get october => AppLocale.translate('October');
-  static String get oldPassword => AppLocale.translate('Old Password');
-  static String get oldPasswordIncorrect =>
-      AppLocale.translate('Original password incorrect or update failed');
-  static String get orSignInWith => AppLocale.translate('Or Sign In With');
-  static String get orSignUpWith => AppLocale.translate('Or Sign Up With');
-  static String get others => AppLocale.translate('Others');
-  static String get password => AppLocale.translate('Password');
-  static String get passwordInconsistent =>
-      AppLocale.translate('The passwords entered twice do not match');
-  static String get passwordLengthMax =>
-      AppLocale.translate('the length of user password must be less than 12');
-  static String get passwordLengthMin =>
-      AppLocale.translate('the length of user password must be more than 6');
-  static String get passwordMinLengthPrompt =>
-      AppLocale.translate('Password length must not be less than 6 digits');
-  static String get passwordNotSame =>
-      AppLocale.translate('the password is not same');
-  static String get person => AppLocale.translate('Person');
-  static String get phoneNumber => AppLocale.translate('Phone Number');
-  static String get pleaseEnterBankCardNumber =>
-      AppLocale.translate('Please enter bank card number');
-  static String get pleaseEnterExpirationDate =>
-      AppLocale.translate('Please enter an expiration date');
-  static String get pleaseEnterVerifyCode => AppLocale.translate(
-      'Please enter the verify code we sent to your email:');
-  static String get pleaseInputConfirmPassword =>
-      AppLocale.translate('Please enter the confirmation new password');
-  static String get pleaseInputCurrentPassword =>
-      AppLocale.translate('Please enter your current password first');
-  static String get pleaseInputNewPassword =>
-      AppLocale.translate('Please enter a new password');
-  static String get pleaseLoginWithNewPassword =>
-      AppLocale.translate('Please login with your new password.');
-  static String get pleaseSignIn => AppLocale.translate('Please Sign In');
-  static String get pleaseTypeInYourName =>
-      AppLocale.translate('Please type in your name');
-  static String get profile => AppLocale.translate('Profile');
-  static String get receive => AppLocale.translate('Receive');
-  static String get recharge => AppLocale.translate('Recharge');
-  static String get register => AppLocale.translate('Register');
-  static String get registerFailed => AppLocale.translate('Register Failed');
-  static String get registerSucceed => AppLocale.translate('Register Succeed');
-  static String get satu => AppLocale.translate('Satu');
-  static String get search => AppLocale.translate('Search');
-  static String get send => AppLocale.translate('Send');
-  static String get september => AppLocale.translate('September');
-  static String get setPasswordSucceed =>
-      AppLocale.translate('Set Password Succeed');
-  static String get settings => AppLocale.translate('Settings');
-  static String get signIn => AppLocale.translate('Sign In');
-  static String get signUp => AppLocale.translate('Sign Up');
-  static String get something => AppLocale.translate('Something');
-  static String get somethingLikeAds =>
-      AppLocale.translate('something like ads');
-  static String get stillWorkingOnIt =>
-      AppLocale.translate('still working on it');
-  static String get submit => AppLocale.translate('Submit');
-  static String get sun => AppLocale.translate('Sun');
-  static String get sureToLogout => AppLocale.translate('SureToLogout');
-  static String get thisMonth => AppLocale.translate('this month');
-  static String get thisWeek => AppLocale.translate('this week');
-  static String get thisYear => AppLocale.translate('this year');
-  static String get thur => AppLocale.translate('Thur');
-  static String get total => AppLocale.translate('Total');
-  static String get totalSpending => AppLocale.translate('Total Spending');
-  static String get transfers => AppLocale.translate('Transfers');
-  static String get translations => AppLocale.translate('Translations');
-  static String get tues => AppLocale.translate('Tues');
-  static String get username => AppLocale.translate('Username');
-  static String get usernameLengthMax =>
-      AppLocale.translate('the length of username must be less than 10');
-  static String get usernameLengthMin =>
-      AppLocale.translate('the length of username must be more than 3');
-  static String get verify => AppLocale.translate('verify');
-  static String get visa => AppLocale.translate('Visa');
-  static String get wallet => AppLocale.translate('Wallet');
-  static String get wed => AppLocale.translate('Wed');
+  // ==========================================
+  // 一、 业务分层命名空间（Layered Namespaces）
+  // ==========================================
 
-  // 静态字典映射 (供 AppLocale.translate 查找)
+  /// 认证、账号、密码及表单校验词条命名空间
+  static AuthLang get auth => AppLocale.current.auth;
+
+  /// 钱包、银行卡、交易流水及财务词条命名空间
+  static WalletLang get wallet => AppLocale.current.wallet;
+
+  /// 首页、看板、月份、星期及快捷分类词条命名空间
+  static HomeLang get home => AppLocale.current.home;
+
+  /// 设置、关于、个人资料、通知及退出登录词条命名空间
+  static SettingsLang get settings => AppLocale.current.settings;
+
+  /// 通用公共词条（按钮、状态、缺省页等）命名空间
+  static CommonLang get common => AppLocale.current.common;
+
+  // ==========================================
+  // 二、 扁平兼容层（带双语悬浮预览注释）
+  // ==========================================
+
+  // --- Auth 模块 ---
+  ///- [zh_CN] 登录
+  ///- [en_US] Sign In
+  static String get signIn => auth.signIn;
+
+  ///- [zh_CN] 注册
+  ///- [en_US] Sign Up
+  static String get signUp => auth.signUp;
+
+  ///- [zh_CN] 登录
+  ///- [en_US] Login
+  static String get login => auth.login;
+
+  ///- [zh_CN] 注册
+  ///- [en_US] Register
+  static String get register => auth.register;
+
+  ///- [zh_CN] 登录失败
+  ///- [en_US] Login Failed
+  static String get loginFailed => auth.loginFailed;
+
+  ///- [zh_CN] 注册成功
+  ///- [en_US] Register Succeed
+  static String get registerSucceed => auth.registerSucceed;
+
+  ///- [zh_CN] 注册失败
+  ///- [en_US] Register Failed
+  static String get registerFailed => auth.registerFailed;
+
+  ///- [zh_CN] 用户名
+  ///- [en_US] Username
+  static String get username => auth.username;
+
+  ///- [zh_CN] 密码
+  ///- [en_US] Password
+  static String get password => auth.password;
+
+  ///- [zh_CN] 旧密码
+  ///- [en_US] Old Password
+  static String get oldPassword => auth.oldPassword;
+
+  ///- [zh_CN] 新密码
+  ///- [en_US] New Password
+  static String get newPassword => auth.newPassword;
+
+  ///- [zh_CN] 确认密码
+  ///- [en_US] Confirm Password
+  static String get confirmPassword => auth.confirmPassword;
+
+  ///- [zh_CN] 修改密码
+  ///- [en_US] Change Password
+  static String get changePassword => auth.changePassword;
+
+  ///- [zh_CN] 设置新密码
+  ///- [en_US] Add New Password
+  static String get addNewPassword => auth.addNewPassword;
+
+  ///- [zh_CN] 设置密码成功
+  ///- [en_US] Set Password Succeed
+  static String get setPasswordSucceed => auth.setPasswordSucceed;
+
+  ///- [zh_CN] 请使用您的新密码登录。
+  ///- [en_US] Please login with your new password.
+  static String get pleaseLoginWithNewPassword =>
+      auth.pleaseLoginWithNewPassword;
+
+  ///- [zh_CN] 原密码不正确或修改失败
+  ///- [en_US] Original password incorrect or update failed
+  static String get oldPasswordIncorrect => auth.oldPasswordIncorrect;
+
+  ///- [zh_CN] 两次输入的密码不一致
+  ///- [en_US] The passwords entered twice do not match
+  static String get passwordInconsistent => auth.passwordInconsistent;
+
+  ///- [zh_CN] 密码不一样
+  ///- [en_US] the password is not same
+  static String get passwordNotSame => auth.passwordNotSame;
+
+  ///- [zh_CN] 密码长度不能小于6位
+  ///- [en_US] Password length must not be less than 6 digits
+  static String get passwordMinLengthPrompt => auth.passwordMinLengthPrompt;
+
+  ///- [zh_CN] 用户密码长度必须大于6
+  ///- [en_US] the length of user password must be more than 6
+  static String get passwordLengthMin => auth.passwordLengthMin;
+
+  ///- [zh_CN] 用户密码长度必须小于12
+  ///- [en_US] the length of user password must be less than 12
+  static String get passwordLengthMax => auth.passwordLengthMax;
+
+  ///- [zh_CN] 用户名长度必须大于3
+  ///- [en_US] the length of username must be more than 3
+  static String get usernameLengthMin => auth.usernameLengthMin;
+
+  ///- [zh_CN] 用户名长度必须小于10
+  ///- [en_US] the length of username must be less than 10
+  static String get usernameLengthMax => auth.usernameLengthMax;
+
+  ///- [zh_CN] 电子邮件
+  ///- [en_US] E-mail
+  static String get email => auth.email;
+
+  ///- [zh_CN] 电子邮件
+  ///- [en_US] Email Address
+  static String get emailAddress => auth.emailAddress;
+
+  ///- [zh_CN] 电子邮件格式不正确
+  ///- [en_US] the email format is not correct
+  static String get emailFormatNotCorrect => auth.emailFormatNotCorrect;
+
+  ///- [zh_CN] 用户电子邮件长度必须大于5
+  ///- [en_US] the length of user email must be more than 5
+  static String get emailLengthMin => auth.emailLengthMin;
+
+  ///- [zh_CN] 用户电子邮件长度必须小于30
+  ///- [en_US] the length of user email must be less than 30
+  static String get emailLengthMax => auth.emailLengthMax;
+
+  ///- [zh_CN] 输入您的电子邮件地址来重置您的密码
+  ///- [en_US] Enter your email address to reset your password
+  static String get enterEmailToResetPassword => auth.enterEmailToResetPassword;
+
+  ///- [zh_CN] 忘记密码
+  ///- [en_US] Forget Password
+  static String get forgetPassword => auth.forgetPassword;
+
+  ///- [zh_CN] 忘记密码？
+  ///- [en_US] Forget passwords?
+  static String get forgetPasswords => auth.forgetPasswords;
+
+  ///- [zh_CN] 忘记密码
+  ///- [en_US] Forgot PIN
+  static String get forgotPin => auth.forgotPin;
+
+  ///- [zh_CN] 不用担心PIN码\n只需致电银行即可更改PIN码。
+  ///- [en_US] Don't take too much tension about PiN\nJust make ono call to bank and change your pin.
+  static String get forgotPinDetail => auth.forgotPinDetail;
+
+  ///- [zh_CN] 不要分享密码
+  ///- [en_US] Don't Share Password
+  static String get dontSharePassword => auth.dontSharePassword;
+
+  ///- [zh_CN] 使用字母、数字和特殊字符的强组合来设置密码。
+  ///- [en_US] Use strong combinations of letters,numbers and special characters to make your password.
+  static String get dontSharePasswordDetail => auth.dontSharePasswordDetail;
+
+  ///- [zh_CN] 管理账户
+  ///- [en_US] Manage Account
+  static String get manageAccount => auth.manageAccount;
+
+  ///- [zh_CN] 银行账户保持交易活跃并定期更改密码更安全。
+  ///- [en_US] Bank account make more secure keeping transaction active and changing password regularly.
+  static String get manageAccountDetail => auth.manageAccountDetail;
+
+  ///- [zh_CN] 或通过下述方式登录
+  ///- [en_US] Or Sign In With
+  static String get orSignInWith => auth.orSignInWith;
+
+  ///- [zh_CN] 或通过下述方式注册
+  ///- [en_US] Or Sign Up With
+  static String get orSignUpWith => auth.orSignUpWith;
+
+  ///- [zh_CN] 我已经有一个帐户
+  ///- [en_US] I have already an account
+  static String get haveAccount => auth.haveAccount;
+
+  ///- [zh_CN] 我没有账户
+  ///- [en_US] I don't have an account
+  static String get dontHaveAccount => auth.dontHaveAccount;
+
+  ///- [zh_CN] 请登录
+  ///- [en_US] Please Sign In
+  static String get pleaseSignIn => auth.pleaseSignIn;
+
+  ///- [zh_CN] 请输入我们发送到您邮箱的验证码：
+  ///- [en_US] Please enter the verify code we sent to your email:
+  static String get pleaseEnterVerifyCode => auth.pleaseEnterVerifyCode;
+
+  ///- [zh_CN] 获取验证码
+  ///- [en_US] verify
+  static String get verify => auth.verify;
+
+  ///- [zh_CN] 请先输入现有密码
+  ///- [en_US] Please enter your current password first
+  static String get pleaseInputCurrentPassword =>
+      auth.pleaseInputCurrentPassword;
+
+  ///- [zh_CN] 请输入新密码
+  ///- [en_US] Please enter a new password
+  static String get pleaseInputNewPassword => auth.pleaseInputNewPassword;
+
+  ///- [zh_CN] 请输入确认新密码
+  ///- [en_US] Please enter the confirmation new password
+  static String get pleaseInputConfirmPassword =>
+      auth.pleaseInputConfirmPassword;
+
+  ///- [zh_CN] 指纹登录
+  ///- [en_US] Fingerprint Login
+  static String get fingerprintLogin => auth.fingerprintLogin;
+
+  ///- [zh_CN] 电话号码
+  ///- [en_US] Phone Number
+  static String get phoneNumber => auth.phoneNumber;
+
+  // --- Wallet 模块 ---
+  ///- [zh_CN] 钱包
+  ///- [en_US] Wallet
+  static String get walletTitle => wallet.title;
+
+  ///- [zh_CN] 可用余额
+  ///- [en_US] Available Balance
+  static String get availableBalance => wallet.availableBalance;
+
+  ///- [zh_CN] 总支出
+  ///- [en_US] Total Spending
+  static String get totalSpending => wallet.totalSpending;
+
+  ///- [zh_CN] 上月
+  ///- [en_US]  Last Month
+  static String get lastMonth => wallet.lastMonth;
+
+  ///- [zh_CN] 本月
+  ///- [en_US] this month
+  static String get thisMonth => wallet.thisMonth;
+
+  ///- [zh_CN] 本周
+  ///- [en_US] this week
+  static String get thisWeek => wallet.thisWeek;
+
+  ///- [zh_CN] 本年
+  ///- [en_US] this year
+  static String get thisYear => wallet.thisYear;
+
+  ///- [zh_CN] 最近转出
+  ///- [en_US] Last Send
+  static String get lastSend => wallet.lastSend;
+
+  ///- [zh_CN] 最近转入
+  ///- [en_US] Last Receive
+  static String get lastReceive => wallet.lastReceive;
+
+  ///- [zh_CN] 总计
+  ///- [en_US] Total
+  static String get total => wallet.total;
+
+  ///- [zh_CN] 添加卡片
+  ///- [en_US] Add Card
+  static String get addCard => wallet.addCard;
+
+  ///- [zh_CN] 卡号
+  ///- [en_US] Card Number
+  static String get cardNumber => wallet.cardNumber;
+
+  ///- [zh_CN] 卡片上的名字
+  ///- [en_US] Name On Card
+  static String get nameOnCard => wallet.nameOnCard;
+
+  ///- [zh_CN] 到期日期
+  ///- [en_US] Expire Date
+  static String get expireDate => wallet.expireDate;
+
+  ///- [zh_CN] CVV
+  ///- [en_US] CVV
+  static String get cvv => wallet.cvv;
+
+  ///- [zh_CN] 信用卡
+  ///- [en_US] Card Credit
+  static String get cardCredit => wallet.cardCredit;
+
+  ///- [zh_CN] 请输入银行卡号
+  ///- [en_US] Please enter bank card number
+  static String get pleaseEnterBankCardNumber =>
+      wallet.pleaseEnterBankCardNumber;
+
+  ///- [zh_CN] 请输入有效期
+  ///- [en_US] Please enter an expiration date
+  static String get pleaseEnterExpirationDate =>
+      wallet.pleaseEnterExpirationDate;
+
+  ///- [zh_CN] 请输入您的姓名
+  ///- [en_US] Please type in your name
+  static String get pleaseTypeInYourName => wallet.pleaseTypeInYourName;
+
+  ///- [zh_CN] 万事达卡
+  ///- [en_US] MasterCard
+  static String get masterCard => wallet.masterCard;
+
+  ///- [zh_CN] 维萨卡
+  ///- [en_US] Visa
+  static String get visa => wallet.visa;
+
+  ///- [zh_CN] CNSS
+  ///- [en_US] CNSS
+  static String get cnss => wallet.cnss;
+
+  ///- [zh_CN] DXSS
+  ///- [en_US] DXSS
+  static String get dxss => wallet.dxss;
+
+  ///- [zh_CN] CID
+  ///- [en_US] CID
+  static String get cid => wallet.cid;
+
+  ///- [zh_CN] 转账
+  ///- [en_US] Transfers
+  static String get transfers => wallet.transfers;
+
+  ///- [zh_CN] 账单
+  ///- [en_US] Bill
+  static String get bill => wallet.bill;
+
+  ///- [zh_CN] 充值
+  ///- [en_US] Recharge
+  static String get recharge => wallet.recharge;
+
+  ///- [zh_CN] 话费充值
+  ///- [en_US] Money Recharge
+  static String get moneyRecharge => wallet.moneyRecharge;
+
+  ///- [zh_CN] 转账
+  ///- [en_US] Money Send
+  static String get moneySend => wallet.moneySend;
+
+  ///- [zh_CN] 发送
+  ///- [en_US] Send
+  static String get send => wallet.send;
+
+  ///- [zh_CN] 接收
+  ///- [en_US] Receive
+  static String get receive => wallet.receive;
+
+  ///- [zh_CN] 历史
+  ///- [en_US] History
+  static String get history => wallet.history;
+
+  ///- [zh_CN] 明细
+  ///- [en_US] Details
+  static String get details => wallet.details;
+
+  // --- Home 模块 ---
+  ///- [zh_CN] 首页
+  ///- [en_US] Home
+  static String get homeTitle => home.title;
+
+  ///- [zh_CN] 控制面板
+  ///- [en_US] Dashboard
+  static String get dashboard => home.dashboard;
+
+  ///- [zh_CN] 关注
+  ///- [en_US] Follow
+  static String get follow => home.follow;
+
+  ///- [zh_CN] 热门
+  ///- [en_US] Hot
+  static String get hot => home.hot;
+
+  ///- [zh_CN] 探索
+  ///- [en_US] Explore
+  static String get explore => home.explore;
+
+  ///- [zh_CN] 文章
+  ///- [en_US] Articles
+  static String get articles => home.articles;
+
+  ///- [zh_CN] 开始
+  ///- [en_US] Get Start
+  static String get getStart => home.getStart;
+
+  ///- [zh_CN] 假装这里有广告>>>
+  ///- [en_US] something like ads
+  static String get somethingLikeAds => home.somethingLikeAds;
+
+  ///- [zh_CN] 仍在努力开发中
+  ///- [en_US] still working on it
+  static String get stillWorkingOnIt => home.stillWorkingOnIt;
+
+  ///- [zh_CN] 刚刚
+  ///- [en_US] Just now
+  static String get justNow => home.justNow;
+
+  ///- [zh_CN] 周一
+  ///- [en_US] Mon
+  static String get mon => home.mon;
+
+  ///- [zh_CN] 周二
+  ///- [en_US] Tues
+  static String get tues => home.tues;
+
+  ///- [zh_CN] 周三
+  ///- [en_US] Wed
+  static String get wed => home.wed;
+
+  ///- [zh_CN] 周四
+  ///- [en_US] Thur
+  static String get thur => home.thur;
+
+  ///- [zh_CN] 周五
+  ///- [en_US] Fri
+  static String get fri => home.fri;
+
+  ///- [zh_CN] 周六
+  ///- [en_US] Satu
+  static String get satu => home.satu;
+
+  ///- [zh_CN] 周日
+  ///- [en_US] Sun
+  static String get sun => home.sun;
+
+  ///- [zh_CN] 一月
+  ///- [en_US] January
+  static String get january => home.january;
+
+  ///- [zh_CN] 二月
+  ///- [en_US] February
+  static String get february => home.february;
+
+  ///- [zh_CN] 三月
+  ///- [en_US] March
+  static String get march => home.march;
+
+  ///- [zh_CN] 四月
+  ///- [en_US] April
+  static String get april => home.april;
+
+  ///- [zh_CN] 五月
+  ///- [en_US] May
+  static String get may => home.may;
+
+  ///- [zh_CN] 六月
+  ///- [en_US] June
+  static String get june => home.june;
+
+  ///- [zh_CN] 七月
+  ///- [en_US] July
+  static String get july => home.july;
+
+  ///- [zh_CN] 八月
+  ///- [en_US] August
+  static String get august => home.august;
+
+  ///- [zh_CN] 九月
+  ///- [en_US] September
+  static String get september => home.september;
+
+  ///- [zh_CN] 十月
+  ///- [en_US] October
+  static String get october => home.october;
+
+  ///- [zh_CN] 十一月
+  ///- [en_US] November
+  static String get november => home.november;
+
+  ///- [zh_CN] 十二月
+  ///- [en_US] December
+  static String get december => home.december;
+
+  // --- Settings 模块 ---
+  ///- [zh_CN] <p style="text-align: center;"><span style="font-size: 19px;"><strong>Sirc&nbsp;</strong></span><img src="https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg" alt="" data-href="https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg" width='30%'  style=""></p><p style="text-align: center;"><br></p><p style="text-align: center;"><span style="color: rgb(41, 44, 50); font-size: 19px;">一款使用Flutter开发的开源金融类应用。</span></p><p style="text-align: center;"><span style="color: rgb(41, 44, 50); font-size: 19px;">Made&nbsp;With&nbsp;❤️&nbsp;by&nbsp;JI,XIAOYONG.</span></p><p><br></p>
+  ///- [en_US] <p style="text-align: center;"><span style="font-size: 19px;"><strong>Sirc&nbsp;</strong></span><img src="https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg" alt="" data-href="https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg" width='30%'  style=""></p><p style="text-align: center;"><br></p><p style="text-align: center;"><span style="color: rgb(41, 44, 50); font-size: 19px;">An open-source financial application developed using Flutter.</span></p><p style="text-align: center;"><span style="color: rgb(41, 44, 50); font-size: 19px;">Made&nbsp;With&nbsp;❤️&nbsp;by&nbsp;JI,XIAOYONG.</span></p><p><br></p>
+  static String get aboutUsDescription => settings.aboutUsDescription;
+
+  ///- [zh_CN] 设置
+  ///- [en_US] Settings
+  static String get settingsTitle => settings.title;
+
+  ///- [zh_CN] 关于
+  ///- [en_US] About
+  static String get about => settings.about;
+
+  ///- [zh_CN] 这是一个开源项目，托管于
+  ///- [en_US] This is an open-source project hosted on
+  static String get hostedOnGithub => settings.hostedOnGithub;
+
+  ///- [zh_CN] 语言
+  ///- [en_US] Language
+  static String get language => settings.language;
+
+  ///- [zh_CN] 翻译
+  ///- [en_US] Translations
+  static String get translations => settings.translations;
+
+  ///- [zh_CN] 通知
+  ///- [en_US] Notifications
+  static String get notifications => settings.notifications;
+
+  ///- [zh_CN] 通用信息
+  ///- [en_US] General Information
+  static String get generalInformation => settings.generalInformation;
+
+  ///- [zh_CN] 本地地址
+  ///- [en_US] Local Address
+  static String get localAddress => settings.localAddress;
+
+  ///- [zh_CN] 个人
+  ///- [en_US] Person
+  static String get person => settings.person;
+
+  ///- [zh_CN] 个人资料
+  ///- [en_US] Profile
+  static String get profile => settings.profile;
+
+  ///- [zh_CN] 退出登录
+  ///- [en_US] Logout
+  static String get logout => settings.logout;
+
+  ///- [zh_CN] 退出登录并清除数据
+  ///- [en_US] Logout & Clean Data
+  static String get logoutAndCleanData => settings.logoutAndCleanData;
+
+  ///- [zh_CN] 您确定要退出吗？\n这将清除所有数据！
+  ///- [en_US] SureToLogout
+  static String get sureToLogout => settings.sureToLogout;
+
+  // --- Common 模块 ---
+  ///- [zh_CN] 取消
+  ///- [en_US] Cancel
+  static String get cancel => common.cancel;
+
+  ///- [zh_CN] 提交
+  ///- [en_US] Submit
+  static String get submit => common.submit;
+
+  ///- [zh_CN] 加载中...
+  ///- [en_US] Loading...
+  static String get loading => common.loading;
+
+  ///- [zh_CN] 搜索
+  ///- [en_US] Search
+  static String get search => common.search;
+
+  ///- [zh_CN] 菜单
+  ///- [en_US] Menu
+  static String get menu => common.menu;
+
+  ///- [zh_CN] 类别
+  ///- [en_US] Category
+  static String get category => common.category;
+
+  ///- [zh_CN] 其他
+  ///- [en_US] Others
+  static String get others => common.others;
+
+  ///- [zh_CN] 某些东西
+  ///- [en_US] Something
+  static String get something => common.something;
+
+  ///- [zh_CN] 页面未找到
+  ///- [en_US] Not Found
+  static String get notFound => common.notFound;
+
+  ///- [zh_CN] 返回首页
+  ///- [en_US] Go to Home
+  static String get goToHome => common.goToHome;
+
+  // ==========================================
+  // 三、 兼容字典映射 (供 AppLocale.translate 兜底查找)
+  // ==========================================
   static Map<String, Map<String, String>> get keys => _keys;
 
   static final Map<String, Map<String, String>> _keys = {
     "en_US": {
-      "MasterCard": "MasterCard",
-      "Visa": "Visa",
-      "Home": "Home",
+      "Sign In": "Sign In",
+      "Sign Up": "Sign Up",
+      "Login": "Login",
+      "Register": "Register",
+      "Login Failed": "Login Failed",
+      "Register Succeed": "Register Succeed",
+      "Register Failed": "Register Failed",
+      "Username": "Username",
+      "Password": "Password",
+      "Old Password": "Old Password",
+      "New Password": "New Password",
+      "Confirm Password": "Confirm Password",
+      "Change Password": "Change Password",
+      "Add New Password": "Add New Password",
+      "Set Password Succeed": "Set Password Succeed",
+      "Please login with your new password.":
+          "Please login with your new password.",
+      "Original password incorrect or update failed":
+          "Original password incorrect or update failed",
+      "The passwords entered twice do not match":
+          "The passwords entered twice do not match",
+      "the password is not same": "the password is not same",
+      "Password length must not be less than 6 digits":
+          "Password length must not be less than 6 digits",
+      "the length of user password must be more than 6":
+          "the length of user password must be more than 6",
+      "the length of user password must be less than 12":
+          "the length of user password must be less than 12",
+      "the length of username must be more than 3":
+          "the length of username must be more than 3",
+      "the length of username must be less than 10":
+          "the length of username must be less than 10",
+      "E-mail": "E-mail",
+      "Email Address": "Email Address",
+      "the email format is not correct": "the email format is not correct",
+      "the length of user email must be more than 5":
+          "the length of user email must be more than 5",
+      "the length of user email must be less than 30":
+          "the length of user email must be less than 30",
+      "Enter your email address to reset your password":
+          "Enter your email address to reset your password",
+      "Forget Password": "Forget Password",
+      "Forget passwords?": "Forget passwords?",
+      "Forgot PIN": "Forgot PIN",
+      "Don't take too much tension about PiN\nJust make ono call to bank and change your pin.":
+          "Don't take too much tension about PiN\\nJust make ono call to bank and change your pin.",
+      "Don't Share Password": "Don't Share Password",
+      "Use strong combinations of letters,numbers and special characters to make your password.":
+          "Use strong combinations of letters,numbers and special characters to make your password.",
+      "Manage Account": "Manage Account",
+      "Bank account make more secure keeping transaction active and changing password regularly.":
+          "Bank account make more secure keeping transaction active and changing password regularly.",
+      "Or Sign In With": "Or Sign In With",
+      "Or Sign Up With": "Or Sign Up With",
+      "I have already an account": "I have already an account",
+      "I don't have an account": "I don't have an account",
+      "Please Sign In": "Please Sign In",
+      "Please enter the verify code we sent to your email:":
+          "Please enter the verify code we sent to your email:",
+      "verify": "verify",
+      "Please enter your current password first":
+          "Please enter your current password first",
+      "Please enter a new password": "Please enter a new password",
+      "Please enter the confirmation new password":
+          "Please enter the confirmation new password",
+      "Fingerprint Login": "Fingerprint Login",
+      "Phone Number": "Phone Number",
       "Wallet": "Wallet",
-      "Search": "Search",
-      "Menu": "Menu",
-      " Last Month": " Last Month",
-      "History": "History",
-      "Person": "Person",
+      "Wallet": "Wallet",
       "Available Balance": "Available Balance",
-      "Send": "Send",
-      "Dashboard": "Dashboard",
-      "Translations": "Translations",
-      "Money Send": "Money Send",
-      "Money Recharge": "Money Recharge",
-      "Receive": "Receive",
-      "Total": "Total",
+      "Total Spending": "Total Spending",
+      " Last Month": " Last Month",
+      "this month": "this month",
+      "this week": "this week",
+      "this year": "this year",
       "Last Send": "Last Send",
       "Last Receive": "Last Receive",
-      "Just now": "Just now",
-      "Something": "Something",
-      "Profile": "Profile",
-      "Notifications": "Notifications",
-      "Settings": "Settings",
-      "About": "About us",
-      "Total Spending": "Total Spending",
-      "General Information": "General Information",
-      "E-mail": "E-mail",
-      "Phone Number": "Phone Number",
-      "Local Address": "Local Address",
-      "Card Credit": "Card Credit",
+      "Total": "Total",
       "Add Card": "Add Card",
-      "Language": "Language",
-      "Change Password": "Change Password",
-      "Fingerprint Login": "Fingerprint Login",
+      "Card Number": "Card Number",
+      "Name On Card": "Name On Card",
+      "Expire Date": "Expire Date",
+      "CVV": "CVV",
+      "Card Credit": "Card Credit",
+      "Please enter bank card number": "Please enter bank card number",
+      "Please enter an expiration date": "Please enter an expiration date",
+      "Please type in your name": "Please type in your name",
+      "MasterCard": "MasterCard",
+      "Visa": "Visa",
       "CNSS": "CNSS",
       "DXSS": "DXSS",
       "CID": "CID",
+      "Transfers": "Transfers",
+      "Bill": "Bill",
+      "Recharge": "Recharge",
+      "Money Recharge": "Money Recharge",
+      "Money Send": "Money Send",
+      "Send": "Send",
+      "Receive": "Receive",
+      "History": "History",
+      "Details": "Details",
+      "Home": "Home",
+      "Home": "Home",
+      "Dashboard": "Dashboard",
+      "Follow": "Follow",
+      "Hot": "Hot",
+      "Explore": "Explore",
+      "Articles": "Articles",
+      "Get Start": "Get Start",
+      "something like ads": "something like ads",
+      "still working on it": "still working on it",
+      "Just now": "Just now",
       "Mon": "Mon",
       "Tues": "Tues",
       "Wed": "Wed",
@@ -246,151 +739,138 @@ class Languages {
       "October": "October",
       "November": "November",
       "December": "December",
-      "Category": "Category",
-      "this month": "this month",
-      "this week": "this week",
-      "this year": "this year",
-      "Transfers": "Transfers",
-      "Recharge": "Recharge",
-      "Bill": "Bill",
-      "Others": "Others",
-      "Login": "Login",
-      "Don't Share Password": "Don't Share Password",
-      "Use strong combinations of letters,numbers and special characters to make your password.":
-          "Use strong combinations of letters,numbers and special characters to make your password.",
-      "Forgot PIN": "Forgot PIN",
-      "Don't take too much tension about PiN\nJust make ono call to bank and change your pin.":
-          "Don't take too much tension about PiN\nJust make ono call to bank and change your pin.",
-      "Manage Account": "Manage Account",
-      "Bank account make more secure keeping transaction active and changing password regularly.":
-          "Bank account make more secure keeping transaction active and changing password regularly.",
-      "Sign In": "Sign In",
-      "Sign Up": "Sign Up",
-      "Forgot Password": "Forgot Password",
-      "Enter your email address so we can send you a link to reset your password.":
-          "Enter your email address so we can send you a link to reset your password.",
-      "Username": "Username",
-      "Password": "Password",
-      "Login Failed": "Login Failed",
-      "Loading...": "Loading...",
+      "Settings": "Settings",
+      "Settings": "Settings",
+      "About": "About",
+      "This is an open-source project hosted on ":
+          "This is an open-source project hosted on ",
+      "Language": "Language",
+      "Translations": "Translations",
+      "Notifications": "Notifications",
+      "General Information": "General Information",
+      "Local Address": "Local Address",
+      "Person": "Person",
+      "Profile": "Profile",
       "Logout": "Logout",
-      "Old Password": "Old Password",
-      "New Password": "New Password",
-      "Confirm Password": "Confirm Password",
-      "SureToLogout":
-          "Are you sure you want to logout?\nThis will CLEAN ALL DATA",
       "Logout & Clean Data": "Logout & Clean Data",
+      "SureToLogout": "SureToLogout",
       "Cancel": "Cancel",
-      "Get Start": "Get Start",
-      "Set Password Succeed": "Set Password Succeed",
-      "Please login with your new password.":
-          "Please login with your new password.",
-      "Forget passwords?": "Forget passwords?",
-      "Or Sign In With": "Or Sign In With",
-      "I don't have an account": "I don't have an account",
-      "Register Succeed": "Register Succeed",
-      "Register Failed": "Register Failed",
-      "Please Sign In": "Please Sign In",
-      "Or Sign Up With": "Or Sign Up With",
-      "I have already an account": "I have already an account",
-      "Register": "Register",
-      "Email Address": "Email Address",
-      "Forget Password": "Forget Password",
-      "Enter your email address to reset your password":
-          "Enter your email address to reset your password",
-      "verify": "verify",
       "Submit": "Submit",
-      "the email format is not correct": "the email format is not correct",
-      "the length of user email must be less than 30":
-          "the length of user email must be less than 30",
-      "the length of user email must be more than 5":
-          "the length of user email must be more than 5",
-      "the password is not same": "the password is not same",
-      "the length of user password must be less than 12":
-          "the length of user password must be less than 12",
-      "the length of user password must be more than 6":
-          "the length of user password must be more than 6",
-      "the length of username must be less than 10":
-          "the length of username must be less than 10",
-      "the length of username must be more than 3":
-          "the length of username must be more than 3",
-      "Please enter the verify code we sent to your email:":
-          "Please enter the verify code we sent to your email:",
-      "Name On Card": "Name On Card",
-      "Card Number": "Card Number",
-      "Expire Date": "Expire Date",
-      "Please type in your name": "Please type in your name",
-      "Please enter bank card number": "Please enter bank card number",
-      "Please enter an expiration date": "Please enter an expiration date",
-      "AboutUsDescription":
-          """<p style="text-align: center;"><span style="font-size: 19px;"><strong>Sirc&nbsp;</strong></span><img src="https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg" alt="" data-href="https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg" width='30%' style=""></p><p style="text-align: center;"><br></p><p style="text-align: center;"><span style="color: rgb(41, 44, 50); font-size: 19px;">an&nbsp;open-source&nbsp;Flutter&nbsp;financial&nbsp;application.</span></p><p style="text-align: center;"><span style="color: rgb(41, 44, 50); font-size: 19px;">Made&nbsp;With&nbsp;❤️&nbsp;by&nbsp;JI,XIAOYONG.</span></p><p><br></p>""",
-      "Hot": "Hot",
-      "Follow": "Follow",
-      "Explore": "Explore",
-      "Articles": "Articles",
-      "still working on it": "still working on it",
-      "something like ads": "something like ads>>>",
-      'The passwords entered twice do not match':
-          'The passwords entered twice do not match',
-      'Original password incorrect or update failed':
-          'Original password incorrect or update failed',
-      'Password length must not be less than 6 digits':
-          'Password length must not be less than 6 digits',
-      'Please enter your current password first':
-          'Please enter your current password first',
-      'Please enter a new password': 'Please enter a new password',
-      'Please enter the confirmation new password':
-          'Please enter the confirmation new password',
-      'CVV': 'CVV',
-      'Add New Password': 'Add New Password',
-      'This is an open-source project hosted on ':
-          'This is an open-source project hosted on ',
+      "Loading...": "Loading...",
+      "Search": "Search",
+      "Menu": "Menu",
+      "Category": "Category",
+      "Others": "Others",
+      "Something": "Something",
+      "Not Found": "Not Found",
+      "Go to Home": "Go to Home",
     },
     "zh_CN": {
+      "Sign In": "登录",
+      "Sign Up": "注册",
+      "Login": "登录",
+      "Register": "注册",
+      "Login Failed": "登录失败",
+      "Register Succeed": "注册成功",
+      "Register Failed": "注册失败",
+      "Username": "用户名",
+      "Password": "密码",
+      "Old Password": "旧密码",
+      "New Password": "新密码",
+      "Confirm Password": "确认密码",
+      "Change Password": "修改密码",
+      "Add New Password": "设置新密码",
+      "Set Password Succeed": "设置密码成功",
+      "Please login with your new password.": "请使用您的新密码登录。",
+      "Original password incorrect or update failed": "原密码不正确或修改失败",
+      "The passwords entered twice do not match": "两次输入的密码不一致",
+      "the password is not same": "密码不一样",
+      "Password length must not be less than 6 digits": "密码长度不能小于6位",
+      "the length of user password must be more than 6": "用户密码长度必须大于6",
+      "the length of user password must be less than 12": "用户密码长度必须小于12",
+      "the length of username must be more than 3": "用户名长度必须大于3",
+      "the length of username must be less than 10": "用户名长度必须小于10",
+      "E-mail": "电子邮件",
+      "Email Address": "电子邮件",
+      "the email format is not correct": "电子邮件格式不正确",
+      "the length of user email must be more than 5": "用户电子邮件长度必须大于5",
+      "the length of user email must be less than 30": "用户电子邮件长度必须小于30",
+      "Enter your email address to reset your password": "输入您的电子邮件地址来重置您的密码",
+      "Forget Password": "忘记密码",
+      "Forget passwords?": "忘记密码？",
+      "Forgot PIN": "忘记密码",
+      "Don't take too much tension about PiN\nJust make ono call to bank and change your pin.":
+          "不用担心PIN码\\n只需致电银行即可更改PIN码。",
+      "Don't Share Password": "不要分享密码",
+      "Use strong combinations of letters,numbers and special characters to make your password.":
+          "使用字母、数字和特殊字符的强组合来设置密码。",
+      "Manage Account": "管理账户",
+      "Bank account make more secure keeping transaction active and changing password regularly.":
+          "银行账户保持交易活跃并定期更改密码更安全。",
+      "Or Sign In With": "或通过下述方式登录",
+      "Or Sign Up With": "或通过下述方式注册",
+      "I have already an account": "我已经有一个帐户",
+      "I don't have an account": "我没有账户",
+      "Please Sign In": "请登录",
+      "Please enter the verify code we sent to your email:": "请输入我们发送到您邮箱的验证码：",
+      "verify": "获取验证码",
+      "Please enter your current password first": "请先输入现有密码",
+      "Please enter a new password": "请输入新密码",
+      "Please enter the confirmation new password": "请输入确认新密码",
+      "Fingerprint Login": "指纹登录",
+      "Phone Number": "电话号码",
+      "Wallet": "钱包",
+      "Wallet": "钱包",
+      "Available Balance": "可用余额",
+      "Total Spending": "总支出",
+      " Last Month": "上月",
+      "this month": "本月",
+      "this week": "本周",
+      "this year": "本年",
+      "Last Send": "最近转出",
+      "Last Receive": "最近转入",
+      "Total": "总计",
+      "Add Card": "添加卡片",
+      "Card Number": "卡号",
+      "Name On Card": "卡片上的名字",
+      "Expire Date": "到期日期",
+      "CVV": "CVV",
+      "Card Credit": "信用卡",
+      "Please enter bank card number": "请输入银行卡号",
+      "Please enter an expiration date": "请输入有效期",
+      "Please type in your name": "请输入您的姓名",
       "MasterCard": "万事达卡",
       "Visa": "维萨卡",
-      "Home": "首页",
-      "Wallet": "钱包",
-      "Search": "搜索",
-      " Last Month": "上月",
-      "History": "历史",
-      "Person": "个人",
-      "Available Balance": "可用余额",
+      "CNSS": "CNSS",
+      "DXSS": "DXSS",
+      "CID": "CID",
+      "Transfers": "转账",
+      "Bill": "账单",
+      "Recharge": "充值",
+      "Money Recharge": "话费充值",
+      "Money Send": "转账",
       "Send": "发送",
-      "Dashboard": "仪表盘",
-      "Translations": "收支明细",
-      "Money Send": "发送",
-      "Money Recharge": "充值",
       "Receive": "接收",
-      "Total": "总计",
-      "Last Send": "上次发送",
-      "Last Receive": "上次接收",
+      "History": "历史",
+      "Details": "明细",
+      "Home": "首页",
+      "Home": "首页",
+      "Dashboard": "控制面板",
+      "Follow": "关注",
+      "Hot": "热门",
+      "Explore": "探索",
+      "Articles": "文章",
+      "Get Start": "开始",
+      "something like ads": "假装这里有广告>>>",
+      "still working on it": "仍在努力开发中",
       "Just now": "刚刚",
-      "Something": "某些",
-      "Profile": "个人资料",
-      "Notifications": "通知",
-      "Settings": "设置",
-      "About": "关于我们",
-      "Total Spending": "总支出",
-      "General Information": "一般信息",
-      "E-mail": "电子邮件",
-      "Phone Number": "电话号码",
-      "Local Address": "本地地址",
-      "Card Credit": "信用卡",
-      "Add Card": "添加信用卡",
-      "Language": "语言",
-      "Change Password": "更改密码",
-      "Fingerprint Login": "指纹登录",
-      "CNSS": "招商银行",
-      "DXSS": "中国银行",
-      "CID": "农业银行",
-      "Mon": "星期一",
-      "Tues": "星期二",
-      "Wed": "星期三",
-      "Thur": "星期四",
-      "Fri": "星期五",
-      "Satu": "星期六",
-      "Sun": "星期日",
+      "Mon": "周一",
+      "Tues": "周二",
+      "Wed": "周三",
+      "Thur": "周四",
+      "Fri": "周五",
+      "Satu": "周六",
+      "Sun": "周日",
       "January": "一月",
       "February": "二月",
       "March": "三月",
@@ -403,90 +883,30 @@ class Languages {
       "October": "十月",
       "November": "十一月",
       "December": "十二月",
-      "Category": "类别",
-      "this month": "本月",
-      "this week": "本周",
-      "this year": "本年",
-      "Transfers": "转账",
-      "Recharge": "充值",
-      "Bill": "账单",
-      "Others": "其他",
-      "Don't Share Password": "不要分享密码",
-      "Use strong combinations of letters,numbers and special characters to make your password.":
-          "使用复杂的字母、数字和特殊字符组合来制作你的密码。",
-      "Forgot PIN": "忘记密码",
-      "Don't take too much tension about PiN\nJust make ono call to bank and change your pin.":
-          "不要太勉强自己，只需要电话联系银行，然后更改你的密码。",
-      "Manage Account": "管理账户",
-      "Bank account make more secure keeping transaction active and changing password regularly.":
-          "想要银行账户更安全，请保持交易活动，并定期更改密码。",
-      "Sign In": "登录",
-      "Sign Up": "注册",
-      "Forgot Password": "忘记密码",
-      "Enter your email address so we can send you a link to reset your password.":
-          "输入你的电子邮件地址，我们可以发送一个链接到重置密码。",
-      "Username": "用户名",
-      "Password": "密码",
-      "Old Password": "旧密码",
-      "New Password": "新密码",
-      "Confirm Password": "确认密码",
-      "Login Failed": "登录失败",
-      "Loading...": "加载中...",
+      "Settings": "设置",
+      "Settings": "设置",
+      "About": "关于",
+      "This is an open-source project hosted on ": "这是一个开源项目，托管于 ",
+      "Language": "语言",
+      "Translations": "翻译",
+      "Notifications": "通知",
+      "General Information": "通用信息",
+      "Local Address": "本地地址",
+      "Person": "个人",
+      "Profile": "个人资料",
       "Logout": "退出登录",
       "Logout & Clean Data": "退出登录并清除数据",
+      "SureToLogout": "您确定要退出吗？\\n这将清除所有数据！",
       "Cancel": "取消",
-      "SureToLogout": "您确定要退出吗？\n这将清除所有数据！",
-      "Get Start": "开始",
-      "Set Password Succeed": "设置密码成功",
-      "Please login with your new password.": "请使用您的新密码登录。",
-      "Forget passwords?": "忘记密码？",
-      "Or Sign In With": "或通过下述方式登录",
-      "I don't have an account": "我没有账户",
-      "Login": "登录",
-      "Register Succeed": "注册成功",
-      "Register Failed": "注册失败",
-      "Please Sign In": "请登录",
-      "Or Sign Up With": "或通过下述方式注册",
-      "I have already an account": "我已经有一个帐户",
-      "Register": "注册",
-      "Email Address": "电子邮件",
-      "Forget Password": "忘记密码",
-      "Enter your email address to reset your password": "输入您的电子邮件地址来重置您的密码",
-      "verify": "获取验证码",
       "Submit": "提交",
-      "the email format is not correct": "电子邮件格式不正确",
-      "the length of user email must be less than 30": "用户电子邮件长度必须小于30",
-      "the length of user email must be more than 5": "用户电子邮件长度必须大于5",
-      "the password is not same": "密码不一样",
-      "the length of user password must be less than 12": "用户密码长度必须小于12",
-      "the length of user password must be more than 6": "用户密码长度必须大于6",
-      "the length of username must be less than 10": "用户名长度必须小于10",
-      "the length of username must be more than 3": "用户名长度必须大于3",
-      "Please enter the verify code we sent to your email:": "请输入我们发送到您邮箱的验证码：",
+      "Loading...": "加载中...",
+      "Search": "搜索",
       "Menu": "菜单",
-      "Name On Card": "卡片上的名字",
-      "Card Number": "卡号",
-      "Expire Date": "到期日期",
-      "Please type in your name": "请输入您的姓名",
-      "Please enter bank card number": "请输入银行卡号",
-      "Please enter an expiration date": "请输入有效期",
-      "AboutUsDescription":
-          """<p style="text-align: center;"><span style="font-size: 19px;"><strong>Sirc&nbsp;</strong></span><img src="https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg" alt="" data-href="https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg" width='30%'  style=""></p><p style="text-align: center;"><br></p><p style="text-align: center;"><span style="color: rgb(41, 44, 50); font-size: 19px;">一款使用Flutter开发的开源金融类应用。</span></p><p style="text-align: center;"><span style="color: rgb(41, 44, 50); font-size: 19px;">Made&nbsp;With&nbsp;❤️&nbsp;by&nbsp;JI,XIAOYONG.</span></p><p><br></p>""",
-      "Follow": "关注",
-      "Hot": "热门",
-      "Explore": "探索",
-      "Articles": "文章",
-      "still working on it": "仍在努力开发中",
-      "something like ads": "假装这里有广告>>>",
-      'The passwords entered twice do not match': '两次输入的密码不一致',
-      'Original password incorrect or update failed': '原密码不正确或修改失败',
-      'Password length must not be less than 6 digits': '密码长度不能小于6位',
-      'Please enter your current password first': '请先输入现有密码',
-      'Please enter a new password': '请输入新密码',
-      'Please enter the confirmation new password': '请输入确认新密码',
-      'CVV': 'CVV',
-      'Add New Password': '设置新密码',
-      'This is an open-source project hosted on ': '这是一个开源项目，托管于 ',
-    }
+      "Category": "类别",
+      "Others": "其他",
+      "Something": "某些东西",
+      "Not Found": "页面未找到",
+      "Go to Home": "返回首页",
+    },
   };
 }

@@ -51,7 +51,7 @@ class MenuPage extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TitleText(
-                    text: Languages.settings,
+                    text: Languages.settings.title,
                   ),
                   GestureDetector(
                     onTap: () {

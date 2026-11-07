@@ -86,11 +86,11 @@ class _MainPageState extends ConsumerState<MainPage> {
           items: [
             BottomNavigationBarItem(
               icon: const Icon(Icons.home_outlined),
-              label: Languages.home,
+              label: Languages.home.title,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.account_balance_wallet_outlined),
-              label: Languages.wallet,
+              label: Languages.wallet.title,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.av_timer_outlined),

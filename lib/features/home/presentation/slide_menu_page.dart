@@ -63,13 +63,13 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
 
     if (title == Languages.about) {
       context.push(AppRoutes.ABOUT);
-    } else if (title == Languages.home) {
+    } else if (title == Languages.home.title) {
       ref.read(navigationControllerProvider.notifier).changeIndex(0);
     } else if (title == Languages.profile) {
       ref.read(navigationControllerProvider.notifier).changeIndex(3);
     } else if (title == Languages.history) {
       ref.read(navigationControllerProvider.notifier).changeIndex(2);
-    } else if (title == Languages.settings) {
+    } else if (title == Languages.settings.title) {
       ref.read(navigationControllerProvider.notifier).changeIndex(4);
     } else if (title == Languages.notifications) {
       context.push(AppRoutes.NOTIFICATIONS);
@@ -109,11 +109,11 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
     final double screenHeight = screenSize.height;
 
     final slideMenuList = [
-      (Icons.home_outlined, Languages.home),
+      (Icons.home_outlined, Languages.home.title),
       (Icons.person_outline, Languages.profile),
       (Icons.history_outlined, Languages.history),
       (Icons.notifications_outlined, Languages.notifications),
-      (Icons.settings, Languages.settings),
+      (Icons.settings, Languages.settings.title),
       (Icons.help_outline_outlined, Languages.about),
     ];
 

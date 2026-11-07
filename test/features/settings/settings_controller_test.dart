@@ -53,7 +53,7 @@ void main() {
 
       // 验证翻译扩展即时更新为英文
       expect(Languages.language, equals('Language'));
-      expect(Languages.settings, equals('Settings'));
+      expect(Languages.settings.title, equals('Settings'));
     });
 
     test('通过 switchAppLanguage 辅助函数切换至中文', () {

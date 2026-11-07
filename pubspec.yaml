@@ -71,11 +71,12 @@ dev_dependencies:
     sdk: flutter
 
   build_runner: ^2.4.15
-  riverpod_generator: ^2.6.4
-  riverpod_lint: ^2.6.4
-  custom_lint: ^0.7.0
+  # riverpod_generator: ^2.4.3
+  # riverpod_lint: ^2.3.12
+  # custom_lint: ^0.6.7
 
   flutter_lints: ^4.0.0
+
   # ume调试工具
 #  flutter_ume: ^0.3.0+1 # null-safety 版本: ^0.2.1
 #  flutter_ume_kit_ui: ^0.3.0+1  # null-safety 版本: ^0.2.1

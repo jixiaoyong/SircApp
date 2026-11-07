@@ -14,7 +14,7 @@
    - 业务文案按业务域切分（`Languages.auth`、`Languages.wallet`、`Languages.home`、`Languages.settings`、`Languages.common`）；
    - 彻底解决词条同名冲突和全局数百个词条造成的 IDE 补全卡顿；
    - 支持高频词与历史旧调用的扁平兼容层（如 `Languages.cancel` 直接代理到 `common.cancel`），保证历史业务代码 0 改动。
-3. **智蛙式双语悬浮预览**：
+3. **IDE 双语悬浮预览**：
    - 门面方法带有标准 DartDoc 注释：
      ```dart
      ///- [zh_CN] 原密码不正确或修改失败
@@ -36,11 +36,9 @@
 2. **在双语实现类中分别补全**（`zh` / `en`）：
    - `zh`: `@override String get myNewText => '中文内容';`
    - `en`: `@override String get myNewText => 'English Content';`
-3. **在门面类中暴露并添加双语注释**：
-   ```dart
-   ///- [zh_CN] 中文内容
-   ///- [en_US] English Content
-   static String get myNewText => _current.auth.myNewText;
-   ```
-   *保存后全工程即可直接调用：`Languages.auth.myNewText`。*
+3. **执行一键自动更新**（自动生成 `lib/data/languages.dart` 及双语注释）：
+   - **手动单次更新**：`dart run tool/build_lang.dart`
+   - **后台实时监听**：`dart run tool/build_lang.dart --watch`（保存代码时自动触发更新，无需手动敲命令）
+
+*更新完成后全工程即可直接调用：`Languages.auth.myNewText`。*
 

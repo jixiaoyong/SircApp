@@ -30,8 +30,8 @@
    - 以整段英文句子（如 `'Original password incorrect or update failed'`）作为 Map 的 Key，与代码里的驼峰变量严重脱节，且只要修改文案中的一个标点符号，所有映射直接失效。
 3. **单文件膨胀与 Git 冲突**：
    - 所有词条集中在一个几千行的文件里，团队多人协作时频繁产生 Merge Conflict。
-4. **参考借鉴与升华**：
-   - 借鉴智蛙工程（`lang_library`）的**简短语义化 Key** 与 **IDE 双语悬浮预览注释**；
+4. **现代工程架构设计**：
+   - 采用基于面向对象契约的**简短语义化 Key** 与 **IDE 双语悬浮预览注释**；
    - 结合现代 Dart 3 面向对象契约（`abstract class`），实现**零第三方依赖、编译期 100% 漏翻拦截、分层命名空间隔离**。
 
 ---
@@ -43,7 +43,7 @@
    - **核心收益**：契约中只要新增了一个词条，若中文或英文漏翻任何一项，**Dart 编译器直接报红线编译报错**，彻底杜绝线上“漏翻回退”问题。
 2. **分层命名空间（Layered Namespaces）**：
    - 按业务域解耦（如 `Languages.auth.xxx`、`Languages.wallet.xxx`），避免全局数百个词条混在一起导致 IDE 提示爆炸与同名冲突。
-3. **智蛙式双语注释悬浮预览（Bilingual Hover Tooltips）**：
+3. **IDE 双语注释悬浮预览（Bilingual Hover Tooltips）**：
    - 门面类上带有标准 DartDoc 注释（`///- [zh_CN] ... ///- [en_US] ...`），写代码时鼠标悬浮即可实时预览双语文本，无需在文件之间来回翻找。
 4. **无 Context 约束 & $O(1)$ 寻址性能**：
    - 全局任何层级（UI Widget、Riverpod Controller、Domain Service、Utils）皆可直接调用；
@@ -225,14 +225,12 @@ RichText(
    此时 Dart 分析器会自动提示未实现报错，分别在 `zh` 与 `en` 实现类中补全：
    - 中文：`@override String get biometricLoginPrompt => '请使用指纹或面容完成验证';`
    - 英文：`@override String get biometricLoginPrompt => 'Please authenticate using biometric';`
-3. **第三步（门面生成/暴露）**：
-   在 `Languages.auth` 门面上增加带注释的属性（或运行脚本自动生成）：
-   ```dart
-   ///- [zh_CN] 请使用指纹或面容完成验证
-   ///- [en_US] Please authenticate using biometric
-   static String get biometricLoginPrompt => _current.auth.biometricLoginPrompt;
-   ```
-   *完成！全项目立即享受 IDE 悬浮双语提示与类型安全保护。*
+3. **第三步（一键自动生成门面与双语注释）**：
+   无需手动在 `Languages` 中写重复代码，直接运行自动脚本即可生成带双语预览注释的门面：
+   - **单次生成**：`dart run tool/build_lang.dart`
+   - **后台实时监听**：`dart run tool/build_lang.dart --watch`（保存时即刻自动同步）
+
+   *生成完成后，全工程立即享受 IDE 悬浮双语提示与类型安全保护。*
 
 ---
 
