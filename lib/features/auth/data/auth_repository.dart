@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sirc/core/network/api_client.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/features/auth/domain/user.dart';
 import 'package:sirc/mock/mock_utils.dart';
@@ -8,8 +9,11 @@ import 'package:sirc/utils/m5d_utils.dart';
 /// 认证仓储接口与实现：封装用户持久化、账号密码校验（MD5）、找回密码与设置密码等核心业务逻辑
 class AuthRepository {
   final StorageService _storageService;
+  final ApiClient? _apiClient;
 
-  AuthRepository(this._storageService);
+  AuthRepository(this._storageService, [this._apiClient]);
+
+  ApiClient? get apiClient => _apiClient;
 
   /// 预置默认测试账号（在 Debug/Web 演示或首次无账号时使用）
   Future<void> initDefaultUserIfNeeded({
@@ -153,5 +157,6 @@ class AuthRepository {
 /// AuthRepository Provider
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final storageService = ref.watch(storageServiceProvider);
-  return AuthRepository(storageService);
+  final apiClient = ref.watch(apiClientProvider);
+  return AuthRepository(storageService, apiClient);
 });

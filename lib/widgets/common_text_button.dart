@@ -36,8 +36,8 @@ class CommonTextButton extends StatelessWidget {
             : BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.purple.shade400.withOpacity(0.7),
-                    Colors.deepPurpleAccent.shade400.withOpacity(0.7)
+                    Colors.purple.shade400.withValues(alpha: 0.7),
+                    Colors.deepPurpleAccent.shade400.withValues(alpha: 0.7)
                   ],
                 ),
                 borderRadius: BorderRadius.circular(8.dp)),

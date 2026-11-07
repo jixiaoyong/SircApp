@@ -57,14 +57,12 @@ class MyApp extends ConsumerWidget {
             );
           },
           localizationsDelegates: const [
+            AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            Locale("en", "US"),
-            Locale("zh", "CN"),
-          ],
+          supportedLocales: AppLocalizations.supportedLocales,
           locale: locale,
           initialRoute: AppPages.INITIAL,
           onGenerateRoute: AppPages.onGenerateRoute,
@@ -99,7 +97,7 @@ class MyApp extends ConsumerWidget {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
+                          color: Colors.black.withValues(alpha: 0.08),
                           blurRadius: 24,
                           offset: const Offset(0, 4),
                         ),

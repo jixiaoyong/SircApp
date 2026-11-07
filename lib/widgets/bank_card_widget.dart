@@ -53,9 +53,9 @@ class BankCardWidget extends StatelessWidget {
           width: width,
           padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
           decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               border:
-                  Border.all(color: Colors.white.withOpacity(0.5), width: 2.dp),
+                  Border.all(color: Colors.white.withValues(alpha: 0.5), width: 2.dp),
               borderRadius: BorderRadius.circular(20.dp)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +88,7 @@ class BankCardWidget extends StatelessWidget {
                     cardNumber,
                     style: TextStyle(
                         fontSize: 20.sp,
-                        color: Colors.white.withOpacity(0.85),
+                        color: Colors.white.withValues(alpha: 0.85),
                         letterSpacing: 1.5),
                   ),
                 ),
@@ -110,7 +110,7 @@ class BankCardWidget extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                   fontSize: 14.sp,
-                                  color: Colors.white.withOpacity(0.7)),
+                                  color: Colors.white.withValues(alpha: 0.7)),
                             ),
                           ),
                           SizedBox(width: 12.dp),

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/bean/money_operate_bean.dart';
 import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/core/network/api_client.dart';
 import 'package:sirc/mock/mock_utils.dart';
 import '../domain/models/bank_card.dart';
 
@@ -35,8 +36,14 @@ abstract class WalletRepository {
   Future<List<(String day, double percentage)>> getMonthlyChartData(String month);
 }
 
-/// 钱包业务仓库默认实现（基于内存与 Mock 驱动）
+/// 钱包业务仓库默认实现（基于内存与 Mock 驱动，支持 ApiClient 网络扩展）
 class WalletRepositoryImpl implements WalletRepository {
+  final ApiClient? _apiClient;
+
+  WalletRepositoryImpl([this._apiClient]);
+
+  ApiClient? get apiClient => _apiClient;
+
   // 初始银行卡列表（与首页默认卡片数据一致）
   final List<BankCard> _cards = [
     BankCard(
@@ -134,5 +141,6 @@ class WalletRepositoryImpl implements WalletRepository {
 
 /// 钱包业务仓库 Provider
 final walletRepositoryProvider = Provider<WalletRepository>((ref) {
-  return WalletRepositoryImpl();
+  final apiClient = ref.watch(apiClientProvider);
+  return WalletRepositoryImpl(apiClient);
 });

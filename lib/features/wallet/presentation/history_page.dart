@@ -200,7 +200,7 @@ class HistoryPage extends ConsumerWidget {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black12.withOpacity(0.1),
+                          color: Colors.black12.withValues(alpha: 0.1),
                           offset: const Offset(0, 0),
                           blurRadius: 10.dp,
                           spreadRadius: 10.dp,

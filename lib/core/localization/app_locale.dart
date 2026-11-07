@@ -1,7 +1,11 @@
 import 'dart:ui';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/languages.dart';
 import '../storage/storage_service.dart';
+
+export 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// 全局多语言管理
 class AppLocale {
@@ -12,6 +16,9 @@ class AppLocale {
   static void setLocale(Locale locale) {
     _currentLocale = locale;
   }
+
+  /// 官方强类型 Localizations 快捷获取
+  static AppLocalizations? of(BuildContext context) => AppLocalizations.of(context);
 
   static final Map<String, Map<String, String>> _translations = Languages().keys;
 
