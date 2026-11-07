@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:get/utils.dart';
 import 'package:sirc/utils/logger.dart';
 import 'package:sirc/widgets/webview/web_java_script_channel.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -52,7 +50,7 @@ class WebViewPage extends StatefulWidget {
 
 class WebViewPageState extends State<WebViewPage> {
   int progress = 0;
-  late final WebViewController _controller;
+  late WebViewController _controller;
   String? _pageTitle;
 
   @override
@@ -125,7 +123,7 @@ class WebViewPageState extends State<WebViewPage> {
                 if (canGoBack) {
                   await _controller.goBack();
                 } else {
-                  Get.back();
+                  Navigator.of(context).maybePop();
                 }
               },
               icon: const Icon(

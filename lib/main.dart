@@ -1,86 +1,62 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-// import 'package:flutter_ume/flutter_ume.dart'; // UME 框架
-// import 'package:flutter_ume_kit_console/flutter_ume_kit_console.dart'; // debugPrint 插件包
-// import 'package:flutter_ume_kit_device/flutter_ume_kit_device.dart'; // 设备信息插件包
-// import 'package:flutter_ume_kit_perf/flutter_ume_kit_perf.dart'; // 性能插件包
-// import 'package:flutter_ume_kit_show_code/flutter_ume_kit_show_code.dart'; // 代码查看插件包
-// import 'package:flutter_ume_kit_ui/flutter_ume_kit_ui.dart'; // UI 插件包
-import 'package:get/get.dart';
-import 'package:sirc/data/languages.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/core/router/nav_keys.dart';
+import 'package:sirc/core/storage/storage_service.dart';
+import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/utils/size_extension.dart' as size_ext;
 
-import 'components/not_found/not_found_view.dart';
-import 'data/common_date.dart';
-import 'routes/app_pages.dart';
+import 'package:sirc/routes/app_router.dart';
+import 'data/common_data.dart';
 
 /// a finance $ banking app
 /// UI copy from https://hbimg.huabanimg.com/71e943643aac8a17dedaee0445a0e27aec8023d212e8d8-5fkAOb
-void main() {
-  const myApp = MyApp();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
 
-  // LogUtils.forceOpenLog();
-
-  // if (kDebugMode) {
-  //   PluginManager.instance // 注册插件
-  //     ..register(const WidgetInfoInspector())
-  //     ..register(const WidgetDetailInspector())
-  //     ..register(const ColorSucker())
-  //     ..register(AlignRuler())
-  //     ..register(Performance())
-  //     ..register(const ShowCode())
-  //     ..register(const MemoryInfoPage())
-  //     ..register(CpuInfoPage())
-  //     ..register(const DeviceInfoPanel())
-  //     ..register(Console());
-  //   runApp(const UMEWidget(child: myApp, enable: true)); // 初始化
-  // } else {
-  runApp(myApp);
-  // }
+  runApp(
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     SystemUiOverlayStyle uiStyle = SystemUiOverlayStyle.dark.copyWith(
       statusBarColor: Colors.transparent,
     );
     SystemChrome.setSystemUIOverlayStyle(uiStyle);
 
+    final locale = ref.watch(localeProvider);
+
     return ScreenUtilInit(
       designSize: const Size(375, 666),
       builder: (context, _) {
-        return GetMaterialApp(
+        return MaterialApp.router(
+          routerConfig: appRouter,
+          scaffoldMessengerKey: rootScaffoldMessengerKey,
           title: "Sirc App",
-          onUnknownRoute: (RouteSettings settings) {
-            return MaterialPageRoute(
-              builder: (context) => const NotFoundPage(),
-            );
-          },
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            Locale("en", ""),
-            Locale("zh", "CN"),
-          ],
-          locale: Get.deviceLocale,
-          fallbackLocale: const Locale("en", "US"),
-          translations: Languages(),
-          initialRoute: AppPages.INITIAL,
-          getPages: AppPages.routes,
-          theme: Theme.of(context).copyWith(
-            primaryColor: Colors.white,
-          ),
+          supportedLocales: AppLocale.supportedLocales,
+          locale: locale,
+          theme: AppTheme.lightTheme,
           builder: (context, child) {
             final mediaQuery = MediaQuery.of(context);
             final screenWidth = mediaQuery.size.width;
@@ -110,7 +86,7 @@ class MyApp extends StatelessWidget {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
+                          color: Colors.black.withValues(alpha: 0.08),
                           blurRadius: 24,
                           offset: const Offset(0, 4),
                         ),

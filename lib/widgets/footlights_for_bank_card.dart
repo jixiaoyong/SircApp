@@ -44,11 +44,11 @@ class _FootlightsForBankCardState extends State<FootlightsForBankCard>
       decoration: BoxDecoration(
           gradient: LinearGradient(
         colors: [
-          backgroundColor.withOpacity(0.35),
-          Colors.grey.shade400.withOpacity(0.2),
-          Colors.grey.shade400.withOpacity(0.5),
-          Colors.grey.shade400.withOpacity(0.2),
-          backgroundColor.withOpacity(0.35),
+          backgroundColor.withValues(alpha: 0.35),
+          Colors.grey.shade400.withValues(alpha: 0.2),
+          Colors.grey.shade400.withValues(alpha: 0.5),
+          Colors.grey.shade400.withValues(alpha: 0.2),
+          backgroundColor.withValues(alpha: 0.35),
           backgroundColor,
         ],
         stops: const [0.0, 0.4, 0.8, 0.85, 0.95, 1.0],
@@ -65,8 +65,8 @@ class _FootlightsForBankCardState extends State<FootlightsForBankCard>
               width: bigBallSize,
               decoration: BoxDecoration(
                   gradient: RadialGradient(colors: [
-                    Colors.orangeAccent.withOpacity(0.2),
-                    Colors.orangeAccent.withOpacity(0.9)
+                    Colors.orangeAccent.withValues(alpha: 0.2),
+                    Colors.orangeAccent.withValues(alpha: 0.9)
                   ]),
                   borderRadius: BorderRadius.circular(100.dp)),
             ),
@@ -79,8 +79,8 @@ class _FootlightsForBankCardState extends State<FootlightsForBankCard>
               width: smallBallSize,
               decoration: BoxDecoration(
                   gradient: RadialGradient(colors: [
-                    Colors.purple.withOpacity(0.2),
-                    Colors.purple.withOpacity(0.9)
+                    Colors.purple.withValues(alpha: 0.2),
+                    Colors.purple.withValues(alpha: 0.9)
                   ]),
                   borderRadius: BorderRadius.circular(100.dp)),
             ),

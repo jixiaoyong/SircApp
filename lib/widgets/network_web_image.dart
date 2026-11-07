@@ -128,7 +128,7 @@ class NetworkWebImage extends StatelessWidget {
           width: _effectiveWidth,
           height: _effectiveHeight,
           decoration: BoxDecoration(
-            color: Colors.blue.withOpacity(0.05),
+            color: Colors.blue.withValues(alpha: 0.05),
           ),
           alignment: Alignment.center,
           child: SizedBox(
@@ -136,7 +136,7 @@ class NetworkWebImage extends StatelessWidget {
             height: indicatorSize,
             child: CircularProgressIndicator(
               strokeWidth: strokeWidth,
-              color: Colors.blue.withOpacity(0.6),
+              color: Colors.blue.withValues(alpha: 0.6),
             ),
           ),
         );
@@ -190,7 +190,7 @@ class NetworkWebImage extends StatelessWidget {
     final iconData = fallbackIcon ??
         (isAvatar ? Icons.person_rounded : Icons.image_not_supported_outlined);
     final iconColor = isAvatar
-        ? const Color(0xFF6366F1).withOpacity(0.75) // Indigo accent
+        ? const Color(0xFF6366F1).withValues(alpha: 0.75) // Indigo accent
         : const Color(0xFF94A3B8); // Slate 400
 
     return Icon(

@@ -48,7 +48,7 @@ class ExpandablePageView extends StatefulWidget {
 
 class _ExpandablePageViewState extends State<ExpandablePageView> {
   late PageController _pageViewController;
-  late final List<double?> _viewPageHeightList;
+  late List<double?> _viewPageHeightList;
 
   var _currentPageHeight = 0.0;
 

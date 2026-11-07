@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:get/get_utils/src/extensions/internacionalization.dart';
+import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/gen_a/A.dart';
 import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/utils/size_extension.dart';
@@ -53,9 +53,9 @@ class BankCardWidget extends StatelessWidget {
           width: width,
           padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
           decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               border:
-                  Border.all(color: Colors.white.withOpacity(0.5), width: 2.dp),
+                  Border.all(color: Colors.white.withValues(alpha: 0.5), width: 2.dp),
               borderRadius: BorderRadius.circular(20.dp)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +88,7 @@ class BankCardWidget extends StatelessWidget {
                     cardNumber,
                     style: TextStyle(
                         fontSize: 20.sp,
-                        color: Colors.white.withOpacity(0.85),
+                        color: Colors.white.withValues(alpha: 0.85),
                         letterSpacing: 1.5),
                   ),
                 ),
@@ -110,7 +110,7 @@ class BankCardWidget extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                   fontSize: 14.sp,
-                                  color: Colors.white.withOpacity(0.7)),
+                                  color: Colors.white.withValues(alpha: 0.7)),
                             ),
                           ),
                           SizedBox(width: 12.dp),
@@ -126,7 +126,7 @@ class BankCardWidget extends StatelessWidget {
                     ),
                     SizedBox(width: 8.dp),
                     Text(
-                      cardType ?? (isMasterCard ? "MasterCard".tr : "Visa".tr),
+                      cardType ?? (isMasterCard ? Languages.masterCard : Languages.visa),
                       style: TextStyle(
                           fontSize: 18.sp,
                           color: Colors.white,
