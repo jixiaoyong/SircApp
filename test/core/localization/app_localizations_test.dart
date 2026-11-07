@@ -3,35 +3,25 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 
 void main() {
-  group('Official AppLocalizations & ARB Tests', () {
-    test('AppLocalizations loads English strings correctly', () async {
-      final loc = await AppLocalizations.delegate.load(const Locale('en'));
-      expect(loc.dashboard, 'Dashboard');
-      expect(loc.wallet, 'Wallet');
-      expect(loc.history, 'History');
-      expect(loc.availableBalance, 'Available Balance');
-      expect(loc.send, 'Send');
-      expect(loc.receive, 'Receive');
-      expect(loc.total, 'Total');
-      expect(loc.january, 'January');
-    });
-
-    test('AppLocalizations loads Chinese strings correctly', () async {
-      final loc = await AppLocalizations.delegate.load(const Locale('zh'));
-      expect(loc.dashboard, '仪表盘');
-      expect(loc.wallet, '钱包');
-      expect(loc.history, '历史');
-      expect(loc.availableBalance, '可用余额');
-      expect(loc.send, '发送');
-      expect(loc.receive, '接收');
-      expect(loc.total, '总额');
-      expect(loc.january, '一月');
-    });
-
-    test('AppLocalizations supported locales include en and zh', () {
-      const locales = AppLocalizations.supportedLocales;
+  group('AppLocale 运行时全局语言测试', () {
+    test('AppLocale 支持语言列表包含 zh 和 en', () {
+      const locales = AppLocale.supportedLocales;
       final languageCodes = locales.map((l) => l.languageCode).toList();
       expect(languageCodes, containsAll(['en', 'zh']));
+    });
+
+    test('AppLocale 动态切换 Locale 且正确读取中英文强类型实体', () {
+      // 切换至英文
+      AppLocale.setLocale(const Locale('en', 'US'));
+      expect(AppLocale.current.auth.signIn, 'Sign In');
+      expect(AppLocale.current.wallet.availableBalance, 'Available Balance');
+      expect(Languages.auth.signIn, 'Sign In');
+
+      // 切换至中文
+      AppLocale.setLocale(const Locale('zh', 'CN'));
+      expect(AppLocale.current.auth.signIn, '登录');
+      expect(AppLocale.current.wallet.availableBalance, '可用余额');
+      expect(Languages.auth.signIn, '登录');
     });
   });
 }

@@ -77,9 +77,7 @@ class NotificationsPage extends ConsumerWidget {
 
                 return Container(
                   margin: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 5.dp),
-                  padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 5.dp),
                   decoration: BoxDecoration(
-                    color: Colors.white,
                     borderRadius: BorderRadius.circular(10.dp),
                     boxShadow: [
                       BoxShadow(
@@ -90,64 +88,71 @@ class NotificationsPage extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.accents.elementAt(
-                            Colors.accents.length % (3 * index + 3),
-                          ),
-                          child: Icon(
-                            icon,
-                            color: Colors.white,
-                          ),
-                        ),
-                        title: Text(title),
-                        trailing: Icon(
-                          isSelected
-                              ? Icons.keyboard_arrow_up_outlined
-                              : Icons.keyboard_arrow_down_outlined,
-                        ),
-                        onTap: () {
-                          notifier.setIndexExpand(index);
-                        },
-                      ),
-                      if (isSelected)
-                        ...items.asMap().entries.map((subEntry) {
-                          final int subIndex = subEntry.key;
-                          final subItem = subEntry.value;
-
-                          return Padding(
-                            padding: EdgeInsets.symmetric(vertical: 5.dp),
-                            child: ListTile(
-                              leading: Container(
-                                width: 60.dp,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.dp),
-                                  color: Colors.blueAccent.withValues(
-                                    alpha: 1 / (subIndex + 1),
-                                  ),
-                                ),
-                                child: Center(
-                                  child: NetworkWebImage(
-                                    subItem.userIcon ?? "",
-                                    size: Size(40.dp, 40.dp),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
+                  child: Material(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.dp),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 5.dp),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: Colors.accents.elementAt(
+                                Colors.accents.length % (3 * index + 3),
                               ),
-                              title: Text(subItem.moneyActionName ?? ""),
-                              trailing: Text(
-                                "\$${subItem.moneyAmount?.toStringAsFixed(2) ?? ""}",
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              child: Icon(
+                                icon,
+                                color: Colors.white,
                               ),
                             ),
-                          );
-                        }),
-                    ],
+                            title: Text(title),
+                            trailing: Icon(
+                              isSelected
+                                  ? Icons.keyboard_arrow_up_outlined
+                                  : Icons.keyboard_arrow_down_outlined,
+                            ),
+                            onTap: () {
+                              notifier.setIndexExpand(index);
+                            },
+                          ),
+                          if (isSelected)
+                            ...items.asMap().entries.map((subEntry) {
+                              final int subIndex = subEntry.key;
+                              final subItem = subEntry.value;
+
+                              return Padding(
+                                padding: EdgeInsets.symmetric(vertical: 5.dp),
+                                child: ListTile(
+                                  leading: Container(
+                                    width: 60.dp,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.dp),
+                                      color: Colors.blueAccent.withValues(
+                                        alpha: 1 / (subIndex + 1),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: NetworkWebImage(
+                                        subItem.userIcon ?? "",
+                                        size: Size(40.dp, 40.dp),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  title: Text(subItem.moneyActionName ?? ""),
+                                  trailing: Text(
+                                    "\$${subItem.moneyAmount?.toStringAsFixed(2) ?? ""}",
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                        ],
+                      ),
+                    ),
                   ),
                 );
               }),

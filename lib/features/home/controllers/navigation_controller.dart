@@ -1,4 +1,6 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'navigation_controller.g.dart';
 
 /// 底部导航与主框架全局状态
 class NavigationState {
@@ -54,7 +56,8 @@ class NavigationState {
 }
 
 /// 底部导航与抽屉控制器
-class NavigationController extends Notifier<NavigationState> {
+@Riverpod(keepAlive: true)
+class NavigationController extends _$NavigationController {
   @override
   NavigationState build() {
     return const NavigationState();
@@ -106,9 +109,3 @@ class NavigationController extends Notifier<NavigationState> {
     }
   }
 }
-
-/// 全局导航控制器 Provider
-final navigationControllerProvider =
-    NotifierProvider<NavigationController, NavigationState>(
-  NavigationController.new,
-);

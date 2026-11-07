@@ -36,7 +36,7 @@
 2. **在双语实现类中分别补全**（`zh` / `en`）：
    - `zh`: `@override String get myNewText => '中文内容';`
    - `en`: `@override String get myNewText => 'English Content';`
-3. **执行一键自动更新**（自动生成 `lib/data/languages.dart` 及双语注释）：
+3. **执行一键自动更新**（自动生成 `lib/l10n/languages.dart` 及双语注释）：
    - **手动单次更新**：`dart run tool/build_lang.dart`
    - **后台实时监听**：`dart run tool/build_lang.dart --watch`（保存代码时自动触发更新，无需手动敲命令）
 

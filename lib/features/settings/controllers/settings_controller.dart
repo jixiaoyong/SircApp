@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import '../../../core/localization/app_locale.dart';
 import '../../../core/storage/storage_service.dart';
 import '../../../gen_a/A.dart';
 import '../../../mock/mock_utils.dart';
 import '../../../routes/app_routes.dart';
+
+part 'settings_controller.g.dart';
 
 // ============================================================================
 // 1. Language Configuration
@@ -63,7 +65,8 @@ class NotificationsState {
   }
 }
 
-class NotificationsNotifier extends Notifier<NotificationsState> {
+@riverpod
+class NotificationsController extends _$NotificationsController {
   @override
   NotificationsState build() {
     ref.watch(localeProvider);
@@ -83,10 +86,7 @@ class NotificationsNotifier extends Notifier<NotificationsState> {
   void toggleExpand(int index) => setIndexExpand(index);
 }
 
-final notificationsControllerProvider =
-    NotifierProvider<NotificationsNotifier, NotificationsState>(
-  NotificationsNotifier.new,
-);
+typedef NotificationsNotifier = NotificationsController;
 
 // ============================================================================
 // 3. Initial & Splash State & Notifier
@@ -139,7 +139,8 @@ class InitialState {
   }
 }
 
-class InitialController extends Notifier<InitialState> {
+@Riverpod(keepAlive: true)
+class InitialController extends _$InitialController {
   Timer? _countdownTimer;
 
   @override
@@ -214,8 +215,3 @@ class InitialController extends Notifier<InitialState> {
     }
   }
 }
-
-final initialControllerProvider =
-    NotifierProvider<InitialController, InitialState>(
-  InitialController.new,
-);

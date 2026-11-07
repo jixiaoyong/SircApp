@@ -50,12 +50,11 @@ class MyApp extends ConsumerWidget {
           scaffoldMessengerKey: rootScaffoldMessengerKey,
           title: "Sirc App",
           localizationsDelegates: const [
-            AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: AppLocalizations.supportedLocales,
+          supportedLocales: AppLocale.supportedLocales,
           locale: locale,
           theme: AppTheme.lightTheme,
           builder: (context, child) {

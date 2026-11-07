@@ -15,15 +15,15 @@ void main(List<String> args) {
   _generate();
 
   if (isWatch) {
-    print('👀 已启动监听模式（--watch），正在实时监听 lib/data/l10n/ 目录变动...');
+    print('👀 已启动监听模式（--watch），正在实时监听 lib/l10n/ 目录变动...');
     print('💡 当你保存契约或实现文件时，将自动重新生成，无需手动执行命令。\n');
 
-    final l10nDir = Directory('lib/data/l10n');
+    final l10nDir = Directory('lib/l10n');
     Timer? debounceTimer;
 
     l10nDir.watch(recursive: true).listen((event) {
-      // 忽略 README.md 等非 dart 文件变动
-      if (!event.path.endsWith('.dart')) return;
+      // 忽略 README.md、languages.dart 等变动，仅监听 keys 和 impl
+      if (!event.path.endsWith('.dart') || event.path.endsWith('languages.dart')) return;
 
       debounceTimer?.cancel();
       debounceTimer = Timer(const Duration(milliseconds: 300), () {
@@ -35,10 +35,10 @@ void main(List<String> args) {
 }
 
 void _generate() {
-  final keysDir = Directory('lib/data/l10n/keys');
-  final zhDir = Directory('lib/data/l10n/impl/zh');
-  final enDir = Directory('lib/data/l10n/impl/en');
-  final targetFile = File('lib/data/languages.dart');
+  final keysDir = Directory('lib/l10n/keys');
+  final zhDir = Directory('lib/l10n/impl/zh');
+  final enDir = Directory('lib/l10n/impl/en');
+  final targetFile = File('lib/l10n/languages.dart');
 
   if (!keysDir.existsSync() || !zhDir.existsSync() || !enDir.existsSync()) {
     stderr.writeln('错误：找不到多语言目录结构！请确保在项目根目录运行。');
@@ -74,13 +74,13 @@ void _generate() {
     print('  - 模块 [$mod] 解析到 ${entries.length} 个词条');
   }
 
-  print('📊 总计解析到 $totalCount 个词条，正在生成 lib/data/languages.dart...');
+  print('📊 总计解析到 $totalCount 个词条，正在生成 lib/l10n/languages.dart...');
 
   final sb = StringBuffer();
   sb.writeln('''// GENERATED CODE - DO NOT MODIFY BY HAND
 // 该文件由脚本自动维护。如需新增或修改多语言词条：
-// 1. 在 `lib/data/l10n/keys/` 中声明对应模块属性
-// 2. 在 `lib/data/l10n/impl/zh/` 和 `lib/data/l10n/impl/en/` 中实现中英文翻译
+// 1. 在 `lib/l10n/keys/` 中声明对应模块属性
+// 2. 在 `lib/l10n/impl/zh/` 和 `lib/l10n/impl/en/` 中实现中英文翻译
 // 3. 执行更新命令：
 //    - 手动单次生成：`dart run tool/build_lang.dart`
 //    - 后台监听实时生成：`dart run tool/build_lang.dart --watch`
@@ -194,7 +194,7 @@ class Languages {
   targetFile.writeAsStringSync(sb.toString());
 
   Process.runSync('dart', ['format', targetFile.path]);
-  print('✅ 自动生成完成！lib/data/languages.dart 已更新。');
+  print('✅ 自动生成完成！lib/l10n/languages.dart 已更新。');
 }
 
 class _Entry {

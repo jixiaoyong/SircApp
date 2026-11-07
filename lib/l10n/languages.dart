@@ -1,7 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // 该文件由脚本自动维护。如需新增或修改多语言词条：
-// 1. 在 `lib/data/l10n/keys/` 中声明对应模块属性
-// 2. 在 `lib/data/l10n/impl/zh/` 和 `lib/data/l10n/impl/en/` 中实现中英文翻译
+// 1. 在 `lib/l10n/keys/` 中声明对应模块属性
+// 2. 在 `lib/l10n/impl/zh/` 和 `lib/l10n/impl/en/` 中实现中英文翻译
 // 3. 执行更新命令：
 //    - 手动单次生成：`dart run tool/build_lang.dart`
 //    - 后台监听实时生成：`dart run tool/build_lang.dart --watch`

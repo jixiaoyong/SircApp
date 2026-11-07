@@ -8,8 +8,21 @@ import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/title_text.dart';
 
+/// 指纹登录开关状态 Notifier (全面适配 Riverpod 3.x)
+class FingerprintEnabledNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  @override
+  set state(bool value) => super.state = value;
+  void update(bool Function(bool state) cb) => state = cb(state);
+}
+
 /// 指纹登录开关状态 Provider
-final fingerprintEnabledProvider = StateProvider<bool>((ref) => false);
+final fingerprintEnabledProvider =
+    NotifierProvider<FingerprintEnabledNotifier, bool>(
+  FingerprintEnabledNotifier.new,
+);
 
 /// 菜单列表页面，视觉与交互 100% 保持一致
 class MenuPage extends ConsumerWidget {

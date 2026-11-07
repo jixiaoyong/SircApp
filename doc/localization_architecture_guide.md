@@ -90,12 +90,13 @@ graph TD
 
 ## 四、 目录与文件组织规范
 
-多语言模块归整在 `lib/data/l10n/` 目录下（保持高内聚），结构如下：
+多语言模块归整在 `lib/l10n/` 目录下（保持高内聚），结构如下：
 
 ```text
-lib/data/l10n/
+lib/l10n/
 ├── README.md                  # 本设计规范就近文档
 ├── lang_keys.dart             # 契约总接口 LangKeys
+├── languages.dart             # 全局静态统一门面 (自动生成或聚合)
 ├── keys/                      # 业务模块契约
 │   ├── auth_keys.dart         # 登录/注册/密码契约
 │   ├── wallet_keys.dart       # 钱包/银行卡/历史明细契约
@@ -107,8 +108,6 @@ lib/data/l10n/
 │   │   └── languages_zh.dart  # LanguagesZhCN 聚合入口
 │   └── en/                    # 英文实现模块 (AuthEn, WalletEn...)
 │       └── languages_en.dart  # LanguagesEnUS 聚合入口
-├── languages.dart             # 全局静态统一门面 (自动生成或聚合)
-└── app_locale.dart            # 全局 Locale 状态与切换控制
 ```
 
 ---

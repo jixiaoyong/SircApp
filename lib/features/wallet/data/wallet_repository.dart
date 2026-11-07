@@ -73,10 +73,10 @@ class WalletRepositoryImpl implements WalletRepository {
   ];
 
   // 初始交易记录列表
-  late List<Transaction> _transactions =
+  late final List<Transaction> _transactions =
       List<Transaction>.from(MockUtils.moneyOperateList);
 
-  double _availableBalance = 35.269;
+  final double _availableBalance = 35.269;
 
   @override
   Future<List<BankCard>> getBankCards() async {

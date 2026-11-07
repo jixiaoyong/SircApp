@@ -1,21 +1,13 @@
 import 'dart:ui';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../data/l10n/impl/en/languages_en.dart';
-import '../../data/l10n/impl/zh/languages_zh.dart';
-import '../../data/l10n/lang_keys.dart';
-import '../../data/languages.dart';
+import '../../l10n/impl/en/languages_en.dart';
+import '../../l10n/impl/zh/languages_zh.dart';
+import '../../l10n/lang_keys.dart';
+import '../../l10n/languages.dart';
 import '../storage/storage_service.dart';
 
-export 'package:flutter_gen/gen_l10n/app_localizations.dart';
-export '../../data/l10n/lang_keys.dart';
-export '../../data/languages.dart';
-
-extension BuildContextL10n on BuildContext {
-  /// 官方生成的强类型多语言对象快捷获取
-  AppLocalizations get l10n => AppLocalizations.of(this)!;
-}
+export '../../l10n/lang_keys.dart';
+export '../../l10n/languages.dart';
 
 /// 全局多语言管理
 class AppLocale {
@@ -27,9 +19,13 @@ class AppLocale {
     _currentLocale = locale;
   }
 
-  /// 官方强类型 Localizations 快捷获取
-  static AppLocalizations? of(BuildContext context) =>
-      AppLocalizations.of(context);
+  /// 支持的语言列表
+  static const List<Locale> supportedLocales = [
+    Locale('zh', 'CN'),
+    Locale('en', 'US'),
+    Locale('zh'),
+    Locale('en'),
+  ];
 
   static const LangKeys _zhCN = LanguagesZhCN();
   static const LangKeys _enUS = LanguagesEnUS();
@@ -61,29 +57,32 @@ class AppLocale {
   }
 }
 
-class LocaleNotifier extends StateNotifier<Locale> {
-  final StorageService _storageService;
-
-  LocaleNotifier(this._storageService) : super(AppLocale.currentLocale) {
-    _loadSavedLocale();
-  }
-
-  void _loadSavedLocale() {
-    final saved = _storageService.localLanguage;
+class LocaleNotifier extends Notifier<Locale> {
+  @override
+  Locale build() {
+    final storage = ref.watch(storageServiceProvider);
+    final saved = storage.localLanguage;
     if (saved != null && saved.isNotEmpty) {
       if (saved.contains('_')) {
         final parts = saved.split('_');
-        setLocale(Locale(parts[0], parts[1]));
+        final loc = Locale(parts[0], parts[1]);
+        AppLocale.setLocale(loc);
+        return loc;
       } else {
-        setLocale(Locale(saved));
+        final loc = Locale(saved);
+        AppLocale.setLocale(loc);
+        return loc;
       }
     } else {
-      // 优先保留 AppLocale.currentLocale 或系统语言
       if (AppLocale.currentLocale.languageCode == 'en' ||
           PlatformDispatcher.instance.locale.languageCode == 'en') {
-        setLocale(const Locale('en', 'US'));
+        const loc = Locale('en', 'US');
+        AppLocale.setLocale(loc);
+        return loc;
       } else {
-        setLocale(const Locale('zh', 'CN'));
+        const loc = Locale('zh', 'CN');
+        AppLocale.setLocale(loc);
+        return loc;
       }
     }
   }
@@ -94,11 +93,9 @@ class LocaleNotifier extends StateNotifier<Locale> {
     final code = locale.countryCode != null && locale.countryCode!.isNotEmpty
         ? '${locale.languageCode}_${locale.countryCode}'
         : locale.languageCode;
-    _storageService.setLocalLanguage(code);
+    ref.read(storageServiceProvider).setLocalLanguage(code);
   }
 }
 
-final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) {
-  final storageService = ref.watch(storageServiceProvider);
-  return LocaleNotifier(storageService);
-});
+final localeProvider =
+    NotifierProvider<LocaleNotifier, Locale>(LocaleNotifier.new);

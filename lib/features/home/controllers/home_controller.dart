@@ -1,5 +1,7 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sirc/widgets/jingang_widget.dart';
+
+part 'home_controller.g.dart';
 
 /// 首页卡片数据模型（纯数据实体，不持有 UI Widget）
 class BankCardItem {
@@ -46,7 +48,8 @@ class HomeState {
 }
 
 /// 首页控制器（纯业务逻辑，不与多语言直接耦合）
-class HomeController extends Notifier<HomeState> {
+@riverpod
+class HomeController extends _$HomeController {
   @override
   HomeState build() {
     return HomeState(
@@ -115,8 +118,3 @@ class HomeController extends Notifier<HomeState> {
     state = state.copyWith(weeklyPercentages: percentages);
   }
 }
-
-/// 首页控制器 Provider
-final homeControllerProvider = NotifierProvider<HomeController, HomeState>(
-  HomeController.new,
-);

@@ -239,8 +239,8 @@ doc/api/
 *.js.deps
 *.js.map
 
-
-
 # FVM
-.fvm/flutter_sdk
 .worktrees/
+
+# FVM Version Cache
+.fvm/

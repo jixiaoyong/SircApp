@@ -1,11 +1,13 @@
 import 'dart:math' as math;
 import 'package:flutter/widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import '../../data/wallet_repository.dart';
 import '../../domain/models/bank_card.dart';
+
+part 'wallet_controller.g.dart';
 
 // ==========================================
 // 1. 钱包与交易历史状态 (WalletState)
@@ -75,7 +77,8 @@ class WalletState {
 // 2. 钱包与交易历史控制器 (WalletController)
 // ==========================================
 
-class WalletController extends Notifier<WalletState> {
+@Riverpod(keepAlive: true)
+class WalletController extends _$WalletController {
   WalletRepository get _repository => ref.read(walletRepositoryProvider);
 
   @override
@@ -84,43 +87,44 @@ class WalletController extends Notifier<WalletState> {
     ref.watch(localeProvider);
 
     final months = [
-      Languages.january,
-      Languages.february,
-      Languages.march,
-      Languages.april,
-      Languages.may,
-      Languages.june,
-      Languages.july,
-      Languages.august,
-      Languages.september,
-      Languages.october,
-      Languages.november,
-      Languages.december,
+      Languages.home.january,
+      Languages.home.february,
+      Languages.home.march,
+      Languages.home.april,
+      Languages.home.may,
+      Languages.home.june,
+      Languages.home.july,
+      Languages.home.august,
+      Languages.home.september,
+      Languages.home.october,
+      Languages.home.november,
+      Languages.home.december,
     ];
 
     final initialMoneyTypes = [
-      Languages.lastSend,
-      Languages.lastReceive,
-      Languages.total,
+      Languages.wallet.lastSend,
+      Languages.wallet.lastReceive,
+      Languages.wallet.total,
     ];
 
     final defaultChart = [
-      (Languages.mon, 0.3),
-      (Languages.tues, 0.5),
-      (Languages.wed, 0.1),
-      (Languages.thur, 0.6),
-      (Languages.fri, 0.9),
-      (Languages.satu, 0.2),
-      (Languages.sun, 0.8),
+      (Languages.home.mon, 0.3),
+      (Languages.home.tues, 0.5),
+      (Languages.home.wed, 0.1),
+      (Languages.home.thur, 0.6),
+      (Languages.home.fri, 0.9),
+      (Languages.home.satu, 0.2),
+      (Languages.home.sun, 0.8),
     ];
 
     // 若此前已有加载好的业务数据（如切换语言触发 rebuild），平滑保留数据，仅迁移本地化字段
     final previousState = stateOrNull;
     if (previousState != null) {
-      final oldIndex =
-          previousState.monthEnglishNameList.indexOf(previousState.selectedMonth);
-      final newSelectedMonth =
-          oldIndex >= 0 && oldIndex < months.length ? months[oldIndex] : months.first;
+      final oldIndex = previousState.monthEnglishNameList
+          .indexOf(previousState.selectedMonth);
+      final newSelectedMonth = oldIndex >= 0 && oldIndex < months.length
+          ? months[oldIndex]
+          : months.first;
 
       return previousState.copyWith(
         moneyTypes: initialMoneyTypes,
@@ -148,12 +152,16 @@ class WalletController extends Notifier<WalletState> {
   Future<void> loadInitialData() async {
     try {
       final balance = await _repository.getAvailableBalance();
+      if (!ref.mounted) return;
       final cards = await _repository.getBankCards();
+      if (!ref.mounted) return;
       final transactions = await _fetchFilteredTransactions(
         filterIndex: state.currentFilterIndex,
         query: state.searchQuery,
       );
+      if (!ref.mounted) return;
       final chart = await _repository.getMonthlyChartData(state.selectedMonth);
+      if (!ref.mounted) return;
 
       state = state.copyWith(
         availableBalance: balance,
@@ -163,6 +171,7 @@ class WalletController extends Notifier<WalletState> {
         isLoading: false,
       );
     } catch (e) {
+      if (!ref.mounted) return;
       state = state.copyWith(
         isLoading: false,
         errorMessage: () => e.toString(),
@@ -173,6 +182,7 @@ class WalletController extends Notifier<WalletState> {
   /// 重新获取银行卡列表
   Future<void> loadCards() async {
     final cards = await _repository.getBankCards();
+    if (!ref.mounted) return;
     state = state.copyWith(cards: cards);
   }
 
@@ -184,6 +194,7 @@ class WalletController extends Notifier<WalletState> {
       filterIndex: index,
       query: state.searchQuery,
     );
+    if (!ref.mounted) return;
     state = state.copyWith(transactions: txs);
   }
 
@@ -199,6 +210,7 @@ class WalletController extends Notifier<WalletState> {
     if (state.selectedMonth == month) return;
     state = state.copyWith(selectedMonth: month);
     final chart = await _repository.getMonthlyChartData(month);
+    if (!ref.mounted) return;
     state = state.copyWith(chartData: chart);
   }
 
@@ -209,6 +221,7 @@ class WalletController extends Notifier<WalletState> {
       filterIndex: state.currentFilterIndex,
       query: query,
     );
+    if (!ref.mounted) return;
     state = state.copyWith(transactions: txs);
   }
 
@@ -225,11 +238,6 @@ class WalletController extends Notifier<WalletState> {
     return _repository.getTransactions(filter: filter, query: query);
   }
 }
-
-final walletControllerProvider =
-    NotifierProvider<WalletController, WalletState>(
-  WalletController.new,
-);
 
 // ==========================================
 // 3. 添加银行卡状态 (AddCardState)
@@ -303,9 +311,8 @@ class AddCardState {
       ownerName: ownerName ?? this.ownerName,
       cardNumber: cardNumber ?? this.cardNumber,
       expireDate: expireDate ?? this.expireDate,
-      expireDateString: expireDateString != null
-          ? expireDateString()
-          : this.expireDateString,
+      expireDateString:
+          expireDateString != null ? expireDateString() : this.expireDateString,
       cvv: cvv ?? this.cvv,
       ownerNameError:
           ownerNameError != null ? ownerNameError() : this.ownerNameError,
@@ -323,7 +330,8 @@ class AddCardState {
 // 4. 添加银行卡控制器 (AddCardController)
 // ==========================================
 
-class AddCardController extends Notifier<AddCardState> {
+@riverpod
+class AddCardController extends _$AddCardController {
   WalletRepository get _repository => ref.read(walletRepositoryProvider);
 
   @override
@@ -357,7 +365,8 @@ class AddCardController extends Notifier<AddCardState> {
   /// 输入持卡人姓名
   void setOwnerName(String value) {
     final trimmed = value.trim();
-    final error = trimmed.isEmpty ? Languages.pleaseTypeInYourName : null;
+    final error =
+        trimmed.isEmpty ? Languages.wallet.pleaseTypeInYourName : null;
     state = state.copyWith(
       ownerName: value,
       ownerNameError: () => error,
@@ -367,7 +376,8 @@ class AddCardController extends Notifier<AddCardState> {
   /// 输入卡号
   void setCardNumber(String value) {
     final trimmed = value.trim();
-    final error = trimmed.isEmpty ? Languages.pleaseEnterBankCardNumber : null;
+    final error =
+        trimmed.isEmpty ? Languages.wallet.pleaseEnterBankCardNumber : null;
     state = state.copyWith(
       cardNumber: value,
       cardNumberError: () => error,
@@ -380,7 +390,7 @@ class AddCardController extends Notifier<AddCardState> {
     final yearStr = (value.year % 100).toString().padLeft(2, '0');
     final str = '$monthStr/$yearStr';
     final error =
-        str.isNotEmpty ? null : Languages.pleaseEnterExpirationDate;
+        str.isNotEmpty ? null : Languages.wallet.pleaseEnterExpirationDate;
     state = state.copyWith(
       expireDate: value,
       expireDateString: () => str,
@@ -418,19 +428,17 @@ class AddCardController extends Notifier<AddCardState> {
       );
 
       await _repository.addBankCard(newCard);
+      if (!ref.mounted) return false;
       // 同步刷新钱包卡片列表
       await ref.read(walletControllerProvider.notifier).loadCards();
+      if (!ref.mounted) return false;
 
       state = state.copyWith(isSubmitting: false);
       return true;
     } catch (_) {
+      if (!ref.mounted) return false;
       state = state.copyWith(isSubmitting: false);
       return false;
     }
   }
 }
-
-final addCardControllerProvider =
-    NotifierProvider<AddCardController, AddCardState>(
-  AddCardController.new,
-);

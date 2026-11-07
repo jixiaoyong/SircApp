@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/localization/app_locale.dart';
-import 'package:sirc/data/l10n/impl/en/languages_en.dart';
-import 'package:sirc/data/l10n/impl/zh/languages_zh.dart';
+import 'package:sirc/l10n/impl/en/languages_en.dart';
+import 'package:sirc/l10n/impl/zh/languages_zh.dart';
 
 void main() {
   group('现代强类型分层多语言 (l10n) 架构测试', () {
-    final zh = const LanguagesZhCN();
-    final en = const LanguagesEnUS();
+    const zh = LanguagesZhCN();
+    const en = LanguagesEnUS();
 
     test('1. 契约完整性与非空校验 (严格杜绝漏翻或空串)', () {
       // Auth 认证模块

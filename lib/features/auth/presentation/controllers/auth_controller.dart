@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/auth/data/auth_repository.dart';
 import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/utils/username_pwd_utils.dart';
+
+part 'auth_controller.g.dart';
 
 // ============================================================================
 // 1. Sign In State & Notifier
@@ -53,7 +55,8 @@ class SignInState {
   }
 }
 
-class SignInNotifier extends Notifier<SignInState> {
+@riverpod
+class SignInController extends _$SignInController {
   @override
   SignInState build() {
     return SignInState(socialList: MockUtils.socialList);
@@ -125,8 +128,7 @@ class SignInNotifier extends Notifier<SignInState> {
   }
 }
 
-final signInControllerProvider =
-    NotifierProvider<SignInNotifier, SignInState>(SignInNotifier.new);
+typedef SignInNotifier = SignInController;
 
 // ============================================================================
 // 2. Sign Up State & Notifier
@@ -192,7 +194,8 @@ class SignUpState {
   }
 }
 
-class SignUpNotifier extends Notifier<SignUpState> {
+@riverpod
+class SignUpController extends _$SignUpController {
   @override
   SignUpState build() {
     return SignUpState(socialList: MockUtils.socialList);
@@ -342,8 +345,7 @@ class SignUpNotifier extends Notifier<SignUpState> {
   void logUpWith((IconData, Color) item) {}
 }
 
-final signUpControllerProvider =
-    NotifierProvider<SignUpNotifier, SignUpState>(SignUpNotifier.new);
+typedef SignUpNotifier = SignUpController;
 
 // ============================================================================
 // 3. Forget Password State & Notifier
@@ -392,7 +394,8 @@ class ForgetPwdState {
   }
 }
 
-class ForgetPwdNotifier extends Notifier<ForgetPwdState> {
+@riverpod
+class ForgetPwdController extends _$ForgetPwdController {
   @override
   ForgetPwdState build() => const ForgetPwdState();
 
@@ -445,8 +448,7 @@ class ForgetPwdNotifier extends Notifier<ForgetPwdState> {
   }
 }
 
-final forgetPwdControllerProvider =
-    NotifierProvider<ForgetPwdNotifier, ForgetPwdState>(ForgetPwdNotifier.new);
+typedef ForgetPwdNotifier = ForgetPwdController;
 
 // ============================================================================
 // 4. Set Password State & Notifier
@@ -496,7 +498,8 @@ class SetPwdState {
   }
 }
 
-class SetPwdNotifier extends Notifier<SetPwdState> {
+@riverpod
+class SetPwdController extends _$SetPwdController {
   @override
   SetPwdState build() => const SetPwdState();
 
@@ -559,8 +562,7 @@ class SetPwdNotifier extends Notifier<SetPwdState> {
   }
 }
 
-final setPwdControllerProvider =
-    NotifierProvider<SetPwdNotifier, SetPwdState>(SetPwdNotifier.new);
+typedef SetPwdNotifier = SetPwdController;
 
 // ============================================================================
 // 5. Password Page State & Notifier (修改密码)
@@ -614,7 +616,8 @@ class PasswordState {
   }
 }
 
-class PasswordNotifier extends Notifier<PasswordState> {
+@riverpod
+class PasswordController extends _$PasswordController {
   @override
   PasswordState build() => const PasswordState();
 
@@ -703,5 +706,4 @@ class PasswordNotifier extends Notifier<PasswordState> {
   }
 }
 
-final passwordControllerProvider =
-    NotifierProvider<PasswordNotifier, PasswordState>(PasswordNotifier.new);
+typedef PasswordNotifier = PasswordController;

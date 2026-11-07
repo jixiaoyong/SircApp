@@ -1,7 +1,7 @@
 {
-    "dart.flutterSdkPath": ".fvm/flutter_sdk",
-    "dart.hotReloadOnSave": "manual",
-    "javascript.updateImportsOnFileMove.enabled": "always",
-    "commentTranslate.source": "Baidu",
-    "dart.hotReloadProgress": "statusBar"
+  "dart.flutterSdkPath": ".fvm/versions/stable",
+  "dart.hotReloadOnSave": "manual",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "commentTranslate.source": "Baidu",
+  "dart.hotReloadProgress": "statusBar"
 }
