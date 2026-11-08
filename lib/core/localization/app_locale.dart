@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/impl/en/languages_en.dart';
 import '../../l10n/impl/zh/languages_zh.dart';
 import '../../l10n/lang_keys.dart';
-import '../../l10n/languages.dart';
+import '../../l10n/languages.g.dart';
 import '../storage/storage_service.dart';
 
 export '../../l10n/lang_keys.dart';
-export '../../l10n/languages.dart';
+export '../../l10n/languages.g.dart';
 
 /// 全局多语言管理
 class AppLocale {

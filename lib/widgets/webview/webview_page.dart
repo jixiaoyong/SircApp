@@ -122,7 +122,7 @@ class WebViewPageState extends State<WebViewPage> {
                 final bool canGoBack = await _controller.canGoBack();
                 if (canGoBack) {
                   await _controller.goBack();
-                } else {
+                } else if (context.mounted) {
                   Navigator.of(context).maybePop();
                 }
               },

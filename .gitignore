@@ -223,8 +223,7 @@ lint/tmp/
 # See https://www.dartlang.org/guides/libraries/private-files
 
 # Files and directories created by pub
-# If you're building an application, you may want to check-in your pubspec.lock
-pubspec.lock
+# If you're building an application, check in pubspec.lock for reproducible dependency versions.
 
 # Directory created by dartdoc
 # If you don't generate documentation locally you can remove this line.
@@ -242,5 +241,8 @@ doc/api/
 # FVM
 .worktrees/
 
-# FVM Version Cache
+# FVM SDK cache (keep .fvmrc tracked)
 .fvm/
+
+# Cursor / Flutter Widget Preview generated project
+.widget_preview/

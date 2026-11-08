@@ -90,41 +90,39 @@ class _JingangWidgetState extends State<JingangWidget> {
   Widget build(BuildContext context) {
     var childCount = widget.data.length;
 
-    return Container(
-      child: ExpandablePageView(
-        pageBuilder: (context, index) {
-          final int childIndexStart = index * widget.childCountPerPage;
-          final int childIndexExpectEnd =
-              childIndexStart + widget.childCountPerPage - 1;
-          final int childIndexEnd = childIndexExpectEnd > childCount - 1
-              ? childCount - 1
-              : childIndexExpectEnd;
-          return GridView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: widget.childCountPerRow,
-                childAspectRatio: widget.childAspectRatio),
-            itemBuilder: (context, subIndex) {
-              // the index of the child in the total children
-              final int childIndex = childIndexStart + subIndex;
-              var data = widget.data[childIndex];
-              return widget.itemBuilder(context, subIndex, index, data);
-            },
-            itemCount: childIndexEnd - childIndexStart + 1,
-            shrinkWrap: true,
-          );
-        },
-        pageCount: (widget.data.length / widget.childCountPerPage).ceil(),
-        childAspectRatio: widget.childAspectRatio,
-        indicatorOffset: widget.indicatorOffset,
-        indicatorBuilder: widget.indicatorBuilder ??
-            (context, onPageSelected, scrollPercentage) {
-              return ScrollableIndicator(
-                onPageSelected: onPageSelected,
-                scrollPercentage: scrollPercentage,
-              );
-            },
-      ),
+    return ExpandablePageView(
+      pageBuilder: (context, index) {
+        final int childIndexStart = index * widget.childCountPerPage;
+        final int childIndexExpectEnd =
+            childIndexStart + widget.childCountPerPage - 1;
+        final int childIndexEnd = childIndexExpectEnd > childCount - 1
+            ? childCount - 1
+            : childIndexExpectEnd;
+        return GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: widget.childCountPerRow,
+              childAspectRatio: widget.childAspectRatio),
+          itemBuilder: (context, subIndex) {
+            // the index of the child in the total children
+            final int childIndex = childIndexStart + subIndex;
+            var data = widget.data[childIndex];
+            return widget.itemBuilder(context, subIndex, index, data);
+          },
+          itemCount: childIndexEnd - childIndexStart + 1,
+          shrinkWrap: true,
+        );
+      },
+      pageCount: (widget.data.length / widget.childCountPerPage).ceil(),
+      childAspectRatio: widget.childAspectRatio,
+      indicatorOffset: widget.indicatorOffset,
+      indicatorBuilder: widget.indicatorBuilder ??
+          (context, onPageSelected, scrollPercentage) {
+            return ScrollableIndicator(
+              onPageSelected: onPageSelected,
+              scrollPercentage: scrollPercentage,
+            );
+          },
     );
   }
 }

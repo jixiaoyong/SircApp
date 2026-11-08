@@ -25,7 +25,6 @@ class AboutPage extends ConsumerWidget {
     // 监听多语言变化以刷新文案
     ref.watch(localeProvider);
 
-    final width = MediaQuery.of(context).size.width;
     final aboutText = Languages.aboutUsDescription;
 
     return Scaffold(

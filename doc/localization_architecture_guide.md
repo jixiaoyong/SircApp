@@ -96,7 +96,7 @@ graph TD
 lib/l10n/
 ├── README.md                  # 本设计规范就近文档
 ├── lang_keys.dart             # 契约总接口 LangKeys
-├── languages.dart             # 全局静态统一门面 (自动生成或聚合)
+├── languages.g.dart           # 全局静态统一门面 (自动生成)
 ├── keys/                      # 业务模块契约
 │   ├── auth_keys.dart         # 登录/注册/密码契约
 │   ├── wallet_keys.dart       # 钱包/银行卡/历史明细契约

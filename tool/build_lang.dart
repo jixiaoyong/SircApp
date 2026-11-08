@@ -5,9 +5,9 @@ import 'dart:io';
 ///
 /// 使用方式：
 /// 1. 手动一键生成：
-///    `dart run tool/build_lang.dart`
+///    `fvm dart run tool/build_lang.dart`
 /// 2. 监听文件变动实时自动生成：
-///    `dart run tool/build_lang.dart --watch`
+///    `fvm dart run tool/build_lang.dart --watch`
 void main(List<String> args) {
   final isWatch = args.contains('--watch') || args.contains('-w');
 
@@ -22,8 +22,9 @@ void main(List<String> args) {
     Timer? debounceTimer;
 
     l10nDir.watch(recursive: true).listen((event) {
-      // 忽略 README.md、languages.dart 等变动，仅监听 keys 和 impl
-      if (!event.path.endsWith('.dart') || event.path.endsWith('languages.dart')) return;
+      // 忽略 README.md、生成的门面文件等变动，仅监听 keys 和 impl
+      if (!event.path.endsWith('.dart') ||
+          event.path.endsWith('languages.g.dart')) return;
 
       debounceTimer?.cancel();
       debounceTimer = Timer(const Duration(milliseconds: 300), () {
@@ -38,7 +39,7 @@ void _generate() {
   final keysDir = Directory('lib/l10n/keys');
   final zhDir = Directory('lib/l10n/impl/zh');
   final enDir = Directory('lib/l10n/impl/en');
-  final targetFile = File('lib/l10n/languages.dart');
+  final targetFile = File('lib/l10n/languages.g.dart');
 
   if (!keysDir.existsSync() || !zhDir.existsSync() || !enDir.existsSync()) {
     stderr.writeln('错误：找不到多语言目录结构！请确保在项目根目录运行。');
@@ -74,7 +75,7 @@ void _generate() {
     print('  - 模块 [$mod] 解析到 ${entries.length} 个词条');
   }
 
-  print('📊 总计解析到 $totalCount 个词条，正在生成 lib/l10n/languages.dart...');
+  print('📊 总计解析到 $totalCount 个词条，正在生成 lib/l10n/languages.g.dart...');
 
   final sb = StringBuffer();
   sb.writeln('''// GENERATED CODE - DO NOT MODIFY BY HAND
@@ -194,7 +195,7 @@ class Languages {
   targetFile.writeAsStringSync(sb.toString());
 
   Process.runSync('dart', ['format', targetFile.path]);
-  print('✅ 自动生成完成！lib/l10n/languages.dart 已更新。');
+  print('✅ 自动生成完成！lib/l10n/languages.g.dart 已更新。');
 }
 
 class _Entry {

@@ -103,9 +103,10 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
     ref.watch(localeProvider);
     final navigationState = ref.watch(navigationControllerProvider);
     final screenSize = MediaQuery.of(context).size;
-    final double screenWidth = (widget.screenWidth != null && widget.screenWidth! > 0)
-        ? widget.screenWidth!
-        : screenSize.width;
+    final double screenWidth =
+        (widget.screenWidth != null && widget.screenWidth! > 0)
+            ? widget.screenWidth!
+            : screenSize.width;
     final double screenHeight = screenSize.height;
 
     final slideMenuList = [
@@ -221,11 +222,18 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
           // 中间装饰投影层
           Transform(
             transform: Matrix4.identity()
-              ..translate(
+              ..translateByDouble(
                 screenWidth * 0.55 * _percentage,
                 0.18 * _percentage * screenHeight,
+                0,
+                1,
               )
-              ..scale(1.0 - (_percentage * 0.36)),
+              ..scaleByDouble(
+                1.0 - (_percentage * 0.36),
+                1.0 - (_percentage * 0.36),
+                1.0 - (_percentage * 0.36),
+                1,
+              ),
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.5),
@@ -236,11 +244,18 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
           // 顶层主体内容层
           Transform(
             transform: Matrix4.identity()
-              ..translate(
+              ..translateByDouble(
                 screenWidth * 0.6 * _percentage,
                 0.15 * _percentage * screenHeight,
+                0,
+                1,
               )
-              ..scale(1.0 - (_percentage * 0.3)),
+              ..scaleByDouble(
+                1.0 - (_percentage * 0.3),
+                1.0 - (_percentage * 0.3),
+                1.0 - (_percentage * 0.3),
+                1,
+              ),
             child: SizedBox(
               width: screenWidth,
               height: screenHeight,

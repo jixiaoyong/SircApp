@@ -43,7 +43,7 @@ class ExpandablePageView extends StatefulWidget {
   });
 
   @override
-  _ExpandablePageViewState createState() => _ExpandablePageViewState();
+  State<ExpandablePageView> createState() => _ExpandablePageViewState();
 }
 
 class _ExpandablePageViewState extends State<ExpandablePageView> {
@@ -119,13 +119,13 @@ class _ExpandablePageViewState extends State<ExpandablePageView> {
     final isIndicatorVisible =
         widget.indicatorBuilder != null && widget.pageCount > 1;
     final pageViewPaddingBottom =
-    widget.indicatorOffset.dy < 0 && isIndicatorVisible
-        ? -widget.indicatorOffset.dy
-        : 0.0;
+        widget.indicatorOffset.dy < 0 && isIndicatorVisible
+            ? -widget.indicatorOffset.dy
+            : 0.0;
     final indicatorPaddingBottom =
-    widget.indicatorOffset.dy > 0 && isIndicatorVisible
-        ? widget.indicatorOffset.dy
-        : 0.0;
+        widget.indicatorOffset.dy > 0 && isIndicatorVisible
+            ? widget.indicatorOffset.dy
+            : 0.0;
 
     return LayoutBuilder(builder: (context, constraints) {
       final indicatorBuilder = widget.indicatorBuilder;
@@ -197,13 +197,14 @@ class ScrollableIndicator extends StatelessWidget {
   final Color indicatorColor;
   final Color indicatorBackgroundColor;
 
-  const ScrollableIndicator({super.key,
-    required this.onPageSelected,
-    required this.scrollPercentage,
-    this.indicatorSize = const Size(50, 10),
-    this.indicatorBackgroundSize = const Size(100, 10),
-    this.indicatorColor = Colors.black,
-    this.indicatorBackgroundColor = Colors.white});
+  const ScrollableIndicator(
+      {super.key,
+      required this.onPageSelected,
+      required this.scrollPercentage,
+      this.indicatorSize = const Size(50, 10),
+      this.indicatorBackgroundSize = const Size(100, 10),
+      this.indicatorColor = Colors.black,
+      this.indicatorBackgroundColor = Colors.white});
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +230,7 @@ class ScrollableIndicator extends StatelessWidget {
               decoration: BoxDecoration(
                 color: indicatorColor,
                 borderRadius:
-                BorderRadius.all(Radius.circular(indicatorSize.height / 2)),
+                    BorderRadius.all(Radius.circular(indicatorSize.height / 2)),
               ),
             )
           ],

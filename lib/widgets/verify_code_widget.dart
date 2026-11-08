@@ -28,7 +28,7 @@ class VerifyCodeWidget extends StatefulWidget {
       this.separatorBuilder});
 
   @override
-  _VerifyCodeWidgetState createState() => _VerifyCodeWidgetState();
+  State<VerifyCodeWidget> createState() => _VerifyCodeWidgetState();
 }
 
 class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {

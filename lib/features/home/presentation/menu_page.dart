@@ -99,84 +99,81 @@ class MenuPage extends ConsumerWidget {
 
                 return Container(
                   margin: EdgeInsets.symmetric(vertical: 10.dp),
-                  padding: EdgeInsets.symmetric(vertical: 12.dp),
-                  decoration: BoxDecoration(
+                  child: Material(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10.dp),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withValues(alpha: 0.5),
-                        offset: const Offset(0, 5),
-                        blurRadius: 10.dp,
-                      ),
-                    ],
-                  ),
-                  child: ListTile(
-                    title: Text(item.$2),
-                    leading: Container(
-                      height: 50.dp,
-                      width: 50.dp,
-                      decoration: BoxDecoration(
-                        color: iconBgColor.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(50.dp),
-                      ),
-                      child: Icon(
-                        item.$1,
-                        color: Colors.white,
+                    elevation: 5,
+                    shadowColor: Colors.grey.withValues(alpha: 0.5),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12.dp),
+                      child: ListTile(
+                        title: Text(item.$2),
+                        leading: Container(
+                          height: 50.dp,
+                          width: 50.dp,
+                          decoration: BoxDecoration(
+                            color: iconBgColor.withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(50.dp),
+                          ),
+                          child: Icon(
+                            item.$1,
+                            color: Colors.white,
+                          ),
+                        ),
+                        trailing: isFingerprint
+                            ? CupertinoSwitch(
+                                value: isFingerprintOpen,
+                                onChanged: (v) {
+                                  ref
+                                      .read(fingerprintEnabledProvider.notifier)
+                                      .state = v;
+                                },
+                              )
+                            : const Icon(Icons.keyboard_arrow_right),
+                        onTap: () {
+                          if (isFingerprint) {
+                            ref
+                                .read(fingerprintEnabledProvider.notifier)
+                                .update((val) => !val);
+                          } else if (AppRoutes.LOGOUT == item.$3) {
+                            showDialog(
+                              context: context,
+                              builder: (dialogContext) => AlertDialog(
+                                title: Text(Languages.logout),
+                                content: Text(Languages.sureToLogout),
+                                actions: [
+                                  OutlinedButton(
+                                    child: Text(Languages.cancel),
+                                    onPressed: () {
+                                      Navigator.of(dialogContext).pop();
+                                    },
+                                  ),
+                                  OutlinedButton(
+                                    child: Text(
+                                      Languages.logoutAndCleanData,
+                                      style: const TextStyle(color: Colors.red),
+                                    ),
+                                    onPressed: () async {
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      await prefs.clear();
+                                      if (dialogContext.mounted) {
+                                        Navigator.of(dialogContext).pop();
+                                      }
+                                      if (context.mounted) {
+                                        context.go(AppRoutes.INITIAL);
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else {
+                            context.push(item.$3);
+                          }
+                        },
                       ),
                     ),
-                    trailing: isFingerprint
-                        ? CupertinoSwitch(
-                            value: isFingerprintOpen,
-                            onChanged: (v) {
-                              ref
-                                  .read(fingerprintEnabledProvider.notifier)
-                                  .state = v;
-                            },
-                          )
-                        : const Icon(Icons.keyboard_arrow_right),
-                    onTap: () {
-                      if (isFingerprint) {
-                        ref
-                            .read(fingerprintEnabledProvider.notifier)
-                            .update((val) => !val);
-                      } else if (AppRoutes.LOGOUT == item.$3) {
-                        showDialog(
-                          context: context,
-                          builder: (dialogContext) => AlertDialog(
-                            title: Text(Languages.logout),
-                            content: Text(Languages.sureToLogout),
-                            actions: [
-                              OutlinedButton(
-                                child: Text(Languages.cancel),
-                                onPressed: () {
-                                  Navigator.of(dialogContext).pop();
-                                },
-                              ),
-                              OutlinedButton(
-                                child: Text(
-                                  Languages.logoutAndCleanData,
-                                  style: const TextStyle(color: Colors.red),
-                                ),
-                                onPressed: () async {
-                                  final prefs =
-                                      await SharedPreferences.getInstance();
-                                  await prefs.clear();
-                                  if (dialogContext.mounted) {
-                                    Navigator.of(dialogContext).pop();
-                                  }
-                                  if (context.mounted) {
-                                    context.go(AppRoutes.INITIAL);
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                        );
-                      } else {
-                        context.push(item.$3);
-                      }
-                    },
                   ),
                 );
               }),
