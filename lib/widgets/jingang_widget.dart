@@ -62,6 +62,7 @@ class JingangWidget<T> extends StatefulWidget {
   final List<T> data;
   final IndicatorBuilder? indicatorBuilder;
   final double childAspectRatio;
+  final double? mainAxisExtent;
   final int childCountPerPage;
   final int childCountPerRow;
 
@@ -78,6 +79,7 @@ class JingangWidget<T> extends StatefulWidget {
       this.indicatorBuilder,
       this.indicatorOffset = const Offset(0, 0),
       this.childAspectRatio = 0.55,
+      this.mainAxisExtent,
       this.childCountPerRow = 6,
       this.childCountPerPage = 12});
 
@@ -102,6 +104,7 @@ class _JingangWidgetState extends State<JingangWidget> {
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: widget.childCountPerRow,
+              mainAxisExtent: widget.mainAxisExtent,
               childAspectRatio: widget.childAspectRatio),
           itemBuilder: (context, subIndex) {
             // the index of the child in the total children

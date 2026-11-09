@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -59,36 +58,9 @@ class MyApp extends ConsumerWidget {
           theme: AppTheme.lightTheme,
           builder: (context, child) {
             final mediaQuery = MediaQuery.of(context);
-            // 使用可用窗口宽度切换布局，不将页面缩放成手机预览画布。
-            const maxContentWidth = 1200.0;
-            const isWeb = kIsWeb;
-            final screenWidth = mediaQuery.size.width;
-            final screenHeight = mediaQuery.size.height;
-            final appWidth = screenWidth.clamp(0.0, maxContentWidth);
-
-            CommonData.realScreenWidth = appWidth;
+            // 页面使用完整窗口宽度，控件尺寸不随窗口宽度缩放。
+            CommonData.realScreenWidth = mediaQuery.size.width;
             size_ext.SizeExtension.dpScale = 1;
-
-            if (isWeb && screenWidth > maxContentWidth) {
-              return ColoredBox(
-                color: const Color(0xFFF1F5F9),
-                child: Center(
-                  child: SizedBox(
-                    width: maxContentWidth,
-                    height: screenHeight,
-                    child: ColoredBox(
-                      color: Colors.white,
-                      child: MediaQuery(
-                        data: mediaQuery.copyWith(
-                          size: Size(maxContentWidth, screenHeight),
-                        ),
-                        child: child ?? const SizedBox(),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }
 
             return child ?? const SizedBox();
           },
