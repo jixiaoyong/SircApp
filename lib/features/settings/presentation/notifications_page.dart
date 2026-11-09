@@ -34,41 +34,84 @@ class NotificationsPage extends ConsumerWidget {
           padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 10.dp),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    Languages.category,
-                    style: TextStyle(fontSize: 16.sp, color: Colors.grey),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10.dp),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15.dp),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withValues(alpha: 0.5),
-                          offset: const Offset(0, 1),
-                          blurRadius: 2,
-                        ),
-                      ],
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final titleStyle = DefaultTextStyle.of(context).style
+                      .merge(TextStyle(fontSize: 16.sp, color: Colors.grey));
+                  final menuStyle = Theme.of(context).textTheme.titleMedium!;
+                  double textWidth(String text, TextStyle style) {
+                    final painter = TextPainter(
+                      text: TextSpan(text: text, style: style),
+                      textDirection: Directionality.of(context),
+                      textScaler: MediaQuery.textScalerOf(context),
+                    )..layout();
+                    final width = painter.width;
+                    painter.dispose();
+                    return width;
+                  }
+
+                  final categories = state.categories;
+                  // Include the container padding and the dropdown icon.
+                  final menuWidth =
+                      categories
+                          .map((text) => textWidth(text, menuStyle))
+                          .reduce((a, b) => a > b ? a : b) +
+                      20.dp +
+                      24;
+                  final fitsInline =
+                      textWidth(Languages.category, titleStyle) +
+                          16.dp +
+                          menuWidth <=
+                      constraints.maxWidth;
+                  final title = Text(Languages.category, style: titleStyle);
+                  final dropdown = SizedBox(
+                    width: fitsInline ? menuWidth : constraints.maxWidth,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10.dp),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15.dp),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withValues(alpha: 0.5),
+                            offset: const Offset(0, 1),
+                            blurRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: DropdownButton<int>(
+                        value: state.currentCategoryIndex,
+                        isExpanded: true,
+                        itemHeight: null,
+                        style: menuStyle,
+                        items: categories.asMap().entries.map((entry) {
+                          return DropdownMenuItem(
+                            value: entry.key,
+                            child: Text(entry.value),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          notifier.setCategory(value ?? 0);
+                        },
+                        underline: Container(),
+                      ),
                     ),
-                    child: DropdownButton<int>(
-                      value: state.currentCategoryIndex,
-                      items: state.categories.map((e) {
-                        return DropdownMenuItem(
-                          value: state.categories.indexOf(e),
-                          child: Text(e),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        notifier.setCategory(value ?? 0);
-                      },
-                      underline: Container(),
-                    ),
-                  ),
-                ],
+                  );
+                  if (fitsInline) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [title, dropdown],
+                    );
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      title,
+                      SizedBox(height: 8.dp),
+                      dropdown,
+                    ],
+                  );
+                },
               ),
               ...groups.asMap().entries.map((entry) {
                 final int index = entry.key;
