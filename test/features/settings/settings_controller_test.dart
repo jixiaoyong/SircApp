@@ -12,6 +12,31 @@ import 'package:sirc/features/settings/presentation/not_found_page.dart';
 import 'package:sirc/features/settings/presentation/notifications_page.dart';
 import 'package:sirc/routes/app_routes.dart';
 
+class _LongCategoryState extends NotificationsState {
+  static const options = [
+    'All notifications received during this exceptionally long reporting week 通知分类完整文本',
+    'All notifications received during this exceptionally long reporting month 通知分类完整文本',
+  ];
+
+  const _LongCategoryState({super.currentCategoryIndex});
+
+  @override
+  List<String> get categories => options;
+
+  @override
+  NotificationsState copyWith({
+    int? currentCategoryIndex,
+    int? currentExpandIndex,
+  }) => _LongCategoryState(
+    currentCategoryIndex: currentCategoryIndex ?? this.currentCategoryIndex,
+  );
+}
+
+class _LongCategoryController extends NotificationsController {
+  @override
+  NotificationsState build() => const _LongCategoryState();
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -178,6 +203,153 @@ void main() {
       expect(img1, isNotEmpty);
       expect(title1, equals(Languages.dontSharePassword));
       expect(sub1, isNotEmpty);
+    });
+  });
+
+  group('NotificationsPage 响应式布局回归', () {
+    for (final width in [320.0, 390.0, 834.0, 1440.0]) {
+      for (final language in ['en', 'zh']) {
+        for (final scale in [1.0, 2.0]) {
+          testWidgets('$width / $language / ${scale}x 分类选择与展开收起', (
+            tester,
+          ) async {
+            tester.view.physicalSize = Size(width, 1600);
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.reset);
+            container.read(localeProvider.notifier).setLocale(Locale(language));
+            await tester.pumpWidget(
+              UncontrolledProviderScope(
+                container: container,
+                child: MaterialApp(
+                  builder: (context, child) => MediaQuery(
+                    data: MediaQuery.of(context)
+                        .copyWith(textScaler: TextScaler.linear(scale)),
+                    child: child!,
+                  ),
+                  home: const NotificationsPage(),
+                ),
+              ),
+            );
+            await tester.pump();
+            expect(tester.takeException(), isNull);
+
+            final titleRect = tester.getRect(find.text(Languages.category));
+            final dropdownRect = tester.getRect(
+              find.byType(DropdownButton<int>),
+            );
+            if ((scale == 1 && width >= 390) || width >= 834) {
+              expect(titleRect.center.dy, closeTo(dropdownRect.center.dy, 1));
+            }
+            if (language == 'en' && scale == 2 && width <= 390) {
+              expect(dropdownRect.top, greaterThan(titleRect.bottom));
+            }
+
+            await tester.tap(find.byType(DropdownButton<int>));
+            // Network image loading indicators animate indefinitely in widget tests.
+            await tester.pump();
+            await tester.pump(const Duration(milliseconds: 400));
+            expect(tester.takeException(), isNull);
+            await tester.tap(find.text(Languages.thisMonth).last);
+            // Network image loading indicators animate indefinitely in widget tests.
+            await tester.pump();
+            await tester.pump(const Duration(milliseconds: 400));
+            expect(
+              container
+                  .read(notificationsControllerProvider)
+                  .currentCategoryIndex,
+              1,
+            );
+            expect(
+              tester
+                  .widget<DropdownButton<int>>(find.byType(DropdownButton<int>))
+                  .value,
+              1,
+            );
+            expect(tester.takeException(), isNull);
+
+            await tester.tap(find.byIcon(Icons.keyboard_arrow_up_outlined));
+            await tester.pump();
+            expect(
+              container
+                  .read(notificationsControllerProvider)
+                  .currentExpandIndex,
+              -1,
+            );
+            expect(find.byIcon(Icons.keyboard_arrow_up_outlined), findsNothing);
+            await tester.tap(find.text(Languages.transfers));
+            await tester.pump();
+            expect(
+              container
+                  .read(notificationsControllerProvider)
+                  .currentExpandIndex,
+              0,
+            );
+            expect(
+              find.byIcon(Icons.keyboard_arrow_up_outlined),
+              findsOneWidget,
+            );
+            expect(tester.takeException(), isNull);
+          });
+        }
+      }
+    }
+
+    testWidgets('长分类选项保留完整文本语义且菜单可选择', (tester) async {
+      tester.view.physicalSize = const Size(320, 1600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final longContainer = ProviderContainer(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          notificationsControllerProvider.overrideWith(
+            _LongCategoryController.new,
+          ),
+        ],
+      );
+      addTearDown(longContainer.dispose);
+      longContainer.read(localeProvider.notifier).setLocale(const Locale('en'));
+      final semantics = tester.ensureSemantics();
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: longContainer,
+          child: MaterialApp(
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(2)),
+              child: child!,
+            ),
+            home: const NotificationsPage(),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      expect(
+        find.bySemanticsLabel(_LongCategoryState.options.first),
+        findsOneWidget,
+      );
+      await tester.tap(find.byType(DropdownButton<int>));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(tester.takeException(), isNull);
+      await tester.ensureVisible(
+        find.text(_LongCategoryState.options.last).last,
+      );
+      await tester.tap(find.text(_LongCategoryState.options.last).last);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(
+        longContainer
+            .read(notificationsControllerProvider)
+            .currentCategoryIndex,
+        1,
+      );
+      expect(
+        find.bySemanticsLabel(_LongCategoryState.options.last),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+      semantics.dispose();
     });
   });
 
