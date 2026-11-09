@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/data/common_keys.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:sirc/features/settings/controllers/settings_controller.dart';
 import 'package:sirc/features/settings/presentation/initial_page.dart';
 import 'package:sirc/features/settings/presentation/language_page.dart';
@@ -24,9 +23,7 @@ void main() {
     prefs = await SharedPreferences.getInstance();
 
     container = ProviderContainer(
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(prefs),
-      ],
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
     );
   });
 
@@ -108,11 +105,17 @@ void main() {
 
       // 当前是 0，再次点击 0 应收起变为 -1
       notifier.setIndexExpand(0);
-      expect(container.read(notificationsControllerProvider).currentExpandIndex, equals(-1));
+      expect(
+        container.read(notificationsControllerProvider).currentExpandIndex,
+        equals(-1),
+      );
 
       // 点击索引 1 展开
       notifier.toggleExpand(1);
-      expect(container.read(notificationsControllerProvider).currentExpandIndex, equals(1));
+      expect(
+        container.read(notificationsControllerProvider).currentExpandIndex,
+        equals(1),
+      );
     });
   });
 
@@ -153,11 +156,17 @@ void main() {
         },
       );
 
-      expect(container.read(initialControllerProvider).isAutoNavigating, isTrue);
+      expect(
+        container.read(initialControllerProvider).isAutoNavigating,
+        isTrue,
+      );
 
       // 取消倒计时
       notifier.cancelCountdown();
-      expect(container.read(initialControllerProvider).isAutoNavigating, isFalse);
+      expect(
+        container.read(initialControllerProvider).isAutoNavigating,
+        isFalse,
+      );
       expect(hasCompleted, isFalse);
     });
 
@@ -176,12 +185,8 @@ void main() {
     testWidgets('NotFoundPage 正常渲染图标与按钮', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-          ],
-          child: const MaterialApp(
-            home: Scaffold(body: NotFoundPage()),
-          ),
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+          child: const MaterialApp(home: Scaffold(body: NotFoundPage())),
         ),
       );
       await tester.pump();
@@ -194,12 +199,8 @@ void main() {
     testWidgets('LanguagePage 正常渲染语言列表与切换', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-          ],
-          child: const MaterialApp(
-            home: LanguagePage(),
-          ),
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+          child: const MaterialApp(home: LanguagePage()),
         ),
       );
       await tester.pump();
@@ -221,15 +222,8 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-          ],
-          child: ScreenUtilInit(
-            designSize: const Size(375, 666),
-            builder: (context, _) => const MaterialApp(
-              home: NotificationsPage(),
-            ),
-          ),
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+          child: const MaterialApp(home: NotificationsPage()),
         ),
       );
       await tester.pump();
@@ -255,15 +249,8 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-          ],
-          child: ScreenUtilInit(
-            designSize: const Size(375, 666),
-            builder: (context, _) => const MaterialApp(
-              home: InitialPage(),
-            ),
-          ),
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+          child: const MaterialApp(home: InitialPage()),
         ),
       );
       await tester.pump();

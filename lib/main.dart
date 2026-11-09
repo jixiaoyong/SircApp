@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/router/nav_keys.dart';
@@ -21,9 +20,7 @@ void main() async {
 
   runApp(
     ProviderScope(
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(prefs),
-      ],
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       child: const MyApp(),
     ),
   );
@@ -41,30 +38,25 @@ class MyApp extends ConsumerWidget {
 
     final locale = ref.watch(localeProvider);
 
-    return ScreenUtilInit(
-      designSize: const Size(375, 666),
-      builder: (context, _) {
-        return MaterialApp.router(
-          routerConfig: ref.watch(appRouterProvider),
-          scaffoldMessengerKey: rootScaffoldMessengerKey,
-          title: "Sirc App",
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: AppLocale.supportedLocales,
-          locale: locale,
-          theme: AppTheme.lightTheme,
-          builder: (context, child) {
-            final mediaQuery = MediaQuery.of(context);
-            // 页面使用完整窗口宽度，控件尺寸不随窗口宽度缩放。
-            CommonData.realScreenWidth = mediaQuery.size.width;
-            size_ext.SizeExtension.dpScale = 1;
+    return MaterialApp.router(
+      routerConfig: ref.watch(appRouterProvider),
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
+      title: "Sirc App",
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocale.supportedLocales,
+      locale: locale,
+      theme: AppTheme.lightTheme,
+      builder: (context, child) {
+        final mediaQuery = MediaQuery.of(context);
+        // 页面使用完整窗口宽度，控件尺寸不随窗口宽度缩放。
+        CommonData.realScreenWidth = mediaQuery.size.width;
+        size_ext.SizeExtension.dpScale = 1;
 
-            return child ?? const SizedBox();
-          },
-        );
+        return child ?? const SizedBox();
       },
     );
   }

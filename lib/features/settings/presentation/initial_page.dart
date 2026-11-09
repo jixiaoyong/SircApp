@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/localization/app_locale.dart';
 import '../../../data/common_data.dart';
 import '../../../gen_a/A.dart';
 import '../../../utils/size_extension.dart';
+import '../../../widgets/constrained_content.dart';
 import '../../../widgets/title_text.dart';
 import '../controllers/settings_controller.dart';
 
@@ -32,13 +34,17 @@ class _InitialPageState extends ConsumerState<InitialPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final isFirst = ref.read(initialControllerProvider).isFirstInitial;
       if (!isFirst) {
-        ref.read(initialControllerProvider.notifier).startAutoNavigateCountdown(
-          onComplete: () {
-            if (mounted) {
-              ref.read(initialControllerProvider.notifier).goMainPage(context);
-            }
-          },
-        );
+        ref
+            .read(initialControllerProvider.notifier)
+            .startAutoNavigateCountdown(
+              onComplete: () {
+                if (mounted) {
+                  ref
+                      .read(initialControllerProvider.notifier)
+                      .goMainPage(context);
+                }
+              },
+            );
       }
     });
   }
@@ -71,10 +77,7 @@ class _InitialPageState extends ConsumerState<InitialPage> {
 
                   return Container(
                     color: Colors.white,
-                    padding: EdgeInsets.only(
-                      right: 20.dp,
-                      left: 20.dp,
-                    ),
+                    padding: EdgeInsets.only(right: 20.dp, left: 20.dp),
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         final viewportHeight = constraints.maxHeight;
@@ -105,15 +108,17 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                     itemBuilder: (context, subIndex) {
                                       return Container(
                                         margin: EdgeInsets.symmetric(
-                                            horizontal: 5.dp),
+                                          horizontal: 5.dp,
+                                        ),
                                         height: 10.dp,
                                         width: 10.dp,
                                         decoration: BoxDecoration(
                                           color: subIndex == index
                                               ? Colors.deepPurpleAccent
                                               : Colors.grey,
-                                          borderRadius:
-                                              BorderRadius.circular(10.dp),
+                                          borderRadius: BorderRadius.circular(
+                                            10.dp,
+                                          ),
                                         ),
                                       );
                                     },
@@ -121,8 +126,9 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                 ),
                                 TitleText(text: title),
                                 Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 20.dp),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 20.dp,
+                                  ),
                                   child: Text(
                                     subtitle,
                                     textAlign: TextAlign.center,
@@ -138,7 +144,8 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                         onTap: () {
                                           _pageController.nextPage(
                                             duration: const Duration(
-                                                milliseconds: 300),
+                                              milliseconds: 300,
+                                            ),
                                             curve: Curves.easeInOut,
                                           );
                                         },
@@ -147,8 +154,9 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                           width: 50.dp,
                                           margin: EdgeInsets.only(top: 30.dp),
                                           decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(25.dp),
+                                            borderRadius: BorderRadius.circular(
+                                              25.dp,
+                                            ),
                                             gradient: const LinearGradient(
                                               colors: [
                                                 Colors.purple,
@@ -165,38 +173,43 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                     : GestureDetector(
                                         onTap: () {
                                           ref
-                                              .read(initialControllerProvider
-                                                  .notifier)
+                                              .read(
+                                                initialControllerProvider
+                                                    .notifier,
+                                              )
                                               .goMainPage(context);
                                         },
-                                        child: Container(
-                                          height: 50.dp,
-                                          width: double.infinity,
-                                          constraints: const BoxConstraints(
-                                            maxWidth: 360,
-                                          ),
-                                          margin: EdgeInsets.fromLTRB(
+                                        child: Padding(
+                                          padding: EdgeInsets.fromLTRB(
                                             30.dp,
                                             30.dp,
                                             30.dp,
                                             0,
                                           ),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(15.dp),
-                                            gradient: const LinearGradient(
-                                              colors: [
-                                                Colors.purple,
-                                                Colors.deepPurpleAccent,
-                                              ],
-                                            ),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              Languages.getStart,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20.sp,
+                                          child: ConstrainedContent(
+                                            maxWidth: 360,
+                                            child: Container(
+                                              height: 50.dp,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                      15.dp,
+                                                    ),
+                                                gradient: const LinearGradient(
+                                                  colors: [
+                                                    Colors.purple,
+                                                    Colors.deepPurpleAccent,
+                                                  ],
+                                                ),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  Languages.getStart,
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 20.sp,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),
