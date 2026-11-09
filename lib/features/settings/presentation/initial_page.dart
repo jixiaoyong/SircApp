@@ -171,8 +171,10 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                         },
                                         child: Container(
                                           height: 50.dp,
-                                          width: CommonData.realScreenWidth -
-                                              60.dp,
+                                          width: double.infinity,
+                                          constraints: const BoxConstraints(
+                                            maxWidth: 360,
+                                          ),
                                           margin: EdgeInsets.fromLTRB(
                                             30.dp,
                                             30.dp,

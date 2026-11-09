@@ -6,9 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:sirc/routes/app_routes.dart';
-import 'package:sirc/utils/size_extension.dart';
-import 'package:sirc/widgets/common_text_button.dart';
-import 'package:sirc/widgets/title_text.dart';
 
 /*
 * @description: Sign In Page (Refactored to Riverpod & Clean Architecture)
@@ -58,8 +55,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           builder: (context) => AlertDialog(
             title: Text(Languages.loading),
             content: SizedBox(
-              height: 50.dp,
-              width: 50.dp,
+              height: 50.toDouble(),
+              width: 50.toDouble(),
               child: const Center(child: CircularProgressIndicator()),
             ),
           ),
@@ -82,12 +79,12 @@ class _SignInPageState extends ConsumerState<SignInPage> {
             builder: (context) => AlertDialog(
               title: Text(Languages.loginFailed),
               content: SizedBox(
-                height: 80.dp,
+                height: 80.toDouble(),
                 child: Center(
                   child: Icon(
                     Icons.error_outline_outlined,
                     color: Colors.red,
-                    size: 80.dp,
+                    size: 80.toDouble(),
                   ),
                 ),
               ),
@@ -103,9 +100,11 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     final isLoginInProgress = state.isLoading;
     final isButtonEnabled = !isLoginInProgress && state.isUserInputValid;
 
+    final availableSize = MediaQuery.sizeOf(context);
+    final formWidth = availableSize.width.clamp(0.0, 520.0);
     final logicScreenHeight =
-        MediaQuery.of(context).size.height - kToolbarHeight - 16.dp;
-    final iconSize = 24.dp;
+        (availableSize.height - kToolbarHeight).clamp(0.0, 700.0);
+    final iconSize = 24.toDouble();
 
     return Scaffold(
       appBar: AppBar(
@@ -120,192 +119,214 @@ class _SignInPageState extends ConsumerState<SignInPage> {
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 16.dp),
-          padding: EdgeInsets.symmetric(vertical: 20.dp),
-          child: Column(
-            children: [
-              Container(
-                height: 0.15 * logicScreenHeight,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.dp),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      offset: Offset(0, 4),
-                      blurRadius: 8,
-                    )
-                  ],
-                  color: Colors.white,
-                ),
-                child: TextField(
-                  controller: nameTextFieldController,
-                  decoration: InputDecoration(
-                    hintText: Languages.username,
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.dp),
-                      borderSide:
-                          const BorderSide(color: Colors.black12, width: 0),
-                    ),
-                    labelText: Languages.username,
-                    errorText: state.userNameError,
-                    suffixIcon: Icon(
-                      Icons.person_outline,
-                      color: Colors.redAccent,
-                      size: iconSize,
-                    ),
-                  ),
-                  onChanged: (value) {
-                    notifier.setUserName(value);
-                  },
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 50.dp),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.dp),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      offset: Offset(0, 4),
-                      blurRadius: 8,
-                    )
-                  ],
-                  color: Colors.white,
-                ),
-                child: TextField(
-                  controller: pwdTextFieldController,
-                  decoration: InputDecoration(
-                    hintText: Languages.password,
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.dp),
-                      borderSide:
-                          const BorderSide(color: Colors.black12, width: 0),
-                    ),
-                    labelText: Languages.password,
-                    errorText: state.userPwdError,
-                    suffixIcon: Icon(
-                      Icons.lock_outlined,
-                      color: Colors.grey,
-                      size: iconSize,
-                    ),
-                  ),
-                  obscureText: true,
-                  keyboardType: TextInputType.visiblePassword,
-                  onChanged: (value) {
-                    notifier.setUserPwd(value);
-                  },
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+      body: Center(
+        child: SizedBox(
+          width: formWidth,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: 16.toDouble(), vertical: 20.toDouble()),
+              child: Column(
                 children: [
-                  GestureDetector(
-                    onTap: () async {
-                      final result =
-                          await context.push<bool>(AppRoutes.FORGET_PWD);
-                      if (true == result && context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(Languages.setPasswordSucceed,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold)),
-                                Text(Languages.pleaseLoginWithNewPassword),
-                              ],
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    child: Text(
-                      Languages.forgetPasswords,
-                      textAlign: TextAlign.end,
-                      style: TextStyle(
-                        height: 3,
-                        fontSize: 12.dp,
-                        fontWeight: FontWeight.w500,
+                  Container(
+                    height: 0.15 * logicScreenHeight,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.toDouble()),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          offset: Offset(0, 4),
+                          blurRadius: 8,
+                        )
+                      ],
+                      color: Colors.white,
+                    ),
+                    child: TextField(
+                      controller: nameTextFieldController,
+                      decoration: InputDecoration(
+                        hintText: Languages.username,
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.toDouble()),
+                          borderSide:
+                              const BorderSide(color: Colors.black12, width: 0),
+                        ),
+                        labelText: Languages.username,
+                        errorText: state.userNameError,
+                        suffixIcon: Icon(
+                          Icons.person_outline,
+                          color: Colors.redAccent,
+                          size: iconSize,
+                        ),
                       ),
+                      onChanged: (value) {
+                        notifier.setUserName(value);
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 50.toDouble()),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.toDouble()),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          offset: Offset(0, 4),
+                          blurRadius: 8,
+                        )
+                      ],
+                      color: Colors.white,
+                    ),
+                    child: TextField(
+                      controller: pwdTextFieldController,
+                      decoration: InputDecoration(
+                        hintText: Languages.password,
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.toDouble()),
+                          borderSide:
+                              const BorderSide(color: Colors.black12, width: 0),
+                        ),
+                        labelText: Languages.password,
+                        errorText: state.userPwdError,
+                        suffixIcon: Icon(
+                          Icons.lock_outlined,
+                          color: Colors.grey,
+                          size: iconSize,
+                        ),
+                      ),
+                      obscureText: true,
+                      keyboardType: TextInputType.visiblePassword,
+                      onChanged: (value) {
+                        notifier.setUserPwd(value);
+                      },
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          final result =
+                              await context.push<bool>(AppRoutes.FORGET_PWD);
+                          if (true == result && context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(Languages.setPasswordSucceed,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                    Text(Languages.pleaseLoginWithNewPassword),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text(
+                          Languages.forgetPasswords,
+                          textAlign: TextAlign.end,
+                          style: TextStyle(
+                            height: 3,
+                            fontSize: 12.toDouble(),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24, bottom: 24),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(0, 50),
+                          textStyle: const TextStyle(fontSize: 16),
+                        ),
+                        onPressed: isButtonEnabled ? notifier.login : null,
+                        child: Text(Languages.login),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Text(
+                      Languages.orSignInWith,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 50.toDouble(),
+                    width: double.infinity,
+                    child: Center(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          final item = state.socialList[index];
+                          return GestureDetector(
+                            onTap: () {
+                              notifier.loginWith(item);
+                            },
+                            child: Container(
+                              height: 50.toDouble(),
+                              width: 50.toDouble(),
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 10.toDouble()),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(8.toDouble()),
+                                border: Border.all(color: item.$2, width: 1),
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  item.$1,
+                                  color: item.$2,
+                                  size: iconSize,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        itemCount: state.socialList.length,
+                        scrollDirection: Axis.horizontal,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: logicScreenHeight * 0.08,
+                  ),
+                  RichText(
+                    text: TextSpan(
+                      text: Languages.dontHaveAccount,
+                      style: TextStyle(
+                          color: Colors.black, fontSize: 12.toDouble()),
+                      children: [
+                        TextSpan(
+                          text: " ${Languages.signUp}",
+                          style: TextStyle(
+                            color: Colors.purple,
+                            fontSize: 12.toDouble(),
+                            fontWeight: FontWeight.w500,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => context.push(AppRoutes.SIGN_UP),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-              CommonTextButton(
-                isButtonEnabled: isButtonEnabled,
-                onTap: () {
-                  notifier.login();
-                },
-                text: Languages.login,
-              ),
-              TitleText(text: Languages.orSignInWith),
-              SizedBox(
-                height: 50.dp,
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final item = state.socialList[index];
-                        return GestureDetector(
-                          onTap: () {
-                            notifier.loginWith(item);
-                          },
-                          child: Container(
-                            height: 50.dp,
-                            width: 50.dp,
-                            margin: EdgeInsets.symmetric(horizontal: 10.dp),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.dp),
-                              border: Border.all(color: item.$2, width: 1),
-                            ),
-                            child: Center(
-                              child: Icon(
-                                item.$1,
-                                color: item.$2,
-                                size: iconSize,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      itemCount: state.socialList.length,
-                      scrollDirection: Axis.horizontal,
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                height: logicScreenHeight * 0.08,
-              ),
-              RichText(
-                text: TextSpan(
-                  text: Languages.dontHaveAccount,
-                  style: TextStyle(color: Colors.black, fontSize: 12.dp),
-                  children: [
-                    TextSpan(
-                      text: " ${Languages.signUp}",
-                      style: TextStyle(
-                        color: Colors.purple,
-                        fontSize: 12.dp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () => context.push(AppRoutes.SIGN_UP),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

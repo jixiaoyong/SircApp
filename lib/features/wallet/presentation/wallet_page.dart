@@ -8,7 +8,6 @@ import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/color_extension.dart';
 import 'package:sirc/utils/number_extension.dart';
 import 'package:sirc/utils/size_extension.dart';
-import 'package:sirc/widgets/expanded_icon_button.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
 
@@ -81,49 +80,56 @@ class WalletPage extends ConsumerWidget {
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ExpandedIconButton(
-                  icon: Icons.arrow_forward_rounded,
-                  onPressed: () {
-                    ref
-                        .read(walletControllerProvider.notifier)
-                        .setFilterIndex(0);
-                  },
-                  height: 50.dp,
-                  maxWidth: 200.dp,
-                  colors: [Colors.blue, Colors.blueAccent.shade100],
-                  text: Languages.send,
-                  isExpanded: state.currentFilterIndex == 0,
-                ),
-                ExpandedIconButton(
-                  icon: Icons.arrow_back_rounded,
-                  onPressed: () {
-                    ref
-                        .read(walletControllerProvider.notifier)
-                        .setFilterIndex(1);
-                  },
-                  height: 50.dp,
-                  maxWidth: 200.dp,
-                  colors: [Colors.deepPurple, Colors.deepPurpleAccent.shade100],
-                  text: Languages.receive,
-                  isExpanded: state.currentFilterIndex == 1,
-                ),
-                ExpandedIconButton(
-                  icon: Icons.more_horiz_rounded,
-                  onPressed: () {
-                    ref
-                        .read(walletControllerProvider.notifier)
-                        .setFilterIndex(2);
-                  },
-                  height: 50.dp,
-                  maxWidth: 200.dp,
-                  colors: [Colors.orange, Colors.amber.shade400],
-                  text: Languages.total,
-                  isExpanded: state.currentFilterIndex == 2,
-                ),
-              ],
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.dp),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _WalletActionButton(
+                      icon: Icons.arrow_forward_rounded,
+                      onPressed: () {
+                        ref
+                            .read(walletControllerProvider.notifier)
+                            .setFilterIndex(0);
+                      },
+                      colors: [Colors.blue, Colors.blueAccent.shade100],
+                      text: Languages.send,
+                      isSelected: state.currentFilterIndex == 0,
+                    ),
+                  ),
+                  SizedBox(width: 10.dp),
+                  Expanded(
+                    child: _WalletActionButton(
+                      icon: Icons.arrow_back_rounded,
+                      onPressed: () {
+                        ref
+                            .read(walletControllerProvider.notifier)
+                            .setFilterIndex(1);
+                      },
+                      colors: [
+                        Colors.deepPurple,
+                        Colors.deepPurpleAccent.shade100
+                      ],
+                      text: Languages.receive,
+                      isSelected: state.currentFilterIndex == 1,
+                    ),
+                  ),
+                  SizedBox(width: 10.dp),
+                  Expanded(
+                    child: _WalletActionButton(
+                      icon: Icons.more_horiz_rounded,
+                      onPressed: () {
+                        ref
+                            .read(walletControllerProvider.notifier)
+                            .setFilterIndex(2);
+                      },
+                      colors: [Colors.orange, Colors.amber.shade400],
+                      text: Languages.total,
+                      isSelected: state.currentFilterIndex == 2,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Padding(
               padding: EdgeInsets.only(top: 20.dp),
@@ -220,6 +226,78 @@ class WalletPage extends ConsumerWidget {
               );
             }),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _WalletActionButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+  final List<Color> colors;
+  final String text;
+  final bool isSelected;
+
+  const _WalletActionButton({
+    required this.icon,
+    required this.onPressed,
+    required this.colors,
+    required this.text,
+    required this.isSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      label: text,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(25.dp),
+        clipBehavior: Clip.antiAlias,
+        child: Ink(
+          height: 50.dp,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: colors),
+          ),
+          child: InkWell(
+            onTap: onPressed,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.dp),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (isSelected) ...[
+                    Expanded(
+                      child: Text(
+                        text,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                      ),
+                    ),
+                    SizedBox(width: 4.dp),
+                  ],
+                  Container(
+                    width: 32.dp,
+                    height: 32.dp,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isSelected ? Colors.white : Colors.transparent,
+                    ),
+                    child: Icon(
+                      icon,
+                      size: 24.dp,
+                      color: isSelected ? colors.first : Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

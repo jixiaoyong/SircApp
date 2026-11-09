@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
-import 'package:sirc/data/common_data.dart';
 import 'package:sirc/features/home/controllers/home_controller.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/utils/color_extension.dart';
@@ -16,30 +15,11 @@ import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
 
 /// 纯净 Riverpod 架构的首页看板 Widget
-class HomePage extends ConsumerStatefulWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  ConsumerState<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends ConsumerState<HomePage> {
-  late PageController _pageController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController(initialPage: 0, viewportFraction: 0.8);
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(localeProvider);
     final homeState = ref.watch(homeControllerProvider);
     final userAvatar = ref.watch(
@@ -62,7 +42,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                   HomeTopBodyWidget(
                     homeState: homeState,
                     userAvatar: userAvatar,
-                    pageController: _pageController,
                   ),
                 ],
               ),
@@ -145,26 +124,10 @@ class HomeTopBodyWidget extends ConsumerWidget {
     super.key,
     required this.homeState,
     required this.userAvatar,
-    required this.pageController,
   });
 
   final HomeState homeState;
   final String userAvatar;
-  final PageController pageController;
-
-  String _localizedBankName(String bankName) {
-    switch (bankName) {
-      case 'CNSS':
-        return Languages.cnss;
-      case 'DXSS':
-        return Languages.dxss;
-      case 'CID':
-        return Languages.cid;
-      default:
-        return bankName;
-    }
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(localeProvider);
@@ -201,78 +164,12 @@ class HomeTopBodyWidget extends ConsumerWidget {
               ],
             ),
           ),
-          SizedBox(
-            height: 255.dp,
-            child: Stack(
-              children: [
-                FootlightsForBankCard(
-                  screenWidth: CommonData.realScreenWidth,
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 20.dp, 0, 35.dp),
-                  child: PageView.builder(
-                    controller: pageController,
-                    itemBuilder: (context, index) {
-                      final card = homeState.banks[index];
-                      return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.dp),
-                        child: BankCardWidget(
-                          bankName: _localizedBankName(card.bankName),
-                          cardNumber: card.cardNumber,
-                          ownerName: card.ownerName,
-                          expirationDate: card.expirationDate,
-                        ),
-                      );
-                    },
-                    itemCount: homeState.banks.length,
-                    onPageChanged: (index) {
-                      ref
-                          .read(homeControllerProvider.notifier)
-                          .setBankIndex(index);
-                    },
-                  ),
-                ),
-                Positioned(
-                  bottom: 20.dp,
-                  right: 0,
-                  left: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      homeState.banks.length,
-                      (index) {
-                        return GestureDetector(
-                          onTap: () {
-                            pageController.animateToPage(
-                              index,
-                              duration: const Duration(milliseconds: 200),
-                              curve: Curves.easeIn,
-                            );
-                          },
-                          child: Container(
-                            width: 10.dp,
-                            height: 10.dp,
-                            margin: EdgeInsets.symmetric(horizontal: 5.dp),
-                            decoration: BoxDecoration(
-                              color: (homeState.currentBankIndex == index
-                                      ? Colors.white
-                                      : "#ffb6c6d5".hexToColor)
-                                  .withValues(alpha: 0.6),
-                              borderRadius: BorderRadius.circular(10.dp),
-                            ),
-                          ),
-                        );
-                      },
-                      growable: false,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const HomeBankCardCarousel(),
           Padding(
             padding: EdgeInsets.only(top: 10.dp),
             child: JingangWidget(
+              // 行高由图标和两行文字决定，不随每列宽度增长。
+              mainAxisExtent: 80,
               childAspectRatio: 0.7,
               data: homeState.quickActions,
               indicatorOffset: Offset(0, -2.dp),
@@ -438,6 +335,151 @@ class HomeTopBodyWidget extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// 按局部可用宽度显示一张露边或多张银行卡，卡片高度不随宽度增长。
+class HomeBankCardCarousel extends ConsumerWidget {
+  const HomeBankCardCarousel({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(localeProvider);
+    final homeState = ref.watch(homeControllerProvider);
+    return SizedBox(
+      height: 255.dp,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          if (!width.isFinite || width <= 0) return const SizedBox.shrink();
+          // 每页含左右各 10 的间距，卡片本体最大 400 逻辑像素。
+          final fraction = (width * 0.8).clamp(0.0, 420.0) / width;
+          return Stack(
+            children: [
+              FootlightsForBankCard(screenWidth: width),
+              _HomeBankCardPages(
+                // fraction 不可变；重建分页状态让 Flutter 正常解绑并释放旧控制器。
+                key: ValueKey(fraction),
+                viewportFraction: fraction,
+                homeState: homeState,
+                onPageChanged: (index) => ref
+                    .read(homeControllerProvider.notifier)
+                    .setBankIndex(index),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _HomeBankCardPages extends StatefulWidget {
+  const _HomeBankCardPages({
+    super.key,
+    required this.viewportFraction,
+    required this.homeState,
+    required this.onPageChanged,
+  });
+
+  final double viewportFraction;
+  final HomeState homeState;
+  final ValueChanged<int> onPageChanged;
+
+  @override
+  State<_HomeBankCardPages> createState() => _HomeBankCardPagesState();
+}
+
+class _HomeBankCardPagesState extends State<_HomeBankCardPages> {
+  late final PageController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController(
+      initialPage: widget.homeState.currentBankIndex,
+      viewportFraction: widget.viewportFraction,
+      // resize 后以业务选中索引为准，不恢复旧尺寸对应的 PageStorage 位置。
+      keepPage: false,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  String _localizedBankName(String bankName) {
+    switch (bankName) {
+      case 'CNSS':
+        return Languages.cnss;
+      case 'DXSS':
+        return Languages.dxss;
+      case 'CID':
+        return Languages.cid;
+      default:
+        return bankName;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final homeState = widget.homeState;
+    return Stack(
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(0, 20.dp, 0, 35.dp),
+          child: PageView.builder(
+            controller: _controller,
+            itemCount: homeState.banks.length,
+            onPageChanged: widget.onPageChanged,
+            itemBuilder: (context, index) {
+              final card = homeState.banks[index];
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.dp),
+                child: BankCardWidget(
+                  bankName: _localizedBankName(card.bankName),
+                  cardNumber: card.cardNumber,
+                  ownerName: card.ownerName,
+                  expirationDate: card.expirationDate,
+                ),
+              );
+            },
+          ),
+        ),
+        Positioned(
+          bottom: 20.dp,
+          right: 0,
+          left: 0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(homeState.banks.length, (index) {
+              return GestureDetector(
+                key: ValueKey('bank-card-indicator-$index'),
+                onTap: () => _controller.animateToPage(
+                  index,
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeIn,
+                ),
+                child: Container(
+                  width: 10.dp,
+                  height: 10.dp,
+                  margin: EdgeInsets.symmetric(horizontal: 5.dp),
+                  decoration: BoxDecoration(
+                    color: (homeState.currentBankIndex == index
+                            ? Colors.white
+                            : "#ffb6c6d5".hexToColor)
+                        .withValues(alpha: 0.6),
+                    borderRadius: BorderRadius.circular(10.dp),
+                  ),
+                ),
+              );
+            }, growable: false),
+          ),
+        ),
+      ],
     );
   }
 }
