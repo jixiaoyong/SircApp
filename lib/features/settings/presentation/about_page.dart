@@ -7,6 +7,7 @@ import '../../../core/localization/app_locale.dart';
 import '../../../gen_a/A.dart';
 import '../../../utils/size_extension.dart';
 import '../../../widgets/one_title_with_back_button_appbar.dart';
+import '../../../widgets/settings_item_tile.dart';
 import 'package:embed_webview/embed_webview.dart';
 import '../../../widgets/webview/webview_page.dart';
 
@@ -115,23 +116,35 @@ class AboutPage extends ConsumerWidget {
                 ),
               ),
             ),
-            buildItemWidget(
-              Icons.link_outlined,
-              "Github",
-              "https://github.com/jixiaoyong",
-              () => openUrl(context, "https://github.com/jixiaoyong"),
-            ),
-            buildItemWidget(
-              Icons.rocket_outlined,
-              "Blog",
-              "https://jixiaoyong.github.io",
-              () => openUrl(context, "https://jixiaoyong.github.io"),
-            ),
-            buildItemWidget(
-              Icons.email_outlined,
-              "Email",
-              "jixiaoyong1995@gmail.com",
-              () => openUrl(context, "mailto:jixiaoyong1995@gmail.com"),
+            Material(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(10.dp),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: [
+                  SettingsItemTile(
+                    icon: Icons.link_outlined,
+                    title: "Github",
+                    subtitle: "https://github.com/jixiaoyong",
+                    onTap: () =>
+                        openUrl(context, "https://github.com/jixiaoyong"),
+                  ),
+                  SettingsItemTile(
+                    icon: Icons.rocket_outlined,
+                    title: "Blog",
+                    subtitle: "https://jixiaoyong.github.io",
+                    onTap: () =>
+                        openUrl(context, "https://jixiaoyong.github.io"),
+                  ),
+                  SettingsItemTile(
+                    icon: Icons.email_outlined,
+                    title: "Email",
+                    subtitle: "jixiaoyong1995@gmail.com",
+                    onTap: () =>
+                        openUrl(context, "mailto:jixiaoyong1995@gmail.com"),
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 30.dp),
             Padding(
@@ -151,51 +164,6 @@ class AboutPage extends ConsumerWidget {
                   );
                 },
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildItemWidget(
-    IconData icon,
-    String title,
-    String content,
-    GestureTapCallback? onTap,
-  ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10.dp),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(5.dp),
-              ),
-              padding: EdgeInsets.all(5.dp),
-              child: Icon(icon),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 10.dp),
-              child: Text(title),
-            ),
-            Expanded(
-              child: Text(
-                content,
-                textAlign: TextAlign.end,
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 10.dp,
             ),
           ],
         ),

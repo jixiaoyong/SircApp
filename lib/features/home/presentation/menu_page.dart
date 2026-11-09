@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/auth/data/auth_repository.dart';
 import 'package:sirc/routes/app_routes.dart';
+import 'package:sirc/widgets/settings_item_tile.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/title_text.dart';
 
@@ -113,21 +114,11 @@ class MenuPage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(10.dp),
                     elevation: 5,
                     shadowColor: Colors.grey.withValues(alpha: 0.5),
-                    child: ListTile(
-                      minVerticalPadding: 12.dp,
-                      title: Text(item.$2),
-                      leading: Container(
-                        height: 50.dp,
-                        width: 50.dp,
-                        decoration: BoxDecoration(
-                          color: iconBgColor.withValues(alpha: 0.5),
-                          borderRadius: BorderRadius.circular(50.dp),
-                        ),
-                        child: Icon(
-                          item.$1,
-                          color: Colors.white,
-                        ),
-                      ),
+                    clipBehavior: Clip.antiAlias,
+                    child: SettingsItemTile(
+                      icon: item.$1,
+                      title: item.$2,
+                      iconBackgroundColor: iconBgColor.withValues(alpha: 0.5),
                       trailing: isFingerprint
                           ? CupertinoSwitch(
                               value: isFingerprintOpen,

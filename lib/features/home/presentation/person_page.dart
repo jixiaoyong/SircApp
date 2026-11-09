@@ -11,6 +11,7 @@ import 'package:sirc/utils/number_extension.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
+import 'package:sirc/widgets/settings_item_tile.dart';
 
 /// 个人中心页面，用户信息展示、流水列表与通用信息
 class PersonPage extends ConsumerStatefulWidget {
@@ -221,59 +222,38 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                     ),
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TitleText(text: Languages.generalInformation),
-                    ...generalInformationList.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final item = entry.value;
+                child: Material(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15.dp),
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TitleText(text: Languages.generalInformation),
+                      ...generalInformationList.asMap().entries.expand((entry) {
+                        final index = entry.key;
+                        final item = entry.value;
 
-                      return GestureDetector(
-                        onTap: () {
-                          context.push(AppRoutes.ABOUT);
-                        },
-                        child: Container(
-                          color: Colors.transparent,
-                          padding: EdgeInsets.symmetric(
-                            vertical: 10.dp,
-                            horizontal: 20.dp,
+                        return [
+                          SettingsItemTile(
+                            icon: item.$1,
+                            title: item.$2,
+                            onTap: () {
+                              context.push(AppRoutes.ABOUT);
+                            },
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade200,
-                                      borderRadius:
-                                          BorderRadius.circular(5.dp),
-                                    ),
-                                    padding: EdgeInsets.all(5.dp),
-                                    child: Icon(item.$1),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 10.dp),
-                                    child: Text(item.$2),
-                                  ),
-                                  const Spacer(),
-                                  const Icon(Icons.arrow_forward_ios_rounded),
-                                ],
-                              ),
-                              if (index != generalInformationList.length - 1)
-                                Container(
-                                  height: 1,
-                                  margin: EdgeInsets.only(top: 10.dp),
-                                  color: Colors.grey.withValues(alpha: 0.2),
-                                ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
-                  ],
+                          if (index != generalInformationList.length - 1)
+                            Divider(
+                              height: 1,
+                              thickness: 1,
+                              indent: 20.dp,
+                              endIndent: 20.dp,
+                              color: Colors.grey.withValues(alpha: 0.2),
+                            ),
+                        ];
+                      }),
+                    ],
+                  ),
                 ),
               ),
             ],
