@@ -233,6 +233,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.2"
+  cupertino_ui:
+    dependency: transitive
+    description:
+      name: cupertino_ui
+      sha256: "369e39a1c5c030a6212589c3da1809920b1c2cfade7b02aade7695bfa4b88c3a"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.6"
   custom_lint:
     dependency: "direct dev"
     description:
@@ -273,6 +281,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.0"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: ea36e500cbf0ec18361deabca755434f73e42fe53c5130021c7e2d6b5ebe1702
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "3.0.0"
   extended_image:
     dependency: "direct main"
     description:
@@ -355,14 +371,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.1.0"
-  flutter_screenutil:
+  flutter_screenutil_plus:
     dependency: "direct main"
     description:
-      name: flutter_screenutil
-      sha256: "8239210dd68bee6b0577aa4a090890342d04a136ce1c81f98ee513fc0ce891de"
-      url: "https://pub.flutter-io.cn"
+      name: flutter_screenutil_plus
+      sha256: b5e3820a93f332d8079579df7df39bfc2734c6bfadc00114ecdc6a037b961617
+      url: "https://pub.dev"
     source: hosted
-    version: "5.9.3"
+    version: "2.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -589,6 +605,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.13.0"
+  material_ui:
+    dependency: transitive
+    description:
+      name: material_ui
+      sha256: a30f5d0625b6b83770f53ca3f7aafd6fd9d147cb3853f54a70668541046fe5d6
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.10.0"
   meta:
     dependency: transitive
     description:

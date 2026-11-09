@@ -6,6 +6,7 @@ import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/data/common_data.dart';
 import 'package:sirc/features/home/presentation/menu_page.dart';
+import 'package:sirc/features/settings/controllers/settings_controller.dart';
 import 'package:sirc/features/settings/presentation/initial_page.dart';
 
 void main() {
@@ -16,7 +17,7 @@ void main() {
     prefs = await SharedPreferences.getInstance();
   });
 
-  for (final width in [320.0, 1440.0]) {
+  for (final width in [320.0, 375.0, 430.0, 1461.0]) {
     testWidgets('引导末页按钮在宽度 $width 时居中并保留边距', (tester) async {
       tester.view.physicalSize = Size(width, 900);
       tester.view.devicePixelRatio = 1;
@@ -35,8 +36,28 @@ void main() {
       );
       await tester.pumpAndSettle();
       final pageView = tester.widget<PageView>(find.byType(PageView));
-      pageView.controller!.jumpToPage(2);
-      await tester.pumpAndSettle();
+      final tips = InitialState.initialTips;
+      for (var index = 0; index < tips.length; index++) {
+        final title = find.text(tips[index].$2);
+        expect(title.hitTestable(), findsOneWidget);
+        final image = find.byWidgetPredicate(
+          (widget) =>
+              widget is Image &&
+              widget.image is AssetImage &&
+              (widget.image as AssetImage).assetName == tips[index].$1,
+        );
+        expect(tester.getRect(image).center.dx, closeTo(width / 2, 0.01));
+        expect(tester.getRect(image).top, greaterThanOrEqualTo(0));
+        expect(tester.takeException(), isNull);
+        if (index < tips.length - 1) {
+          final next = find.byIcon(Icons.arrow_forward_rounded).hitTestable();
+          expect(next, findsOneWidget);
+          expect(tester.getRect(next).center.dx, closeTo(width / 2, 0.01));
+          await tester.tap(next);
+          await tester.pumpAndSettle();
+          expect(pageView.controller!.page, index + 1);
+        }
+      }
 
       final button = find
           .ancestor(
@@ -45,10 +66,15 @@ void main() {
           )
           .first;
       final rect = tester.getRect(button);
-      expect(rect.width, lessThanOrEqualTo(360));
+      expect(rect.width, (width - 100).clamp(0, 360));
+      expect(rect.height, 50);
       expect(rect.center.dx, closeTo(width / 2, 0.01));
-      expect(rect.left, greaterThanOrEqualTo(20));
-      expect(width - rect.right, greaterThanOrEqualTo(20));
+      expect(rect.left, greaterThanOrEqualTo(50));
+      expect(width - rect.right, greaterThanOrEqualTo(50));
+      expect(rect.bottom, lessThanOrEqualTo(900));
+      final subtitleRect = tester.getRect(find.text(tips.last.$3));
+      expect(rect.top - subtitleRect.bottom, closeTo(30, 0.01));
+      expect(MediaQuery.sizeOf(tester.element(button)).width, width);
       expect(tester.takeException(), isNull);
     });
 
@@ -76,7 +102,10 @@ void main() {
         final leadingRect = tester.getRect(leading);
         final titleRect = tester.getRect(find.byWidget(tile.title!));
         final trailingRect = tester.getRect(
-          find.descendant(of: tileFinder, matching: find.byWidget(tile.trailing!)),
+          find.descendant(
+            of: tileFinder,
+            matching: find.byWidget(tile.trailing!),
+          ),
         );
         expect(tileRect.height, greaterThanOrEqualTo(88));
         expect(leadingRect.size, const Size(40, 40));
