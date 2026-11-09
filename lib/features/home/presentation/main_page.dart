@@ -75,49 +75,68 @@ class _MainPageState extends ConsumerState<MainPage> {
       const MenuPage(),
     ];
 
+    final isWideLayout = MediaQuery.sizeOf(context).width >= 840;
+    final navigationItems = [
+      (Icons.home_outlined, Languages.home.title),
+      (Icons.account_balance_wallet_outlined, Languages.wallet.title),
+      (Icons.av_timer_outlined, Languages.history),
+      (Icons.person_outline_outlined, Languages.person),
+      (Icons.menu_outlined, Languages.menu),
+    ];
+
+    void selectTab(int index) {
+      ref.read(navigationControllerProvider.notifier).changeIndex(index);
+      if (kIsWeb && index < _tabRoutes.length) {
+        SystemNavigator.routeInformationUpdated(
+          uri: Uri.parse(_tabRoutes[index]),
+        );
+      }
+    }
+
+    final navigation = isWideLayout
+        ? NavigationRail(
+            selectedIndex: currentIndex,
+            onDestinationSelected: selectTab,
+            labelType: NavigationRailLabelType.all,
+            destinations: navigationItems
+                .map((item) => NavigationRailDestination(
+                      icon: Icon(item.$1),
+                      label: Text(item.$2),
+                    ))
+                .toList(),
+          )
+        : null;
+
     return SlideMenuPage(
       screenWidth: CommonData.realScreenWidth,
       child: Scaffold(
-        body: IndexedStack(
-          index: currentIndex,
-          children: homePages,
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.home_outlined),
-              label: Languages.home.title,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.account_balance_wallet_outlined),
-              label: Languages.wallet.title,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.av_timer_outlined),
-              label: Languages.history,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.person_outline_outlined),
-              label: Languages.person,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.menu_outlined),
-              label: Languages.menu,
+        body: Row(
+          children: [
+            if (navigation != null) navigation,
+            Expanded(
+              child: IndexedStack(
+                index: currentIndex,
+                children: homePages,
+              ),
             ),
           ],
-          onTap: (index) {
-            ref.read(navigationControllerProvider.notifier).changeIndex(index);
-            if (kIsWeb && index < _tabRoutes.length) {
-              SystemNavigator.routeInformationUpdated(
-                uri: Uri.parse(_tabRoutes[index]),
-              );
-            }
-          },
-          currentIndex: currentIndex,
-          selectedItemColor: Theme.of(context).primaryColorDark,
-          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-          unselectedItemColor: Theme.of(context).primaryColorLight,
         ),
+        bottomNavigationBar: isWideLayout
+            ? null
+            : BottomNavigationBar(
+                items: navigationItems
+                    .map((item) => BottomNavigationBarItem(
+                          icon: Icon(item.$1),
+                          label: item.$2,
+                        ))
+                    .toList(),
+                onTap: selectTab,
+                currentIndex: currentIndex,
+                selectedItemColor: Theme.of(context).primaryColorDark,
+                selectedLabelStyle:
+                    const TextStyle(fontWeight: FontWeight.bold),
+                unselectedItemColor: Theme.of(context).primaryColorLight,
+              ),
       ),
     );
   }

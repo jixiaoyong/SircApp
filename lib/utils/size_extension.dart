@@ -1,5 +1,3 @@
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 /*
 * @description: extension class
 * @author: jixiaoyong
@@ -7,21 +5,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 * @date: 22/04/17
 */
 extension SizeExtension on num {
+  // 保留兼容现有初始化代码；逻辑像素不再使用屏幕缩放系数。
   static double dpScale = 1;
 
-  /// 屏幕适配
-  /// 控件大小适配
-  /// 需要将设计稿宽度设置为375，然后导入本拓展，直接使用设计稿中的宽高值.dp即可
-  /// import 'package:project/utils/size_extension.dart';
-  double get dp {
-    return w * dpScale;
-  }
+  /// Flutter 逻辑像素，不随窗口宽度缩放。
+  /// 用于控件尺寸和间距；自适应宽度应由父级布局约束决定。
+  double get dp => toDouble();
 
-  /// 屏幕适配
-  /// 字体大小适配
-  /// 需要将设计稿宽度设置为375，然后导入本拓展，直接使用设计稿中的字体大小.sp即可
-  /// import 'package:project/utils/size_extension.dart';
-  double get sp {
-    return ScreenUtil().setSp(this) * dpScale;
-  }
+  /// 字体逻辑尺寸，不随窗口宽度缩放。
+  /// 系统的无障碍字体缩放仍由 Text / MediaQuery 正常处理。
+  double get sp => toDouble();
 }

@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/features/auth/data/auth_repository.dart';
 import 'package:sirc/routes/app_routes.dart';
+import 'package:sirc/widgets/settings_item_tile.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/title_text.dart';
 
@@ -70,22 +72,30 @@ class MenuPage extends ConsumerWidget {
                     onTap: () {
                       context.push(AppRoutes.NOTIFICATIONS);
                     },
-                    child: Stack(
-                      children: [
-                        const Icon(Icons.notifications_outlined),
-                        Positioned(
-                          top: 5.dp,
-                          right: 1.dp,
-                          child: Container(
-                            height: 8.dp,
-                            width: 8.dp,
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(10.dp),
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: Stack(
+                        children: [
+                          const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: Icon(Icons.notifications_outlined),
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -104,75 +114,64 @@ class MenuPage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(10.dp),
                     elevation: 5,
                     shadowColor: Colors.grey.withValues(alpha: 0.5),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12.dp),
-                      child: ListTile(
-                        title: Text(item.$2),
-                        leading: Container(
-                          height: 50.dp,
-                          width: 50.dp,
-                          decoration: BoxDecoration(
-                            color: iconBgColor.withValues(alpha: 0.5),
-                            borderRadius: BorderRadius.circular(50.dp),
-                          ),
-                          child: Icon(
-                            item.$1,
-                            color: Colors.white,
-                          ),
-                        ),
-                        trailing: isFingerprint
-                            ? CupertinoSwitch(
-                                value: isFingerprintOpen,
-                                onChanged: (v) {
-                                  ref
-                                      .read(fingerprintEnabledProvider.notifier)
-                                      .state = v;
-                                },
-                              )
-                            : const Icon(Icons.keyboard_arrow_right),
-                        onTap: () {
-                          if (isFingerprint) {
-                            ref
-                                .read(fingerprintEnabledProvider.notifier)
-                                .update((val) => !val);
-                          } else if (AppRoutes.LOGOUT == item.$3) {
-                            showDialog(
-                              context: context,
-                              builder: (dialogContext) => AlertDialog(
-                                title: Text(Languages.logout),
-                                content: Text(Languages.sureToLogout),
-                                actions: [
-                                  OutlinedButton(
-                                    child: Text(Languages.cancel),
-                                    onPressed: () {
+                    clipBehavior: Clip.antiAlias,
+                    child: SettingsItemTile(
+                      icon: item.$1,
+                      title: item.$2,
+                      iconBackgroundColor: iconBgColor.withValues(alpha: 0.5),
+                      trailing: isFingerprint
+                          ? CupertinoSwitch(
+                              value: isFingerprintOpen,
+                              onChanged: (v) {
+                                ref
+                                    .read(fingerprintEnabledProvider.notifier)
+                                    .state = v;
+                              },
+                            )
+                          : const Icon(Icons.keyboard_arrow_right),
+                      onTap: () {
+                        if (isFingerprint) {
+                          ref
+                              .read(fingerprintEnabledProvider.notifier)
+                              .update((val) => !val);
+                        } else if (AppRoutes.LOGOUT == item.$3) {
+                          showDialog(
+                            context: context,
+                            builder: (dialogContext) => AlertDialog(
+                              title: Text(Languages.logout),
+                              content: Text(Languages.sureToLogout),
+                              actions: [
+                                OutlinedButton(
+                                  child: Text(Languages.cancel),
+                                  onPressed: () {
+                                    Navigator.of(dialogContext).pop();
+                                  },
+                                ),
+                                OutlinedButton(
+                                  child: Text(
+                                    Languages.logoutAndCleanData,
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
+                                  onPressed: () async {
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    await prefs.clear();
+                                    if (dialogContext.mounted) {
                                       Navigator.of(dialogContext).pop();
-                                    },
-                                  ),
-                                  OutlinedButton(
-                                    child: Text(
-                                      Languages.logoutAndCleanData,
-                                      style: const TextStyle(color: Colors.red),
-                                    ),
-                                    onPressed: () async {
-                                      final prefs =
-                                          await SharedPreferences.getInstance();
-                                      await prefs.clear();
-                                      if (dialogContext.mounted) {
-                                        Navigator.of(dialogContext).pop();
-                                      }
-                                      if (context.mounted) {
-                                        context.go(AppRoutes.INITIAL);
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ),
-                            );
-                          } else {
-                            context.push(item.$3);
-                          }
-                        },
-                      ),
+                                    }
+                                    // 清空持久化后仍需发布登出通知，由统一守卫回到登录页。
+                                    await ref
+                                        .read(authRepositoryProvider)
+                                        .logout();
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          context.push(item.$3);
+                        }
+                      },
                     ),
                   ),
                 );

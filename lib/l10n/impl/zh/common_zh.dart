@@ -25,7 +25,7 @@ class CommonZh implements CommonLang {
   String get others => '其他';
 
   @override
-  String get something => '某些东西';
+  String get something => '某件事';
 
   @override
   String get notFound => '页面未找到';
