@@ -58,7 +58,6 @@ class _InitialPageState extends ConsumerState<InitialPage> {
     final isFirst = state.isFirstInitial;
     final tips = InitialState.initialTips;
     final initialInfoLength = tips.length;
-    final screenHeight = MediaQuery.of(context).size.height;
 
     return Material(
       child: isFirst
@@ -73,115 +72,139 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                   return Container(
                     color: Colors.white,
                     padding: EdgeInsets.only(
-                      top: screenHeight * 0.1,
                       right: 20.dp,
                       left: 20.dp,
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          imagePath,
-                          height: screenHeight * 0.4,
-                          fit: BoxFit.cover,
-                        ),
-                        SizedBox(
-                          height: 10.dp,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: initialInfoLength,
-                            itemBuilder: (context, subIndex) {
-                              return Container(
-                                margin: EdgeInsets.symmetric(horizontal: 5.dp),
-                                height: 10.dp,
-                                width: 10.dp,
-                                decoration: BoxDecoration(
-                                  color: subIndex == index
-                                      ? Colors.deepPurpleAccent
-                                      : Colors.grey,
-                                  borderRadius: BorderRadius.circular(10.dp),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final viewportHeight = constraints.maxHeight;
+                        final imageHeight = (viewportHeight * 0.36)
+                            .clamp(0.0, 360.0)
+                            .toDouble();
+
+                        return SingleChildScrollView(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: viewportHeight,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                  imagePath,
+                                  height: imageHeight,
+                                  fit: BoxFit.contain,
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-                        TitleText(text: title),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.dp),
-                          child: Text(
-                            subtitle,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.grey[500],
-                              fontSize: 15.sp,
-                              height: 1.5,
+                                SizedBox(
+                                  height: 10.dp,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: initialInfoLength,
+                                    itemBuilder: (context, subIndex) {
+                                      return Container(
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 5.dp),
+                                        height: 10.dp,
+                                        width: 10.dp,
+                                        decoration: BoxDecoration(
+                                          color: subIndex == index
+                                              ? Colors.deepPurpleAccent
+                                              : Colors.grey,
+                                          borderRadius:
+                                              BorderRadius.circular(10.dp),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                TitleText(text: title),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 20.dp),
+                                  child: Text(
+                                    subtitle,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.grey[500],
+                                      fontSize: 15.sp,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                ),
+                                initialInfoLength - 1 != index
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          _pageController.nextPage(
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                            curve: Curves.easeInOut,
+                                          );
+                                        },
+                                        child: Container(
+                                          height: 50.dp,
+                                          width: 50.dp,
+                                          margin: EdgeInsets.only(top: 30.dp),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(25.dp),
+                                            gradient: const LinearGradient(
+                                              colors: [
+                                                Colors.purple,
+                                                Colors.deepPurpleAccent,
+                                              ],
+                                            ),
+                                          ),
+                                          child: const Icon(
+                                            Icons.arrow_forward_rounded,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      )
+                                    : GestureDetector(
+                                        onTap: () {
+                                          ref
+                                              .read(initialControllerProvider
+                                                  .notifier)
+                                              .goMainPage(context);
+                                        },
+                                        child: Container(
+                                          height: 50.dp,
+                                          width: CommonData.realScreenWidth -
+                                              60.dp,
+                                          margin: EdgeInsets.fromLTRB(
+                                            30.dp,
+                                            30.dp,
+                                            30.dp,
+                                            0,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(15.dp),
+                                            gradient: const LinearGradient(
+                                              colors: [
+                                                Colors.purple,
+                                                Colors.deepPurpleAccent,
+                                              ],
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              Languages.getStart,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20.sp,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                              ],
                             ),
                           ),
-                        ),
-                        initialInfoLength - 1 != index
-                            ? GestureDetector(
-                                onTap: () {
-                                  _pageController.nextPage(
-                                    duration: const Duration(milliseconds: 300),
-                                    curve: Curves.easeInOut,
-                                  );
-                                },
-                                child: Container(
-                                  height: 50.dp,
-                                  width: 50.dp,
-                                  margin: EdgeInsets.only(top: 30.dp),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(25.dp),
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Colors.purple,
-                                        Colors.deepPurpleAccent,
-                                      ],
-                                    ),
-                                  ),
-                                  child: const Icon(
-                                    Icons.arrow_forward_rounded,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              )
-                            : GestureDetector(
-                                onTap: () {
-                                  ref
-                                      .read(initialControllerProvider.notifier)
-                                      .goMainPage(context);
-                                },
-                                child: Container(
-                                  height: 50.dp,
-                                  width: CommonData.realScreenWidth - 60.dp,
-                                  margin: EdgeInsets.fromLTRB(
-                                    30.dp,
-                                    30.dp,
-                                    30.dp,
-                                    0,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15.dp),
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Colors.purple,
-                                        Colors.deepPurpleAccent,
-                                      ],
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      Languages.getStart,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20.sp,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                      ],
+                        );
+                      },
                     ),
                   );
                 },

@@ -9,9 +9,9 @@ import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/router/nav_keys.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/core/theme/app_theme.dart';
+import 'package:sirc/routes/app_router.dart';
 import 'package:sirc/utils/size_extension.dart' as size_ext;
 
-import 'package:sirc/routes/app_router.dart';
 import 'data/common_data.dart';
 
 /// a finance $ banking app
@@ -59,43 +59,28 @@ class MyApp extends ConsumerWidget {
           theme: AppTheme.lightTheme,
           builder: (context, child) {
             final mediaQuery = MediaQuery.of(context);
+            // 使用可用窗口宽度切换布局，不将页面缩放成手机预览画布。
+            const maxContentWidth = 1200.0;
+            const isWeb = kIsWeb;
             final screenWidth = mediaQuery.size.width;
             final screenHeight = mediaQuery.size.height;
+            final appWidth = screenWidth.clamp(0.0, maxContentWidth);
 
-            // 判定是否处于 Web 宽屏模式（宽大于高且宽度超出普通手机 430px）
-            final isWebWideScreen =
-                kIsWeb && (screenWidth > screenHeight && screenWidth > 430);
-
-            // 如果处于 Web 宽屏模式，自适应居中在 360~430 之间；拉窄后自动 100% 满屏无缝展示
-            final double appWidth = isWebWideScreen
-                ? (screenHeight * 9 / 16).clamp(360.0, 430.0)
-                : screenWidth;
-
-            // 实时响应窗口尺寸缩放与内部组件联动
             CommonData.realScreenWidth = appWidth;
-            size_ext.SizeExtension.dpScale = appWidth / screenWidth;
+            size_ext.SizeExtension.dpScale = 1;
 
-            if (isWebWideScreen) {
-              return Scaffold(
-                backgroundColor: const Color(0xFFF1F5F9),
-                body: Center(
-                  child: Container(
-                    width: appWidth,
+            if (isWeb && screenWidth > maxContentWidth) {
+              return ColoredBox(
+                color: const Color(0xFFF1F5F9),
+                child: Center(
+                  child: SizedBox(
+                    width: maxContentWidth,
                     height: screenHeight,
-                    decoration: BoxDecoration(
+                    child: ColoredBox(
                       color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.08),
-                          blurRadius: 24,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: ClipRect(
                       child: MediaQuery(
                         data: mediaQuery.copyWith(
-                          size: Size(appWidth, screenHeight),
+                          size: Size(maxContentWidth, screenHeight),
                         ),
                         child: child ?? const SizedBox(),
                       ),

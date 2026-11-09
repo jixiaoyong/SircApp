@@ -68,7 +68,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
         Navigator.of(context, rootNavigator: true).pop();
       }
 
-      if (previous?.isLoginSuccess != next.isLoginSuccess && next.isLoginSuccess != null) {
+      if (previous?.isLoginSuccess != next.isLoginSuccess &&
+          next.isLoginSuccess != null) {
         if (next.isLoginSuccess == true) {
           Navigator.of(context).pop(true);
         } else {
@@ -100,6 +101,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
 
     final logicScreenHeight =
         MediaQuery.of(context).size.height - kToolbarHeight - 16.dp;
+    final iconSize = 24.dp;
 
     return Scaffold(
       appBar: AppBar(
@@ -141,14 +143,16 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                     hintText: Languages.username,
                     hintStyle: const TextStyle(color: Colors.grey),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Colors.black12, width: 0),
+                      borderRadius: BorderRadius.circular(10.dp),
+                      borderSide:
+                          const BorderSide(color: Colors.black12, width: 0),
                     ),
                     labelText: Languages.username,
                     errorText: state.userNameError,
-                    suffixIcon: const Icon(
+                    suffixIcon: Icon(
                       Icons.person_outline,
                       color: Colors.redAccent,
+                      size: iconSize,
                     ),
                   ),
                   onChanged: (value) {
@@ -175,14 +179,16 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                     hintText: Languages.password,
                     hintStyle: const TextStyle(color: Colors.grey),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Colors.black12, width: 0),
+                      borderRadius: BorderRadius.circular(10.dp),
+                      borderSide:
+                          const BorderSide(color: Colors.black12, width: 0),
                     ),
                     labelText: Languages.password,
                     errorText: state.userPwdError,
-                    suffixIcon: const Icon(
+                    suffixIcon: Icon(
                       Icons.lock_outlined,
                       color: Colors.grey,
+                      size: iconSize,
                     ),
                   ),
                   obscureText: true,
@@ -197,7 +203,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                 children: [
                   GestureDetector(
                     onTap: () async {
-                      final result = await context.push<bool>(AppRoutes.FORGET_PWD);
+                      final result =
+                          await context.push<bool>(AppRoutes.FORGET_PWD);
                       if (true == result && context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -206,7 +213,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(Languages.setPasswordSucceed,
-                                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold)),
                                 Text(Languages.pleaseLoginWithNewPassword),
                               ],
                             ),
@@ -260,6 +268,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                               child: Icon(
                                 item.$1,
                                 color: item.$2,
+                                size: iconSize,
                               ),
                             ),
                           ),

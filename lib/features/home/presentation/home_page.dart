@@ -285,11 +285,13 @@ class HomeTopBodyWidget extends ConsumerWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      NetworkWebImage(
-                        data.imageUrl,
-                        size: Size(40.dp, 40.dp),
-                        fit: BoxFit.fitHeight,
-                        isAvatar: false,
+                      SizedBox.square(
+                        dimension: 40.dp,
+                        child: NetworkWebImage(
+                          data.imageUrl,
+                          fit: BoxFit.contain,
+                          isAvatar: false,
+                        ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 2.dp),
