@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/features/auth/data/auth_repository.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/title_text.dart';
@@ -167,9 +168,10 @@ class MenuPage extends ConsumerWidget {
                                     if (dialogContext.mounted) {
                                       Navigator.of(dialogContext).pop();
                                     }
-                                    if (context.mounted) {
-                                      context.go(AppRoutes.INITIAL);
-                                    }
+                                    // 清空持久化后仍需发布登出通知，由统一守卫回到登录页。
+                                    await ref
+                                        .read(authRepositoryProvider)
+                                        .logout();
                                   },
                                 ),
                               ],
