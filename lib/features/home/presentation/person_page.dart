@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/core/localization/transaction_localization.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/routes/app_routes.dart';
@@ -114,7 +115,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                   itemCount: _moneyOperateList.length,
                   itemBuilder: (context, index) {
                     final heroTag = "heroTag_$index";
-                    final data = _moneyOperateList[index];
+                    final data = _moneyOperateList[index].localizedPlaceholders;
                     final isSelected = _selectedMoneyIndex == index;
                     final textColor = isSelected ? Colors.white : Colors.black;
 

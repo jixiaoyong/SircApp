@@ -589,7 +589,7 @@ class Languages {
   ///- [en_US] Others
   static String get others => common.others;
 
-  ///- [zh_CN] 某些东西
+  ///- [zh_CN] 某件事
   ///- [en_US] Something
   static String get something => common.something;
 
@@ -904,7 +904,7 @@ class Languages {
       "Menu": "菜单",
       "Category": "类别",
       "Others": "其他",
-      "Something": "某些东西",
+      "Something": "某件事",
       "Not Found": "页面未找到",
       "Go to Home": "返回首页",
     },
