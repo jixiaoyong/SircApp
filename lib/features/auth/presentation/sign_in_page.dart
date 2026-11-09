@@ -71,7 +71,11 @@ class _SignInPageState extends ConsumerState<SignInPage> {
       if (previous?.isLoginSuccess != next.isLoginSuccess &&
           next.isLoginSuccess != null) {
         if (next.isLoginSuccess == true) {
-          Navigator.of(context).pop(true);
+          if (context.canPop()) {
+            context.pop(true);
+          } else {
+            context.go(AppRoutes.MAIN);
+          }
         } else {
           showDialog(
             context: context,

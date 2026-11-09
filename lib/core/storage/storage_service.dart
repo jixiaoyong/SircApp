@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/common_keys.dart';
@@ -6,7 +7,7 @@ import '../../data/common_keys.dart';
 final sharedPreferencesProvider = Provider<SharedPreferences?>((ref) => null);
 
 /// 本地持久化服务封装，支持 SharedPreferences 与单测内存缓存双模式
-class StorageService {
+class StorageService extends ChangeNotifier {
   final SharedPreferences? _prefs;
 
   StorageService([this._prefs]);
@@ -22,6 +23,7 @@ class StorageService {
       _prefs?.getBool(CommonKeys.IS_LOGIN_SUCCESS) ?? false;
   Future<bool> setLoginSuccess(bool value) async {
     final result = await _prefs?.setBool(CommonKeys.IS_LOGIN_SUCCESS, value);
+    notifyListeners();
     return result ?? true;
   }
 
@@ -51,11 +53,14 @@ class StorageService {
 
   Future<bool> clearUser() async {
     await _prefs?.remove(CommonKeys.IS_LOGIN_SUCCESS);
+    notifyListeners();
     return true;
   }
 }
 
 final storageServiceProvider = Provider<StorageService>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
-  return StorageService(prefs);
+  final storage = StorageService(prefs);
+  ref.onDispose(storage.dispose);
+  return storage;
 });

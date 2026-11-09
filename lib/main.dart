@@ -46,7 +46,7 @@ class MyApp extends ConsumerWidget {
       designSize: const Size(375, 666),
       builder: (context, _) {
         return MaterialApp.router(
-          routerConfig: appRouter,
+          routerConfig: ref.watch(appRouterProvider),
           scaffoldMessengerKey: rootScaffoldMessengerKey,
           title: "Sirc App",
           localizationsDelegates: const [
