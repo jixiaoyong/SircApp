@@ -24,6 +24,11 @@ abstract class AppRoutes {
   static const ADD_CARD_SEGMENT = "add-card";
   static const TRANSACTION_SEGMENT = "transaction";
 
+  static const PERSON_EMAIL = "$PERSON/email";
+  static const PERSON_PHONE = "$PERSON/phone";
+  static const PERSON_ADDRESS = "$PERSON/address";
+  static const PERSON_CARD = "$PERSON/card";
+
   static const MENU_LANGUAGES = "$MENU/$LANGUAGES_SEGMENT";
   static const MENU_NOTIFICATIONS = "$MENU/$NOTIFICATIONS_SEGMENT";
   static const MENU_PASSWORD = "$MENU/$PASSWORD_SEGMENT";

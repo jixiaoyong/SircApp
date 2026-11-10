@@ -212,10 +212,14 @@ class MenuDetailLayout extends StatefulWidget {
     super.key,
     required this.hasDetail,
     required this.child,
+    this.list = const MenuPage(listOnly: true),
+    this.paneKey = const ValueKey('menu-pane'),
   });
 
   final bool hasDetail;
   final Widget child;
+  final Widget list;
+  final Key paneKey;
 
   @override
   State<MenuDetailLayout> createState() => _MenuDetailLayoutState();
@@ -238,11 +242,7 @@ class _MenuDetailLayoutState extends State<MenuDetailLayout> {
         return Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(
-              key: const ValueKey('menu-pane'),
-              width: paneWidth,
-              child: const MenuPage(listOnly: true),
-            ),
+            SizedBox(key: widget.paneKey, width: paneWidth, child: widget.list),
             SizedBox(
               width: hasDetail ? 1 : 0,
               child: const VerticalDivider(width: 1),

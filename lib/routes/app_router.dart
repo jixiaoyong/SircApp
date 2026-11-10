@@ -152,10 +152,48 @@ GoRouter createAppRouter(
           ),
           StatefulShellBranch(
             routes: [
-              GoRoute(
-                path: AppRoutes.PERSON,
-                builder: (context, state) => const PersonPage(),
-                routes: [_transactionRoute(takeTransactionExtra)],
+              ShellRoute(
+                pageBuilder: (context, state, child) => NoTransitionPage<void>(
+                  key: state.pageKey,
+                  child:
+                      state.uri.path ==
+                          '${AppRoutes.PERSON}/${AppRoutes.TRANSACTION_SEGMENT}'
+                      ? child
+                      : MenuDetailLayout(
+                          hasDetail: state.uri.path != AppRoutes.PERSON,
+                          list: const PersonPage(),
+                          paneKey: const ValueKey('person-pane'),
+                          child: child,
+                        ),
+                ),
+                routes: [
+                  GoRoute(
+                    path: AppRoutes.PERSON,
+                    pageBuilder: (context, state) => NoTransitionPage<void>(
+                      key: state.pageKey,
+                      child: MediaQuery.sizeOf(context).width >= 840
+                          ? const SizedBox.shrink()
+                          : const PersonPage(),
+                    ),
+                    routes: [
+                      for (final field in ['email', 'phone', 'address'])
+                        _menuDetailRoute(
+                          field,
+                          (onBack) => PersonInformationPage(
+                            field: field,
+                            onBack: onBack,
+                          ),
+                          source: AppRoutes.PERSON,
+                        ),
+                      _menuDetailRoute(
+                        'card',
+                        (onBack) => AboutPage(onBack: onBack),
+                        source: AppRoutes.PERSON,
+                      ),
+                      _transactionRoute(takeTransactionExtra),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
@@ -229,8 +267,9 @@ GoRouter createAppRouter(
 
 GoRoute _menuDetailRoute(
   String path,
-  Widget Function(VoidCallback? onBack) buildDetail,
-) => GoRoute(
+  Widget Function(VoidCallback? onBack) buildDetail, {
+  String source = AppRoutes.MENU,
+}) => GoRoute(
   path: path,
   pageBuilder: (context, state) {
     final isWide = MediaQuery.sizeOf(context).width >= 840;
@@ -242,7 +281,7 @@ GoRoute _menuDetailRoute(
                 if (navigator.canPop()) {
                   navigator.pop();
                 } else {
-                  detailContext.go(AppRoutes.MENU);
+                  detailContext.go(source);
                 }
               }
             : null,

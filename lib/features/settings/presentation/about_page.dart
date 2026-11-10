@@ -3,13 +3,16 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../../core/localization/app_locale.dart';
 import '../../../gen_a/A.dart';
 import '../../../routes/app_routes.dart';
 import '../../../utils/size_extension.dart';
 import '../../../widgets/one_title_with_back_button_appbar.dart';
 import '../../../widgets/settings_item_tile.dart';
+
 import 'package:embed_webview/embed_webview.dart';
+
 import '../../../widgets/webview/webview_page.dart';
 
 /*
@@ -20,7 +23,9 @@ import '../../../widgets/webview/webview_page.dart';
 * @date: 22/04/25 (Refactored to Riverpod 2.x)
 */
 class AboutPage extends ConsumerWidget {
-  const AboutPage({super.key});
+  const AboutPage({super.key, this.onBack});
+
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,6 +37,7 @@ class AboutPage extends ConsumerWidget {
     return Scaffold(
       appBar: OneTitleWithBackButtonAppBar(
         title: Languages.about,
+        onBack: onBack,
       ),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(
@@ -70,50 +76,43 @@ class AboutPage extends ConsumerWidget {
                           text: "Github.com/jixiaoyong/SircApp",
                           recognizer: TapGestureRecognizer()
                             ..onTap = () => openUrl(
-                                  context,
-                                  "https://github.com/jixiaoyong/SircApp",
-                                ),
+                              context,
+                              "https://github.com/jixiaoyong/SircApp",
+                            ),
                           style: const TextStyle(color: Colors.blue),
                         ),
                       ],
                     ),
                     const TextSpan(
-                      text:
-                          ", supporting Android, iOS, and Web platforms.\nYou can try the online version: ",
+                      text: ", supporting Android, iOS, and Web platforms.\nYou can try the online version: ",
                     ),
                     TextSpan(
                       text: "jixiaoyong.github.io/SircApp",
                       recognizer: TapGestureRecognizer()
                         ..onTap = () => openUrl(
-                              context,
-                              "https://jixiaoyong.github.io/SircApp",
-                            ),
+                          context,
+                          "https://jixiaoyong.github.io/SircApp",
+                        ),
                       style: const TextStyle(color: Colors.blue),
                     ),
                     const TextSpan(
-                      text:
-                          "\n\nIt is developed by jixiaoyong. The design is based on ",
+                      text: "\n\nIt is developed by jixiaoyong. The design is based on ",
                     ),
                     TextSpan(
                       text: "a picture ",
                       recognizer: TapGestureRecognizer()
                         ..onTap = () => openUrl(
-                              context,
-                              "https://huaban.com/pins/4619822724",
-                            ),
+                          context,
+                          "https://huaban.com/pins/4619822724",
+                        ),
                       style: const TextStyle(color: Colors.blue),
                     ),
-                    const TextSpan(
-                      text: 'found on the internet.',
-                    ),
+                    const TextSpan(text: 'found on the internet.'),
                     const TextSpan(
                       text: '\n\nIf you have any questions, please contact me:',
                     ),
                   ],
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 12.sp, color: Colors.grey),
                 ),
               ),
             ),
@@ -153,15 +152,13 @@ class AboutPage extends ConsumerWidget {
               child: Builder(
                 builder: (context) {
                   final int currentYear = DateTime.now().year;
-                  final String copyrightYear =
-                      currentYear > 2022 ? "2022~$currentYear" : "2022";
+                  final String copyrightYear = currentYear > 2022
+                      ? "2022~$currentYear"
+                      : "2022";
                   return Text(
                     "Copyright (c) $copyrightYear by jixiaoyong, \nAll Rights Reserved.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 12.sp, color: Colors.grey),
                   );
                 },
               ),
