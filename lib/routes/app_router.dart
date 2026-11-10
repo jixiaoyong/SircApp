@@ -121,7 +121,16 @@ GoRouter createAppRouter(
         },
       ),
       StatefulShellRoute.indexedStack(
-        builder: (context, state, shell) => MainPage(navigationShell: shell),
+        builder: (context, state, shell) => MainPage(
+          navigationShell: shell,
+          showBottomNavigation: const {
+            AppRoutes.MAIN,
+            AppRoutes.WALLET,
+            AppRoutes.HISTORY,
+            AppRoutes.PERSON,
+            AppRoutes.MENU,
+          }.contains(state.uri.path),
+        ),
         branches: [
           StatefulShellBranch(
             routes: [

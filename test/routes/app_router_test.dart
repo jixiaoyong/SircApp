@@ -207,6 +207,7 @@ void main() {
           expect(router.routeInformationProvider.value.uri.path, detail.$2);
           expect(find.byType(detail.$3), findsOneWidget);
           expect(tester.element(find.byType(detail.$3)), same(original));
+          expect(find.byType(BottomNavigationBar), findsNothing);
           expect(
             find.byType(PersonPage),
             size.width >= 840 ? findsOneWidget : findsNothing,
@@ -240,6 +241,7 @@ void main() {
         );
         expect(find.byType(PersonPage), findsOneWidget);
         expect(find.byType(detail.$3), findsNothing);
+        expect(find.byType(BottomNavigationBar), findsOneWidget);
         expect(router.canPop(), isFalse);
         expect(tester.takeException(), isNull);
       });
@@ -342,6 +344,7 @@ void main() {
       await finishTransition(tester);
       Future<void> clickTab(IconData icon, String path) async {
         final nav = find.byType(wide ? NavigationRail : BottomNavigationBar);
+        expect(nav, findsOneWidget);
         await tester.tap(
           find.descendant(of: nav, matching: find.byIcon(icon)).first,
         );
@@ -452,11 +455,18 @@ void main() {
       );
       await finishTransition(tester);
       final detailElement = tester.element(find.byType(HistoryDetailsPage));
-      await clickTab(Icons.menu_outlined, AppRoutes.MENU);
-      await clickTab(
-        Icons.account_balance_wallet_outlined,
-        AppRoutes.WALLET_TRANSACTION,
+      expect(
+        find.byType(BottomNavigationBar),
+        findsNothing,
+        reason: '交易详情不应展示底栏',
       );
+      if (wide) {
+        await clickTab(Icons.menu_outlined, AppRoutes.MENU);
+        await clickTab(
+          Icons.account_balance_wallet_outlined,
+          AppRoutes.WALLET_TRANSACTION,
+        );
+      }
       expect(
         identical(
           detailElement,
@@ -881,6 +891,7 @@ void main() {
         expect(router.routeInformationProvider.value.uri.path, detail.$2);
         expect(find.byType(detail.$3), findsOneWidget);
         expect(find.byType(NotFoundPage), findsNothing);
+        expect(find.byType(BottomNavigationBar), findsNothing);
         expect(
           find.byType(MenuPage),
           size.width >= 840 ? findsOneWidget : findsNothing,
@@ -908,6 +919,7 @@ void main() {
       expect(router.routeInformationProvider.value.uri.path, AppRoutes.MENU);
       expect(find.byType(MenuPage), findsOneWidget);
       expect(find.byType(detail.$3), findsNothing);
+      expect(find.byType(BottomNavigationBar), findsOneWidget);
       expect(router.canPop(), isFalse);
       expect(tester.takeException(), isNull);
     });

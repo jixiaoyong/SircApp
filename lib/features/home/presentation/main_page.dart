@@ -8,9 +8,14 @@ import 'package:sirc/utils/toast.dart';
 
 /// 单一主框架；分支页面及返回栈由 StatefulNavigationShell 持有。
 class MainPage extends ConsumerWidget {
-  const MainPage({super.key, required this.navigationShell});
+  const MainPage({
+    super.key,
+    required this.navigationShell,
+    required this.showBottomNavigation,
+  });
 
   final StatefulNavigationShell navigationShell;
+  final bool showBottomNavigation;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -53,7 +58,7 @@ class MainPage extends ConsumerWidget {
             Expanded(child: navigationShell),
           ],
         ),
-        bottomNavigationBar: isWideLayout
+        bottomNavigationBar: isWideLayout || !showBottomNavigation
             ? null
             : BottomNavigationBar(
                 items: navigationItems
