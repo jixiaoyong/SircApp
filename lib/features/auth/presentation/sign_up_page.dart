@@ -5,7 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:sirc/utils/size_extension.dart';
-import 'package:sirc/widgets/title_text.dart';
+import 'package:sirc/features/auth/presentation/sign_up_field.dart';
+import 'package:sirc/widgets/constrained_content.dart';
 
 /*
 * @description: Sign Up Page (Refactored to Riverpod & Clean Architecture)
@@ -43,7 +44,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
         Navigator.of(context, rootNavigator: true).pop();
       }
 
-      if (previous?.isRegisterSuccess != next.isRegisterSuccess && next.isRegisterSuccess != null) {
+      if (previous?.isRegisterSuccess != next.isRegisterSuccess &&
+          next.isRegisterSuccess != null) {
         if (next.isRegisterSuccess == true) {
           // 成功回到 Sign In 页面
           if (Navigator.of(context).canPop()) {
@@ -55,7 +57,10 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(Languages.registerSucceed, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    Languages.registerSucceed,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   Text(Languages.pleaseSignIn),
                 ],
               ),
@@ -85,202 +90,112 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     final state = ref.watch(signUpControllerProvider);
     final notifier = ref.read(signUpControllerProvider.notifier);
 
-    final screenHeight = MediaQuery.of(context).size.height;
     final isLoginInProgress = state.isLoading;
     final isButtonEnabled = !isLoginInProgress && state.isUserInputValid;
-    final marginBetweenFields = screenHeight * 0.05;
+    const marginBetweenFields = 20.0;
+
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final ink = dark ? const Color(0xFFF2F2F2) : const Color(0xFF26282B);
+    final background = dark ? const Color(0xFF181818) : Colors.white;
 
     return Scaffold(
+      backgroundColor: background,
       appBar: AppBar(
-        title: Text(
-          Languages.signUp,
-          style: const TextStyle(color: Colors.black),
-        ),
+        title: Text(Languages.signUp, style: TextStyle(color: ink)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        iconTheme: const IconThemeData(color: Colors.black),
+        systemOverlayStyle: dark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
+        iconTheme: IconThemeData(color: ink),
       ),
-      backgroundColor: Colors.white,
-      body: Container(
-        margin: EdgeInsets.fromLTRB(16.dp, 16.dp, 16.dp, 0),
-        padding: EdgeInsets.fromLTRB(20.dp, 20.dp, 20.dp, 0),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: ConstrainedContent(
+          maxWidth: 520,
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                height: 10.dp,
+              SignUpField(
+                label: Languages.username,
+                errorText: state.userNameError,
+                icon: 'user',
+                enabled: !isLoginInProgress,
+                onChanged: notifier.setUserName,
               ),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.dp),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      offset: Offset(0, 4),
-                      blurRadius: 8,
-                    )
-                  ],
-                  color: Colors.white,
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: Languages.username,
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Colors.black12, width: 0),
-                    ),
-                    labelText: Languages.username,
-                    errorText: state.userNameError,
-                    suffixIcon: const Icon(
-                      Icons.person_outline,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  onChanged: (value) {
-                    notifier.setUserName(value);
-                  },
+              Padding(
+                padding: const EdgeInsets.only(top: marginBetweenFields),
+                child: SignUpField(
+                  label: Languages.emailAddress,
+                  errorText: state.userEmailError,
+                  keyboardType: TextInputType.emailAddress,
+                  enabled: !isLoginInProgress,
+                  onChanged: notifier.setUserEmail,
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(top: marginBetweenFields),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.dp),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      offset: Offset(0, 4),
-                      blurRadius: 8,
-                    )
-                  ],
-                  color: Colors.white,
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: Languages.emailAddress,
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Colors.black12, width: 0),
-                    ),
-                    labelText: Languages.emailAddress,
-                    errorText: state.userEmailError,
-                    suffixIcon: const Icon(
-                      Icons.email_outlined,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  onChanged: (value) {
-                    notifier.setUserEmail(value);
-                  },
+              Padding(
+                padding: const EdgeInsets.only(top: marginBetweenFields),
+                child: SignUpField(
+                  label: Languages.password,
+                  errorText: state.userPwdError,
+                  password: true,
+                  enabled: !isLoginInProgress,
+                  onChanged: notifier.setUserPwd,
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(top: marginBetweenFields),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.dp),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      offset: Offset(0, 4),
-                      blurRadius: 8,
-                    )
-                  ],
-                  color: Colors.white,
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: Languages.password,
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Colors.black12, width: 0),
-                    ),
-                    labelText: Languages.password,
-                    errorText: state.userPwdError,
-                    suffixIcon: const Icon(
-                      Icons.lock_outlined,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  obscureText: true,
-                  keyboardType: TextInputType.visiblePassword,
-                  onChanged: (value) {
-                    notifier.setUserPwd(value);
-                  },
+              Padding(
+                padding: const EdgeInsets.only(top: marginBetweenFields),
+                child: SignUpField(
+                  label: Languages.confirmPassword,
+                  errorText: state.userConfirmPwdError,
+                  password: true,
+                  enabled: !isLoginInProgress,
+                  onChanged: notifier.setUserConfirmPwd,
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(top: marginBetweenFields),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.dp),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      offset: Offset(0, 4),
-                      blurRadius: 8,
-                    )
-                  ],
-                  color: Colors.white,
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: Languages.confirmPassword,
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Colors.black12, width: 0),
-                    ),
-                    labelText: Languages.confirmPassword,
-                    errorText: state.userConfirmPwdError,
-                    suffixIcon: const Icon(
-                      Icons.lock_outlined,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  obscureText: true,
-                  keyboardType: TextInputType.visiblePassword,
-                  onChanged: (value) {
-                    notifier.setUserConfirmPwd(value);
-                  },
-                ),
-              ),
-              GestureDetector(
-                onTap: !isButtonEnabled ? null : () => notifier.register(),
-                child: Container(
-                  height: 50.dp,
-                  margin: EdgeInsets.only(top: 30.dp, bottom: 20.dp),
-                  decoration: !isButtonEnabled
-                      ? BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.dp),
-                          color: Colors.grey[200],
-                          border: Border.all(color: Colors.grey, width: 1),
-                        )
-                      : BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.purple.shade400.withValues(alpha: 0.7),
-                              Colors.deepPurpleAccent.shade400.withValues(alpha: 0.7)
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(8.dp),
-                        ),
-                  child: Center(
-                    child: Text(
-                      Languages.register,
-                      style: TextStyle(
-                        color: !isButtonEnabled ? Colors.grey : Colors.white,
-                        fontSize: 16.dp,
-                        fontWeight: FontWeight.w500,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: ink,
+                      foregroundColor: background,
+                      disabledBackgroundColor: dark
+                          ? const Color(0xFF353535)
+                          : const Color(0xFFE1E1E1),
+                      disabledForegroundColor: dark
+                          ? const Color(0xFFB3B3B3)
+                          : const Color(0xFF666666),
+                      minimumSize: const Size(0, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
+                    onPressed: isButtonEnabled ? notifier.register : null,
+                    child: Text(Languages.register),
                   ),
                 ),
               ),
-              TitleText(text: Languages.orSignUpWith),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 10,
+                ),
+                child: Text(
+                  Languages.orSignUpWith,
+                  style: TextStyle(
+                    color: ink,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
               SizedBox(
                 height: 50.dp,
                 width: double.infinity,
@@ -303,12 +218,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                               borderRadius: BorderRadius.circular(8.dp),
                               border: Border.all(color: item.$2, width: 1),
                             ),
-                            child: Center(
-                              child: Icon(
-                                item.$1,
-                                color: item.$2,
-                              ),
-                            ),
+                            child: Center(child: Icon(item.$1, color: item.$2)),
                           ),
                         );
                       },
@@ -323,12 +233,12 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 child: RichText(
                   text: TextSpan(
                     text: Languages.haveAccount,
-                    style: TextStyle(color: Colors.black, fontSize: 12.dp),
+                    style: TextStyle(color: ink, fontSize: 12.dp),
                     children: [
                       TextSpan(
                         text: " ${Languages.signIn}",
                         style: TextStyle(
-                          color: Colors.purple,
+                          color: ink,
                           fontSize: 12.dp,
                           fontWeight: FontWeight.w500,
                         ),

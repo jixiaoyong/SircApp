@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sirc/utils/size_extension.dart';
+import 'package:sirc/widgets/form_input_decoration.dart';
 
 class CommonTextFiled extends StatelessWidget {
   final String label;
@@ -7,44 +7,37 @@ class CommonTextFiled extends StatelessWidget {
   final TextInputType? keyboardType;
   final String? errorText;
   final int? maxLength;
-
   final String? hint;
+  final TextEditingController? controller;
+  final Widget? suffixIcon;
 
   const CommonTextFiled({
     super.key,
     required this.label,
-    String? hint,
+    this.hint,
     this.onChanged,
     this.keyboardType,
     this.errorText,
     this.maxLength,
-  })  : hint = hint ?? label;
+    this.controller,
+    this.suffixIcon,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.dp),
-          boxShadow: const [
-            BoxShadow(
-                color: Colors.black12, offset: Offset(0, 4), blurRadius: 8)
-          ],
-          color: Colors.white),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: const TextStyle(color: Colors.grey),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: const BorderSide(color: Colors.black12, width: 0),
-          ),
-          labelText: label,
-          errorText: errorText,
-        ),
-        keyboardType: keyboardType,
-        onChanged: onChanged,
-        maxLength: maxLength,
-      ),
+    return TextField(
+      controller: controller,
+      style: Theme.of(context).textTheme.bodyLarge
+          ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+      decoration: formInputDecoration(
+        context,
+        label: label,
+        errorText: errorText,
+        suffixIcon: suffixIcon,
+      ).copyWith(hintText: hint),
+      keyboardType: keyboardType,
+      onChanged: onChanged,
+      maxLength: maxLength,
     );
   }
 }

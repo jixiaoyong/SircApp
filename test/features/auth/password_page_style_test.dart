@@ -30,18 +30,20 @@ void main() {
       expect(fields, findsNWidgets(3));
       final appBarBottom = tester.getRect(find.byType(AppBar)).bottom;
       final firstFieldRect = tester.getRect(fields.first);
-      expect(firstFieldRect.top - appBarBottom, closeTo(10, 0.01));
-      expect(firstFieldRect.left, closeTo(20, 0.01));
+      expect(firstFieldRect.top - appBarBottom, closeTo(20, 0.01));
+      final contentWidth = width.clamp(0.0, 520.0);
+      final contentLeft = (width - contentWidth) / 2 + 20;
+      expect(firstFieldRect.left, closeTo(contentLeft, 0.01));
 
       final buttonFinder = find.byType(FilledButton);
       expect(buttonFinder, findsOneWidget);
       final buttonRect = tester.getRect(buttonFinder);
-      expect(buttonRect.left, closeTo(20, 0.01));
-      expect(buttonRect.width, closeTo(width - 40, 0.01));
+      expect(buttonRect.left, closeTo(contentLeft, 0.01));
+      expect(buttonRect.width, closeTo(contentWidth - 40, 0.01));
       expect(buttonRect.height, closeTo(50, 0.01));
       expect(
         buttonRect.top - tester.getRect(fields.last).bottom,
-        closeTo(50, 0.01),
+        closeTo(24, 0.01),
       );
       final buttonMaterial = tester.widget<Material>(
         find.descendant(of: buttonFinder, matching: find.byType(Material)),

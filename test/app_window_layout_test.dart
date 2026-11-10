@@ -51,7 +51,7 @@ void main() {
       final expectedWidth = width.clamp(0.0, 520.0);
       final fields = find.byType(TextField);
       expect(fields, findsNWidgets(2));
-      expect(tester.getSize(fields.first).width, expectedWidth - 32);
+      expect(tester.getSize(fields.first).width, expectedWidth - 40);
       expect(tester.getRect(fields.first).center.dx, closeTo(width / 2, 0.01));
       expect(tester.widget<ConstrainedContent>(form).maxWidth, expectedWidth);
       expect(24.dp, 24);
@@ -90,7 +90,7 @@ void main() {
       expect(CommonData.realScreenWidth, width);
       final fields = find.byType(TextField);
       expect(fields, findsNWidgets(2));
-      final expectedFieldWidth = width.clamp(0.0, 520.0) - 32;
+      final expectedFieldWidth = width.clamp(0.0, 520.0) - 40;
       for (final field in fields.evaluate()) {
         expect(
           tester.getSize(find.byWidget(field.widget)).width,

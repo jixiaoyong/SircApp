@@ -59,6 +59,7 @@ dependencies:
   url_launcher: ^6.3.0
   logger: ^2.4.0
   flutter_native_splash: ^2.4.1
+  flutter_svg: ^2.3.2
 
 dev_dependencies:
   # ==========================================
