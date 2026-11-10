@@ -1,8 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/widgets/bank_card_widget.dart';
+import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/features/wallet/presentation/card_brand_label.dart';
 
 void main() {
+  late Locale originalLocale;
+  setUp(() {
+    originalLocale = AppLocale.currentLocale;
+    AppLocale.setLocale(const Locale('en', 'US'));
+  });
+  tearDown(() => AppLocale.setLocale(originalLocale));
+
+  testWidgets('已知品牌中英中切换且原始数据和未知品牌不变', (tester) async {
+    final originalTypes = ['Visa', 'MasterCard', 'UnionPay', null];
+    for (final language in ['zh', 'en', 'zh']) {
+      AppLocale.setLocale(Locale(language));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: SingleChildScrollView(
+            child: Column(
+              children: [
+                for (final type in originalTypes)
+                  BankCardWidget(
+                    bankName: 'My Visa Bank',
+                    cardNumber: '12345678',
+                    ownerName: 'OWNER',
+                    expirationDate: '08/29',
+                    cardType: type,
+                    width: 380,
+                  ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(find.text(language == 'zh' ? '维萨卡' : 'Visa'), findsNWidgets(2));
+      expect(
+        find.text(language == 'zh' ? '万事达卡' : 'MasterCard'),
+        findsOneWidget,
+      );
+      expect(find.text('UnionPay'), findsOneWidget);
+      expect(find.text('My Visa Bank'), findsNWidgets(4));
+      expect(
+        tester
+            .widgetList<BankCardWidget>(find.byType(BankCardWidget))
+            .map((card) => card.cardType)
+            .toList(),
+        originalTypes,
+      );
+      expect(cardBrandLabel('  Custom Brand  '), '  Custom Brand  ');
+      expect(cardBrandLabel('mastercard'), Languages.wallet.masterCard);
+      expect(tester.takeException(), isNull);
+    }
+  });
   for (final background in [
     Colors.white,
     const Color(0xFFF1F2F3),

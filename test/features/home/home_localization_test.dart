@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/presentation/home_page.dart';
+import 'package:sirc/features/home/controllers/home_controller.dart';
+import 'package:sirc/widgets/jingang_widget.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 
 class _TestLocaleNotifier extends LocaleNotifier {
@@ -110,6 +112,106 @@ void main() {
       expect(find.text(text), findsOneWidget);
     }
     expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('全部15个快捷入口含翻页随中英中切换且原始标题不变', (tester) async {
+    tester.view.physicalSize = const Size(390, 2200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final container = ProviderContainer(
+      overrides: [
+        localeProvider.overrideWith(_TestLocaleNotifier.new),
+        walletControllerProvider.overrideWith(_EmptyWalletController.new),
+      ],
+    );
+    addTearDown(container.dispose);
+    final original = container
+        .read(homeControllerProvider)
+        .quickActions
+        .map((action) => action.title)
+        .toList();
+    const chinese = [
+      '债券',
+      '账单',
+      '现金',
+      '钱袋',
+      '钱包',
+      '退票',
+      '税务',
+      '采购订单',
+      '付款记录',
+      '用卡',
+      '卡片安全',
+      '卡片正面',
+      '卡片遗失',
+      '信用管理',
+      '商品',
+    ];
+    final english = [...original]
+      ..[11] = 'Card Front Side'
+      ..[12] = 'Card Missing';
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: Consumer(
+          builder: (context, ref, _) => MaterialApp(
+            locale: ref.watch(localeProvider),
+            supportedLocales: AppLocale.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: HomeTopBodyWidget(
+                  homeState: container
+                      .read(homeControllerProvider)
+                      .copyWith(
+                        quickActions: [
+                          for (final title in original) ImgText('', title),
+                        ],
+                      ),
+                  userAvatar: '',
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final grid = find.byWidgetPredicate((widget) => widget is JingangWidget);
+    final pages = find.descendant(of: grid, matching: find.byType(PageView));
+    final controller = tester.widget<PageView>(pages).controller!;
+    for (final language in ['zh', 'en', 'zh']) {
+      container.read(localeProvider.notifier).setLocale(Locale(language));
+      await tester.pumpAndSettle();
+      final expected = language == 'zh' ? chinese : english;
+      controller.jumpToPage(0);
+      await tester.pumpAndSettle();
+      for (final text in expected.take(12)) {
+        expect(
+          find.descendant(of: grid, matching: find.text(text)),
+          findsOneWidget,
+        );
+      }
+      await tester.drag(pages, const Offset(-350, 0));
+      await tester.pumpAndSettle();
+      expect(controller.page, closeTo(1, .01));
+      for (final text in expected.skip(12)) {
+        expect(
+          find.descendant(of: grid, matching: find.text(text)),
+          findsOneWidget,
+        );
+      }
+      expect(
+        container
+            .read(homeControllerProvider)
+            .quickActions
+            .map((action) => action.title)
+            .toList(),
+        original,
+      );
+      expect(tester.takeException(), isNull);
+    }
     await tester.pumpWidget(const SizedBox.shrink());
   });
 

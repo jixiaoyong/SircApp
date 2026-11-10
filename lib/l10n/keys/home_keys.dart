@@ -16,6 +16,22 @@ abstract class HomeLang {
   String get transactionSummary;
   String get localExamples;
 
+  // 快捷入口
+  String get bonds;
+  String get billing;
+  String get cash;
+  String get moneyBag;
+  String get bouncedCheck;
+  String get tax;
+  String get purchaseOrder;
+  String get paymentHistory;
+  String get cardInUse;
+  String get cardSecurity;
+  String get bankCardFrontSide;
+  String get bankCardMissing;
+  String get creditControl;
+  String get commodity;
+
   // 星期
   String get mon;
   String get tues;

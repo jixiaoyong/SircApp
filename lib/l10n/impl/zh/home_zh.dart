@@ -49,6 +49,35 @@ class HomeZh implements HomeLang {
   String get localExamples => '本地示例';
 
   @override
+  String get bonds => '债券';
+  @override
+  String get billing => '账单';
+  @override
+  String get cash => '现金';
+  @override
+  String get moneyBag => '钱袋';
+  @override
+  String get bouncedCheck => '退票';
+  @override
+  String get tax => '税务';
+  @override
+  String get purchaseOrder => '采购订单';
+  @override
+  String get paymentHistory => '付款记录';
+  @override
+  String get cardInUse => '用卡';
+  @override
+  String get cardSecurity => '卡片安全';
+  @override
+  String get bankCardFrontSide => '卡片正面';
+  @override
+  String get bankCardMissing => '卡片遗失';
+  @override
+  String get creditControl => '信用管理';
+  @override
+  String get commodity => '商品';
+
+  @override
   String get mon => '周一';
 
   @override

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/features/wallet/presentation/card_brand_label.dart';
 import 'package:sirc/gen_a/A.dart';
 import 'package:sirc/utils/size_extension.dart';
 
@@ -158,7 +158,7 @@ class BankCardWidget extends StatelessWidget {
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerRight,
                         child: Text(
-                          cardType ?? Languages.visa,
+                          cardBrandLabel(cardType),
                           style: TextStyle(
                             fontSize: 18.sp,
                             color: Colors.white,

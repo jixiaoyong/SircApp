@@ -5,6 +5,7 @@ import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/routes/source_detail_navigation.dart';
 import 'package:sirc/widgets/settings_item_tile.dart';
 
+import 'card_brand_label.dart';
 import 'controllers/wallet_controller.dart';
 import 'wallet_page.dart';
 
@@ -70,7 +71,8 @@ class CardManagementPage extends ConsumerWidget {
                       icon: Icons.credit_card_outlined,
                       title: card.bankName,
                       subtitle: [
-                        if (card.cardType?.isNotEmpty == true) card.cardType!,
+                        if (card.cardType?.isNotEmpty == true)
+                          cardBrandLabel(card.cardType),
                         '•••• ${_lastFour(card.cardNumber)}',
                         card.ownerName,
                       ].join(' · '),

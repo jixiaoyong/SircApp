@@ -455,6 +455,62 @@ class Languages {
   ///- [en_US] Local examples
   static String get localExamples => home.localExamples;
 
+  ///- [zh_CN] 债券
+  ///- [en_US] Bonds
+  static String get bonds => home.bonds;
+
+  ///- [zh_CN] 账单
+  ///- [en_US] Billing
+  static String get billing => home.billing;
+
+  ///- [zh_CN] 现金
+  ///- [en_US] Cash
+  static String get cash => home.cash;
+
+  ///- [zh_CN] 钱袋
+  ///- [en_US] Money Bag
+  static String get moneyBag => home.moneyBag;
+
+  ///- [zh_CN] 退票
+  ///- [en_US] Bounced Check
+  static String get bouncedCheck => home.bouncedCheck;
+
+  ///- [zh_CN] 税务
+  ///- [en_US] Tax
+  static String get tax => home.tax;
+
+  ///- [zh_CN] 采购订单
+  ///- [en_US] Purchase Order
+  static String get purchaseOrder => home.purchaseOrder;
+
+  ///- [zh_CN] 付款记录
+  ///- [en_US] Payment History
+  static String get paymentHistory => home.paymentHistory;
+
+  ///- [zh_CN] 用卡
+  ///- [en_US] Card In Use
+  static String get cardInUse => home.cardInUse;
+
+  ///- [zh_CN] 卡片安全
+  ///- [en_US] Card Security
+  static String get cardSecurity => home.cardSecurity;
+
+  ///- [zh_CN] 卡片正面
+  ///- [en_US] Card Front Side
+  static String get bankCardFrontSide => home.bankCardFrontSide;
+
+  ///- [zh_CN] 卡片遗失
+  ///- [en_US] Card Missing
+  static String get bankCardMissing => home.bankCardMissing;
+
+  ///- [zh_CN] 信用管理
+  ///- [en_US] Credit Control
+  static String get creditControl => home.creditControl;
+
+  ///- [zh_CN] 商品
+  ///- [en_US] Commodity
+  static String get commodity => home.commodity;
+
   ///- [zh_CN] 周一
   ///- [en_US] Mon
   static String get mon => home.mon;
@@ -773,6 +829,20 @@ class Languages {
       "Transactions": "Transactions",
       "Transaction summary": "Transaction summary",
       "Local examples": "Local examples",
+      "Bonds": "Bonds",
+      "Billing": "Billing",
+      "Cash": "Cash",
+      "Money Bag": "Money Bag",
+      "Bounced Check": "Bounced Check",
+      "Tax": "Tax",
+      "Purchase Order": "Purchase Order",
+      "Payment History": "Payment History",
+      "Card In Use": "Card In Use",
+      "Card Security": "Card Security",
+      "Card Front Side": "Card Front Side",
+      "Card Missing": "Card Missing",
+      "Credit Control": "Credit Control",
+      "Commodity": "Commodity",
       "Mon": "Mon",
       "Tues": "Tues",
       "Wed": "Wed",
@@ -929,6 +999,20 @@ class Languages {
       "Transactions": "最近交易",
       "Transaction summary": "交易摘要",
       "Local examples": "本地示例",
+      "Bonds": "债券",
+      "Billing": "账单",
+      "Cash": "现金",
+      "Money Bag": "钱袋",
+      "Bounced Check": "退票",
+      "Tax": "税务",
+      "Purchase Order": "采购订单",
+      "Payment History": "付款记录",
+      "Card In Use": "用卡",
+      "Card Security": "卡片安全",
+      "Card Front Side": "卡片正面",
+      "Card Missing": "卡片遗失",
+      "Credit Control": "信用管理",
+      "Commodity": "商品",
       "Mon": "周一",
       "Tues": "周二",
       "Wed": "周三",

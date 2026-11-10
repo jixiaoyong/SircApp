@@ -85,6 +85,26 @@ class HomeTopBodyWidget extends ConsumerWidget {
 
   final HomeState homeState;
   final String userAvatar;
+
+  String _quickActionLabel(String title) => switch (title) {
+    'Bonds' => Languages.home.bonds,
+    'Billing' => Languages.home.billing,
+    'Cash' => Languages.home.cash,
+    'Money Bag' => Languages.home.moneyBag,
+    'Wallet' => Languages.wallet.wallet,
+    'Bounced Check' => Languages.home.bouncedCheck,
+    'Tax' => Languages.home.tax,
+    'Purchase Order' => Languages.home.purchaseOrder,
+    'Payment History' => Languages.home.paymentHistory,
+    'Card In Use' => Languages.home.cardInUse,
+    'Card Security' => Languages.home.cardSecurity,
+    'Bank Card Front Side' => Languages.home.bankCardFrontSide,
+    'bank card missing' => Languages.home.bankCardMissing,
+    'Credit Control' => Languages.home.creditControl,
+    'Commodity' => Languages.home.commodity,
+    _ => title,
+  };
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(localeProvider);
@@ -121,7 +141,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
                         Padding(
                           padding: EdgeInsets.only(top: 2.dp),
                           child: Text(
-                            data.title,
+                            _quickActionLabel(data.title),
                             overflow: TextOverflow.clip,
                             maxLines: 2,
                             textAlign: TextAlign.center,
