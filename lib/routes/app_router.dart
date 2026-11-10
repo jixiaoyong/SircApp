@@ -161,25 +161,41 @@ GoRouter createAppRouter(
           ),
           StatefulShellBranch(
             routes: [
-              GoRoute(
-                path: AppRoutes.MENU,
-                builder: (context, state) => const MenuPage(),
+              ShellRoute(
+                pageBuilder: (context, state, child) => NoTransitionPage<void>(
+                  key: state.pageKey,
+                  child: MenuDetailLayout(
+                    hasDetail: state.uri.path != AppRoutes.MENU,
+                    child: child,
+                  ),
+                ),
                 routes: [
-                  _menuDetailRoute(
-                    AppRoutes.LANGUAGES_SEGMENT,
-                    const LanguagePage(),
-                  ),
-                  _menuDetailRoute(
-                    AppRoutes.NOTIFICATIONS_SEGMENT,
-                    const NotificationsPage(),
-                  ),
-                  _menuDetailRoute(
-                    AppRoutes.PASSWORD_SEGMENT,
-                    const PasswordPage(),
-                  ),
-                  _menuDetailRoute(
-                    AppRoutes.ADD_CARD_SEGMENT,
-                    const AddCardPage(),
+                  GoRoute(
+                    path: AppRoutes.MENU,
+                    pageBuilder: (context, state) => NoTransitionPage<void>(
+                      key: state.pageKey,
+                      child: MediaQuery.sizeOf(context).width >= 840
+                          ? const SizedBox.shrink()
+                          : const MenuPage(),
+                    ),
+                    routes: [
+                      _menuDetailRoute(
+                        AppRoutes.LANGUAGES_SEGMENT,
+                        (onBack) => LanguagePage(onBack: onBack),
+                      ),
+                      _menuDetailRoute(
+                        AppRoutes.NOTIFICATIONS_SEGMENT,
+                        (onBack) => NotificationsPage(onBack: onBack),
+                      ),
+                      _menuDetailRoute(
+                        AppRoutes.PASSWORD_SEGMENT,
+                        (onBack) => PasswordPage(onBack: onBack),
+                      ),
+                      _menuDetailRoute(
+                        AppRoutes.ADD_CARD_SEGMENT,
+                        (onBack) => AddCardPage(onBack: onBack),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -224,17 +240,27 @@ GoRouter createAppRouter(
   return router;
 }
 
-GoRoute _menuDetailRoute(String path, Widget detail) => GoRoute(
+GoRoute _menuDetailRoute(
+  String path,
+  Widget Function(VoidCallback? onBack) buildDetail,
+) => GoRoute(
   path: path,
-  builder: (context, state) {
-    if (MediaQuery.sizeOf(context).width < 840) return detail;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(width: 360, child: MenuPage(listOnly: true)),
-        const VerticalDivider(width: 1),
-        Expanded(child: detail),
-      ],
+  pageBuilder: (context, state) {
+    if (MediaQuery.sizeOf(context).width < 840) {
+      return MaterialPage<void>(key: state.pageKey, child: buildDetail(null));
+    }
+    return NoTransitionPage<void>(
+      key: state.pageKey,
+      child: Builder(
+        builder: (detailContext) => buildDetail(() {
+          final navigator = Navigator.of(detailContext);
+          if (navigator.canPop()) {
+            navigator.pop();
+          } else {
+            detailContext.go(AppRoutes.MENU);
+          }
+        }),
+      ),
     );
   },
 );

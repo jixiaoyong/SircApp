@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/localization/app_locale.dart';
 import '../../../utils/size_extension.dart';
 import '../../../widgets/network_web_image.dart';
@@ -14,7 +15,9 @@ import '../controllers/settings_controller.dart';
 * @date: 22/04/19 (Refactored to Riverpod 2.x)
 */
 class NotificationsPage extends ConsumerWidget {
-  const NotificationsPage({super.key});
+  const NotificationsPage({super.key, this.onBack});
+
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,6 +31,7 @@ class NotificationsPage extends ConsumerWidget {
     return Scaffold(
       appBar: OneTitleWithBackButtonAppBar(
         title: Languages.notifications,
+        onBack: onBack,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -119,7 +123,10 @@ class NotificationsPage extends ConsumerWidget {
                 final bool isSelected = state.currentExpandIndex == index;
 
                 return Container(
-                  margin: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 5.dp),
+                  margin: EdgeInsets.symmetric(
+                    vertical: 15.dp,
+                    horizontal: 5.dp,
+                  ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.dp),
                     boxShadow: [
@@ -135,7 +142,10 @@ class NotificationsPage extends ConsumerWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10.dp),
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 5.dp),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 15.dp,
+                        horizontal: 5.dp,
+                      ),
                       child: Column(
                         children: [
                           ListTile(
@@ -143,10 +153,7 @@ class NotificationsPage extends ConsumerWidget {
                               backgroundColor: Colors.accents.elementAt(
                                 Colors.accents.length % (3 * index + 3),
                               ),
-                              child: Icon(
-                                icon,
-                                color: Colors.white,
-                              ),
+                              child: Icon(icon, color: Colors.white),
                             ),
                             title: Text(title),
                             trailing: Icon(
@@ -169,7 +176,9 @@ class NotificationsPage extends ConsumerWidget {
                                   leading: Container(
                                     width: 60.dp,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10.dp),
+                                      borderRadius: BorderRadius.circular(
+                                        10.dp,
+                                      ),
                                       color: Colors.blueAccent.withValues(
                                         alpha: 1 / (subIndex + 1),
                                       ),

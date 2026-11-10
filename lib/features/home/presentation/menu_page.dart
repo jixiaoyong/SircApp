@@ -44,6 +44,15 @@ class MenuPage extends ConsumerWidget {
     final target = isWide && !location.startsWith('${AppRoutes.MENU}/')
         ? '${AppRoutes.MENU}$location'
         : location;
+    if (isWide) {
+      final router = GoRouter.of(context);
+      final current = router.routeInformationProvider.value.uri.path;
+      if (current == target) return;
+      if (current.startsWith('${AppRoutes.MENU}/')) {
+        Router.neglect(context, () => router.replace<void>(target));
+        return;
+      }
+    }
     context.push(target);
   }
 
@@ -192,14 +201,47 @@ class MenuPage extends ConsumerWidget {
         ),
       ),
     );
-    if (!isWide || listOnly) return list;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(width: 360, child: list),
-        const VerticalDivider(width: 1),
-        const Expanded(child: SizedBox.shrink()),
-      ],
+    return list;
+  }
+}
+
+/// Menu stays outside the detail Navigator, including when its pane is closed.
+class MenuDetailLayout extends StatelessWidget {
+  const MenuDetailLayout({
+    super.key,
+    required this.hasDetail,
+    required this.child,
+  });
+
+  final bool hasDetail;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (MediaQuery.sizeOf(context).width < 840) return child;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final paneWidth = hasDetail
+            ? (constraints.maxWidth - 1) / 2
+            : constraints.maxWidth;
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(
+              key: const ValueKey('menu-pane'),
+              width: paneWidth,
+              child: const MenuPage(listOnly: true),
+            ),
+            SizedBox(
+              width: hasDetail ? 1 : 0,
+              child: const VerticalDivider(width: 1),
+            ),
+            Expanded(
+              child: Offstage(offstage: !hasDetail, child: child),
+            ),
+          ],
+        );
+      },
     );
   }
 }

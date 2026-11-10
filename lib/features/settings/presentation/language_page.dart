@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/localization/app_locale.dart';
 import '../controllers/settings_controller.dart';
 
@@ -11,24 +12,35 @@ import '../controllers/settings_controller.dart';
 * @date: 22/04/19 (Refactored to Riverpod 2.x)
 */
 class LanguagePage extends ConsumerWidget {
-  const LanguagePage({super.key});
+  const LanguagePage({super.key, this.onBack});
+
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentLocale = ref.watch(localeProvider);
-    final currentTag = currentLocale.countryCode != null && currentLocale.countryCode!.isNotEmpty
+    final currentTag =
+        currentLocale.countryCode != null &&
+            currentLocale.countryCode!.isNotEmpty
         ? '${currentLocale.languageCode}_${currentLocale.countryCode}'
         : currentLocale.languageCode;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(Languages.language, style: const TextStyle(color: Colors.black)),
+        title: Text(
+          Languages.language,
+          style: const TextStyle(color: Colors.black),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: GestureDetector(
           child: const Icon(Icons.arrow_back, color: Colors.black),
           onTap: () {
-            Navigator.of(context).maybePop();
+            if (onBack != null) {
+              onBack!();
+            } else {
+              Navigator.of(context).maybePop();
+            }
           },
         ),
       ),
@@ -41,14 +53,15 @@ class LanguagePage extends ConsumerWidget {
           return ListTile(
             title: Text(item.$1),
             trailing: isSelected
-                ? const Icon(
-                    Icons.check_circle_outline,
-                    color: Colors.green,
-                  )
+                ? const Icon(Icons.check_circle_outline, color: Colors.green)
                 : null,
             onTap: () {
               switchAppLanguage(ref, item.$2);
-              Navigator.of(context).maybePop();
+              if (onBack != null) {
+                onBack!();
+              } else {
+                Navigator.of(context).maybePop();
+              }
             },
           );
         },

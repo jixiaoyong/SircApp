@@ -246,6 +246,215 @@ void main() {
     }
   });
 
+  testWidgets('宽屏无动画分栏保持Menu实例滚动且同级不堆栈', (tester) async {
+    final container = await createContainer(loggedIn: true);
+    final router = createAppRouter(
+      container.read(storageServiceProvider),
+      initialLocation: AppRoutes.MENU,
+    );
+    addTearDown(router.dispose);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1200, 600);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp.router(
+          routerConfig: router,
+          theme: AppTheme.lightTheme,
+        ),
+      ),
+    );
+    await finishTransition(tester);
+    final menu = find.byType(MenuPage);
+    final menuElement = tester.element(menu);
+    final mainElement = tester.element(find.byType(MainPage));
+    final rail = tester.getRect(find.byType(NavigationRail));
+    final full = tester.getRect(find.byType(MenuDetailLayout));
+    final pane = find.byKey(const ValueKey('menu-pane'));
+    expect(tester.getSize(pane).width, full.width);
+    final scroll = find.descendant(of: menu, matching: find.byType(Scrollable));
+    final scrollState = tester.state<ScrollableState>(scroll);
+    expect(scrollState.position.maxScrollExtent, greaterThan(0));
+    scrollState.position.jumpTo(10);
+    await tester.pump();
+    final offset = scrollState.position.pixels;
+    final cases = [
+      (Icons.language_outlined, AppRoutes.MENU_LANGUAGES, LanguagePage),
+      (Icons.lock_outlined, AppRoutes.MENU_PASSWORD, PasswordPage),
+      (Icons.credit_card_outlined, AppRoutes.ADD_CARD, AddCardPage),
+      (
+        Icons.notifications_outlined,
+        AppRoutes.MENU_NOTIFICATIONS,
+        NotificationsPage,
+      ),
+    ];
+    for (final item in cases) {
+      // Exercise the actual handler without ensureVisible altering the scroll offset.
+      if (item.$1 == Icons.notifications_outlined) {
+        final tap = find
+            .ancestor(
+              of: find.descendant(of: menu, matching: find.byIcon(item.$1)),
+              matching: find.byType(GestureDetector),
+            )
+            .first;
+        tester.widget<GestureDetector>(tap).onTap!();
+      } else {
+        tester
+            .widget<SettingsItemTile>(
+              find.byWidgetPredicate(
+                (widget) =>
+                    widget is SettingsItemTile && widget.icon == item.$1,
+              ),
+            )
+            .onTap();
+      }
+      await tester.pump();
+      await tester.pump();
+      for (final ms in [0, 16, 80, 160, 400]) {
+        await tester.pump(Duration(milliseconds: ms));
+        expect(router.routeInformationProvider.value.uri.path, item.$2);
+        expect(menu, findsOneWidget);
+        expect(identical(tester.element(menu), menuElement), isTrue);
+        expect(
+          identical(tester.element(find.byType(MainPage)), mainElement),
+          isTrue,
+        );
+        expect(
+          identical(tester.state<ScrollableState>(scroll), scrollState),
+          isTrue,
+        );
+        expect(scrollState.position.pixels, offset);
+        expect(tester.getRect(find.byType(NavigationRail)), rail);
+        final left = tester.getRect(pane);
+        final right = tester.getRect(find.byType(item.$3));
+        expect(left.left, full.left);
+        expect(left.width, closeTo((full.width - 1) / 2, .01));
+        expect(right.width, closeTo(left.width, .01));
+        expect(right.left, closeTo(left.right + 1, .01));
+        final route = ModalRoute.of(tester.element(find.byType(item.$3)))!;
+        expect(route.settings, isA<NoTransitionPage<void>>());
+        expect(route.animation!.value, 1);
+        expect(route.secondaryAnimation!.value, 0);
+        for (final other in cases.where((other) => other.$3 != item.$3)) {
+          expect(find.byType(other.$3), findsNothing);
+        }
+        expect(tester.takeException(), isNull);
+      }
+    }
+    await tester.tap(
+      find.descendant(
+        of: find.byType(NotificationsPage),
+        matching: find.byIcon(Icons.arrow_back),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+    for (final ms in [0, 16, 100, 400]) {
+      await tester.pump(Duration(milliseconds: ms));
+      expect(tester.getSize(pane).width, full.width);
+      expect(identical(tester.element(menu), menuElement), isTrue);
+      expect(scrollState.position.pixels, offset);
+      expect(tester.getRect(find.byType(NavigationRail)), rail);
+      for (final item in cases) {
+        expect(find.byType(item.$3), findsNothing);
+      }
+      expect(router.routeInformationProvider.value.uri.path, AppRoutes.MENU);
+      expect(router.canPop(), isFalse);
+      expect(tester.takeException(), isNull);
+    }
+  });
+
+  testWidgets('宽屏选择语言完成后关闭详情且Menu保持同一实例', (tester) async {
+    final container = await createContainer(loggedIn: true);
+    final router = createAppRouter(
+      container.read(storageServiceProvider),
+      initialLocation: AppRoutes.MENU_LANGUAGES,
+    );
+    addTearDown(router.dispose);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1200, 900);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp.router(
+          routerConfig: router,
+          theme: AppTheme.lightTheme,
+        ),
+      ),
+    );
+    await finishTransition(tester);
+    final menuElement = tester.element(find.byType(MenuPage));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(LanguagePage),
+        matching: find.text('English'),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(router.routeInformationProvider.value.uri.path, AppRoutes.MENU);
+    expect(find.byType(LanguagePage), findsNothing);
+    expect(
+      identical(tester.element(find.byType(MenuPage)), menuElement),
+      isTrue,
+    );
+    expect(
+      tester.getSize(find.byKey(const ValueKey('menu-pane'))).width,
+      tester.getSize(find.byType(MenuDetailLayout)).width,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  for (final detailPath in [
+    AppRoutes.MENU_LANGUAGES,
+    AppRoutes.MENU_PASSWORD,
+    AppRoutes.ADD_CARD,
+    AppRoutes.MENU_NOTIFICATIONS,
+  ]) {
+    testWidgets('宽屏详情深链返回全宽 $detailPath', (tester) async {
+      final container = await createContainer(loggedIn: true);
+      final router = createAppRouter(
+        container.read(storageServiceProvider),
+        initialLocation: detailPath,
+      );
+      addTearDown(router.dispose);
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(1200, 900);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp.router(
+            routerConfig: router,
+            theme: AppTheme.lightTheme,
+          ),
+        ),
+      );
+      await finishTransition(tester);
+      expect(find.byType(MenuPage), findsOneWidget);
+      final back = find.byIcon(Icons.arrow_back);
+      if (back.evaluate().isNotEmpty) {
+        await tester.tap(back.first);
+      } else {
+        await tester.tap(find.byType(BackButton));
+      }
+      await tester.pump();
+      await tester.pump();
+      expect(router.routeInformationProvider.value.uri.path, AppRoutes.MENU);
+      expect(
+        tester.getSize(find.byKey(const ValueKey('menu-pane'))).width,
+        tester.getSize(find.byType(MenuDetailLayout)).width,
+      );
+      expect(router.canPop(), isFalse);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   for (final wide in [true, false]) {
     testWidgets('${wide ? "宽屏" : "窄屏"}真实点击设置详情并返回菜单', (tester) async {
       final container = await createContainer(loggedIn: true);

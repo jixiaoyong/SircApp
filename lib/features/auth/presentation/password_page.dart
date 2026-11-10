@@ -13,7 +13,9 @@ import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 * @date: 22/04/19
 */
 class PasswordPage extends ConsumerWidget {
-  const PasswordPage({super.key});
+  const PasswordPage({super.key, this.onBack});
+
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,7 +40,11 @@ class PasswordPage extends ConsumerWidget {
 
       if (previous?.isSuccess != next.isSuccess && next.isSuccess != null) {
         if (next.isSuccess == true) {
-          Navigator.of(context).pop();
+          if (onBack != null) {
+            onBack!();
+          } else {
+            Navigator.of(context).pop();
+          }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -58,6 +64,7 @@ class PasswordPage extends ConsumerWidget {
     return Scaffold(
       appBar: OneTitleWithBackButtonAppBar(
         title: Languages.changePassword,
+        onBack: onBack,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.dp, vertical: 10.dp),
@@ -85,9 +92,7 @@ class PasswordPage extends ConsumerWidget {
                 notifier.setOldPassword(value);
               },
             ),
-            Container(
-              height: 20.dp,
-            ),
+            Container(height: 20.dp),
             TextField(
               decoration: InputDecoration(
                 hintText: Languages.newPassword,
@@ -110,9 +115,7 @@ class PasswordPage extends ConsumerWidget {
                 notifier.setNewPassword(value);
               },
             ),
-            Container(
-              height: 20.dp,
-            ),
+            Container(height: 20.dp),
             TextField(
               decoration: InputDecoration(
                 hintText: Languages.confirmPassword,

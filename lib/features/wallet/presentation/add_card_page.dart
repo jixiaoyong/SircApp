@@ -15,7 +15,9 @@ import 'package:sirc/widgets/verify_code_widget.dart';
 
 /// 添加银行卡页面，支持 3D 悬浮投影、手势交互倾斜与表单录入校验
 class AddCardPage extends ConsumerWidget {
-  const AddCardPage({super.key});
+  const AddCardPage({super.key, this.onBack});
+
+  final VoidCallback? onBack;
 
   static const String _defaultCardNumber = '**** **** **** ****';
   static const String _defaultOwnerName = 'YOUR NAME';
@@ -41,6 +43,7 @@ class AddCardPage extends ConsumerWidget {
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         iconTheme: const IconThemeData(color: Colors.black),
+        leading: onBack == null ? null : BackButton(onPressed: onBack),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -74,7 +77,8 @@ class AddCardPage extends ConsumerWidget {
                           ownerName: state.ownerName.isEmpty
                               ? _defaultOwnerName
                               : state.ownerName,
-                          expirationDate: state.expireDateString ?? _defaultExpireDate,
+                          expirationDate:
+                              state.expireDateString ?? _defaultExpireDate,
                           cardType: state.cardType.isEmpty
                               ? _defaultCardType
                               : state.cardType,
@@ -88,8 +92,7 @@ class AddCardPage extends ConsumerWidget {
               ),
             ),
             Container(
-              padding:
-                  EdgeInsets.symmetric(horizontal: 20.dp, vertical: 25.dp),
+              padding: EdgeInsets.symmetric(horizontal: 20.dp, vertical: 25.dp),
               child: Column(
                 children: [
                   CommonTextFiled(
@@ -127,9 +130,8 @@ class AddCardPage extends ConsumerWidget {
                           ),
                         ),
                         Theme(
-                          data: Theme.of(context).copyWith(
-                            primaryColor: Colors.blue,
-                          ),
+                          data: Theme.of(context)
+                              .copyWith(primaryColor: Colors.blue),
                           child: Builder(
                             builder: (innerBuildContext) {
                               return GestureDetector(
@@ -142,10 +144,10 @@ class AddCardPage extends ConsumerWidget {
                                     lastDate: DateTime.utc(nowDate.year + 20),
                                     monthPickerDialogSettings:
                                         MonthPickerDialogSettings(
-                                      dialogSettings: PickerDialogSettings(
-                                        locale: AppLocale.currentLocale,
-                                      ),
-                                    ),
+                                          dialogSettings: PickerDialogSettings(
+                                            locale: AppLocale.currentLocale,
+                                          ),
+                                        ),
                                   );
                                   if (selectedDate != null) {
                                     controller.setExpireDate(selectedDate);
@@ -162,9 +164,7 @@ class AddCardPage extends ConsumerWidget {
                                   ),
                                   child: Text(
                                     state.expireDateString ?? "00/00",
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                    ),
+                                    style: TextStyle(fontSize: 18.sp),
                                   ),
                                 ),
                               );
@@ -206,7 +206,11 @@ class AddCardPage extends ConsumerWidget {
                       final success = await controller.addCard();
                       if (success && context.mounted) {
                         Toast.show("Add Card Succeed");
-                        Navigator.of(context).maybePop();
+                        if (onBack != null) {
+                          onBack!();
+                        } else {
+                          Navigator.of(context).maybePop();
+                        }
                       }
                     },
                   ),
