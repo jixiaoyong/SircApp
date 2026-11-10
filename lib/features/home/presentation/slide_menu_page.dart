@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -101,13 +103,6 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
     ref.watch(localeProvider);
     final navigationState = ref.watch(navigationControllerProvider);
     final colors = Theme.of(context).colorScheme;
-    final screenSize = MediaQuery.of(context).size;
-    final double screenWidth =
-        (widget.screenWidth != null && widget.screenWidth! > 0)
-        ? widget.screenWidth!
-        : screenSize.width;
-    final double screenHeight = screenSize.height;
-
     final slideMenuList = [
       (Icons.home_outlined, Languages.home.title),
       (Icons.person_outline, Languages.profile),
@@ -117,176 +112,256 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
       (Icons.help_outline_outlined, Languages.about),
     ];
 
-    return Material(
-      color: Colors.transparent,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // 抽屉背景菜单层
-          Positioned.fill(
-            child: ExcludeSemantics(
-              excluding: _percentage == 0,
-              child: Container(
-                padding: EdgeInsets.only(left: 30.dp),
-                color: Theme.of(context).scaffoldBackgroundColor,
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(vertical: 32.dp),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 20.dp),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50.dp),
-                          child: NetworkWebImage(
-                            navigationState.userAvatar,
-                            size: Size.square(70.dp),
-                            fit: BoxFit.cover,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = constraints.maxWidth;
+        final screenHeight = constraints.maxHeight;
+        final textScaler = MediaQuery.textScalerOf(context);
+        final textStyle = DefaultTextStyle.of(context).style;
+        double textWidth(String text, TextStyle style) {
+          final painter = TextPainter(
+            text: TextSpan(text: text, style: style),
+            textScaler: textScaler,
+            textDirection: Directionality.of(context),
+            maxLines: 1,
+          )..layout();
+          final width = painter.width;
+          painter.dispose();
+          return width;
+        }
+
+        final widthLimit = textScaler.scale(16) > 16 ? 360.0 : 320.0;
+        final labelWidth = slideMenuList.fold<double>(
+          0,
+          (width, item) =>
+              math.max(width, textWidth(' ${item.$2}', textStyle) + 24),
+        );
+        final accountWidth = math.max(
+          textWidth(navigationState.userName, textStyle.copyWith(fontSize: 16)),
+          textWidth(
+            navigationState.userEmail,
+            textStyle.copyWith(fontSize: 12),
+          ),
+        );
+        final preferredWidth = (math.max(labelWidth, accountWidth) + 46).clamp(
+          280.0,
+          widthLimit,
+        );
+        final menuWidth = math.min(
+          preferredWidth,
+          math.max(0.0, screenWidth - 88),
+        );
+        final offset = math.min(
+          menuWidth + 16,
+          math.max(0.0, screenWidth - 72),
+        );
+        final endScale = screenWidth >= 840 ? 0.96 : 0.92;
+        final scale = 1 - (1 - endScale) * _percentage;
+        final shadowScale = scale - 0.02 * _percentage;
+
+        return Material(
+          color: Colors.transparent,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // 抽屉背景菜单层
+              Positioned.fill(
+                child: ExcludeSemantics(
+                  excluding: _percentage == 0,
+                  child: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    alignment: Alignment.topLeft,
+                    child: SizedBox(
+                      key: const ValueKey('slide-menu-pane'),
+                      width: menuWidth,
+                      child: SafeArea(
+                        right: false,
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            left: math.min(30, menuWidth / 4),
+                            right: math.min(16, menuWidth / 4),
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 10.dp, bottom: 12.dp),
-                        child: Text(
-                          navigationState.userName.isNotEmpty
-                              ? navigationState.userName
-                              : "User",
-                          style: TextStyle(
-                            color: colors.onSurface,
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        navigationState.userEmail.isNotEmpty
-                            ? navigationState.userEmail
-                            : "user@sirc.com",
-                        style: TextStyle(
-                          color: colors.onSurface,
-                          fontSize: 12.sp,
-                        ),
-                      ),
-                      Padding(padding: EdgeInsets.all(20.dp)),
-                      ...slideMenuList.map((item) {
-                        return GestureDetector(
-                          onTap: () => _handleMenuItemClick(item, context),
-                          child: Container(
-                            margin: EdgeInsets.symmetric(vertical: 10.dp),
-                            child: Row(
+                          child: SingleChildScrollView(
+                            padding: EdgeInsets.symmetric(vertical: 32.dp),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(item.$1, color: colors.onSurface),
+                                Padding(
+                                  padding: EdgeInsets.only(top: 20.dp),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(50.dp),
+                                    child: NetworkWebImage(
+                                      navigationState.userAvatar,
+                                      size: Size.square(70.dp),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    top: 10.dp,
+                                    bottom: 12.dp,
+                                  ),
+                                  child: Text(
+                                    navigationState.userName.isNotEmpty
+                                        ? navigationState.userName
+                                        : "User",
+                                    style: TextStyle(
+                                      color: colors.onSurface,
+                                      fontSize: 16.sp,
+                                    ),
+                                  ),
+                                ),
                                 Text(
-                                  " ${item.$2}",
-                                  style: TextStyle(color: colors.onSurface),
+                                  navigationState.userEmail.isNotEmpty
+                                      ? navigationState.userEmail
+                                      : "user@sirc.com",
+                                  style: TextStyle(
+                                    color: colors.onSurface,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                                Padding(padding: EdgeInsets.all(20.dp)),
+                                ...slideMenuList.map((item) {
+                                  return GestureDetector(
+                                    onTap: () =>
+                                        _handleMenuItemClick(item, context),
+                                    child: Container(
+                                      margin: EdgeInsets.symmetric(
+                                        vertical: 10.dp,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            item.$1,
+                                            color: colors.onSurface,
+                                          ),
+                                          Flexible(
+                                            child: Text(
+                                              " ${item.$2}",
+                                              style: TextStyle(
+                                                color: colors.onSurface,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 20.dp,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    ref
+                                        .read(
+                                          navigationControllerProvider.notifier,
+                                        )
+                                        .closeDrawer();
+                                  },
+                                  child: Container(
+                                    width: 50.dp,
+                                    height: 50.dp,
+                                    decoration: BoxDecoration(
+                                      color: colors.onSurface,
+                                      borderRadius: BorderRadius.circular(
+                                        50.dp,
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      Icons.exit_to_app_outlined,
+                                      color: colors.surface,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        );
-                      }),
-                      Padding(padding: EdgeInsets.symmetric(vertical: 20.dp)),
-                      GestureDetector(
-                        onTap: () {
-                          ref
-                              .read(navigationControllerProvider.notifier)
-                              .closeDrawer();
-                        },
-                        child: Container(
-                          width: 50.dp,
-                          height: 50.dp,
-                          decoration: BoxDecoration(
-                            color: colors.onSurface,
-                            borderRadius: BorderRadius.circular(50.dp),
-                          ),
-                          child: Icon(
-                            Icons.exit_to_app_outlined,
-                            color: colors.surface,
-                          ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // 中间装饰投影层
-          Transform(
-            transform: Matrix4.identity()
-              ..translateByDouble(
-                screenWidth * 0.55 * _percentage,
-                0.18 * _percentage * screenHeight,
-                0,
-                1,
-              )
-              ..scaleByDouble(
-                1.0 - (_percentage * 0.36),
-                1.0 - (_percentage * 0.36),
-                1.0 - (_percentage * 0.36),
-                1,
-              ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: colors.onSurface.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(_percentage * 20.dp),
-              ),
-            ),
-          ),
-          // 顶层主体内容层
-          Transform(
-            transform: Matrix4.identity()
-              ..translateByDouble(
-                screenWidth * 0.6 * _percentage,
-                0.15 * _percentage * screenHeight,
-                0,
-                1,
-              )
-              ..scaleByDouble(
-                1.0 - (_percentage * 0.3),
-                1.0 - (_percentage * 0.3),
-                1.0 - (_percentage * 0.3),
-                1,
-              ),
-            child: SizedBox(
-              width: screenWidth,
-              height: screenHeight,
-              child: Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: colors.outlineVariant.withValues(alpha: 0.3),
-                      blurRadius: 15.dp,
-                      offset: Offset(-5.dp, 5.dp),
-                      spreadRadius: 5.dp,
                     ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(_percentage * 20.dp),
-                  child: Stack(
-                    children: [
-                      widget.child,
-                      // 当抽屉展开时，覆盖一层点击遮罩，点击立即收起抽屉
-                      if (_percentage > 0)
-                        Positioned.fill(
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () {
-                              ref
-                                  .read(navigationControllerProvider.notifier)
-                                  .closeDrawer();
-                            },
-                          ),
-                        ),
-                    ],
                   ),
                 ),
               ),
-            ),
+              // 中间装饰投影层
+              IgnorePointer(
+                child: Transform(
+                  key: const ValueKey('slide-menu-shadow'),
+                  transform: Matrix4.identity()
+                    ..translateByDouble(
+                      math.max(menuWidth, offset - 8) * _percentage,
+                      (1 - shadowScale) * screenHeight / 2,
+                      0,
+                      1,
+                    )
+                    ..scaleByDouble(shadowScale, shadowScale, shadowScale, 1),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: colors.onSurface.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(_percentage * 20.dp),
+                    ),
+                  ),
+                ),
+              ),
+              // 顶层主体内容层：仅改变绘制，不缩窄 child 的布局约束。
+              Transform(
+                key: const ValueKey('slide-menu-content'),
+                transform: Matrix4.identity()
+                  ..translateByDouble(
+                    offset * _percentage,
+                    (1 - scale) * screenHeight / 2,
+                    0,
+                    1,
+                  )
+                  ..scaleByDouble(scale, scale, scale, 1),
+                child: SizedBox(
+                  width: screenWidth,
+                  height: screenHeight,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: colors.outlineVariant.withValues(alpha: 0.3),
+                          blurRadius: 15.dp,
+                          offset: Offset(-5.dp, 5.dp),
+                          spreadRadius: 5.dp,
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(_percentage * 20.dp),
+                      child: Stack(
+                        children: [
+                          widget.child,
+                          // 当抽屉展开时，覆盖一层点击遮罩，点击立即收起抽屉
+                          if (_percentage > 0)
+                            Positioned.fill(
+                              child: GestureDetector(
+                                key: const ValueKey('slide-menu-dismiss'),
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () {
+                                  ref
+                                      .read(
+                                        navigationControllerProvider.notifier,
+                                      )
+                                      .closeDrawer();
+                                },
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
