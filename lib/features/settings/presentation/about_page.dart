@@ -60,7 +60,8 @@ class AboutPage extends ConsumerWidget {
               padding: EdgeInsets.symmetric(vertical: 10.dp),
               child: EmbedWebView(
                 aboutText,
-                backgroundColor: "#fafafa",
+                backgroundColor:
+                    '#${Theme.of(context).colorScheme.surface.toARGB32().toRadixString(16).substring(2)}',
                 onLinkTap: (url) => openUrl(context, url),
               ),
             ),
@@ -79,7 +80,9 @@ class AboutPage extends ConsumerWidget {
                               context,
                               "https://github.com/jixiaoyong/SircApp",
                             ),
-                          style: const TextStyle(color: Colors.blue),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
                         ),
                       ],
                     ),
@@ -93,7 +96,9 @@ class AboutPage extends ConsumerWidget {
                           context,
                           "https://jixiaoyong.github.io/SircApp",
                         ),
-                      style: const TextStyle(color: Colors.blue),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
                     ),
                     const TextSpan(
                       text: "\n\nIt is developed by jixiaoyong. The design is based on ",
@@ -105,20 +110,25 @@ class AboutPage extends ConsumerWidget {
                           context,
                           "https://huaban.com/pins/4619822724",
                         ),
-                      style: const TextStyle(color: Colors.blue),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
                     ),
                     const TextSpan(text: 'found on the internet.'),
                     const TextSpan(
                       text: '\n\nIf you have any questions, please contact me:',
                     ),
                   ],
-                  style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
             ),
             Material(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(10.dp),
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(14.dp),
               clipBehavior: Clip.antiAlias,
               child: Column(
                 children: [
@@ -158,7 +168,10 @@ class AboutPage extends ConsumerWidget {
                   return Text(
                     "Copyright (c) $copyrightYear by jixiaoyong, \nAll Rights Reserved.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   );
                 },
               ),

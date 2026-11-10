@@ -10,18 +10,18 @@ import 'package:sirc/widgets/settings_item_tile.dart';
 class _WebViewPlatform extends WebViewPlatform {
   @override
   PlatformWebViewController createPlatformWebViewController(
-          PlatformWebViewControllerCreationParams params) =>
-      _Controller(params);
+    PlatformWebViewControllerCreationParams params,
+  ) => _Controller(params);
 
   @override
   PlatformNavigationDelegate createPlatformNavigationDelegate(
-          PlatformNavigationDelegateCreationParams params) =>
-      _Delegate(params);
+    PlatformNavigationDelegateCreationParams params,
+  ) => _Delegate(params);
 
   @override
   PlatformWebViewWidget createPlatformWebViewWidget(
-          PlatformWebViewWidgetCreationParams params) =>
-      _WebViewWidget(params);
+    PlatformWebViewWidgetCreationParams params,
+  ) => _WebViewWidget(params);
 }
 
 class _Controller extends PlatformWebViewController {
@@ -31,10 +31,12 @@ class _Controller extends PlatformWebViewController {
   Future<void> setJavaScriptMode(JavaScriptMode javaScriptMode) async {}
   @override
   Future<void> addJavaScriptChannel(
-      JavaScriptChannelParams javaScriptChannelParams) async {}
+    JavaScriptChannelParams javaScriptChannelParams,
+  ) async {}
   @override
   Future<void> setPlatformNavigationDelegate(
-      PlatformNavigationDelegate handler) async {}
+    PlatformNavigationDelegate handler,
+  ) async {}
   @override
   Future<void> loadHtmlString(String html, {String? baseUrl}) async {}
 }
@@ -44,7 +46,8 @@ class _Delegate extends PlatformNavigationDelegate {
 
   @override
   Future<void> setOnNavigationRequest(
-      NavigationRequestCallback onNavigationRequest) async {}
+    NavigationRequestCallback onNavigationRequest,
+  ) async {}
   @override
   Future<void> setOnPageFinished(PageEventCallback onPageFinished) async {}
 }
@@ -82,9 +85,9 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       final urls = <String>[];
-      await tester.pumpWidget(ProviderScope(
-        child: MaterialApp(home: _RecordingAboutPage(urls)),
-      ));
+      await tester.pumpWidget(
+        ProviderScope(child: MaterialApp(home: _RecordingAboutPage(urls))),
+      );
       await tester.pumpAndSettle();
       final tiles = find.byType(SettingsItemTile);
       expect(tiles, findsNWidgets(3));
@@ -96,25 +99,38 @@ void main() {
       for (var index = 0; index < 3; index++) {
         final shared = tester.widget<SettingsItemTile>(tiles.at(index));
         final row = find.descendant(
-            of: tiles.at(index), matching: find.byType(ListTile));
+          of: tiles.at(index),
+          matching: find.byType(ListTile),
+        );
         final tile = tester.widget<ListTile>(row);
         await tester.ensureVisible(row);
-        expect(tester.getSize(row).height, greaterThanOrEqualTo(88));
+        expect(tester.getSize(row).height, greaterThanOrEqualTo(64));
         expect(
-            tester.getSize(find.byWidget(tile.leading!)), const Size(40, 40));
+          tester.getSize(find.byWidget(tile.leading!)),
+          const Size(36, 36),
+        );
         expect(
-            tester.getSize(find.descendant(
-                of: find.byWidget(tile.leading!), matching: find.byType(Icon))),
-            const Size(24, 24));
+          tester.getSize(
+            find.descendant(
+              of: find.byWidget(tile.leading!),
+              matching: find.byType(Icon),
+            ),
+          ),
+          const Size(20, 20),
+        );
         expect(
-            shared.subtitle, expectedUrls[index].replaceFirst('mailto:', ''));
+          shared.subtitle,
+          expectedUrls[index].replaceFirst('mailto:', ''),
+        );
         expect(find.text(shared.subtitle!), findsOneWidget);
         final material = tester.widget<Material>(
-            find.ancestor(of: row, matching: find.byType(Material)).first);
+          find.ancestor(of: row, matching: find.byType(Material)).first,
+        );
         expect(material.clipBehavior, Clip.antiAlias);
-        expect(material.borderRadius, BorderRadius.circular(10));
-        await tester
-            .tap(find.descendant(of: row, matching: find.text(shared.title)));
+        expect(material.borderRadius, BorderRadius.circular(14));
+        await tester.tap(
+          find.descendant(of: row, matching: find.text(shared.title)),
+        );
         await tester.pumpAndSettle();
         expect(urls, expectedUrls.take(index + 1).toList());
         expect(tester.takeException(), isNull);

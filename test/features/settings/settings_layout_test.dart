@@ -17,7 +17,58 @@ void main() {
     prefs = await SharedPreferences.getInstance();
   });
 
-  for (final width in [320.0, 375.0, 430.0, 1461.0]) {
+  for (final brightness in Brightness.values) {
+    testWidgets('引导小屏大字在 $brightness 下可切换三个步骤', (tester) async {
+      tester.view.physicalSize = const Size(320, 568);
+      tester.view.devicePixelRatio = 1;
+      final previousWidth = CommonData.realScreenWidth;
+      CommonData.realScreenWidth = 320;
+      addTearDown(() {
+        tester.view.reset();
+        CommonData.realScreenWidth = previousWidth;
+      });
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+          child: MaterialApp(
+            theme: ThemeData(brightness: brightness),
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(2)),
+              child: child!,
+            ),
+            home: const InitialPage(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final tips = InitialState.initialTips;
+      for (var index = 0; index < tips.length; index++) {
+        final page = find.ancestor(
+          of: find.text(tips[index].$2),
+          matching: find.byType(SingleChildScrollView),
+        );
+        final control = index < tips.length - 1
+            ? find.byIcon(Icons.arrow_forward_rounded)
+            : find.text(Languages.getStart);
+        await tester.scrollUntilVisible(
+          control,
+          100,
+          scrollable: find
+              .descendant(of: page, matching: find.byType(Scrollable))
+              .first,
+        );
+        expect(control.hitTestable(), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        if (index < tips.length - 1) {
+          await tester.tap(control);
+          await tester.pumpAndSettle();
+        }
+      }
+    });
+  }
+
+  for (final width in [320.0, 375.0, 390.0, 430.0, 1461.0]) {
     testWidgets('引导末页按钮在宽度 $width 时居中并保留边距', (tester) async {
       tester.view.physicalSize = Size(width, 900);
       tester.view.devicePixelRatio = 1;
@@ -48,6 +99,12 @@ void main() {
         );
         expect(tester.getRect(image).center.dx, closeTo(width / 2, 0.01));
         expect(tester.getRect(image).top, greaterThanOrEqualTo(0));
+        final indicators = find.byKey(ValueKey('initial_indicators_$index'));
+        expect(
+          tester.getRect(indicators).top - tester.getRect(image).bottom,
+          closeTo(32, 0.01),
+        );
+        expect(tips[index].$1, endsWith('_transparent.webp'));
         expect(tester.takeException(), isNull);
         if (index < tips.length - 1) {
           final next = find.byIcon(Icons.arrow_forward_rounded).hitTestable();
@@ -107,12 +164,20 @@ void main() {
             matching: find.byWidget(tile.trailing!),
           ),
         );
-        expect(tileRect.height, greaterThanOrEqualTo(88));
-        expect(leadingRect.size, const Size(40, 40));
-        expect(tester.getSize(icon), const Size(24, 24));
-        expect(leadingRect.top - tileRect.top, greaterThanOrEqualTo(24));
-        expect(tileRect.bottom - leadingRect.bottom, greaterThanOrEqualTo(24));
-        expect(titleRect.center.dy, closeTo(tileRect.center.dy, 0.01));
+        expect(tileRect.height, greaterThanOrEqualTo(64));
+        expect(leadingRect.size, const Size(36, 36));
+        expect(tester.getSize(icon), const Size(20, 20));
+        expect(leadingRect.top - tileRect.top, greaterThanOrEqualTo(12));
+        expect(tileRect.bottom - leadingRect.bottom, greaterThanOrEqualTo(12));
+        if (tile.subtitle == null) {
+          expect(titleRect.center.dy, closeTo(tileRect.center.dy, 0.01));
+        } else {
+          expect(titleRect.top, greaterThanOrEqualTo(tileRect.top));
+          expect(
+            tester.getRect(find.byWidget(tile.subtitle!)).bottom,
+            lessThanOrEqualTo(tileRect.bottom),
+          );
+        }
         expect(trailingRect.center.dy, closeTo(tileRect.center.dy, 0.01));
         expect(tileRect.left, greaterThanOrEqualTo(0));
         expect(tileRect.right, lessThanOrEqualTo(width));

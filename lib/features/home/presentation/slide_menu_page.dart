@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/routes/app_routes.dart';
-import 'package:sirc/utils/color_extension.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/utils/toast.dart';
 import 'package:sirc/widgets/network_web_image.dart';
@@ -101,11 +100,12 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
     // 收起与展开保持同一棵主体树，避免抽屉动画重建分支 Navigator。
     ref.watch(localeProvider);
     final navigationState = ref.watch(navigationControllerProvider);
+    final colors = Theme.of(context).colorScheme;
     final screenSize = MediaQuery.of(context).size;
     final double screenWidth =
         (widget.screenWidth != null && widget.screenWidth! > 0)
-            ? widget.screenWidth!
-            : screenSize.width;
+        ? widget.screenWidth!
+        : screenSize.width;
     final double screenHeight = screenSize.height;
 
     final slideMenuList = [
@@ -124,97 +124,90 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
         children: [
           // 抽屉背景菜单层
           Positioned.fill(
-            child: Container(
-              padding: EdgeInsets.only(left: 30.dp),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    "#ffc19bff".hexToColor,
-                    "#ff7784ff".hexToColor,
-                  ],
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.topRight,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 20.dp),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(50.dp),
-                      child: NetworkWebImage(
-                        navigationState.userAvatar,
-                        size: Size.square(70.dp),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10.dp, bottom: 12.dp),
-                    child: Text(
-                      navigationState.userName.isNotEmpty
-                          ? navigationState.userName
-                          : "User",
-                      style: TextStyle(color: Colors.white, fontSize: 16.sp),
-                    ),
-                  ),
-                  Text(
-                    navigationState.userEmail.isNotEmpty
-                        ? navigationState.userEmail
-                        : "user@sirc.com",
-                    style: TextStyle(color: Colors.white, fontSize: 12.sp),
-                  ),
-                  Padding(padding: EdgeInsets.all(20.dp)),
-                  ...slideMenuList.map((item) {
-                    return GestureDetector(
-                      onTap: () => _handleMenuItemClick(item, context),
-                      child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 10.dp),
-                        child: Row(
-                          children: [
-                            Icon(
-                              item.$1,
-                              color: Colors.white,
-                            ),
-                            Text(
-                              " ${item.$2}",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ],
+            child: ExcludeSemantics(
+              excluding: _percentage == 0,
+              child: Container(
+                padding: EdgeInsets.only(left: 30.dp),
+                color: Theme.of(context).scaffoldBackgroundColor,
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(vertical: 32.dp),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 20.dp),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(50.dp),
+                          child: NetworkWebImage(
+                            navigationState.userAvatar,
+                            size: Size.square(70.dp),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                    );
-                  }),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 20.dp)),
-                  GestureDetector(
-                    onTap: () {
-                      ref
-                          .read(navigationControllerProvider.notifier)
-                          .closeDrawer();
-                    },
-                    child: Container(
-                      width: 50.dp,
-                      height: 50.dp,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(50.dp),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white.withValues(alpha: 0.7),
-                            blurRadius: 15.dp,
-                            spreadRadius: 0.5,
+                      Padding(
+                        padding: EdgeInsets.only(top: 10.dp, bottom: 12.dp),
+                        child: Text(
+                          navigationState.userName.isNotEmpty
+                              ? navigationState.userName
+                              : "User",
+                          style: TextStyle(
+                            color: colors.onSurface,
+                            fontSize: 16.sp,
                           ),
-                        ],
+                        ),
                       ),
-                      child: Icon(
-                        Icons.exit_to_app_outlined,
-                        color: "#ff7784ff".hexToColor,
+                      Text(
+                        navigationState.userEmail.isNotEmpty
+                            ? navigationState.userEmail
+                            : "user@sirc.com",
+                        style: TextStyle(
+                          color: colors.onSurface,
+                          fontSize: 12.sp,
+                        ),
                       ),
-                    ),
+                      Padding(padding: EdgeInsets.all(20.dp)),
+                      ...slideMenuList.map((item) {
+                        return GestureDetector(
+                          onTap: () => _handleMenuItemClick(item, context),
+                          child: Container(
+                            margin: EdgeInsets.symmetric(vertical: 10.dp),
+                            child: Row(
+                              children: [
+                                Icon(item.$1, color: colors.onSurface),
+                                Text(
+                                  " ${item.$2}",
+                                  style: TextStyle(color: colors.onSurface),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                      Padding(padding: EdgeInsets.symmetric(vertical: 20.dp)),
+                      GestureDetector(
+                        onTap: () {
+                          ref
+                              .read(navigationControllerProvider.notifier)
+                              .closeDrawer();
+                        },
+                        child: Container(
+                          width: 50.dp,
+                          height: 50.dp,
+                          decoration: BoxDecoration(
+                            color: colors.onSurface,
+                            borderRadius: BorderRadius.circular(50.dp),
+                          ),
+                          child: Icon(
+                            Icons.exit_to_app_outlined,
+                            color: colors.surface,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -235,7 +228,7 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
               ),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.5),
+                color: colors.onSurface.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(_percentage * 20.dp),
               ),
             ),
@@ -262,7 +255,7 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
-                      color: "#ffc19bff".hexToColor.withValues(alpha: 0.7),
+                      color: colors.outlineVariant.withValues(alpha: 0.3),
                       blurRadius: 15.dp,
                       offset: Offset(-5.dp, 5.dp),
                       spreadRadius: 5.dp,

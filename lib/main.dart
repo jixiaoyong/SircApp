@@ -10,6 +10,7 @@ import 'package:sirc/core/router/nav_keys.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/routes/app_router.dart';
+import 'package:sirc/features/settings/controllers/settings_controller.dart';
 import 'package:sirc/utils/size_extension.dart' as size_ext;
 
 import 'data/common_data.dart';
@@ -39,11 +40,6 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    SystemUiOverlayStyle uiStyle = SystemUiOverlayStyle.dark.copyWith(
-      statusBarColor: Colors.transparent,
-    );
-    SystemChrome.setSystemUIOverlayStyle(uiStyle);
-
     final locale = ref.watch(localeProvider);
 
     return MaterialApp.router(
@@ -58,8 +54,16 @@ class MyApp extends ConsumerWidget {
       supportedLocales: AppLocale.supportedLocales,
       locale: locale,
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ref.watch(themeModeProvider),
       builder: (context, child) {
         final mediaQuery = MediaQuery.of(context);
+        final overlay = Theme.of(context).brightness == Brightness.dark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark;
+        SystemChrome.setSystemUIOverlayStyle(
+          overlay.copyWith(statusBarColor: Colors.transparent),
+        );
         // 页面使用完整窗口宽度，控件尺寸不随窗口宽度缩放。
         CommonData.realScreenWidth = mediaQuery.size.width;
         size_ext.SizeExtension.dpScale = 1;

@@ -18,6 +18,7 @@ abstract class AppRoutes {
   static const MENU = "/menu";
 
   // nested GoRoute 使用相对片段，导航与 URL 比较使用完整路径。
+  static const APPEARANCE_SEGMENT = "appearance";
   static const LANGUAGES_SEGMENT = "languages";
   static const NOTIFICATIONS_SEGMENT = "notifications";
   static const PASSWORD_SEGMENT = "password";
@@ -29,6 +30,7 @@ abstract class AppRoutes {
   static const PERSON_ADDRESS = "$PERSON/address";
   static const PERSON_CARD = "$PERSON/card";
 
+  static const MENU_APPEARANCE = "$MENU/$APPEARANCE_SEGMENT";
   static const MENU_LANGUAGES = "$MENU/$LANGUAGES_SEGMENT";
   static const MENU_NOTIFICATIONS = "$MENU/$NOTIFICATIONS_SEGMENT";
   static const MENU_PASSWORD = "$MENU/$PASSWORD_SEGMENT";
