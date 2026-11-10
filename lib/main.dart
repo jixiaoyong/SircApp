@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/router/nav_keys.dart';
@@ -16,6 +18,12 @@ import 'data/common_data.dart';
 /// UI copy from https://hbimg.huabanimg.com/71e943643aac8a17dedaee0445a0e27aec8023d212e8d8-5fkAOb
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) {
+    // extended_image creates cacheimage non-recursively; its parent may not
+    // exist on a fresh macOS installation.
+    final cacheDirectory = await getTemporaryDirectory();
+    await cacheDirectory.create(recursive: true);
+  }
   final prefs = await SharedPreferences.getInstance();
 
   runApp(
