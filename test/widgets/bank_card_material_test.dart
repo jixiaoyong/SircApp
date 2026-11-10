@@ -130,6 +130,80 @@ void main() {
     );
   }
 
+  testWidgets('选中只提亮微虹边缘，扫光绘制在文字下且默认不启用', (tester) async {
+    Future<void> render({bool selected = false, double? progress}) =>
+        tester.pumpWidget(
+          MaterialApp(
+            home: Center(
+              child: BankCardWidget(
+                bankName: 'Bank',
+                cardNumber: '12345678',
+                ownerName: 'OWNER',
+                expirationDate: '08/29',
+                cardType: 'UnionPay',
+                width: 380,
+                isSelected: selected,
+                selectionHighlightProgress: progress,
+              ),
+            ),
+          ),
+        );
+    await render();
+    final original =
+        tester
+                .widget<DecoratedBox>(
+                  find.byKey(const ValueKey('bank-card-iridescent-edge')),
+                )
+                .decoration
+            as BoxDecoration;
+    expect(
+      tester
+          .widget<BankCardWidget>(find.byType(BankCardWidget))
+          .selectionHighlightProgress,
+      isNull,
+    );
+    await render(selected: true, progress: .5);
+    final selected =
+        tester
+                .widget<DecoratedBox>(
+                  find.byKey(const ValueKey('bank-card-iridescent-edge')),
+                )
+                .decoration
+            as BoxDecoration;
+    final originalColors = (original.gradient! as LinearGradient).colors;
+    final selectedColors = (selected.gradient! as LinearGradient).colors;
+    for (var i = 0; i < originalColors.length; i++) {
+      expect(
+        selectedColors[i].computeLuminance(),
+        greaterThan(originalColors[i].computeLuminance()),
+      );
+    }
+    final paint = tester.widget<CustomPaint>(
+      find
+          .descendant(
+            of: find.byKey(const ValueKey('bank-card-dark-surface')),
+            matching: find.byType(CustomPaint),
+          )
+          .first,
+    );
+    expect(paint.painter, isNotNull);
+    expect(paint.foregroundPainter, isNull);
+    expect(
+      find.descendant(
+        of: find.byType(CustomPaint),
+        matching: find.text('1234 5678 '),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      tester.getSize(find.byKey(const ValueKey('bank-card-iridescent-edge'))),
+      const Size(380, 200),
+    );
+    expect(find.text('UnionPay'), findsOneWidget);
+    expect(selected.boxShadow, original.boxShadow);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('brand is stable across rebuilds and honors real type', (
     tester,
   ) async {

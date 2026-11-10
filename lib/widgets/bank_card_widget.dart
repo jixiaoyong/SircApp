@@ -18,6 +18,8 @@ class BankCardWidget extends StatelessWidget {
   final String? cardType;
   final double? height;
   final double? width;
+  final bool isSelected;
+  final double? selectionHighlightProgress;
 
   BankCardWidget({
     super.key,
@@ -28,6 +30,8 @@ class BankCardWidget extends StatelessWidget {
     this.cardType,
     this.height,
     this.width,
+    this.isSelected = false,
+    this.selectionHighlightProgress,
   }) : cardNumber = _formatCardNumber(cardNumber);
 
   static String _formatCardNumber(String raw) {
@@ -45,16 +49,23 @@ class BankCardWidget extends StatelessWidget {
       key: const ValueKey('bank-card-iridescent-edge'),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.dp),
-        gradient: const LinearGradient(
-          begin: Alignment(-0.819152, -0.573576),
-          end: Alignment(0.819152, 0.573576),
-          colors: [
-            Color(0xFF91AAB0),
-            Color(0xFFA99AA9),
-            Color(0xFF697F89),
-            Color(0xFFB4B39B),
-          ],
-          stops: [0, .32, .65, 1],
+        gradient: LinearGradient(
+          begin: const Alignment(-0.819152, -0.573576),
+          end: const Alignment(0.819152, 0.573576),
+          colors: isSelected
+              ? const [
+                  Color(0xFFB0C7CC),
+                  Color(0xFFC6B7C6),
+                  Color(0xFF8CA2AC),
+                  Color(0xFFCFCEB5),
+                ]
+              : const [
+                  Color(0xFF91AAB0),
+                  Color(0xFFA99AA9),
+                  Color(0xFF697F89),
+                  Color(0xFFB4B39B),
+                ],
+          stops: const [0, .32, .65, 1],
         ),
         boxShadow: const [
           BoxShadow(
@@ -69,7 +80,6 @@ class BankCardWidget extends StatelessWidget {
         child: Container(
           height: (height ?? 200.dp) - 4.dp,
           width: width == null ? null : width! - 4.dp,
-          padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
           key: const ValueKey('bank-card-dark-surface'),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -80,100 +90,155 @@ class BankCardWidget extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(18.dp),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                bankName,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 26.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 2.dp),
-                child: Image.asset(
-                  A.assets_imgs_bank_chip,
-                  height: 32.dp,
-                  fit: BoxFit.fitHeight,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.dp),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    cardNumber,
+          child: CustomPaint(
+            painter: _CardSelectionHighlightPainter(
+              progress: selectionHighlightProgress,
+              radius: 18.dp,
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    bankName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 20.sp,
-                      color: Colors.white.withValues(alpha: 0.85),
-                      letterSpacing: 1.5,
+                      fontSize: 26.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontStyle: FontStyle.italic,
                     ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.dp),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              ownerName,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                color: Colors.white.withValues(alpha: 0.7),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 12.dp),
-                          Text(
-                            expirationDate,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 2.dp),
+                    child: Image.asset(
+                      A.assets_imgs_bank_chip,
+                      height: 32.dp,
+                      fit: BoxFit.fitHeight,
                     ),
-                    SizedBox(width: 8.dp),
-                    Flexible(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          cardBrandLabel(cardType),
-                          style: TextStyle(
-                            fontSize: 18.sp,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.dp),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        cardNumber,
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          color: Colors.white.withValues(alpha: 0.85),
+                          letterSpacing: 1.5,
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.dp),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  ownerName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: Colors.white.withValues(alpha: 0.7),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 12.dp),
+                              Text(
+                                expirationDate,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 8.dp),
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              cardBrandLabel(cardType),
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
+}
+
+// Paint beneath the content: the narrow reflection never washes out card text.
+class _CardSelectionHighlightPainter extends CustomPainter {
+  const _CardSelectionHighlightPainter({
+    required this.progress,
+    required this.radius,
+  });
+
+  final double? progress;
+  final double radius;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final value = progress;
+    if (value == null || value <= 0 || value >= 1) return;
+    canvas.save();
+    canvas.clipRRect(
+      RRect.fromRectAndRadius(Offset.zero & size, Radius.circular(radius)),
+    );
+    final x = -size.width * .25 + size.width * 1.5 * value;
+    final band = Rect.fromLTWH(
+      x,
+      -size.height,
+      size.width * .14,
+      size.height * 3,
+    );
+    final fade = 1 - (2 * value - 1).abs();
+    canvas.skew(-.18, 0);
+    canvas.drawRect(
+      band,
+      Paint()
+        ..shader = LinearGradient(
+          colors: [
+            Colors.white.withValues(alpha: 0),
+            Colors.white.withValues(alpha: .12 * fade),
+            Colors.white.withValues(alpha: 0),
+          ],
+        ).createShader(band),
+    );
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _CardSelectionHighlightPainter oldDelegate) =>
+      oldDelegate.progress != progress || oldDelegate.radius != radius;
 }

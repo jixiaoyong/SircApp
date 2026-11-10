@@ -119,7 +119,9 @@ class HomeTopBodyWidget extends ConsumerWidget {
             mainAxisExtent: 80,
             childAspectRatio: 0.7,
             data: homeState.quickActions,
-            indicatorOffset: Offset(0, -2.dp),
+            // 分页滑条高 10px、上下 margin 各 10px，完整预留空间，
+            // 不挤占最后一排文字，也不改变图标、文字及网格行高。
+            indicatorOffset: Offset(0, -30.dp),
             itemBuilder:
                 (BuildContext context, int index, int pageIndex, data) {
                   return GestureDetector(
@@ -265,8 +267,21 @@ class _HomeBankCardPages extends StatefulWidget {
   State<_HomeBankCardPages> createState() => _HomeBankCardPagesState();
 }
 
-class _HomeBankCardPagesState extends State<_HomeBankCardPages> {
+class _HomeBankCardPagesState extends State<_HomeBankCardPages>
+    with SingleTickerProviderStateMixin {
   final _controller = ScrollController(keepScrollOffset: false);
+  late final _selectionHighlight = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 650),
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _selectionHighlight.reset();
+    }
+  }
   bool _dragging = false;
   bool _selecting = false;
   static const _gap = 18.0;
@@ -287,6 +302,14 @@ class _HomeBankCardPagesState extends State<_HomeBankCardPages> {
   @override
   void didUpdateWidget(covariant _HomeBankCardPages oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.homeState.currentBankIndex !=
+        widget.homeState.currentBankIndex) {
+      if (MediaQuery.disableAnimationsOf(context)) {
+        _selectionHighlight.reset();
+      } else {
+        _selectionHighlight.forward(from: 0);
+      }
+    }
     // 窄屏保持选中卡居中；多卡宽屏仅最小滚动，不挪动已完整可见的卡片。
     if (oldWidget.viewportWidth != widget.viewportWidth ||
         oldWidget.homeState.currentBankIndex !=
@@ -314,7 +337,7 @@ class _HomeBankCardPagesState extends State<_HomeBankCardPages> {
                 : current)
             .clamp(0.0, position.maxScrollExtent);
     if ((target - current).abs() < .5) return;
-    if (animate) {
+    if (animate && !MediaQuery.disableAnimationsOf(context)) {
       _controller.animateTo(
         target,
         duration: const Duration(milliseconds: 200),
@@ -351,6 +374,7 @@ class _HomeBankCardPagesState extends State<_HomeBankCardPages> {
 
   @override
   void dispose() {
+    _selectionHighlight.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -387,8 +411,7 @@ class _HomeBankCardPagesState extends State<_HomeBankCardPages> {
       children: [
         SizedBox(
           width: double.infinity,
-          // 卡面上下各留 8px，下侧空间容纳选中短线。
-          height: cardHeight + 16,
+          height: cardHeight,
           child: NotificationListener<ScrollNotification>(
             onNotification: _onScroll,
             child: ListView.separated(
@@ -404,44 +427,42 @@ class _HomeBankCardPagesState extends State<_HomeBankCardPages> {
                 return GestureDetector(
                   key: ValueKey('home-bank-card-$index'),
                   onTap: () => _select(index),
-                  child: SizedBox(
-                    width: widget.cardWidth,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 8),
-                        SizedBox(
-                          width: widget.cardWidth,
-                          height: cardHeight,
-                          child: Container(
-                            key: const ValueKey('home-bank-backdrop'),
-                            child: FittedBox(
-                              child: SizedBox(
-                                width: 380,
-                                height: 200,
-                                // 银行卡是按固定比例缩放的实体卡面；外围 UI 仍遵循大字设置。
-                                child: MediaQuery.withClampedTextScaling(
-                                  maxScaleFactor: 1,
-                                  child: BankCardWidget(
-                                    bankName: _localizedBankName(card.bankName),
-                                    cardNumber: card.cardNumber,
-                                    ownerName: card.ownerName,
-                                    expirationDate: card.expirationDate,
-                                    cardType: card.cardType,
-                                  ),
+                  child: Semantics(
+                    selected: homeState.currentBankIndex == index,
+                    child: SizedBox(
+                      width: widget.cardWidth,
+                      height: cardHeight,
+                      child: Container(
+                        key: const ValueKey('home-bank-backdrop'),
+                        child: FittedBox(
+                          child: SizedBox(
+                            width: 380,
+                            height: 200,
+                            // 银行卡按固定比例缩放；外围 UI 仍遵循大字设置。
+                            child: MediaQuery.withClampedTextScaling(
+                              maxScaleFactor: 1,
+                              child: AnimatedBuilder(
+                                animation: _selectionHighlight,
+                                builder: (context, _) => BankCardWidget(
+                                  bankName: _localizedBankName(card.bankName),
+                                  cardNumber: card.cardNumber,
+                                  ownerName: card.ownerName,
+                                  expirationDate: card.expirationDate,
+                                  cardType: card.cardType,
+                                  isSelected: homeState.currentBankIndex == index,
+                                  selectionHighlightProgress:
+                                      homeState.currentBankIndex == index &&
+                                          _selectionHighlight.isAnimating &&
+                                          _selectionHighlight.value < 1 &&
+                                          !MediaQuery.disableAnimationsOf(context)
+                                      ? _selectionHighlight.value
+                                      : null,
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 5),
-                        Container(
-                          height: 3,
-                          width: 32,
-                          color: homeState.currentBankIndex == index
-                              ? Theme.of(context).colorScheme.onSurface
-                              : Colors.transparent,
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 );

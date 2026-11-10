@@ -20,12 +20,15 @@ void main() {
     ProviderContainer container,
     double width, {
     double textScale = 1,
+    bool disableAnimations = false,
   }) => UncontrolledProviderScope(
     container: container,
     child: MaterialApp(
       builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(context)
-            .copyWith(textScaler: TextScaler.linear(textScale)),
+        data: MediaQuery.of(context).copyWith(
+          textScaler: TextScaler.linear(textScale),
+          disableAnimations: disableAnimations,
+        ),
         child: child!,
       ),
       home: Scaffold(
@@ -60,7 +63,7 @@ void main() {
       expect(tester.getSize(first).width, cardWidth);
       expect(
         tester.getSize(find.byType(HomeBankCardCarousel)).height,
-        closeTo(cardWidth * 200 / 380 + 38, .01),
+        closeTo(cardWidth * 200 / 380 + 22, .01),
       );
       expect(container.read(homeControllerProvider).currentBankIndex, 0);
       final displayed = tester
@@ -113,6 +116,98 @@ void main() {
       expect(visible, width == 1200 ? 3 : greaterThanOrEqualTo(2));
       expect(tester.takeException(), isNull);
     }
+  });
+
+  BankCardWidget selectedCard(WidgetTester tester) => tester
+      .widgetList<BankCardWidget>(find.byType(BankCardWidget))
+      .singleWhere((card) => card.isSelected);
+
+  testWidgets('移除短条且选择仅扫光一次，重建不重播并保留品牌和语义', (tester) async {
+    configureView(tester);
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    await tester.pumpWidget(harness(container, 1200));
+    await tester.pumpAndSettle();
+    expect(selectedCard(tester).selectionHighlightProgress, isNull);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Container &&
+            widget.constraints?.maxWidth == 32 &&
+            widget.constraints?.maxHeight == 3,
+      ),
+      findsNothing,
+    );
+    final brands = container
+        .read(walletControllerProvider)
+        .cards
+        .map((card) => card.cardType)
+        .toList();
+    await tester.tap(find.byKey(const ValueKey('home-bank-card-1')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    final progress = selectedCard(tester).selectionHighlightProgress!;
+    expect(progress, closeTo(200 / 650, .01));
+    await tester.tap(find.byKey(const ValueKey('home-bank-card-1')));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(
+      selectedCard(tester).selectionHighlightProgress,
+      greaterThan(progress),
+    );
+    await tester.pump(const Duration(milliseconds: 350));
+    expect(selectedCard(tester).selectionHighlightProgress, isNull);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is Semantics && widget.properties.selected == true,
+      ),
+      findsOneWidget,
+    );
+    await tester.pumpWidget(harness(container, 800, textScale: 2));
+    AppLocale.setLocale(const Locale('en', 'US'));
+    await tester.pumpWidget(harness(container, 1200));
+    await tester.pump();
+    expect(selectedCard(tester).selectionHighlightProgress, isNull);
+    expect(
+      tester
+          .widgetList<BankCardWidget>(find.byType(BankCardWidget))
+          .map((card) => card.cardType)
+          .toList(),
+      brands,
+    );
+    AppLocale.setLocale(const Locale('zh', 'CN'));
+    container.read(walletControllerProvider.notifier).selectCard(2);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(selectedCard(tester).selectionHighlightProgress, greaterThan(0));
+    // Dispose while the ticker is active.
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(seconds: 1));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('减少动画不扫光，途中开启立即停止且关闭后不补播', (tester) async {
+    configureView(tester);
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    await tester.pumpWidget(harness(container, 1200, disableAnimations: true));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('home-bank-card-1')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(selectedCard(tester).isSelected, isTrue);
+    expect(selectedCard(tester).selectionHighlightProgress, isNull);
+    await tester.pumpWidget(harness(container, 1200));
+    expect(selectedCard(tester).selectionHighlightProgress, isNull);
+    container.read(walletControllerProvider.notifier).selectCard(2);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(selectedCard(tester).selectionHighlightProgress, greaterThan(0));
+    await tester.pumpWidget(harness(container, 1200, disableAnimations: true));
+    expect(selectedCard(tester).selectionHighlightProgress, isNull);
+    await tester.pumpWidget(harness(container, 1200));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(selectedCard(tester).selectionHighlightProgress, isNull);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('单卡在窄宽屏及大字下卡面双轴居中', (tester) async {
@@ -182,7 +277,11 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(container.read(homeControllerProvider).currentBankIndex, 0);
     await gesture.up();
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(selectedCard(tester).selectionHighlightProgress, isNotNull);
     await tester.pumpAndSettle();
+    expect(selectedCard(tester).selectionHighlightProgress, isNull);
     expect(container.read(homeControllerProvider).currentBankIndex, 1);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());

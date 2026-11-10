@@ -43,6 +43,7 @@ class MyApp extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
 
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       routerConfig: ref.watch(appRouterProvider),
       scaffoldMessengerKey: rootScaffoldMessengerKey,
       title: "Sirc App",
