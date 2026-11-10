@@ -78,7 +78,7 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
     } else if (title == Languages.settings.title) {
       widget.onBranchSelected(4);
     } else if (title == Languages.notifications) {
-      context.push(AppRoutes.NOTIFICATIONS);
+      context.push(AppRoutes.MENU_NOTIFICATIONS);
     } else {
       Toast.showDefaultToast();
     }
