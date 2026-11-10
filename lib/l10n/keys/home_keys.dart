@@ -16,6 +16,15 @@ abstract class HomeLang {
   String get transactionSummary;
   String get localExamples;
 
+  String get chartWeek;
+  String get chartMonth;
+  String get chartVolume;
+  String get chartVolumeHint;
+  String get chartEmpty;
+  String get chartZero;
+  String get chartFuture;
+  String get chartUndated;
+
   // 快捷入口
   String get bonds;
   String get billing;

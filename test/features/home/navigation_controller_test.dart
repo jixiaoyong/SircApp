@@ -151,7 +151,6 @@ void main() {
       final state = container.read(homeControllerProvider);
 
       expect(state.currentBankIndex, 0);
-      expect(state.weeklyPercentages.length, 7);
       expect(state.banks.length, 3);
       expect(state.quickActions.length, 15);
     });
@@ -165,17 +164,6 @@ void main() {
 
       controller.setBankIndex(2);
       expect(container.read(homeControllerProvider).currentBankIndex, 2);
-    });
-
-    test('updateWeeklyPercentages should update weekly percentages data', () {
-      final controller = container.read(homeControllerProvider.notifier);
-      final newData = [0.1, 0.2, 0.8];
-
-      controller.updateWeeklyPercentages(newData);
-      expect(
-        container.read(homeControllerProvider).weeklyPercentages,
-        equals(newData),
-      );
     });
   });
 }

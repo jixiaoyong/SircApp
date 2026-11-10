@@ -16,9 +16,8 @@ import 'package:sirc/features/home/presentation/sample_articles.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/jingang_widget.dart';
-import 'package:sirc/widgets/line_graph.dart';
+import 'package:sirc/features/home/presentation/home_transaction_chart.dart';
 import 'package:sirc/widgets/network_web_image.dart';
-import 'package:sirc/widgets/title_text.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -174,39 +173,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
     final graph = Container(
       key: const ValueKey('home-weekly-graph'),
       padding: EdgeInsets.symmetric(horizontal: 16.dp),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TitleText(text: Languages.february),
-          Builder(
-            builder: (context) {
-              final weekLabels = [
-                Languages.mon,
-                Languages.tues,
-                Languages.wed,
-                Languages.thur,
-                Languages.fri,
-                Languages.satu,
-                Languages.sun,
-              ];
-              return SizedBox(
-                height: 200.dp,
-                width: double.infinity,
-                child: LineGraph(
-                  data: List.generate(
-                    homeState.weeklyPercentages.length,
-                    (index) => (
-                      weekLabels[index % weekLabels.length],
-                      homeState.weeklyPercentages[index],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 20),
-        ],
-      ),
+      child: const HomeTransactionChart(),
     );
     final dark = Theme.of(context).brightness == Brightness.dark;
     return AnnotatedRegion<SystemUiOverlayStyle>(

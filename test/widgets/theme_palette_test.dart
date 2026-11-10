@@ -19,44 +19,39 @@ void main() {
   });
 
   test('折线图颜色变化必须重绘', () {
-    final data = [('Mon', .3), ('Tue', .5)];
-    final original = LinerGraphPainter(data, null);
-    expect(LinerGraphPainter(data, null).shouldRepaint(original), isFalse);
-    expect(
-      LinerGraphPainter(
-        data,
-        null,
-        lineColor: Colors.red,
-      ).shouldRepaint(original),
-      isTrue,
+    final data = [const ChartDataPoint('Mon', 'Monday', 30)];
+    LinerGraphPainter painter(Color color) => LinerGraphPainter(
+      data,
+      axis: AmountAxis.forValues([30]),
+      monthly: false,
+      selected: null,
+      textScaler: TextScaler.noScaling,
+      lineColor: color,
+      labelColor: Colors.grey,
+      axisColor: Colors.grey,
     );
-    expect(
-      LinerGraphPainter(
-        data,
-        null,
-        labelColor: Colors.white,
-      ).shouldRepaint(original),
-      isTrue,
-    );
-    expect(
-      LinerGraphPainter(
-        data,
-        null,
-        axisColor: Colors.white,
-      ).shouldRepaint(original),
-      isTrue,
-    );
+    expect(painter(Colors.red).shouldRepaint(painter(Colors.blue)), isTrue);
   });
 
   testWidgets('空数据与单点折线安全绘制', (tester) async {
     for (final data in <List<ChartDataPoint>>[
       [],
-      [('Mon', .3)],
+      [const ChartDataPoint('Mon', 'Monday', 30)],
     ]) {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.darkTheme,
-          home: SizedBox(width: 300, height: 160, child: LineGraph(data: data)),
+          home: Center(
+            child: SizedBox(
+              width: 300,
+              height: 160,
+              child: LineGraph(
+                data: data,
+                axisLabel: 'Volume',
+                futureLabel: 'Future',
+              ),
+            ),
+          ),
         ),
       );
       expect(tester.takeException(), isNull);

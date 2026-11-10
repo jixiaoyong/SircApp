@@ -49,6 +49,23 @@ class HomeZh implements HomeLang {
   String get localExamples => '本地示例';
 
   @override
+  String get chartWeek => '本周';
+  @override
+  String get chartMonth => '本月';
+  @override
+  String get chartVolume => '每日交易总额';
+  @override
+  String get chartVolumeHint => '收入与支出绝对值之和，非余额或净额';
+  @override
+  String get chartEmpty => '本周期暂无交易';
+  @override
+  String get chartZero => '每日交易总额均为零';
+  @override
+  String get chartFuture => '尚未到该日期';
+  @override
+  String get chartUndated => '日期不明确的记录未计入';
+
+  @override
   String get bonds => '债券';
   @override
   String get billing => '账单';

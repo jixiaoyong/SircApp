@@ -49,6 +49,24 @@ class HomeEn implements HomeLang {
   String get localExamples => 'Local examples';
 
   @override
+  String get chartWeek => 'This week';
+  @override
+  String get chartMonth => 'This month';
+  @override
+  String get chartVolume => 'Daily transaction volume';
+  @override
+  String get chartVolumeHint =>
+      'Absolute income + expense, not balance or net amount';
+  @override
+  String get chartEmpty => 'No transactions in this period';
+  @override
+  String get chartZero => 'All daily transaction amounts are zero';
+  @override
+  String get chartFuture => 'Future date';
+  @override
+  String get chartUndated => 'Records with unknown dates excluded';
+
+  @override
   String get bonds => 'Bonds';
   @override
   String get billing => 'Billing';

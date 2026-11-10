@@ -455,6 +455,38 @@ class Languages {
   ///- [en_US] Local examples
   static String get localExamples => home.localExamples;
 
+  ///- [zh_CN] 本周
+  ///- [en_US] This week
+  static String get chartWeek => home.chartWeek;
+
+  ///- [zh_CN] 本月
+  ///- [en_US] This month
+  static String get chartMonth => home.chartMonth;
+
+  ///- [zh_CN] 每日交易总额
+  ///- [en_US] Daily transaction volume
+  static String get chartVolume => home.chartVolume;
+
+  ///- [zh_CN] 收入与支出绝对值之和，非余额或净额
+  ///- [en_US] Absolute income + expense, not balance or net amount
+  static String get chartVolumeHint => home.chartVolumeHint;
+
+  ///- [zh_CN] 本周期暂无交易
+  ///- [en_US] No transactions in this period
+  static String get chartEmpty => home.chartEmpty;
+
+  ///- [zh_CN] 每日交易总额均为零
+  ///- [en_US] All daily transaction amounts are zero
+  static String get chartZero => home.chartZero;
+
+  ///- [zh_CN] 尚未到该日期
+  ///- [en_US] Future date
+  static String get chartFuture => home.chartFuture;
+
+  ///- [zh_CN] 日期不明确的记录未计入
+  ///- [en_US] Records with unknown dates excluded
+  static String get chartUndated => home.chartUndated;
+
   ///- [zh_CN] 债券
   ///- [en_US] Bonds
   static String get bonds => home.bonds;
@@ -829,6 +861,17 @@ class Languages {
       "Transactions": "Transactions",
       "Transaction summary": "Transaction summary",
       "Local examples": "Local examples",
+      "This week": "This week",
+      "This month": "This month",
+      "Daily transaction volume": "Daily transaction volume",
+      "Absolute income + expense, not balance or net amount":
+          "Absolute income + expense, not balance or net amount",
+      "No transactions in this period": "No transactions in this period",
+      "All daily transaction amounts are zero":
+          "All daily transaction amounts are zero",
+      "Future date": "Future date",
+      "Records with unknown dates excluded":
+          "Records with unknown dates excluded",
       "Bonds": "Bonds",
       "Billing": "Billing",
       "Cash": "Cash",
@@ -999,6 +1042,15 @@ class Languages {
       "Transactions": "最近交易",
       "Transaction summary": "交易摘要",
       "Local examples": "本地示例",
+      "This week": "本周",
+      "This month": "本月",
+      "Daily transaction volume": "每日交易总额",
+      "Absolute income + expense, not balance or net amount":
+          "收入与支出绝对值之和，非余额或净额",
+      "No transactions in this period": "本周期暂无交易",
+      "All daily transaction amounts are zero": "每日交易总额均为零",
+      "Future date": "尚未到该日期",
+      "Records with unknown dates excluded": "日期不明确的记录未计入",
       "Bonds": "债券",
       "Billing": "账单",
       "Cash": "现金",

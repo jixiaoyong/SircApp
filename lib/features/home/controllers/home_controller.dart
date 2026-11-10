@@ -24,26 +24,22 @@ class BankCardItem {
 /// 首页看板状态（纯业务数据，不与 UI 组件或特定多语言文本耦合）
 class HomeState {
   final int currentBankIndex;
-  final List<double> weeklyPercentages;
   final List<BankCardItem> banks;
   final List<ImgText> quickActions;
 
   const HomeState({
     this.currentBankIndex = 0,
-    required this.weeklyPercentages,
     required this.banks,
     required this.quickActions,
   });
 
   HomeState copyWith({
     int? currentBankIndex,
-    List<double>? weeklyPercentages,
     List<BankCardItem>? banks,
     List<ImgText>? quickActions,
   }) {
     return HomeState(
       currentBankIndex: currentBankIndex ?? this.currentBankIndex,
-      weeklyPercentages: weeklyPercentages ?? this.weeklyPercentages,
       banks: banks ?? this.banks,
       quickActions: quickActions ?? this.quickActions,
     );
@@ -58,9 +54,6 @@ class HomeController extends _$HomeController {
     final wallet = ref.watch(walletControllerProvider);
     return HomeState(
       currentBankIndex: wallet.selectedCardIndex,
-      weeklyPercentages:
-          stateOrNull?.weeklyPercentages ??
-          const [0.3, 0.5, 0.1, 0.6, 0.9, 0.2, 0.8],
       banks: wallet.cards
           .map(
             (card) => BankCardItem(
@@ -128,10 +121,5 @@ class HomeController extends _$HomeController {
   /// 设置当前选中的银行卡索引
   void setBankIndex(int index) {
     ref.read(walletControllerProvider.notifier).selectCard(index);
-  }
-
-  /// 更新折线图周百分比数据
-  void updateWeeklyPercentages(List<double> percentages) {
-    state = state.copyWith(weeklyPercentages: percentages);
   }
 }
