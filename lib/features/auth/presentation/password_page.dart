@@ -51,7 +51,7 @@ class PasswordPage extends ConsumerWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(Languages.oldPasswordIncorrect),
-              backgroundColor: Colors.red,
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         }
@@ -61,8 +61,7 @@ class PasswordPage extends ConsumerWidget {
     final state = ref.watch(passwordControllerProvider);
     final notifier = ref.read(passwordControllerProvider.notifier);
     final isValidError = state.errorMessage;
-    final isButtonEnabled = isValidError == null;
-
+    final isButtonEnabled = !state.isLoading && isValidError == null;
     return Scaffold(
       appBar: OneTitleWithBackButtonAppBar(
         title: Languages.changePassword,
@@ -76,6 +75,7 @@ class PasswordPage extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               PasswordTextField(
+                enabled: !state.isLoading,
                 label: Languages.oldPassword,
                 isVisible: state.isOldPasswordVisible,
                 onVisibilityChanged: notifier.setOldPasswordVisible,
@@ -83,6 +83,7 @@ class PasswordPage extends ConsumerWidget {
               ),
               Container(height: 20.dp),
               PasswordTextField(
+                enabled: !state.isLoading,
                 label: Languages.newPassword,
                 errorText: isValidError,
                 isNewPassword: true,
@@ -92,6 +93,7 @@ class PasswordPage extends ConsumerWidget {
               ),
               Container(height: 20.dp),
               PasswordTextField(
+                enabled: !state.isLoading,
                 label: Languages.confirmPassword,
                 errorText: isValidError,
                 isNewPassword: true,
@@ -106,7 +108,10 @@ class PasswordPage extends ConsumerWidget {
                   child: FilledButton(
                     style: FilledButton.styleFrom(
                       minimumSize: Size(0, 50.dp),
-                      textStyle: TextStyle(fontSize: 16.dp),
+                      textStyle: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     onPressed: !isButtonEnabled
                         ? null

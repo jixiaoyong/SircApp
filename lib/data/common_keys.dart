@@ -12,6 +12,8 @@ class CommonKeys {
 
   // the language of app
   static const String LOCAL_LANGUAGE = 'localLanguage';
+  // Device appearance preference survives logout and account data cleanup.
+  static const String THEME_MODE = 'themeMode';
   static const String USER_NAME = 'user_name';
 
   // the md5 of user password

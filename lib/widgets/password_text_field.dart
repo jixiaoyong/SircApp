@@ -13,6 +13,7 @@ class PasswordTextField extends StatefulWidget {
     this.isNewPassword = false,
     this.isVisible,
     this.onVisibilityChanged,
+    this.enabled = true,
   });
 
   final String label;
@@ -20,6 +21,7 @@ class PasswordTextField extends StatefulWidget {
   final TextEditingController? controller;
   final String? errorText;
   final bool isNewPassword;
+  final bool enabled;
   final bool? isVisible;
   final ValueChanged<bool>? onVisibilityChanged;
 
@@ -40,6 +42,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
         ? (english ? 'Hide password' : '隐藏密码')
         : (english ? 'Show password' : '显示密码');
     return TextField(
+      enabled: widget.enabled,
       controller: widget.controller,
       onChanged: widget.onChanged,
       obscureText: !visible,
@@ -62,10 +65,12 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
           color: colors.onSurfaceVariant,
           icon: const Icon(Icons.visibility_outlined),
           selectedIcon: const Icon(Icons.visibility_off_outlined),
-          onPressed: () {
-            setState(() => _isVisible = !visible);
-            widget.onVisibilityChanged?.call(!visible);
-          },
+          onPressed: widget.enabled
+              ? () {
+                  setState(() => _isVisible = !visible);
+                  widget.onVisibilityChanged?.call(!visible);
+                }
+              : null,
         ),
       ),
     );

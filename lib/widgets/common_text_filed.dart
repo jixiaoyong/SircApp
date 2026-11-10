@@ -10,6 +10,7 @@ class CommonTextFiled extends StatelessWidget {
   final String? hint;
   final TextEditingController? controller;
   final Widget? suffixIcon;
+  final bool enabled;
 
   const CommonTextFiled({
     super.key,
@@ -21,11 +22,13 @@ class CommonTextFiled extends StatelessWidget {
     this.maxLength,
     this.controller,
     this.suffixIcon,
+    this.enabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      enabled: enabled,
       controller: controller,
       style: Theme.of(context).textTheme.bodyLarge
           ?.copyWith(color: Theme.of(context).colorScheme.onSurface),

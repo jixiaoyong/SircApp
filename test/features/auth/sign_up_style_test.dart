@@ -1,17 +1,147 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sirc/widgets/common_text_filed.dart';
+import 'package:sirc/widgets/password_text_field.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/features/auth/presentation/sign_up_page.dart';
 import 'package:sirc/features/auth/presentation/sign_up_field.dart';
+import 'package:sirc/features/auth/presentation/sign_in_page.dart';
+import 'package:sirc/features/auth/presentation/forget_pwd_page.dart';
+import 'package:sirc/features/auth/presentation/set_pwd_page.dart';
+import 'package:sirc/features/auth/presentation/password_page.dart';
+import 'package:sirc/widgets/constrained_content.dart';
 
 void main() {
+  for (final page in [const SignInPage(), const SignUpPage()]) {
+    for (final width in [320.0, 390.0, 1200.0]) {
+      for (final keyboard in [false, true]) {
+        testWidgets('${page.runtimeType} 居中与滚动 $width / 键盘$keyboard', (
+          tester,
+        ) async {
+          tester.view.physicalSize = Size(width, 1000);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          SharedPreferences.setMockInitialValues({});
+          final prefs = await SharedPreferences.getInstance();
+          await tester.pumpWidget(
+            ProviderScope(
+              overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+              child: MaterialApp(
+                theme: AppTheme.lightTheme,
+                builder: (context, child) => MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaler: TextScaler.linear(keyboard ? 2 : 1),
+                    viewInsets: EdgeInsets.only(bottom: keyboard ? 650 : 0),
+                    padding: const EdgeInsets.only(top: 24, bottom: 20),
+                  ),
+                  child: child!,
+                ),
+                home: page,
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(find.byType(AppBar), findsNothing);
+          expect(find.byType(BackButton), findsNothing);
+          final content = tester.getRect(find.byType(ConstrainedContent));
+          final viewport = tester.getRect(find.byType(SingleChildScrollView));
+          if (!keyboard) {
+            expect(content.height, lessThan(viewport.height));
+            expect(content.center.dy, closeTo(viewport.center.dy, 1));
+          } else {
+            final scrollable = find
+                .descendant(
+                  of: find.byType(SingleChildScrollView),
+                  matching: find.byType(Scrollable),
+                )
+                .first;
+            final position = tester.state<ScrollableState>(scrollable).position;
+            expect(position.maxScrollExtent, greaterThan(0));
+            await tester.drag(
+              find.byType(SingleChildScrollView),
+              const Offset(0, -900),
+            );
+            await tester.pumpAndSettle();
+            expect(position.pixels, greaterThan(0));
+          }
+          expect(
+            tester.getSize(find.byType(TextField).first).width,
+            lessThanOrEqualTo(480),
+          );
+          expect(tester.takeException(), isNull);
+        });
+      }
+    }
+  }
+
+  testWidgets('App内修改密码保留顶部与返回', (tester) async {
+    tester.view.physicalSize = const Size(390, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+        child: MaterialApp(home: PasswordPage(onBack: () {})),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final viewport = tester.getRect(find.byType(SingleChildScrollView));
+    final content = tester.getRect(find.byType(ConstrainedContent));
+    expect(content.top, viewport.top);
+    expect(find.byIcon(Icons.arrow_back), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+  for (final dark in [false, true]) {
+    for (final page in <Widget>[
+      const SignInPage(),
+      const SignUpPage(),
+      const ForgetPwdPage(),
+      const SetPwdPage(initialUserName: 'test@example.com'),
+      const PasswordPage(),
+    ]) {
+      testWidgets('${page.runtimeType} 跟随主题 $dark 且窄屏无溢出', (tester) async {
+        tester.view.physicalSize = const Size(320, 1000);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        SharedPreferences.setMockInitialValues({});
+        final prefs = await SharedPreferences.getInstance();
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+            child: MaterialApp(
+              theme: dark ? AppTheme.darkTheme : AppTheme.lightTheme,
+              home: page,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        final theme = Theme.of(tester.element(find.byType(TextField).first));
+        expect(theme.brightness, dark ? Brightness.dark : Brightness.light);
+        for (final field in tester.widgetList<TextField>(
+          find.byType(TextField),
+        )) {
+          expect(
+            field.decoration!.fillColor,
+            theme.colorScheme.surfaceContainerHighest,
+          );
+          expect(
+            (field.decoration!.enabledBorder! as OutlineInputBorder)
+                .borderRadius,
+            BorderRadius.circular(14),
+          );
+        }
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
   for (final dark in [false, true]) {
     for (final width in [320.0, 1440.0]) {
-      testWidgets('注册柔灰 $dark / $width 保留字段标签、SVG、状态与显隐', (tester) async {
+      testWidgets('注册柔灰 $dark / $width 复用公共字段并保留标签、状态与显隐', (tester) async {
         tester.view.physicalSize = Size(width, 1000);
         tester.view.devicePixelRatio = 1;
         addTearDown(tester.view.reset);
@@ -21,9 +151,7 @@ void main() {
           ProviderScope(
             overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
             child: MaterialApp(
-              theme: dark
-                  ? ThemeData(brightness: Brightness.dark)
-                  : AppTheme.lightTheme,
+              theme: dark ? AppTheme.darkTheme : AppTheme.lightTheme,
               home: const SignUpPage(),
             ),
           ),
@@ -31,23 +159,19 @@ void main() {
         await tester.pumpAndSettle();
         final fields = find.byType(TextField);
         expect(fields, findsNWidgets(4));
-        expect(find.byType(SvgPicture), findsNWidgets(6));
+        expect(find.byType(CommonTextFiled), findsNWidgets(2));
+        expect(find.byType(PasswordTextField), findsNWidgets(2));
+        final colors = Theme.of(tester.element(fields.first)).colorScheme;
         final first = tester.widget<TextField>(fields.first);
-        expect(
-          first.decoration!.fillColor,
-          dark ? const Color(0xFF2C2C2C) : const Color(0xFFF2F2F2),
-        );
+        expect(first.decoration!.fillColor, colors.surfaceContainerHighest);
         final border = first.decoration!.enabledBorder! as OutlineInputBorder;
         expect(border.borderRadius, BorderRadius.circular(14));
-        expect(border.borderSide.color, Colors.transparent);
-        final expectedInk = dark
-            ? const Color(0xFFF2F2F2)
-            : const Color(0xFF26282B);
+        expect(border.borderSide.color, colors.outline);
         expect(
           (first.decoration!.focusedBorder! as OutlineInputBorder)
               .borderSide
               .color,
-          expectedInk,
+          colors.secondary,
         );
         expect(
           tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
@@ -74,7 +198,7 @@ void main() {
                 w.decoration is BoxDecoration &&
                 (w.decoration as BoxDecoration).boxShadow?.isNotEmpty == true,
           ),
-          findsWidgets,
+          findsNothing,
         );
         await tester.enterText(fields.at(1), 'invalid');
         await tester.pumpAndSettle();
@@ -121,7 +245,12 @@ void main() {
     );
     final field = tester.widget<TextField>(find.byType(TextField));
     expect(field.enabled, isFalse);
-    expect(field.decoration!.fillColor, const Color(0xFFF8F8F8));
+    expect(
+      field.decoration!.fillColor,
+      Theme.of(tester.element(find.byType(TextField)))
+          .colorScheme
+          .surfaceContainerHighest,
+    );
     expect(
       tester.widget<IconButton>(find.byType(IconButton)).onPressed,
       isNull,

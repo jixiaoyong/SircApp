@@ -96,20 +96,25 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
     final state = ref.watch(forgetPwdControllerProvider);
     final notifier = ref.read(forgetPwdControllerProvider.notifier);
 
-    final isVerifyButtonEnabled = notifier.isEmailAndVerifyCodeValid();
+    final colors = Theme.of(context).colorScheme;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final isVerifyButtonEnabled =
+        !state.isVerifyingCode && notifier.isEmailAndVerifyCodeValid();
     final isSendVerifyCodeBtnDisable = state.lastSendVerifyCodeTime > 0;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           Languages.forgetPassword,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: colors.onSurface),
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: colors.surface,
         elevation: 0,
         centerTitle: true,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        iconTheme: const IconThemeData(color: Colors.black),
+        systemOverlayStyle: dark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
+        iconTheme: IconThemeData(color: colors.onSurface),
       ),
       body: SingleChildScrollView(
         child: ConstrainedContent(
@@ -119,12 +124,13 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
             children: [
               Text(
                 Languages.enterEmailToResetPassword,
-                style: const TextStyle(fontSize: 18, color: Colors.grey),
+                style: TextStyle(fontSize: 13, color: colors.onSurfaceVariant),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: CommonTextFiled(
                   label: Languages.emailAddress,
+                  enabled: !state.isVerifyingCode,
                   keyboardType: TextInputType.emailAddress,
                   errorText: state.userEmailError,
                   suffixIcon:
@@ -132,41 +138,34 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            GestureDetector(
-                              onTap: isSendVerifyCodeBtnDisable
+                            TextButton(
+                              onPressed:
+                                  isSendVerifyCodeBtnDisable ||
+                                      state.isVerifyingCode
                                   ? null
                                   : () {
                                       notifier.verifyEmail();
                                       _controller.forward();
                                     },
-                              child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10.dp),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 20.dp,
-                                  vertical: 5.dp,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSendVerifyCodeBtnDisable
-                                      ? Colors.grey
-                                      : Colors.blue,
-                                  borderRadius: BorderRadius.circular(20.dp),
-                                ),
-                                child: Text(
-                                  Languages.verify +
-                                      (state.lastSendVerifyCodeTime > 0
-                                          ? ' (${state.lastSendVerifyCodeTime}s)'
-                                          : ''),
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12.sp,
-                                  ),
-                                ),
+                              style: TextButton.styleFrom(
+                                foregroundColor: colors.secondary,
+                                minimumSize: const Size(44, 44),
+                                textStyle: const TextStyle(fontSize: 12),
+                              ),
+                              child: Text(
+                                Languages.verify +
+                                    (state.lastSendVerifyCodeTime > 0
+                                        ? ' (${state.lastSendVerifyCodeTime}s)'
+                                        : ''),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ],
                         )
-                      : const Icon(Icons.email_outlined, color: Colors.grey),
+                      : Icon(
+                          Icons.email_outlined,
+                          color: colors.onSurfaceVariant,
+                        ),
                   onChanged: notifier.setUserEmail,
                 ),
               ),
@@ -177,7 +176,10 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
                       padding: EdgeInsets.only(top: 50.dp),
                       child: Text(
                         Languages.pleaseEnterVerifyCode,
-                        style: TextStyle(color: Colors.grey, fontSize: 16.sp),
+                        style: TextStyle(
+                          color: colors.onSurfaceVariant,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                     Padding(

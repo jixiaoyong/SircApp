@@ -35,7 +35,13 @@ class _LineGraphState extends State<LineGraph> {
         });
       },
       child: CustomPaint(
-        painter: LinerGraphPainter(widget.data, _currentPosition),
+        painter: LinerGraphPainter(
+          widget.data,
+          _currentPosition,
+          lineColor: Theme.of(context).colorScheme.tertiary,
+          labelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+          axisColor: Theme.of(context).colorScheme.outline,
+        ),
       ),
     );
   }
@@ -49,15 +55,26 @@ class LinerGraphPainter extends CustomPainter {
   List<ChartDataPoint> data;
   Offset? currentPosition;
 
-  LinerGraphPainter(this.data, this.currentPosition) {
+  final Color lineColor;
+  final Color labelColor;
+  final Color axisColor;
+
+  LinerGraphPainter(
+    this.data,
+    this.currentPosition, {
+    this.lineColor = const Color(0xFF526F91),
+    this.labelColor = const Color(0xFF66686C),
+    this.axisColor = const Color(0xFF85888D),
+  }) {
     var tempPercentage = data.map((e) => e.$2).toList();
     tempPercentage.sort();
-    _maxPercentage = tempPercentage.last;
-    _minPercentage = tempPercentage.first;
+    _maxPercentage = tempPercentage.isEmpty ? 1 : tempPercentage.last;
+    _minPercentage = tempPercentage.isEmpty ? 0 : tempPercentage.first;
   }
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (data.isEmpty) return;
     final double width = size.width;
     final double height = size.height;
 
@@ -66,17 +83,17 @@ class LinerGraphPainter extends CustomPainter {
 
     final double percentageCount = (_maxPercentage - _minPercentage) * 10 + 1;
     final double axisYStep = availableHeight / percentageCount;
-    final double axisXStep = width / (data.length - 1);
+    final double axisXStep = width / (data.length > 1 ? data.length - 1 : 1);
 
     final paint = Paint()
-      ..color = Colors.blue
+      ..color = lineColor
       ..strokeWidth = _lineWidth
       ..style = PaintingStyle.stroke;
 
     final textPaint = TextPainter()..textDirection = TextDirection.ltr;
 
     final circlePaint = Paint()
-      ..color = Colors.blue
+      ..color = lineColor
       ..strokeWidth = _lineWidth
       ..style = PaintingStyle.fill;
 
@@ -95,22 +112,32 @@ class LinerGraphPainter extends CustomPainter {
 
         var controlPoint2X = (lastPoint.dx + x) / 2;
         var controlPoint2Y = y;
-        path.cubicTo(controlPoint1X, controlPoint1Y, controlPoint2X,
-            controlPoint2Y, x, y);
+        path.cubicTo(
+          controlPoint1X,
+          controlPoint1Y,
+          controlPoint2X,
+          controlPoint2Y,
+          x,
+          y,
+        );
       }
       lastPoint = Offset(x, y);
 
       // draw data text
       var text = TextSpan(
-          text: label,
-          style: TextStyle(
-              color: Colors.black,
-              fontSize: 12.sp,
-              fontWeight: FontWeight.bold));
+        text: label,
+        style: TextStyle(
+          color: labelColor,
+          fontSize: 12.sp,
+          fontWeight: FontWeight.bold,
+        ),
+      );
       textPaint.text = text;
       textPaint.layout();
-      textPaint.paint(canvas,
-          Offset(x - textPaint.width / 2, availableHeight + textPaint.height));
+      textPaint.paint(
+        canvas,
+        Offset(x - textPaint.width / 2, availableHeight + textPaint.height),
+      );
 
       // draw the current tap position
       if (currentPosition != null &&
@@ -120,11 +147,13 @@ class LinerGraphPainter extends CustomPainter {
 
         // draw the percentage text
         var percentageText = TextSpan(
-            text: '${(percentage * 100).toStringAsFixed(0)}%',
-            style: TextStyle(
-                color: Colors.blue,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.bold));
+          text: '${(percentage * 100).toStringAsFixed(0)}%',
+          style: TextStyle(
+            color: lineColor,
+            fontSize: 12.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        );
         textPaint.text = percentageText;
         textPaint.layout();
         var textY = y + textPaint.height + 10.dp;
@@ -138,14 +167,20 @@ class LinerGraphPainter extends CustomPainter {
 
     // draw the day line
     paint
-      ..color = Colors.blue.shade200
+      ..color = axisColor
       ..strokeWidth = 1.dp;
     canvas.drawLine(
-        Offset(0, availableHeight), Offset(width, availableHeight), paint);
+      Offset(0, availableHeight),
+      Offset(width, availableHeight),
+      paint,
+    );
   }
 
   @override
   bool shouldRepaint(covariant LinerGraphPainter oldDelegate) =>
       oldDelegate.data != data ||
-      oldDelegate.currentPosition != currentPosition;
+      oldDelegate.currentPosition != currentPosition ||
+      oldDelegate.lineColor != lineColor ||
+      oldDelegate.labelColor != labelColor ||
+      oldDelegate.axisColor != axisColor;
 }

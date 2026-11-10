@@ -74,18 +74,22 @@ class _SetPwdPageState extends ConsumerState<SetPwdPage> {
     final state = ref.watch(setPwdControllerProvider);
     final notifier = ref.read(setPwdControllerProvider.notifier);
     const marginBetweenFields = 20.0;
+    final colors = Theme.of(context).colorScheme;
+    final dark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           Languages.addNewPassword,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: colors.onSurface),
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: colors.surface,
         elevation: 0,
         centerTitle: true,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        iconTheme: const IconThemeData(color: Colors.black),
+        systemOverlayStyle: dark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
+        iconTheme: IconThemeData(color: colors.onSurface),
       ),
       body: SingleChildScrollView(
         child: ConstrainedContent(
@@ -97,6 +101,7 @@ class _SetPwdPageState extends ConsumerState<SetPwdPage> {
                 label: Languages.password,
                 errorText: state.userPwdError,
                 isNewPassword: true,
+                enabled: !state.isWaitSetPwdResult,
                 onChanged: notifier.setUserPwd,
               ),
               Padding(
@@ -105,11 +110,13 @@ class _SetPwdPageState extends ConsumerState<SetPwdPage> {
                   label: Languages.confirmPassword,
                   errorText: state.userConfirmPwdError,
                   isNewPassword: true,
+                  enabled: !state.isWaitSetPwdResult,
                   onChanged: notifier.setUserConfirmPwd,
                 ),
               ),
               CommonTextButton(
-                isButtonEnabled: state.isUserInputValid,
+                isButtonEnabled:
+                    !state.isWaitSetPwdResult && state.isUserInputValid,
                 onTap: () {
                   notifier.resetPwd();
                 },

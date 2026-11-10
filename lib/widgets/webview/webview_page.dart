@@ -4,9 +4,6 @@ import 'package:sirc/utils/logger.dart';
 import 'package:sirc/widgets/webview/web_java_script_channel.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../endless_rotating_indicator.dart';
-import '../gradient_progress_indicator.dart';
-
 /*
 * @description: 将webview_flutter封装为单独的页面
 * 做了如下修改：
@@ -112,32 +109,35 @@ class WebViewPageState extends State<WebViewPage> {
         appBar: AppBar(
           title: Text(
             _pageTitle ?? "",
-            style: const TextStyle(color: Colors.black),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           ),
           centerTitle: true,
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
-          elevation: 0.5,
+          elevation: 0,
+          scrolledUnderElevation: 0,
           leading: IconButton(
-              onPressed: () async {
-                final bool canGoBack = await _controller.canGoBack();
-                if (canGoBack) {
-                  await _controller.goBack();
-                } else if (context.mounted) {
-                  Navigator.of(context).maybePop();
-                }
-              },
-              icon: const Icon(
-                Icons.arrow_back_ios_rounded,
-                color: Colors.black,
-              )),
-          backgroundColor: Colors.white,
+            onPressed: () async {
+              final bool canGoBack = await _controller.canGoBack();
+              if (canGoBack) {
+                await _controller.goBack();
+              } else if (context.mounted) {
+                Navigator.of(context).maybePop();
+              }
+            },
+            icon: Icon(
+              Icons.arrow_back_ios_rounded,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+          backgroundColor: Theme.of(context).colorScheme.surface,
         ),
         body: buildWebViewContent(),
       );
     } else {
-      SystemUiOverlayStyle uiStyle = SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-      );
+      SystemUiOverlayStyle uiStyle =
+          (Theme.of(context).brightness == Brightness.dark
+                  ? SystemUiOverlayStyle.light
+                  : SystemUiOverlayStyle.dark)
+              .copyWith(statusBarColor: Colors.transparent);
       SystemChrome.setSystemUIOverlayStyle(uiStyle);
       bodyWidget = buildWebViewContent();
     }
@@ -167,24 +167,14 @@ class WebViewPageState extends State<WebViewPage> {
           visible: progress < 100,
           child: Column(
             children: [
-              GradientProgressIndicator(
-                progress: progress / 100.0,
+              LinearProgressIndicator(
+                value: progress / 100.0,
+                color: Theme.of(context).colorScheme.secondary,
+                backgroundColor: Theme.of(context)
+                    .colorScheme
+                    .surfaceContainerHighest,
               ),
-              const Expanded(
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    EndlessRotatingIndicator(
-                      child: Icon(
-                        Icons.refresh,
-                        color: Colors.white,
-                      ),
-                    )
-                  ],
-                ),
-              )
+              const Expanded(child: Center(child: CircularProgressIndicator())),
             ],
           ),
         ),

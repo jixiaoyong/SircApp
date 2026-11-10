@@ -17,11 +17,11 @@ class OneTitleWithBackButtonAppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title, style: const TextStyle(color: Colors.black)),
-      backgroundColor: Colors.white,
-      leading: GestureDetector(
-        child: const Icon(Icons.arrow_back, color: Colors.black),
-        onTap: () {
+      title: Text(title),
+      leading: IconButton(
+        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
           if (onBack != null) {
             onBack!();
           } else {

@@ -9,10 +9,7 @@ import 'package:sirc/utils/size_extension.dart';
 * @date: 22/04/17
 */
 class TitleText extends StatelessWidget {
-  const TitleText({
-    required this.text,
-    super.key,
-  });
+  const TitleText({required this.text, super.key});
 
   final String text;
 
@@ -23,7 +20,10 @@ class TitleText extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20.sp),
+          color: Theme.of(context).colorScheme.onSurface,
+          fontWeight: FontWeight.bold,
+          fontSize: 20.sp,
+        ),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sirc/routes/app_routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/auth/presentation/controllers/auth_controller.dart';
@@ -47,10 +48,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
       if (previous?.isRegisterSuccess != next.isRegisterSuccess &&
           next.isRegisterSuccess != null) {
         if (next.isRegisterSuccess == true) {
-          // 成功回到 Sign In 页面
-          if (Navigator.of(context).canPop()) {
-            Navigator.of(context).pop();
-          }
+          context.go(AppRoutes.SIGN_IN);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Column(
@@ -76,7 +74,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 child: Center(
                   child: Icon(
                     Icons.error_outline_outlined,
-                    color: Colors.red,
+                    color: Theme.of(context).colorScheme.error,
                     size: 80.dp,
                   ),
                 ),
@@ -94,162 +92,183 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     final isButtonEnabled = !isLoginInProgress && state.isUserInputValid;
     const marginBetweenFields = 20.0;
 
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final ink = dark ? const Color(0xFFF2F2F2) : const Color(0xFF26282B);
-    final background = dark ? const Color(0xFF181818) : Colors.white;
+    final colors = Theme.of(context).colorScheme;
+    final ink = colors.onSurface;
+    final background = Theme.of(context).scaffoldBackgroundColor;
 
     return Scaffold(
       backgroundColor: background,
-      appBar: AppBar(
-        title: Text(Languages.signUp, style: TextStyle(color: ink)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        systemOverlayStyle: dark
-            ? SystemUiOverlayStyle.light
-            : SystemUiOverlayStyle.dark,
-        iconTheme: IconThemeData(color: ink),
-      ),
-      body: SingleChildScrollView(
-        child: ConstrainedContent(
-          maxWidth: 520,
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SignUpField(
-                label: Languages.username,
-                errorText: state.userNameError,
-                icon: 'user',
-                enabled: !isLoginInProgress,
-                onChanged: notifier.setUserName,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: marginBetweenFields),
-                child: SignUpField(
-                  label: Languages.emailAddress,
-                  errorText: state.userEmailError,
-                  keyboardType: TextInputType.emailAddress,
-                  enabled: !isLoginInProgress,
-                  onChanged: notifier.setUserEmail,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: marginBetweenFields),
-                child: SignUpField(
-                  label: Languages.password,
-                  errorText: state.userPwdError,
-                  password: true,
-                  enabled: !isLoginInProgress,
-                  onChanged: notifier.setUserPwd,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: marginBetweenFields),
-                child: SignUpField(
-                  label: Languages.confirmPassword,
-                  errorText: state.userConfirmPwdError,
-                  password: true,
-                  enabled: !isLoginInProgress,
-                  onChanged: notifier.setUserConfirmPwd,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: ink,
-                      foregroundColor: background,
-                      disabledBackgroundColor: dark
-                          ? const Color(0xFF353535)
-                          : const Color(0xFFE1E1E1),
-                      disabledForegroundColor: dark
-                          ? const Color(0xFFB3B3B3)
-                          : const Color(0xFF666666),
-                      minimumSize: const Size(0, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      textStyle: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    onPressed: isButtonEnabled ? notifier.register : null,
-                    child: Text(Languages.register),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 10,
-                ),
-                child: Text(
-                  Languages.orSignUpWith,
-                  style: TextStyle(
-                    color: ink,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 50.dp,
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final item = state.socialList[index];
-                        return GestureDetector(
-                          onTap: () {
-                            notifier.logUpWith(item);
-                          },
-                          child: Container(
-                            height: 50.dp,
-                            width: 50.dp,
-                            margin: EdgeInsets.symmetric(horizontal: 10.dp),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.dp),
-                              border: Border.all(color: item.$2, width: 1),
-                            ),
-                            child: Center(child: Icon(item.$1, color: item.$2)),
-                          ),
-                        );
-                      },
-                      itemCount: state.socialList.length,
-                      scrollDirection: Axis.horizontal,
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 20.dp, bottom: 50.dp),
-                child: RichText(
-                  text: TextSpan(
-                    text: Languages.haveAccount,
-                    style: TextStyle(color: ink, fontSize: 12.dp),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Center(
+                child: ConstrainedContent(
+                  maxWidth: 520,
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextSpan(
-                        text: " ${Languages.signIn}",
-                        style: TextStyle(
-                          color: ink,
-                          fontSize: 12.dp,
-                          fontWeight: FontWeight.w500,
+                      SignUpField(
+                        label: Languages.username,
+                        errorText: state.userNameError,
+                        icon: 'user',
+                        enabled: !isLoginInProgress,
+                        onChanged: notifier.setUserName,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: marginBetweenFields,
                         ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () => Navigator.of(context).pop(),
+                        child: SignUpField(
+                          label: Languages.emailAddress,
+                          errorText: state.userEmailError,
+                          keyboardType: TextInputType.emailAddress,
+                          enabled: !isLoginInProgress,
+                          onChanged: notifier.setUserEmail,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: marginBetweenFields,
+                        ),
+                        child: SignUpField(
+                          label: Languages.password,
+                          errorText: state.userPwdError,
+                          password: true,
+                          enabled: !isLoginInProgress,
+                          onChanged: notifier.setUserPwd,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: marginBetweenFields,
+                        ),
+                        child: SignUpField(
+                          label: Languages.confirmPassword,
+                          errorText: state.userConfirmPwdError,
+                          password: true,
+                          enabled: !isLoginInProgress,
+                          onChanged: notifier.setUserConfirmPwd,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(
+                              minimumSize: const Size(0, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              textStyle: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            onPressed: isButtonEnabled
+                                ? notifier.register
+                                : null,
+                            child: Text(Languages.register),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: Row(
+                          children: [
+                            const Expanded(child: Divider()),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 13,
+                              ),
+                              child: Text(
+                                Languages.orSignUpWith,
+                                style: TextStyle(
+                                  color: colors.onSurfaceVariant,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                            const Expanded(child: Divider()),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 50.dp,
+                        width: double.infinity,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                final item = state.socialList[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    notifier.logUpWith(item);
+                                  },
+                                  child: Container(
+                                    height: 50.dp,
+                                    width: 50.dp,
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: 10.dp,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(
+                                        color: colors.outline,
+                                        width: 1.25,
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        item.$1,
+                                        color: ink,
+                                        size: 20,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              itemCount: state.socialList.length,
+                              scrollDirection: Axis.horizontal,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: RichText(
+                          text: TextSpan(
+                            text: Languages.haveAccount,
+                            style: TextStyle(
+                              color: colors.onSurfaceVariant,
+                              fontSize: 12.dp,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: " ${Languages.signIn}",
+                                style: TextStyle(
+                                  color: ink,
+                                  fontSize: 12.dp,
+                                  fontWeight: FontWeight.w500,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () => context.go(AppRoutes.SIGN_IN),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),

@@ -9,7 +9,7 @@ InputDecoration formInputDecoration(
 }) {
   final colors = Theme.of(context).colorScheme;
   OutlineInputBorder border(Color color, double width) => OutlineInputBorder(
-    borderRadius: BorderRadius.circular(12),
+    borderRadius: BorderRadius.circular(14),
     borderSide: BorderSide(color: color, width: width),
   );
   return InputDecoration(
@@ -21,16 +21,16 @@ InputDecoration formInputDecoration(
         color: states.contains(WidgetState.error)
             ? colors.error
             : states.contains(WidgetState.focused)
-            ? colors.primary
+            ? colors.secondary
             : colors.onSurfaceVariant,
       );
     }),
     filled: true,
-    fillColor: colors.surfaceContainerLow,
+    fillColor: colors.surfaceContainerHighest,
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    border: border(colors.outlineVariant, 1),
-    enabledBorder: border(colors.outlineVariant, 1),
-    focusedBorder: border(colors.primary, 1.5),
+    border: border(colors.outline, 1),
+    enabledBorder: border(colors.outline, 1),
+    focusedBorder: border(colors.secondary, 2),
     errorBorder: border(colors.error, 1),
     focusedErrorBorder: border(colors.error, 1.5),
     errorText: errorText,

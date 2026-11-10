@@ -38,14 +38,14 @@ void main() {
       final decoration = field.decoration!;
       expect(decoration.labelText, '密码');
       expect(decoration.floatingLabelBehavior, FloatingLabelBehavior.always);
-      expect(decoration.fillColor, theme.colorScheme.surfaceContainerLow);
+      expect(decoration.fillColor, theme.colorScheme.surfaceContainerHighest);
       expect(
         (decoration.enabledBorder! as OutlineInputBorder).borderSide.color,
-        theme.colorScheme.outlineVariant,
+        theme.colorScheme.outline,
       );
       expect(
         (decoration.focusedBorder! as OutlineInputBorder).borderSide.color,
-        theme.colorScheme.primary,
+        theme.colorScheme.secondary,
       );
       expect(field.obscureText, isTrue);
       expect(field.autocorrect, isFalse);

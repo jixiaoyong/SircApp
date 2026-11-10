@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../data/common_keys.dart';
 
 /// 全局 SharedPreferences 实例 Provider，由 main.dart 在启动时初始化并 override
@@ -49,6 +50,17 @@ class StorageService extends ChangeNotifier {
   Future<bool> setLocalLanguage(String value) async {
     final result = await _prefs?.setString(CommonKeys.LOCAL_LANGUAGE, value);
     return result ?? true;
+  }
+
+  String? get themeMode => _prefs?.getString(CommonKeys.THEME_MODE);
+  Future<bool> setThemeMode(String value) async =>
+      await _prefs?.setString(CommonKeys.THEME_MODE, value) ?? true;
+
+  /// Match the menu's existing full cleanup, retaining device appearance only.
+  Future<void> clearUserData() async {
+    for (final key in _prefs?.getKeys() ?? <String>{}) {
+      if (key != CommonKeys.THEME_MODE) await _prefs?.remove(key);
+    }
   }
 
   Future<bool> clearUser() async {
