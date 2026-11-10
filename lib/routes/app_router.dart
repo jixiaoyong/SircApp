@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -60,7 +61,15 @@ GoRouter createAppRouter(
     }
     return null;
   },
-  errorBuilder: (context, state) => const NotFoundPage(),
+  errorBuilder: (context, state) {
+    // GoException 的消息可能包含完整 URL；日志仅保留路径，避免泄漏 query。
+    final error = state.error?.toString().replaceAll(
+      RegExp(r'[?#][^\s]*'),
+      '[redacted]',
+    );
+    debugPrint('Router 404: uri=${state.uri.path}, error=$error');
+    return const NotFoundPage();
+  },
   routes: [
     GoRoute(
       path: AppRoutes.INITIAL,
@@ -136,10 +145,12 @@ GoRouter createAppRouter(
         ),
         GoRoute(
           path: 'add-card',
-          builder: (context, state) => const MainPage(
-            initialIndex: 4,
-            initialMenuDetail: AppRoutes.ADD_CARD,
-          ),
+          builder: (context, state) => MediaQuery.sizeOf(context).width >= 840
+              ? const MainPage(
+                  initialIndex: 4,
+                  initialMenuDetail: AppRoutes.ADD_CARD,
+                )
+              : const AddCardPage(),
         ),
       ],
       builder: (context, state) => const MainPage(initialIndex: 4),

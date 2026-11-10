@@ -88,7 +88,11 @@ class _MainPageState extends ConsumerState<MainPage> {
           if (location == null) {
             context.go(AppRoutes.MENU);
           } else {
-            context.go('${AppRoutes.MENU}$location');
+            context.go(
+              location.startsWith('${AppRoutes.MENU}/')
+                  ? location
+                  : '${AppRoutes.MENU}$location',
+            );
           }
         },
       ),
