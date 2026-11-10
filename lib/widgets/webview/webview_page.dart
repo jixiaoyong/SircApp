@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sirc/utils/logger.dart';
 import 'package:sirc/widgets/webview/web_java_script_channel.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -28,16 +27,14 @@ class WebViewPage extends StatefulWidget {
   // 是否使用SurfaceAndroidWebView，以兼容Android 12 输入法等情况（4.x已内置适配，保留字段兼容）
   final bool needSurfaceAndroidWebView;
 
-  WebViewPage(
+  const WebViewPage(
     this.url, {
     super.key,
     this.title,
     this.javascriptChannels,
     this.needAppBar = true,
     this.needSurfaceAndroidWebView = false,
-  }) {
-    LogUtils.d("WebViewPage open url: $url");
-  }
+  });
 
   @override
   State<StatefulWidget> createState() {
