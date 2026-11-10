@@ -134,7 +134,17 @@ class _MainPageState extends ConsumerState<MainPage> {
           children: [
             if (navigation != null) navigation,
             Expanded(
-              child: IndexedStack(index: currentIndex, children: homePages),
+              child: IndexedStack(
+                index: currentIndex,
+                children: [
+                  for (var index = 0; index < homePages.length; index++)
+                    // IndexedStack只隐藏绘制；隐藏Tab不能参与路由Hero飞行。
+                    HeroMode(
+                      enabled: index == currentIndex,
+                      child: homePages[index],
+                    ),
+                ],
+              ),
             ),
           ],
         ),
