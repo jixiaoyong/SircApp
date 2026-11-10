@@ -60,9 +60,9 @@ class PasswordPage extends ConsumerWidget {
         title: Languages.changePassword,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.dp),
+        padding: EdgeInsets.symmetric(horizontal: 20.dp, vertical: 10.dp),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             TextField(
               decoration: InputDecoration(
@@ -135,35 +135,21 @@ class PasswordPage extends ConsumerWidget {
                 notifier.setConfirmPassword(value);
               },
             ),
-            Container(
-              height: 50.dp,
-              width: double.infinity,
-              margin: EdgeInsets.only(top: 50.dp),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.dp),
-                border: !isButtonEnabled ? Border.all(color: Colors.grey) : null,
-                gradient: !isButtonEnabled
-                    ? null
-                    : LinearGradient(
-                        colors: [Colors.blue, Colors.purple.shade400],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-              ),
-              child: GestureDetector(
-                onTap: !isButtonEnabled
-                    ? null
-                    : () {
-                        notifier.changePassword();
-                      },
-                child: Center(
-                  child: Text(
-                    Languages.changePassword,
-                    style: TextStyle(
-                      color: !isButtonEnabled ? Colors.grey : Colors.white,
-                      fontSize: 16.dp,
-                    ),
+            Padding(
+              padding: EdgeInsets.only(top: 50.dp),
+              child: SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    minimumSize: Size(0, 50.dp),
+                    textStyle: TextStyle(fontSize: 16.dp),
                   ),
+                  onPressed: !isButtonEnabled
+                      ? null
+                      : () {
+                          notifier.changePassword();
+                        },
+                  child: Text(Languages.changePassword),
                 ),
               ),
             ),
