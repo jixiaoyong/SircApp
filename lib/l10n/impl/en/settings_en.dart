@@ -35,6 +35,9 @@ class SettingsEn implements SettingsLang {
   String get localAddress => 'Local Address';
 
   @override
+  String get notSet => 'Not set';
+
+  @override
   String get person => 'Person';
 
   @override

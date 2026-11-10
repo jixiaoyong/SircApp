@@ -12,6 +12,44 @@ import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
 import 'package:sirc/widgets/settings_item_tile.dart';
+import 'package:sirc/core/storage/storage_service.dart';
+import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
+
+/// 只读个人资料；电话和地址尚无数据源，不虚构用户信息。
+class PersonInformationPage extends ConsumerWidget {
+  const PersonInformationPage({super.key, required this.field, this.onBack});
+
+  final String field;
+  final VoidCallback? onBack;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(localeProvider);
+    final user = ref.watch(navigationControllerProvider);
+    final savedEmail = ref.watch(storageServiceProvider).userEmail;
+    final title = switch (field) {
+      'email' => Languages.email,
+      'phone' => Languages.phoneNumber,
+      _ => Languages.localAddress,
+    };
+    final email = savedEmail?.trim().isNotEmpty == true
+        ? savedEmail!
+        : user.userEmail;
+    final value = field == 'email' && email.trim().isNotEmpty
+        ? email
+        : Languages.settings.notSet;
+    return Scaffold(
+      appBar: OneTitleWithBackButtonAppBar(title: title, onBack: onBack),
+      body: Padding(
+        padding: EdgeInsets.all(24.dp),
+        child: SelectableText(
+          value,
+          key: const ValueKey('person-information-value'),
+        ),
+      ),
+    );
+  }
+}
 
 /// 个人中心页面，用户信息展示、流水列表与通用信息
 class PersonPage extends ConsumerStatefulWidget {
@@ -32,8 +70,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
     _moneyOperateList = MockUtils.moneyOperateList
         .map<Transaction>(
           (e) => e.copyWith(
-            userIcon:
-                "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
+            userIcon: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
           ),
         )
         .toList();
@@ -45,10 +82,14 @@ class _PersonPageState extends ConsumerState<PersonPage> {
     final navState = ref.watch(navigationControllerProvider);
 
     final generalInformationList = [
-      (Icons.email_outlined, Languages.email),
-      (Icons.phone_outlined, Languages.phoneNumber),
-      (Icons.location_on_outlined, Languages.localAddress),
-      (Icons.credit_card_outlined, Languages.cardCredit),
+      (Icons.email_outlined, Languages.email, AppRoutes.PERSON_EMAIL),
+      (Icons.phone_outlined, Languages.phoneNumber, AppRoutes.PERSON_PHONE),
+      (
+        Icons.location_on_outlined,
+        Languages.localAddress,
+        AppRoutes.PERSON_ADDRESS,
+      ),
+      (Icons.credit_card_outlined, Languages.cardCredit, AppRoutes.PERSON_CARD),
     ];
 
     return SingleChildScrollView(
@@ -75,7 +116,9 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                 padding: EdgeInsets.only(top: 20.dp),
                 child: GestureDetector(
                   onTap: () {
-                    ref.read(navigationControllerProvider.notifier).openDrawer();
+                    ref
+                        .read(navigationControllerProvider.notifier)
+                        .openDrawer();
                   },
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(50.dp),
@@ -127,10 +170,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                         });
                         context.push(
                           AppRoutes.HISTORY_DETAILS,
-                          extra: {
-                            "data": data,
-                            "heroTag": heroTag,
-                          },
+                          extra: {"data": data, "heroTag": heroTag},
                         );
                       },
                       child: Container(
@@ -239,7 +279,24 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                             icon: item.$1,
                             title: item.$2,
                             onTap: () {
-                              context.push(AppRoutes.ABOUT);
+                              final router = GoRouter.of(context);
+                              final current = router
+                                  .routeInformationProvider
+                                  .value
+                                  .uri
+                                  .path;
+                              if (current == item.$3) return;
+                              if (MediaQuery.sizeOf(context).width >= 840 &&
+                                  current.startsWith('${AppRoutes.PERSON}/') &&
+                                  current !=
+                                      '${AppRoutes.PERSON}/${AppRoutes.TRANSACTION_SEGMENT}') {
+                                Router.neglect(
+                                  context,
+                                  () => router.replace<void>(item.$3),
+                                );
+                              } else {
+                                context.push(item.$3);
+                              }
                             },
                           ),
                           if (index != generalInformationList.length - 1)

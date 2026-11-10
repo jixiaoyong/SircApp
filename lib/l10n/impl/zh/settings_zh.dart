@@ -35,6 +35,9 @@ class SettingsZh implements SettingsLang {
   String get localAddress => '本地地址';
 
   @override
+  String get notSet => '未设置';
+
+  @override
   String get person => '个人';
 
   @override

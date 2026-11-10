@@ -65,7 +65,7 @@ GoRouter createAppRouter(
     refreshListenable: storage,
     redirect: (context, state) {
       final path = state.uri.path;
-      // 精确开放现有匿名认证流程；修改密码 /password 仍受保护。
+      // 精确开放现有匿名认证流程；修改密码 /menu/password 仍受保护。
       const publicPaths = {
         AppRoutes.INITIAL,
         AppRoutes.SIGN_IN,
@@ -152,10 +152,48 @@ GoRouter createAppRouter(
           ),
           StatefulShellBranch(
             routes: [
-              GoRoute(
-                path: AppRoutes.PERSON,
-                builder: (context, state) => const PersonPage(),
-                routes: [_transactionRoute(takeTransactionExtra)],
+              ShellRoute(
+                pageBuilder: (context, state, child) => NoTransitionPage<void>(
+                  key: state.pageKey,
+                  child:
+                      state.uri.path ==
+                          '${AppRoutes.PERSON}/${AppRoutes.TRANSACTION_SEGMENT}'
+                      ? child
+                      : MenuDetailLayout(
+                          hasDetail: state.uri.path != AppRoutes.PERSON,
+                          list: const PersonPage(),
+                          paneKey: const ValueKey('person-pane'),
+                          child: child,
+                        ),
+                ),
+                routes: [
+                  GoRoute(
+                    path: AppRoutes.PERSON,
+                    pageBuilder: (context, state) => NoTransitionPage<void>(
+                      key: state.pageKey,
+                      child: MediaQuery.sizeOf(context).width >= 840
+                          ? const SizedBox.shrink()
+                          : const PersonPage(),
+                    ),
+                    routes: [
+                      for (final field in ['email', 'phone', 'address'])
+                        _menuDetailRoute(
+                          field,
+                          (onBack) => PersonInformationPage(
+                            field: field,
+                            onBack: onBack,
+                          ),
+                          source: AppRoutes.PERSON,
+                        ),
+                      _menuDetailRoute(
+                        'card',
+                        (onBack) => AboutPage(onBack: onBack),
+                        source: AppRoutes.PERSON,
+                      ),
+                      _transactionRoute(takeTransactionExtra),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
@@ -199,19 +237,6 @@ GoRouter createAppRouter(
                   ),
                 ],
               ),
-              // 保留旧快捷 URL；同样属于设置分支，返回时仍能回到菜单。
-              GoRoute(
-                path: AppRoutes.LANGUAGES,
-                builder: (context, state) => const LanguagePage(),
-              ),
-              GoRoute(
-                path: AppRoutes.NOTIFICATIONS,
-                builder: (context, state) => const NotificationsPage(),
-              ),
-              GoRoute(
-                path: AppRoutes.PASSWORD,
-                builder: (context, state) => const PasswordPage(),
-              ),
             ],
           ),
         ],
@@ -242,28 +267,92 @@ GoRouter createAppRouter(
 
 GoRoute _menuDetailRoute(
   String path,
-  Widget Function(VoidCallback? onBack) buildDetail,
-) => GoRoute(
+  Widget Function(VoidCallback? onBack) buildDetail, {
+  String source = AppRoutes.MENU,
+}) => GoRoute(
   path: path,
   pageBuilder: (context, state) {
-    if (MediaQuery.sizeOf(context).width < 840) {
-      return MaterialPage<void>(key: state.pageKey, child: buildDetail(null));
-    }
-    return NoTransitionPage<void>(
-      key: state.pageKey,
-      child: Builder(
-        builder: (detailContext) => buildDetail(() {
-          final navigator = Navigator.of(detailContext);
-          if (navigator.canPop()) {
-            navigator.pop();
-          } else {
-            detailContext.go(AppRoutes.MENU);
-          }
-        }),
+    final isWide = MediaQuery.sizeOf(context).width >= 840;
+    final detail = Builder(
+      builder: (detailContext) => buildDetail(
+        isWide
+            ? () {
+                final navigator = Navigator.of(detailContext);
+                if (navigator.canPop()) {
+                  navigator.pop();
+                } else {
+                  detailContext.go(source);
+                }
+              }
+            : null,
       ),
     );
+    return isWide
+        ? _MenuNoTransitionPage(key: state.pageKey, child: detail)
+        : _MenuMaterialPage(key: state.pageKey, child: detail);
   },
 );
+
+// 两种页面共享可更新的 Route，跨断点只切换展示方式，不销毁输入状态。
+class _MenuMaterialPage extends MaterialPage<void> {
+  const _MenuMaterialPage({required super.key, required super.child});
+
+  @override
+  bool canUpdate(Page<dynamic> other) =>
+      (other is _MenuMaterialPage || other is _MenuNoTransitionPage) &&
+      key == other.key;
+
+  @override
+  Route<void> createRoute(BuildContext context) => _menuPageRoute(this);
+}
+
+class _MenuNoTransitionPage extends NoTransitionPage<void> {
+  const _MenuNoTransitionPage({required super.key, required super.child});
+
+  @override
+  bool canUpdate(Page<dynamic> other) =>
+      (other is _MenuMaterialPage || other is _MenuNoTransitionPage) &&
+      key == other.key;
+
+  @override
+  Route<void> createRoute(BuildContext context) => _menuPageRoute(this);
+}
+
+Route<void> _menuPageRoute(Page<void> page) {
+  late final MaterialPageRoute<void> route;
+  route = _MenuDetailPageRoute(
+    settings: page,
+    builder: (context) {
+      final settings = route.settings;
+      return settings is MaterialPage<void>
+          ? settings.child
+          : (settings as NoTransitionPage<void>).child;
+    },
+  );
+  return route;
+}
+
+class _MenuDetailPageRoute extends MaterialPageRoute<void> {
+  _MenuDetailPageRoute({required super.settings, required super.builder});
+
+  @override
+  Duration get transitionDuration => settings is NoTransitionPage<void>
+      ? Duration.zero
+      : super.transitionDuration;
+
+  @override
+  Duration get reverseTransitionDuration => transitionDuration;
+
+  @override
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) => settings is NoTransitionPage<void>
+      ? child
+      : super.buildTransitions(context, animation, secondaryAnimation, child);
+}
 
 // 详情与来源列表共用分支 Navigator，Hero 不跨根/分支边界。
 GoRoute _transactionRoute(Object? Function() takeLegacyExtra) => GoRoute(

@@ -9,6 +9,7 @@ import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/presentation/menu_page.dart';
 import 'package:sirc/features/home/presentation/person_page.dart';
 import 'package:sirc/features/settings/presentation/initial_page.dart';
+import 'package:sirc/features/settings/presentation/about_page.dart';
 import 'package:sirc/widgets/settings_item_tile.dart';
 import 'package:sirc/features/settings/presentation/language_page.dart';
 import 'package:sirc/features/settings/presentation/notifications_page.dart';
@@ -27,8 +28,58 @@ import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 import 'package:sirc/features/wallet/presentation/history_page.dart';
 import 'package:sirc/features/wallet/presentation/history_details_page.dart';
 
+// AboutPage embeds native HTML; use the same test-only platform contract as its page tests.
+// ignore: depend_on_referenced_packages
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
+
+class _AboutWebViewPlatform extends WebViewPlatform {
+  @override
+  PlatformWebViewController createPlatformWebViewController(
+    PlatformWebViewControllerCreationParams params,
+  ) => _AboutController(params);
+  @override
+  PlatformNavigationDelegate createPlatformNavigationDelegate(
+    PlatformNavigationDelegateCreationParams params,
+  ) => _AboutDelegate(params);
+  @override
+  PlatformWebViewWidget createPlatformWebViewWidget(
+    PlatformWebViewWidgetCreationParams params,
+  ) => _AboutWebView(params);
+}
+
+class _AboutController extends PlatformWebViewController {
+  _AboutController(super.params) : super.implementation();
+  @override
+  Future<void> setJavaScriptMode(JavaScriptMode mode) async {}
+  @override
+  Future<void> addJavaScriptChannel(JavaScriptChannelParams params) async {}
+  @override
+  Future<void> setPlatformNavigationDelegate(
+    PlatformNavigationDelegate delegate,
+  ) async {}
+  @override
+  Future<void> loadHtmlString(String html, {String? baseUrl}) async {}
+}
+
+class _AboutDelegate extends PlatformNavigationDelegate {
+  _AboutDelegate(super.params) : super.implementation();
+  @override
+  Future<void> setOnNavigationRequest(
+    NavigationRequestCallback callback,
+  ) async {}
+  @override
+  Future<void> setOnPageFinished(PageEventCallback callback) async {}
+}
+
+class _AboutWebView extends PlatformWebViewWidget {
+  _AboutWebView(super.params) : super.implementation();
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  WebViewPlatform.instance = _AboutWebViewPlatform();
 
   // IndexedStack 中网络图片的加载动画不会 settle；只等待路由转场。
   Future<void> finishTransition(WidgetTester tester) async {
@@ -49,6 +100,213 @@ void main() {
     );
     addTearDown(container.dispose);
     return container;
+  }
+
+  Future<void> tapDetailBack(WidgetTester tester, Type detail) async {
+    final arrow = find.descendant(
+      of: find.byType(detail),
+      matching: find.byIcon(Icons.arrow_back),
+    );
+    await tester.tap(
+      arrow.evaluate().isNotEmpty
+          ? arrow.first
+          : find.descendant(
+              of: find.byType(detail),
+              matching: find.byType(BackButton),
+            ),
+    );
+    await finishTransition(tester);
+  }
+
+  const personDetails = [
+    (Icons.email_outlined, '/person/email', PersonInformationPage),
+    (Icons.phone_outlined, '/person/phone', PersonInformationPage),
+    (Icons.location_on_outlined, '/person/address', PersonInformationPage),
+    (Icons.credit_card_outlined, '/person/card', AboutPage),
+  ];
+
+  for (final detail in personDetails) {
+    testWidgets('宽屏个人资料深链返回完整个人页 ${detail.$2}', (tester) async {
+      final container = await createContainer(loggedIn: true);
+      final router = createAppRouter(
+        container.read(storageServiceProvider),
+        initialLocation: detail.$2,
+      );
+      addTearDown(router.dispose);
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(1200, 900);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp.router(
+            routerConfig: router,
+            theme: AppTheme.lightTheme,
+          ),
+        ),
+      );
+      await finishTransition(tester);
+      expect(router.routeInformationProvider.value.uri.path, detail.$2);
+      expect(find.byType(PersonPage), findsOneWidget);
+      await tapDetailBack(tester, detail.$3);
+      expect(router.routeInformationProvider.value.uri.path, AppRoutes.PERSON);
+      expect(router.canPop(), isFalse);
+      expect(find.byType(detail.$3), findsNothing);
+      expect(
+        tester.getSize(find.byKey(const ValueKey('person-pane'))).width,
+        tester.getSize(find.byType(PersonPage)).width,
+      );
+      expect(tester.takeException(), isNull);
+    });
+    for (final deepLink in [false, true]) {
+      testWidgets('个人资料${deepLink ? "深链" : "点击"}跨断点与返回 ${detail.$2}', (
+        tester,
+      ) async {
+        final container = await createContainer(loggedIn: true);
+        await container
+            .read(storageServiceProvider)
+            .setUserEmail('current@example.test');
+        final router = createAppRouter(
+          container.read(storageServiceProvider),
+          initialLocation: deepLink ? detail.$2 : AppRoutes.PERSON,
+        );
+        addTearDown(router.dispose);
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = const Size(390, 844);
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        await tester.pumpWidget(
+          UncontrolledProviderScope(
+            container: container,
+            child: MaterialApp.router(
+              routerConfig: router,
+              theme: AppTheme.lightTheme,
+            ),
+          ),
+        );
+        await finishTransition(tester);
+        if (!deepLink) {
+          final tile = find.descendant(
+            of: find.byType(PersonPage),
+            matching: find.byIcon(detail.$1),
+          );
+          await tester.ensureVisible(tile);
+          await finishTransition(tester);
+          await tester.tap(tile);
+          await finishTransition(tester);
+        }
+        final original = tester.element(find.byType(detail.$3));
+        for (final size in [
+          const Size(390, 844),
+          const Size(1200, 900),
+          const Size(390, 844),
+        ]) {
+          tester.view.physicalSize = size;
+          await finishTransition(tester);
+          expect(router.routeInformationProvider.value.uri.path, detail.$2);
+          expect(find.byType(detail.$3), findsOneWidget);
+          expect(tester.element(find.byType(detail.$3)), same(original));
+          expect(
+            find.byType(PersonPage),
+            size.width >= 840 ? findsOneWidget : findsNothing,
+          );
+          if (detail.$3 == PersonInformationPage) {
+            final value = tester.widget<SelectableText>(
+              find.byKey(const ValueKey('person-information-value')),
+            );
+            expect(
+              value.data,
+              detail.$2.endsWith('email')
+                  ? 'current@example.test'
+                  : Languages.settings.notSet,
+            );
+            expect(find.byType(TextField), findsNothing);
+          }
+          if (size.width >= 840) {
+            final pane = tester.getRect(
+              find.byKey(const ValueKey('person-pane')),
+            );
+            final content = tester.getRect(find.byType(detail.$3));
+            expect(pane.right, lessThanOrEqualTo(content.left));
+            expect(pane.width, closeTo(content.width, .01));
+          }
+          expect(tester.takeException(), isNull);
+        }
+        await tapDetailBack(tester, detail.$3);
+        expect(
+          router.routeInformationProvider.value.uri.path,
+          AppRoutes.PERSON,
+        );
+        expect(find.byType(PersonPage), findsOneWidget);
+        expect(find.byType(detail.$3), findsNothing);
+        expect(router.canPop(), isFalse);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
+
+  testWidgets('宽屏个人资料重复切换保持列表状态且不堆栈', (tester) async {
+    final container = await createContainer(loggedIn: true);
+    final router = createAppRouter(
+      container.read(storageServiceProvider),
+      initialLocation: AppRoutes.PERSON,
+    );
+    addTearDown(router.dispose);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1200, 900);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp.router(
+          routerConfig: router,
+          theme: AppTheme.lightTheme,
+        ),
+      ),
+    );
+    await finishTransition(tester);
+    final person = tester.element(find.byType(PersonPage));
+    for (final detail in [
+      for (final item in personDetails) ...[item, item],
+    ]) {
+      final tile = find.descendant(
+        of: find.byType(PersonPage),
+        matching: find.byIcon(detail.$1),
+      );
+      await tester.ensureVisible(tile);
+      await finishTransition(tester);
+      await tester.tap(tile);
+      await finishTransition(tester);
+      expect(router.routeInformationProvider.value.uri.path, detail.$2);
+      expect(tester.element(find.byType(PersonPage)), same(person));
+      expect(find.byType(detail.$3), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    }
+    await tapDetailBack(tester, AboutPage);
+    expect(router.routeInformationProvider.value.uri.path, AppRoutes.PERSON);
+    expect(router.canPop(), isFalse);
+    expect(tester.element(find.byType(PersonPage)), same(person));
+    expect(tester.takeException(), isNull);
+  });
+
+  const menuDetails = [
+    (Icons.language_outlined, '/menu/languages', LanguagePage),
+    (Icons.notifications_outlined, '/menu/notifications', NotificationsPage),
+    (Icons.lock_outlined, '/menu/password', PasswordPage),
+    (Icons.credit_card_outlined, '/menu/add-card', AddCardPage),
+  ];
+
+  Future<void> tapMenuDetail(WidgetTester tester, IconData icon) async {
+    final target = find.descendant(
+      of: find.byType(MenuPage),
+      matching: find.byIcon(icon),
+    );
+    await tester.ensureVisible(target);
+    await finishTransition(tester);
+    await tester.tap(target);
+    await finishTransition(tester);
   }
 
   for (final wide in [true, false]) {
@@ -290,7 +548,10 @@ void main() {
         NotificationsPage,
       ),
     ];
-    for (final item in cases) {
+    // 连续重复点击当前详情也必须去重；最后一次返回应直接到菜单。
+    for (final item in [
+      for (final detail in cases) ...[detail, detail],
+    ]) {
       // Exercise the actual handler without ensureVisible altering the scroll offset.
       if (item.$1 == Icons.notifications_outlined) {
         final tap = find
@@ -482,10 +743,15 @@ void main() {
       await finishTransition(tester);
 
       final cases = [
-        (Icons.language_outlined, AppRoutes.LANGUAGES, LanguagePage, 'English'),
+        (
+          Icons.language_outlined,
+          AppRoutes.MENU_LANGUAGES,
+          LanguagePage,
+          'English',
+        ),
         (
           Icons.lock_outlined,
-          AppRoutes.PASSWORD,
+          AppRoutes.MENU_PASSWORD,
           PasswordPage,
           Languages.oldPassword,
         ),
@@ -497,7 +763,7 @@ void main() {
         ),
         (
           Icons.notifications_outlined,
-          AppRoutes.NOTIFICATIONS,
+          AppRoutes.MENU_NOTIFICATIONS,
           NotificationsPage,
           Languages.category,
         ),
@@ -523,9 +789,7 @@ void main() {
         );
         await finishTransition(tester);
         await tester.pump();
-        final expectedPath = wide && !item.$2.startsWith('${AppRoutes.MENU}/')
-            ? '${AppRoutes.MENU}${item.$2}'
-            : item.$2;
+        final expectedPath = item.$2;
         expect(
           GoRouterState.of(tester.element(find.byType(item.$3))).uri.path,
           expectedPath,
@@ -563,6 +827,198 @@ void main() {
         expect(find.byType(SettingsItemTile), findsNWidgets(5));
         expect(tester.takeException(), isNull);
       }
+    });
+  }
+
+  for (final detail in menuDetails) {
+    testWidgets('窄屏进入详情后跨断点保持URL和输入并正常返回 ${detail.$2}', (tester) async {
+      final container = await createContainer(loggedIn: true);
+      final router = createAppRouter(
+        container.read(storageServiceProvider),
+        initialLocation: AppRoutes.MENU,
+      );
+      addTearDown(router.dispose);
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp.router(
+            routerConfig: router,
+            theme: AppTheme.lightTheme,
+          ),
+        ),
+      );
+      await finishTransition(tester);
+      await tapMenuDetail(tester, detail.$1);
+
+      final inputValues = detail.$3 == PasswordPage
+          ? ['old-password', 'new-password', 'new-password']
+          : detail.$3 == AddCardPage
+          ? ['Test Owner', '4111111111111111']
+          : <String>[];
+      Finder fields() => find.descendant(
+        of: find.byType(detail.$3),
+        matching: find.byType(EditableText),
+      );
+      for (var i = 0; i < inputValues.length; i++) {
+        await tester.ensureVisible(fields().at(i));
+        await tester.enterText(fields().at(i), inputValues[i]);
+      }
+      tester.testTextInput.hide();
+      FocusManager.instance.primaryFocus?.unfocus();
+      await finishTransition(tester);
+
+      for (final size in [
+        const Size(390, 844),
+        const Size(1200, 900),
+        const Size(390, 844),
+      ]) {
+        tester.view.physicalSize = size;
+        await finishTransition(tester);
+        expect(router.routeInformationProvider.value.uri.path, detail.$2);
+        expect(find.byType(detail.$3), findsOneWidget);
+        expect(find.byType(NotFoundPage), findsNothing);
+        expect(
+          find.byType(MenuPage),
+          size.width >= 840 ? findsOneWidget : findsNothing,
+        );
+        expect(
+          find.byType(NavigationRail),
+          size.width >= 840 ? findsOneWidget : findsNothing,
+        );
+        if (size.width >= 840) {
+          final menu = tester.getRect(find.byKey(const ValueKey('menu-pane')));
+          final content = tester.getRect(find.byType(detail.$3));
+          expect(menu.right, lessThanOrEqualTo(content.left));
+          expect(menu.width, closeTo(content.width, .01));
+        }
+        for (var i = 0; i < inputValues.length; i++) {
+          expect(
+            tester.widget<EditableText>(fields().at(i)).controller.text,
+            inputValues[i],
+            reason: '切换至 $size 后不应清空 ${detail.$2} 的第 $i 项输入',
+          );
+        }
+        expect(tester.takeException(), isNull);
+      }
+      await tapDetailBack(tester, detail.$3);
+      expect(router.routeInformationProvider.value.uri.path, AppRoutes.MENU);
+      expect(find.byType(MenuPage), findsOneWidget);
+      expect(find.byType(detail.$3), findsNothing);
+      expect(router.canPop(), isFalse);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('窄屏正式深链接返回菜单 ${detail.$2}', (tester) async {
+      final container = await createContainer(loggedIn: true);
+      final router = createAppRouter(
+        container.read(storageServiceProvider),
+        initialLocation: detail.$2,
+      );
+      addTearDown(router.dispose);
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp.router(
+            routerConfig: router,
+            theme: AppTheme.lightTheme,
+          ),
+        ),
+      );
+      await finishTransition(tester);
+      expect(router.routeInformationProvider.value.uri.path, detail.$2);
+      expect(find.byType(detail.$3), findsOneWidget);
+      expect(find.byType(MenuPage), findsNothing);
+      await tapDetailBack(tester, detail.$3);
+      expect(router.routeInformationProvider.value.uri.path, AppRoutes.MENU);
+      expect(find.byType(MenuPage), findsOneWidget);
+      expect(router.canPop(), isFalse);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  for (final oldPath in ['/languages', '/notifications', '/password']) {
+    testWidgets('已登录访问旧详情路径显示404而不兼容跳转 $oldPath', (tester) async {
+      final container = await createContainer(loggedIn: true);
+      final router = createAppRouter(
+        container.read(storageServiceProvider),
+        initialLocation: oldPath,
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp.router(
+            routerConfig: router,
+            theme: AppTheme.lightTheme,
+          ),
+        ),
+      );
+      await finishTransition(tester);
+      expect(router.routeInformationProvider.value.uri.path, oldPath);
+      expect(find.byType(NotFoundPage), findsOneWidget);
+      for (final detail in menuDetails) {
+        expect(find.byType(detail.$3), findsNothing);
+      }
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  for (final wide in [false, true]) {
+    testWidgets('${wide ? "宽屏" : "窄屏"}侧滑通知使用正式菜单详情入口', (tester) async {
+      final container = await createContainer(loggedIn: true);
+      // 通过真实侧滑入口进入，而不是调用 router.go 模拟通知导航。
+      final router = createAppRouter(
+        container.read(storageServiceProvider),
+        initialLocation: AppRoutes.MENU,
+      );
+      addTearDown(router.dispose);
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = wide
+          ? const Size(1200, 900)
+          : const Size(390, 844);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp.router(
+            routerConfig: router,
+            theme: AppTheme.lightTheme,
+          ),
+        ),
+      );
+      await finishTransition(tester);
+      container.read(navigationControllerProvider.notifier).openDrawer();
+      await finishTransition(tester);
+      await tester.tap(
+        find.descendant(
+          of: find.byType(SlideMenuPage),
+          matching: find.text(' ${Languages.notifications}'),
+        ),
+      );
+      await finishTransition(tester);
+      expect(
+        router.routeInformationProvider.value.uri.path,
+        '/menu/notifications',
+      );
+      expect(find.byType(NotificationsPage), findsOneWidget);
+      expect(find.byType(NotFoundPage), findsNothing);
+      expect(
+        container.read(navigationControllerProvider).isDrawerOpen,
+        isFalse,
+      );
+      expect(find.byType(MenuPage), wide ? findsOneWidget : findsNothing);
+      await tapDetailBack(tester, NotificationsPage);
+      expect(router.routeInformationProvider.value.uri.path, AppRoutes.MENU);
+      expect(tester.takeException(), isNull);
     });
   }
 
@@ -658,8 +1114,6 @@ void main() {
       AppRoutes.MENU_PASSWORD,
       AppRoutes.MENU_LANGUAGES,
       AppRoutes.MENU_NOTIFICATIONS,
-      AppRoutes.ADD_CARD,
-      AppRoutes.PASSWORD,
       AppRoutes.HISTORY_DETAILS,
     ]) {
       router.go(path);

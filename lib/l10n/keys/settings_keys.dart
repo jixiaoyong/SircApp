@@ -10,6 +10,7 @@ abstract class SettingsLang {
   String get notifications;
   String get generalInformation;
   String get localAddress;
+  String get notSet;
   String get person;
   String get profile;
   String get logout;

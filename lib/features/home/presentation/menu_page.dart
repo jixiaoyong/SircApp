@@ -41,19 +41,16 @@ class MenuPage extends ConsumerWidget {
   ];
 
   void _openDetail(BuildContext context, String location, bool isWide) {
-    final target = isWide && !location.startsWith('${AppRoutes.MENU}/')
-        ? '${AppRoutes.MENU}$location'
-        : location;
     if (isWide) {
       final router = GoRouter.of(context);
       final current = router.routeInformationProvider.value.uri.path;
-      if (current == target) return;
+      if (current == location) return;
       if (current.startsWith('${AppRoutes.MENU}/')) {
-        Router.neglect(context, () => router.replace<void>(target));
+        Router.neglect(context, () => router.replace<void>(location));
         return;
       }
     }
-    context.push(target);
+    context.push(location);
   }
 
   @override
@@ -64,8 +61,8 @@ class MenuPage extends ConsumerWidget {
     final isWide = MediaQuery.sizeOf(context).width >= 840;
 
     final menuItems = [
-      (Icons.language_outlined, Languages.language, AppRoutes.LANGUAGES),
-      (Icons.lock_outlined, Languages.changePassword, AppRoutes.PASSWORD),
+      (Icons.language_outlined, Languages.language, AppRoutes.MENU_LANGUAGES),
+      (Icons.lock_outlined, Languages.changePassword, AppRoutes.MENU_PASSWORD),
       (
         Icons.fingerprint_outlined,
         Languages.fingerprintLogin,
@@ -87,7 +84,11 @@ class MenuPage extends ConsumerWidget {
                   TitleText(text: Languages.settings.title),
                   GestureDetector(
                     onTap: () {
-                      _openDetail(context, AppRoutes.NOTIFICATIONS, isWide);
+                      _openDetail(
+                        context,
+                        AppRoutes.MENU_NOTIFICATIONS,
+                        isWide,
+                      );
                     },
                     child: SizedBox(
                       width: 24,
@@ -206,19 +207,33 @@ class MenuPage extends ConsumerWidget {
 }
 
 /// Menu stays outside the detail Navigator, including when its pane is closed.
-class MenuDetailLayout extends StatelessWidget {
+class MenuDetailLayout extends StatefulWidget {
   const MenuDetailLayout({
     super.key,
     required this.hasDetail,
     required this.child,
+    this.list = const MenuPage(listOnly: true),
+    this.paneKey = const ValueKey('menu-pane'),
   });
 
   final bool hasDetail;
   final Widget child;
+  final Widget list;
+  final Key paneKey;
+
+  @override
+  State<MenuDetailLayout> createState() => _MenuDetailLayoutState();
+}
+
+class _MenuDetailLayoutState extends State<MenuDetailLayout> {
+  // 跨断点移动详情 Navigator 时保留其页面与输入状态。
+  final _detailKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.sizeOf(context).width < 840) return child;
+    final hasDetail = widget.hasDetail;
+    final detail = KeyedSubtree(key: _detailKey, child: widget.child);
+    if (MediaQuery.sizeOf(context).width < 840) return detail;
     return LayoutBuilder(
       builder: (context, constraints) {
         final paneWidth = hasDetail
@@ -227,17 +242,13 @@ class MenuDetailLayout extends StatelessWidget {
         return Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(
-              key: const ValueKey('menu-pane'),
-              width: paneWidth,
-              child: const MenuPage(listOnly: true),
-            ),
+            SizedBox(key: widget.paneKey, width: paneWidth, child: widget.list),
             SizedBox(
               width: hasDetail ? 1 : 0,
               child: const VerticalDivider(width: 1),
             ),
             Expanded(
-              child: Offstage(offstage: !hasDetail, child: child),
+              child: Offstage(offstage: !hasDetail, child: detail),
             ),
           ],
         );
