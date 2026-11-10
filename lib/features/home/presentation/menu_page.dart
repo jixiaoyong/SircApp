@@ -9,10 +9,6 @@ import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/settings_item_tile.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/title_text.dart';
-import 'package:sirc/features/settings/presentation/language_page.dart';
-import 'package:sirc/features/settings/presentation/notifications_page.dart';
-import 'package:sirc/features/auth/presentation/password_page.dart';
-import 'package:sirc/features/wallet/presentation/add_card_page.dart';
 
 /// 指纹登录开关状态 Notifier (全面适配 Riverpod 3.x)
 class FingerprintEnabledNotifier extends Notifier<bool> {
@@ -32,10 +28,9 @@ final fingerprintEnabledProvider =
 
 /// 菜单列表页面，视觉与交互 100% 保持一致
 class MenuPage extends ConsumerWidget {
-  final String? wideDetail;
-  final ValueChanged<String?>? onWideDetailSelected;
+  final bool listOnly;
 
-  const MenuPage({super.key, this.wideDetail, this.onWideDetailSelected});
+  const MenuPage({super.key, this.listOnly = false});
 
   static const List<Color> _menuColors = [
     Color(0xFF7E57C2), // 深紫
@@ -46,11 +41,10 @@ class MenuPage extends ConsumerWidget {
   ];
 
   void _openDetail(BuildContext context, String location, bool isWide) {
-    if (isWide) {
-      onWideDetailSelected?.call(location);
-    } else {
-      context.push(location);
-    }
+    final target = isWide && !location.startsWith('${AppRoutes.MENU}/')
+        ? '${AppRoutes.MENU}$location'
+        : location;
+    context.push(target);
   }
 
   @override
@@ -198,20 +192,13 @@ class MenuPage extends ConsumerWidget {
         ),
       ),
     );
-    if (!isWide) return list;
-    final detail = switch (wideDetail) {
-      AppRoutes.LANGUAGES => const LanguagePage(),
-      AppRoutes.NOTIFICATIONS => const NotificationsPage(),
-      AppRoutes.PASSWORD => const PasswordPage(),
-      AppRoutes.ADD_CARD => const AddCardPage(),
-      _ => null,
-    };
+    if (!isWide || listOnly) return list;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(width: 360, child: list),
         const VerticalDivider(width: 1),
-        Expanded(child: detail ?? const SizedBox.shrink()),
+        const Expanded(child: SizedBox.shrink()),
       ],
     );
   }

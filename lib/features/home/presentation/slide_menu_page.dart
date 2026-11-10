@@ -13,8 +13,14 @@ import 'package:sirc/widgets/network_web_image.dart';
 class SlideMenuPage extends ConsumerStatefulWidget {
   final Widget child;
   final double? screenWidth;
+  final ValueChanged<int> onBranchSelected;
 
-  const SlideMenuPage({super.key, required this.child, this.screenWidth});
+  const SlideMenuPage({
+    super.key,
+    required this.child,
+    this.screenWidth,
+    required this.onBranchSelected,
+  });
 
   @override
   ConsumerState<SlideMenuPage> createState() => _SlideMenuPageState();
@@ -64,13 +70,13 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
     if (title == Languages.about) {
       context.push(AppRoutes.ABOUT);
     } else if (title == Languages.home.title) {
-      ref.read(navigationControllerProvider.notifier).changeIndex(0);
+      widget.onBranchSelected(0);
     } else if (title == Languages.profile) {
-      ref.read(navigationControllerProvider.notifier).changeIndex(3);
+      widget.onBranchSelected(3);
     } else if (title == Languages.history) {
-      ref.read(navigationControllerProvider.notifier).changeIndex(2);
+      widget.onBranchSelected(2);
     } else if (title == Languages.settings.title) {
-      ref.read(navigationControllerProvider.notifier).changeIndex(4);
+      widget.onBranchSelected(4);
     } else if (title == Languages.notifications) {
       context.push(AppRoutes.NOTIFICATIONS);
     } else {
@@ -92,14 +98,7 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
       },
     );
 
-    // 当抽屉完全收起时，直接返回原生全尺寸内容，确保移动端底部导航栏贴底且不产生任何空白
-    if (_percentage == 0.0) {
-      return Material(
-        color: Colors.transparent,
-        child: SizedBox.expand(child: widget.child),
-      );
-    }
-
+    // 收起与展开保持同一棵主体树，避免抽屉动画重建分支 Navigator。
     ref.watch(localeProvider);
     final navigationState = ref.watch(navigationControllerProvider);
     final screenSize = MediaQuery.of(context).size;
@@ -276,16 +275,17 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
                     children: [
                       widget.child,
                       // 当抽屉展开时，覆盖一层点击遮罩，点击立即收起抽屉
-                      Positioned.fill(
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            ref
-                                .read(navigationControllerProvider.notifier)
-                                .closeDrawer();
-                          },
+                      if (_percentage > 0)
+                        Positioned.fill(
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () {
+                              ref
+                                  .read(navigationControllerProvider.notifier)
+                                  .closeDrawer();
+                            },
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),

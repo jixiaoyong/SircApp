@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/localization/app_locale.dart';
 import '../../../gen_a/A.dart';
+import '../../../routes/app_routes.dart';
 import '../../../utils/size_extension.dart';
 import '../../../widgets/one_title_with_back_button_appbar.dart';
 import '../../../widgets/settings_item_tile.dart';
@@ -179,7 +180,7 @@ class AboutPage extends ConsumerWidget {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => WebViewPage(url),
-        settings: const RouteSettings(name: '/webview'),
+        settings: const RouteSettings(name: AppRoutes.WEBVIEW),
       ),
     );
   }

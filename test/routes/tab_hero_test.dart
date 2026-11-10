@@ -5,9 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/data/common_keys.dart';
-import 'package:sirc/features/home/presentation/main_page.dart';
 import 'package:sirc/features/wallet/presentation/history_details_page.dart';
 import 'package:sirc/routes/app_router.dart';
+import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 
 void main() {
@@ -23,7 +23,7 @@ void main() {
     addTearDown(container.dispose);
     final router = createAppRouter(
       container.read(storageServiceProvider),
-      initialLocation: '/wallet',
+      initialLocation: AppRoutes.WALLET,
     );
     addTearDown(router.dispose);
     tester.view.devicePixelRatio = 1;
@@ -43,21 +43,16 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     await tester.pump();
 
-    // Hero默认shuttle复用目标头像，但飞行时不属于业务页面或Hero子树。
+    // 普通图片位于所属 Navigator 的页面中；Hero shuttle 位于该
+    // Navigator 的 Overlay 中，不再继承它的页面路由。分支 Overlay
+    // 仍在 MainPage 内，不能用 MainPage 祖先来排除飞行图片。
     final flyingImages = find
         .byWidgetPredicate((widget) => widget is NetworkWebImage)
         .evaluate;
     int flightCount() => flyingImages().where((element) {
-      var inPage = false;
-      element.visitAncestorElements((ancestor) {
-        if (ancestor.widget is MainPage ||
-            ancestor.widget is HistoryDetailsPage) {
-          inPage = true;
-          return false;
-        }
-        return true;
-      });
-      return !inPage;
+      final navigator = element.findAncestorStateOfType<NavigatorState>();
+      return navigator != null &&
+          ModalRoute.of(element)?.navigator != navigator;
     }).length;
 
     for (final icon in [

@@ -11,6 +11,7 @@ import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/data/common_data.dart';
 import 'package:sirc/main.dart';
 import 'package:sirc/routes/app_router.dart';
+import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/size_extension.dart';
 
 void main() {
@@ -78,7 +79,7 @@ void main() {
       await tester.pumpAndSettle();
       router = ProviderScope.containerOf(tester.element(find.byType(MyApp)))
           .read(appRouterProvider);
-      router.go('/sign_in');
+      router.go(AppRoutes.SIGN_IN);
       await tester.pumpAndSettle();
 
       final scaffold = find.byType(Scaffold);
