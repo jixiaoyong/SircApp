@@ -1,0 +1,17 @@
+import '../domain/models/transaction.dart';
+import 'wallet_repository.dart';
+
+/// Only injected into the temporary screenshot copy.
+class ScreenshotWalletRepository extends WalletRepositoryImpl {
+  @override
+  Future<List<Transaction>> getTransactions({
+    TransactionFilter filter = TransactionFilter.total,
+    String? query,
+  }) async => List.generate(20, (index) => Transaction(
+    userIcon: '',
+    moneyAmount: (index.isEven ? -1 : 1) * (24.75 + index * 13.5),
+    time: '2026-11-${(11 - index % 10).toString().padLeft(2, '0')}',
+    moneyActionName: 'Transfer',
+  )).where((item) => filter == TransactionFilter.total ||
+    (filter == TransactionFilter.send ? item.moneyAmount! < 0 : item.moneyAmount! >= 0)).toList();
+}

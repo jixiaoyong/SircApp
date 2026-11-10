@@ -1,0 +1,121 @@
+diff --git a/lib/core/theme/app_theme.dart b/lib/core/theme/app_theme.dart
+index ded589a..5930283 100644
+--- a/lib/core/theme/app_theme.dart
++++ b/lib/core/theme/app_theme.dart
+@@ -1,4 +1,5 @@
+ import 'package:flutter/material.dart';
++import '../screenshot_mode.dart';
+
+ class AppTheme {
+   AppTheme._();
+@@ -38,6 +39,7 @@ class AppTheme {
+     );
+     final base = ThemeData(
+       useMaterial3: true,
++      fontFamily: screenshotMode ? 'ScreenshotSans' : null,
+       colorScheme: scheme,
+       brightness: brightness,
+     );
+diff --git a/lib/features/wallet/presentation/controllers/wallet_controller.dart b/lib/features/wallet/presentation/controllers/wallet_controller.dart
+index d74cfc3..9d19f48 100644
+--- a/lib/features/wallet/presentation/controllers/wallet_controller.dart
++++ b/lib/features/wallet/presentation/controllers/wallet_controller.dart
+@@ -1,4 +1,5 @@
+ import 'dart:math' as math;
++import 'package:sirc/core/screenshot_mode.dart';
+
+ import 'package:flutter/widgets.dart';
+ import 'package:riverpod_annotation/riverpod_annotation.dart';
+@@ -234,6 +235,7 @@ class WalletController extends _$WalletController {
+     }
+
+     final initialState = WalletState(
++      referenceDate: screenshotMode ? screenshotDate : null,
+       moneyTypes: initialMoneyTypes,
+       selectedMonth: months.first,
+       monthEnglishNameList: months,
+diff --git a/lib/main.dart b/lib/main.dart
+index 3c54b38..15e3a1d 100644
+--- a/lib/main.dart
++++ b/lib/main.dart
+@@ -14,6 +14,11 @@ import 'package:sirc/features/settings/controllers/settings_controller.dart';
+ import 'package:sirc/utils/size_extension.dart' as size_ext;
+
+ import 'data/common_data.dart';
++import 'core/screenshot_mode.dart';
++import 'features/auth/data/auth_repository.dart';
++import 'features/wallet/data/screenshot_wallet_repository.dart';
++import 'features/wallet/data/wallet_repository.dart';
++import 'features/wallet/presentation/controllers/wallet_controller.dart';
+
+ /// a finance $ banking app
+ /// UI copy from https://hbimg.huabanimg.com/71e943643aac8a17dedaee0445a0e27aec8023d212e8d8-5fkAOb
+@@ -25,11 +30,32 @@ void main() async {
+     final cacheDirectory = await getTemporaryDirectory();
+     await cacheDirectory.create(recursive: true);
+   }
++  if (screenshotMode) {
++    // Isolated in-memory store, not the user's browser preferences.
++    SharedPreferences.setMockInitialValues({});
++    WidgetsBinding.instance.ensureSemantics();
++    final font = FontLoader('ScreenshotSans')
++      ..addFont(rootBundle.load('assets/screenshot-font.otf'));
++    await font.load();
++  }
+   final prefs = await SharedPreferences.getInstance();
++  if (screenshotMode) {
++    final storage = StorageService(prefs);
++    await storage.setFirstInitial(false);
++    await storage.setLocalLanguage('en_US');
++    await storage.setThemeMode('light');
++    await AuthRepository(storage).initDefaultUserIfNeeded(
++      defaultUsername: 'shot_demo', defaultPassword: 'demo-2026',
++    );
++  }
+
+   runApp(
+     ProviderScope(
+-      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
++      overrides: [
++        sharedPreferencesProvider.overrideWithValue(prefs),
++        if (screenshotMode)
++          walletRepositoryProvider.overrideWith((ref) => ScreenshotWalletRepository()),
++      ],
+       child: const MyApp(),
+     ),
+   );
+@@ -69,7 +95,14 @@ class MyApp extends ConsumerWidget {
+         CommonData.realScreenWidth = mediaQuery.size.width;
+         size_ext.SizeExtension.dpScale = 1;
+
+-        return child ?? const SizedBox();
++        final content = child ?? const SizedBox();
++        if (!screenshotMode) return content;
++        final wallet = ref.watch(walletControllerProvider);
++        return Semantics(
++          identifier: 'screenshot-ready',
++          label: 'screenshot:${locale.languageCode}:${Theme.of(context).brightness.name}:${wallet.isLoading ? 'loading' : 'ready'}',
++          child: content,
++        );
+       },
+     );
+   }
+diff --git a/lib/widgets/network_web_image.dart b/lib/widgets/network_web_image.dart
+index f378415..68f3316 100644
+--- a/lib/widgets/network_web_image.dart
++++ b/lib/widgets/network_web_image.dart
+@@ -1,4 +1,5 @@
+ import 'dart:math';
++import '../core/screenshot_mode.dart';
+ import 'package:extended_image/extended_image.dart';
+ import 'package:flutter/material.dart';
+
+@@ -63,7 +64,7 @@ class NetworkWebImage extends StatelessWidget {
+   @override
+   Widget build(BuildContext context) {
+     Widget content;
+-    if (!_hasValidUrl) {
++    if (screenshotMode || !_hasValidUrl) {
+       content = KeyedSubtree(
+         key: const ValueKey('img_empty_or_invalid'),
+         child: fallbackWidget ?? _buildFallback(context),
