@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/data/common_data.dart';
@@ -17,8 +16,9 @@ import 'package:sirc/utils/toast.dart';
 /// 应用主框架页面，集成侧滑抽屉、IndexedStack 多页面与底部导航栏
 class MainPage extends ConsumerStatefulWidget {
   final int initialIndex;
+  final String? initialMenuDetail;
 
-  const MainPage({super.key, this.initialIndex = 0});
+  const MainPage({super.key, this.initialIndex = 0, this.initialMenuDetail});
 
   @override
   ConsumerState<MainPage> createState() => _MainPageState();
@@ -30,20 +30,8 @@ class _MainPageState extends ConsumerState<MainPage> {
     '/wallet',
     '/history',
     '/person',
-    '/menu',
+    AppRoutes.MENU,
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.initialIndex > 0) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref
-            .read(navigationControllerProvider.notifier)
-            .changeIndex(widget.initialIndex);
-      });
-    }
-  }
 
   @override
   void didUpdateWidget(covariant MainPage oldWidget) {
@@ -60,22 +48,51 @@ class _MainPageState extends ConsumerState<MainPage> {
     Toast.init(context);
 
     // 监听当前选中的 Tab 索引
-    final currentIndex = ref.watch(
-      navigationControllerProvider.select((s) => s.currentIndex),
-    );
+    ref.watch(navigationControllerProvider.select((s) => s.currentIndex));
+    // 路由参数直接决定当前 Tab，避免 Provider 缓存旧索引造成 Person 闪帧。
+    final uriPath = GoRouterState.of(context).uri.path;
+    final uriTabIndex = switch (uriPath) {
+      AppRoutes.MENU ||
+      AppRoutes.LANGUAGES ||
+      AppRoutes.NOTIFICATIONS ||
+      AppRoutes.PASSWORD ||
+      AppRoutes.ADD_CARD => 4,
+      '/wallet' => 1,
+      '/history' => 2,
+      '/person' => 3,
+      _ => widget.initialIndex,
+    };
+    final currentIndex = uriTabIndex;
+    final menuDetail =
+        widget.initialMenuDetail ??
+        switch (uriPath) {
+          AppRoutes.LANGUAGES => AppRoutes.LANGUAGES,
+          AppRoutes.NOTIFICATIONS => AppRoutes.NOTIFICATIONS,
+          AppRoutes.PASSWORD => AppRoutes.PASSWORD,
+          AppRoutes.ADD_CARD => AppRoutes.ADD_CARD,
+          _ => null,
+        };
 
     // 监听全局语言变化以动态刷新底部导航栏标签
     ref.watch(localeProvider);
 
+    final isWideLayout = MediaQuery.sizeOf(context).width >= 840;
     final homePages = [
       const HomePage(),
       const WalletPage(),
       const HistoryPage(),
       const PersonPage(),
-      const MenuPage(),
+      MenuPage(
+        wideDetail: isWideLayout && currentIndex == 4 ? menuDetail : null,
+        onWideDetailSelected: (location) {
+          if (location == null) {
+            context.go(AppRoutes.MENU);
+          } else {
+            context.go('${AppRoutes.MENU}$location');
+          }
+        },
+      ),
     ];
-
-    final isWideLayout = MediaQuery.sizeOf(context).width >= 840;
     final navigationItems = [
       (Icons.home_outlined, Languages.home.title),
       (Icons.account_balance_wallet_outlined, Languages.wallet.title),
@@ -85,11 +102,8 @@ class _MainPageState extends ConsumerState<MainPage> {
     ];
 
     void selectTab(int index) {
-      ref.read(navigationControllerProvider.notifier).changeIndex(index);
-      if (kIsWeb && index < _tabRoutes.length) {
-        SystemNavigator.routeInformationUpdated(
-          uri: Uri.parse(_tabRoutes[index]),
-        );
+      if (index < _tabRoutes.length) {
+        context.go(_tabRoutes[index]);
       }
     }
 
@@ -99,10 +113,12 @@ class _MainPageState extends ConsumerState<MainPage> {
             onDestinationSelected: selectTab,
             labelType: NavigationRailLabelType.all,
             destinations: navigationItems
-                .map((item) => NavigationRailDestination(
-                      icon: Icon(item.$1),
-                      label: Text(item.$2),
-                    ))
+                .map(
+                  (item) => NavigationRailDestination(
+                    icon: Icon(item.$1),
+                    label: Text(item.$2),
+                  ),
+                )
                 .toList(),
           )
         : null;
@@ -114,10 +130,7 @@ class _MainPageState extends ConsumerState<MainPage> {
           children: [
             if (navigation != null) navigation,
             Expanded(
-              child: IndexedStack(
-                index: currentIndex,
-                children: homePages,
-              ),
+              child: IndexedStack(index: currentIndex, children: homePages),
             ),
           ],
         ),
@@ -125,16 +138,19 @@ class _MainPageState extends ConsumerState<MainPage> {
             ? null
             : BottomNavigationBar(
                 items: navigationItems
-                    .map((item) => BottomNavigationBarItem(
-                          icon: Icon(item.$1),
-                          label: item.$2,
-                        ))
+                    .map(
+                      (item) => BottomNavigationBarItem(
+                        icon: Icon(item.$1),
+                        label: item.$2,
+                      ),
+                    )
                     .toList(),
                 onTap: selectTab,
                 currentIndex: currentIndex,
                 selectedItemColor: Theme.of(context).primaryColorDark,
-                selectedLabelStyle:
-                    const TextStyle(fontWeight: FontWeight.bold),
+                selectedLabelStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
                 unselectedItemColor: Theme.of(context).primaryColorLight,
               ),
       ),

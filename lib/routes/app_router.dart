@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../core/storage/storage_service.dart';
 import '../core/router/nav_keys.dart';
 import '../features/auth/presentation/forget_pwd_page.dart';
@@ -39,126 +40,152 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 GoRouter createAppRouter(
   StorageService storage, {
   String initialLocation = AppRoutes.INITIAL,
-}) =>
-    GoRouter(
-      navigatorKey: rootNavigatorKey,
-      initialLocation: initialLocation,
-      refreshListenable: storage,
-      redirect: (context, state) {
-        final path = state.uri.path;
-        // 精确开放现有匿名认证流程；修改密码 /password 仍受保护。
-        const publicPaths = {
-          AppRoutes.INITIAL,
-          AppRoutes.SIGN_IN,
-          AppRoutes.SIGN_UP,
-          AppRoutes.FORGET_PWD,
-          AppRoutes.SET_PWD,
-        };
-        final isPublic = publicPaths.contains(path);
-        if (!storage.isLoginSuccess && !isPublic) {
-          return AppRoutes.SIGN_IN;
+}) => GoRouter(
+  navigatorKey: rootNavigatorKey,
+  initialLocation: initialLocation,
+  refreshListenable: storage,
+  redirect: (context, state) {
+    final path = state.uri.path;
+    // 精确开放现有匿名认证流程；修改密码 /password 仍受保护。
+    const publicPaths = {
+      AppRoutes.INITIAL,
+      AppRoutes.SIGN_IN,
+      AppRoutes.SIGN_UP,
+      AppRoutes.FORGET_PWD,
+      AppRoutes.SET_PWD,
+    };
+    final isPublic = publicPaths.contains(path);
+    if (!storage.isLoginSuccess && !isPublic) {
+      return AppRoutes.SIGN_IN;
+    }
+    return null;
+  },
+  errorBuilder: (context, state) => const NotFoundPage(),
+  routes: [
+    GoRoute(
+      path: AppRoutes.INITIAL,
+      builder: (context, state) => const InitialPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.SIGN_IN,
+      builder: (context, state) => const SignInPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.SIGN_UP,
+      builder: (context, state) => const SignUpPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.FORGET_PWD,
+      builder: (context, state) => const ForgetPwdPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.SET_PWD,
+      builder: (context, state) {
+        String? userName;
+        if (state.extra is String) {
+          userName = state.extra as String;
+        } else if (state.extra is Map) {
+          userName =
+              (state.extra as Map)['user_name'] as String? ??
+              (state.extra as Map)['userName'] as String?;
         }
-        return null;
+        userName ??= state.uri.queryParameters['username'];
+        return SetPwdPage(initialUserName: userName);
       },
-      errorBuilder: (context, state) => const NotFoundPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.MAIN,
+      builder: (context, state) => const MainPage(initialIndex: 0),
+    ),
+    // 兼容直达主页各 Tab 的快捷路由
+    GoRoute(
+      path: '/wallet',
+      builder: (context, state) => const MainPage(initialIndex: 1),
+    ),
+    GoRoute(
+      path: '/history',
+      builder: (context, state) => const MainPage(initialIndex: 2),
+    ),
+    GoRoute(
+      path: '/person',
+      builder: (context, state) => const MainPage(initialIndex: 3),
+    ),
+    GoRoute(
+      path: AppRoutes.MENU,
       routes: [
         GoRoute(
-          path: AppRoutes.INITIAL,
-          builder: (context, state) => const InitialPage(),
+          path: 'languages',
+          builder: (context, state) => const MainPage(
+            initialIndex: 4,
+            initialMenuDetail: AppRoutes.LANGUAGES,
+          ),
         ),
         GoRoute(
-          path: AppRoutes.SIGN_IN,
-          builder: (context, state) => const SignInPage(),
+          path: 'notifications',
+          builder: (context, state) => const MainPage(
+            initialIndex: 4,
+            initialMenuDetail: AppRoutes.NOTIFICATIONS,
+          ),
         ),
         GoRoute(
-          path: AppRoutes.SIGN_UP,
-          builder: (context, state) => const SignUpPage(),
+          path: 'password',
+          builder: (context, state) => const MainPage(
+            initialIndex: 4,
+            initialMenuDetail: AppRoutes.PASSWORD,
+          ),
         ),
         GoRoute(
-          path: AppRoutes.FORGET_PWD,
-          builder: (context, state) => const ForgetPwdPage(),
-        ),
-        GoRoute(
-          path: AppRoutes.SET_PWD,
-          builder: (context, state) {
-            String? userName;
-            if (state.extra is String) {
-              userName = state.extra as String;
-            } else if (state.extra is Map) {
-              userName = (state.extra as Map)['user_name'] as String? ??
-                  (state.extra as Map)['userName'] as String?;
-            }
-            userName ??= state.uri.queryParameters['username'];
-            return SetPwdPage(initialUserName: userName);
-          },
-        ),
-        GoRoute(
-          path: AppRoutes.MAIN,
-          builder: (context, state) => const MainPage(initialIndex: 0),
-        ),
-        // 兼容直达主页各 Tab 的快捷路由
-        GoRoute(
-          path: '/wallet',
-          builder: (context, state) => const MainPage(initialIndex: 1),
-        ),
-        GoRoute(
-          path: '/history',
-          builder: (context, state) => const MainPage(initialIndex: 2),
-        ),
-        GoRoute(
-          path: '/person',
-          builder: (context, state) => const MainPage(initialIndex: 3),
-        ),
-        GoRoute(
-          path: '/menu',
-          builder: (context, state) => const MainPage(initialIndex: 4),
-        ),
-        GoRoute(
-          path: AppRoutes.LANGUAGES,
-          builder: (context, state) => const LanguagePage(),
-        ),
-        GoRoute(
-          path: AppRoutes.NOTIFICATIONS,
-          builder: (context, state) => const NotificationsPage(),
-        ),
-        GoRoute(
-          path: AppRoutes.PASSWORD,
-          builder: (context, state) => const PasswordPage(),
-        ),
-        GoRoute(
-          path: AppRoutes.ADD_CARD,
-          builder: (context, state) => const AddCardPage(),
-        ),
-        GoRoute(
-          path: AppRoutes.ABOUT,
-          builder: (context, state) => const AboutPage(),
-        ),
-        GoRoute(
-          path: AppRoutes.HISTORY_DETAILS,
-          builder: (context, state) {
-            Transaction? data;
-            String heroTag = 'default';
-
-            if (state.extra is Map<String, dynamic>) {
-              final map = state.extra as Map<String, dynamic>;
-              data = map['data'] as Transaction?;
-              heroTag = map['heroTag'] as String? ?? 'default';
-            } else if (state.extra is Transaction) {
-              data = state.extra as Transaction;
-            }
-
-            data ??= Transaction(
-              moneyActionName: "Payment Details",
-              moneyAmount: -98.48,
-              userIcon:
-                  "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
-            );
-
-            return HistoryDetailsPage(
-              data: data,
-              heroTag: heroTag,
-            );
-          },
+          path: 'add-card',
+          builder: (context, state) => const MainPage(
+            initialIndex: 4,
+            initialMenuDetail: AppRoutes.ADD_CARD,
+          ),
         ),
       ],
-    );
+      builder: (context, state) => const MainPage(initialIndex: 4),
+    ),
+    GoRoute(
+      path: AppRoutes.LANGUAGES,
+      builder: (context, state) => const LanguagePage(),
+    ),
+    GoRoute(
+      path: AppRoutes.NOTIFICATIONS,
+      builder: (context, state) => const NotificationsPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.PASSWORD,
+      builder: (context, state) => const PasswordPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.ADD_CARD,
+      builder: (context, state) => const AddCardPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.ABOUT,
+      builder: (context, state) => const AboutPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.HISTORY_DETAILS,
+      builder: (context, state) {
+        Transaction? data;
+        String heroTag = 'default';
+
+        if (state.extra is Map<String, dynamic>) {
+          final map = state.extra as Map<String, dynamic>;
+          data = map['data'] as Transaction?;
+          heroTag = map['heroTag'] as String? ?? 'default';
+        } else if (state.extra is Transaction) {
+          data = state.extra as Transaction;
+        }
+
+        data ??= Transaction(
+          moneyActionName: "Payment Details",
+          moneyAmount: -98.48,
+          userIcon: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
+        );
+
+        return HistoryDetailsPage(data: data, heroTag: heroTag);
+      },
+    ),
+  ],
+);

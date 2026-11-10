@@ -12,11 +12,12 @@ abstract class AppRoutes {
   static const FORGET_PWD = "/forget_pwd";
   static const SET_PWD = "/set_pwd";
   static const MAIN = "/main";
+  static const MENU = "/menu";
   static const LANGUAGES = "/languages";
   static const NOTIFICATIONS = "/notifications";
   static const PASSWORD = "/password";
   static const FINGERPRINT = "/fingerprint";
-  static const ADD_CARD = "/add_card";
+  static const ADD_CARD = "/menu/add-card";
   static const LOGOUT = "/logout";
   static const NOT_FOUND = "/not_found";
   static const ABOUT = "/about";

@@ -14,7 +14,6 @@ import 'package:sirc/widgets/line_graph.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/title_text.dart';
 
-/// 纯净 Riverpod 架构的首页看板 Widget
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
