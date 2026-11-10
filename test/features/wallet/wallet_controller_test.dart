@@ -1,4 +1,7 @@
 import 'dart:ui';
+
+import 'package:sirc/features/wallet/domain/models/transaction.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/localization/app_locale.dart';
@@ -11,6 +14,115 @@ void main() {
     AppLocale.setLocale(const Locale('en', 'US'));
   });
 
+  group('Wallet date aggregation', () {
+    final now = DateTime(2026, 11, 10, 23, 59);
+    WalletState state(List<Transaction> items) => WalletState(
+      moneyTypes: const [],
+      selectedMonth: '',
+      monthEnglishNameList: const [],
+      referenceDate: now,
+      allTransactions: items,
+    );
+
+    test(
+      'relative labels use injected local day, unknown dates remain unknown',
+      () {
+        for (final label in ['Just now', 'Today', '刚刚', '今天']) {
+          expect(
+            WalletState.transactionDate(Transaction(time: label), now: now),
+            DateTime(2026, 11, 10),
+          );
+        }
+        for (final label in ['Yesterday', '昨天']) {
+          expect(
+            WalletState.transactionDate(Transaction(time: label), now: now),
+            DateTime(2026, 11, 9),
+          );
+        }
+        for (final label in ['11/10', '10:30', 'unknown', '2026-02-30', '']) {
+          expect(
+            WalletState.transactionDate(Transaction(time: label), now: now),
+            isNull,
+          );
+        }
+        expect(
+          WalletState.transactionDate(
+            Transaction(time: '2026 / 11 / 09'),
+            now: now,
+          ),
+          DateTime(2026, 11, 9),
+        );
+        expect(
+          WalletState.transactionDate(
+            Transaction(time: '2026-11-09T10:30:00'),
+            now: now,
+          ),
+          DateTime(2026, 11, 9, 10, 30),
+        );
+        expect(
+          WalletState.transactionDate(
+            Transaction(time: 'Yesterday'),
+            now: DateTime(2026, 1, 1),
+          ),
+          DateTime(2025, 12, 31),
+        );
+      },
+    );
+
+    test(
+      'seven days, week boundaries, filters and zero preserve genuine volume',
+      () {
+        final data = state([
+          for (var day = 9; day <= 15; day++)
+            Transaction(
+              time: '2026-11-${day.toString().padLeft(2, '0')}',
+              moneyAmount: -day.toDouble(),
+            ),
+          Transaction(time: 'Just now', moneyAmount: 100),
+          Transaction(time: '2026-11-08', moneyAmount: 999),
+          Transaction(time: '2026-11-16', moneyAmount: 999),
+          Transaction(time: 'unknown', moneyAmount: 999),
+        ]);
+        expect(data.weeklyAmounts(data.allTransactions), [
+          9,
+          110,
+          11,
+          12,
+          13,
+          14,
+          15,
+        ]);
+        expect(
+          data.weeklyAmounts(
+            data.copyWith(currentFilterIndex: 1).walletTransactions,
+          ),
+          [0, 100, 0, 0, 0, 0, 0],
+        );
+        expect(data.weeklyAmounts([]), List.filled(7, 0));
+        expect(data.undatedCount, 1);
+      },
+    );
+
+    test('card index clamps after deletion and handles empty cards', () {
+      const card = BankCard(
+        id: 'a',
+        bankName: 'A',
+        cardNumber: '1111',
+        ownerName: 'A',
+        expirationDate: '12/29',
+      );
+      final empty = state([]);
+      expect(empty.copyWith(selectedCardIndex: 9).selectedCardIndex, 0);
+      final three = empty.copyWith(
+        cards: [card, card, card],
+        selectedCardIndex: 2,
+      );
+      expect(three.copyWith(cards: [card]).selectedCardIndex, 0);
+      expect(three.copyWith(cards: []).selectedCardIndex, 0);
+      expect(three.copyWith(selectedCardIndex: -2).selectedCardIndex, 0);
+    });
+  });
+
   group('WalletRepository Tests', () {
     late WalletRepository repository;
 
@@ -18,11 +130,14 @@ void main() {
       repository = WalletRepositoryImpl();
     });
 
-    test('Initial bank cards should not be empty and contain default cards', () async {
-      final cards = await repository.getBankCards();
-      expect(cards.length, greaterThanOrEqualTo(3));
-      expect(cards.any((c) => c.bankName == 'CNSS'), isTrue);
-    });
+    test(
+      'Initial bank cards should not be empty and contain default cards',
+      () async {
+        final cards = await repository.getBankCards();
+        expect(cards.length, greaterThanOrEqualTo(3));
+        expect(cards.any((c) => c.bankName == 'CNSS'), isTrue);
+      },
+    );
 
     test('addBankCard should successfully add a card to repository', () async {
       final initialCount = (await repository.getBankCards()).length;
@@ -51,34 +166,72 @@ void main() {
         expirationDate: '05/26',
       );
       await repository.addBankCard(newCard);
-      expect((await repository.getBankCards()).any((c) => c.id == 'to_delete_id'), isTrue);
+      expect(
+        (await repository.getBankCards()).any((c) => c.id == 'to_delete_id'),
+        isTrue,
+      );
 
       await repository.deleteBankCard('to_delete_id');
-      expect((await repository.getBankCards()).any((c) => c.id == 'to_delete_id'), isFalse);
+      expect(
+        (await repository.getBankCards()).any((c) => c.id == 'to_delete_id'),
+        isFalse,
+      );
     });
 
-    test('getTransactions with TransactionFilter.send filters negative amounts', () async {
-      final sendTxs = await repository.getTransactions(filter: TransactionFilter.send);
-      expect(sendTxs.every((item) => (item.moneyAmount ?? 0) < 0), isTrue);
-    });
+    test(
+      'getTransactions with TransactionFilter.send filters negative amounts',
+      () async {
+        final sendTxs = await repository.getTransactions(
+          filter: TransactionFilter.send,
+        );
+        expect(sendTxs.every((item) => (item.moneyAmount ?? 0) < 0), isTrue);
+      },
+    );
 
-    test('getTransactions with TransactionFilter.receive filters positive amounts', () async {
-      final receiveTxs = await repository.getTransactions(filter: TransactionFilter.receive);
-      expect(receiveTxs.every((item) => (item.moneyAmount ?? 0) >= 0), isTrue);
-    });
+    test(
+      'getTransactions with TransactionFilter.receive filters positive amounts',
+      () async {
+        final receiveTxs = await repository.getTransactions(
+          filter: TransactionFilter.receive,
+        );
+        expect(
+          receiveTxs.every((item) => (item.moneyAmount ?? 0) >= 0),
+          isTrue,
+        );
+      },
+    );
 
-    test('getTransactions with TransactionFilter.total returns all items', () async {
-      final totalTxs = await repository.getTransactions(filter: TransactionFilter.total);
-      final sendTxs = await repository.getTransactions(filter: TransactionFilter.send);
-      final receiveTxs = await repository.getTransactions(filter: TransactionFilter.receive);
+    test(
+      'getTransactions with TransactionFilter.total returns all items',
+      () async {
+        final totalTxs = await repository.getTransactions(
+          filter: TransactionFilter.total,
+        );
+        final sendTxs = await repository.getTransactions(
+          filter: TransactionFilter.send,
+        );
+        final receiveTxs = await repository.getTransactions(
+          filter: TransactionFilter.receive,
+        );
 
-      expect(totalTxs.length, equals(sendTxs.length + receiveTxs.length));
-    });
+        expect(totalTxs.length, equals(sendTxs.length + receiveTxs.length));
+      },
+    );
 
-    test('getTransactions with search query filters action name or time', () async {
-      final txs = await repository.getTransactions(query: 'Something');
-      expect(txs.every((t) => (t.moneyActionName ?? '').toLowerCase().contains('something') || (t.time ?? '').toLowerCase().contains('something')), isTrue);
-    });
+    test(
+      'getTransactions with search query filters action name or time',
+      () async {
+        final txs = await repository.getTransactions(query: 'Something');
+        expect(
+          txs.every(
+            (t) =>
+                (t.moneyActionName ?? '').toLowerCase().contains('something') ||
+                (t.time ?? '').toLowerCase().contains('something'),
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('getMonthlyChartData returns Dart 3 records', () async {
       final chartData = await repository.getMonthlyChartData('January');
@@ -118,25 +271,32 @@ void main() {
       expect(state.isLoading, isFalse);
     });
 
-    test('setFilterIndex updates currentFilterIndex and refetches transactions', () async {
+    test(
+      'setFilterIndex updates currentFilterIndex and refetches transactions',
+      () async {
+        final controller = container.read(walletControllerProvider.notifier);
+        await controller.loadInitialData();
+
+        // Switch to Receive (index 1)
+        await controller.setFilterIndex(1);
+        var state = container.read(walletControllerProvider);
+        expect(state.currentFilterIndex, equals(1));
+        expect(
+          state.transactions.every((t) => (t.moneyAmount ?? 0) >= 0),
+          isTrue,
+        );
+
+        // Switch to Total (index 2)
+        await controller.setFilterIndex(2);
+        state = container.read(walletControllerProvider);
+        expect(state.currentFilterIndex, equals(2));
+        expect(state.transactions.isNotEmpty, isTrue);
+      },
+    );
+
+    test('selectCard updates selectedCardIndex', () async {
       final controller = container.read(walletControllerProvider.notifier);
       await controller.loadInitialData();
-
-      // Switch to Receive (index 1)
-      await controller.setFilterIndex(1);
-      var state = container.read(walletControllerProvider);
-      expect(state.currentFilterIndex, equals(1));
-      expect(state.transactions.every((t) => (t.moneyAmount ?? 0) >= 0), isTrue);
-
-      // Switch to Total (index 2)
-      await controller.setFilterIndex(2);
-      state = container.read(walletControllerProvider);
-      expect(state.currentFilterIndex, equals(2));
-      expect(state.transactions.isNotEmpty, isTrue);
-    });
-
-    test('selectCard updates selectedCardIndex', () {
-      final controller = container.read(walletControllerProvider.notifier);
       controller.selectCard(2);
 
       final state = container.read(walletControllerProvider);
@@ -149,7 +309,10 @@ void main() {
 
       final state = container.read(walletControllerProvider);
       expect(state.selectedMonth, equals('February'));
-      expect(state.chartData.isNotEmpty, isTrue);
+      expect(
+        state.chartData.isEmpty,
+        isTrue,
+      ); // Never synthesize monthly percentages.
     });
 
     test('setSearchQuery filters transaction records', () async {
@@ -184,29 +347,41 @@ void main() {
 
       // Owner Name
       controller.setOwnerName('');
-      expect(container.read(addCardControllerProvider).ownerNameError, isNotNull);
+      expect(
+        container.read(addCardControllerProvider).ownerNameError,
+        isNotNull,
+      );
       controller.setOwnerName('John Doe');
       expect(container.read(addCardControllerProvider).ownerNameError, isNull);
 
       // Card Number
       controller.setCardNumber('');
-      expect(container.read(addCardControllerProvider).cardNumberError, isNotNull);
+      expect(
+        container.read(addCardControllerProvider).cardNumberError,
+        isNotNull,
+      );
       controller.setCardNumber('1234567812345678');
       expect(container.read(addCardControllerProvider).cardNumberError, isNull);
 
       // Expire Date
       controller.setExpireDate(DateTime(2027, 8));
-      expect(container.read(addCardControllerProvider).expireDateString, equals('08/27'));
+      expect(
+        container.read(addCardControllerProvider).expireDateString,
+        equals('08/27'),
+      );
       expect(container.read(addCardControllerProvider).expireDateError, isNull);
 
       // CVV
       controller.setCvv('');
       expect(container.read(addCardControllerProvider).cvvError, isNotNull);
-      controller.setCvv('123');
+      controller.setCvv('1234');
       expect(container.read(addCardControllerProvider).cvvError, isNull);
 
       // Overall validation should now pass
-      expect(container.read(addCardControllerProvider).isUserInputValid, isTrue);
+      expect(
+        container.read(addCardControllerProvider).isUserInputValid,
+        isTrue,
+      );
     });
 
     test('onBankCardPanUpdate clamps rotation angle within bounds', () {
@@ -220,28 +395,42 @@ void main() {
 
       // Reset
       controller.onBankCardPanUpdate(null);
-      expect(container.read(addCardControllerProvider).cardRotateAngle, equals(AddCardState.cardMinRotateAngle));
+      expect(
+        container.read(addCardControllerProvider).cardRotateAngle,
+        equals(AddCardState.cardMinRotateAngle),
+      );
     });
 
-    test('addCard successfully saves card to repository and reloads cards', () async {
-      final controller = container.read(addCardControllerProvider.notifier);
-      final walletNotifier = container.read(walletControllerProvider.notifier);
-      await walletNotifier.loadInitialData();
+    test(
+      'addCard successfully saves card to repository and reloads cards',
+      () async {
+        final controller = container.read(addCardControllerProvider.notifier);
+        final walletNotifier = container.read(
+          walletControllerProvider.notifier,
+        );
+        await walletNotifier.loadInitialData();
 
-      final initialCardsCount = container.read(walletControllerProvider).cards.length;
+        final initialCardsCount = container
+            .read(walletControllerProvider)
+            .cards
+            .length;
 
-      // Fill in valid details
-      controller.setOwnerName('Michael Jordan');
-      controller.setCardNumber('8888777766665555');
-      controller.setExpireDate(DateTime(2029, 12));
-      controller.setCvv('888');
+        // Fill in valid details
+        controller.setOwnerName('Michael Jordan');
+        controller.setCardNumber('8888777766665555');
+        controller.setExpireDate(DateTime(2029, 12));
+        controller.setCvv('8888');
 
-      final success = await controller.addCard();
-      expect(success, isTrue);
+        final success = await controller.addCard();
+        expect(success, isTrue);
 
-      final updatedCards = container.read(walletControllerProvider).cards;
-      expect(updatedCards.length, equals(initialCardsCount + 1));
-      expect(updatedCards.any((c) => c.ownerName == 'Michael Jordan'), isTrue);
-    });
+        final updatedCards = container.read(walletControllerProvider).cards;
+        expect(updatedCards.length, equals(initialCardsCount + 1));
+        expect(
+          updatedCards.any((c) => c.ownerName == 'Michael Jordan'),
+          isTrue,
+        );
+      },
+    );
   });
 }

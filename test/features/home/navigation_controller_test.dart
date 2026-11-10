@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/features/home/controllers/home_controller.dart';
+import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 
 void main() {
@@ -76,39 +77,62 @@ void main() {
     });
 
     test(
-        'openDrawer, closeDrawer, and toggleDrawer should control drawer state',
-        () {
-      final controller = container.read(navigationControllerProvider.notifier);
+      'openDrawer, closeDrawer, and toggleDrawer should control drawer state',
+      () {
+        final controller = container.read(
+          navigationControllerProvider.notifier,
+        );
 
-      expect(
-          container.read(navigationControllerProvider).isDrawerOpen, isFalse);
+        expect(
+          container.read(navigationControllerProvider).isDrawerOpen,
+          isFalse,
+        );
 
-      controller.openDrawer();
-      expect(container.read(navigationControllerProvider).isDrawerOpen, isTrue);
+        controller.openDrawer();
+        expect(
+          container.read(navigationControllerProvider).isDrawerOpen,
+          isTrue,
+        );
 
-      // 重复打开保持 true
-      controller.openDrawer();
-      expect(container.read(navigationControllerProvider).isDrawerOpen, isTrue);
+        // 重复打开保持 true
+        controller.openDrawer();
+        expect(
+          container.read(navigationControllerProvider).isDrawerOpen,
+          isTrue,
+        );
 
-      controller.closeDrawer();
-      expect(
-          container.read(navigationControllerProvider).isDrawerOpen, isFalse);
+        controller.closeDrawer();
+        expect(
+          container.read(navigationControllerProvider).isDrawerOpen,
+          isFalse,
+        );
 
-      // toggle 切换
-      controller.toggleDrawer();
-      expect(container.read(navigationControllerProvider).isDrawerOpen, isTrue);
+        // toggle 切换
+        controller.toggleDrawer();
+        expect(
+          container.read(navigationControllerProvider).isDrawerOpen,
+          isTrue,
+        );
 
-      controller.toggleDrawer();
-      expect(
-          container.read(navigationControllerProvider).isDrawerOpen, isFalse);
+        controller.toggleDrawer();
+        expect(
+          container.read(navigationControllerProvider).isDrawerOpen,
+          isFalse,
+        );
 
-      // setDrawerOpen
-      controller.setDrawerOpen(true);
-      expect(container.read(navigationControllerProvider).isDrawerOpen, isTrue);
-      controller.setDrawerOpen(false);
-      expect(
-          container.read(navigationControllerProvider).isDrawerOpen, isFalse);
-    });
+        // setDrawerOpen
+        controller.setDrawerOpen(true);
+        expect(
+          container.read(navigationControllerProvider).isDrawerOpen,
+          isTrue,
+        );
+        controller.setDrawerOpen(false);
+        expect(
+          container.read(navigationControllerProvider).isDrawerOpen,
+          isFalse,
+        );
+      },
+    );
   });
 
   group('HomeController Tests', () {
@@ -122,7 +146,8 @@ void main() {
       container.dispose();
     });
 
-    test('Initial state should load correctly', () {
+    test('Initial state should load correctly', () async {
+      await container.read(walletControllerProvider.notifier).loadInitialData();
       final state = container.read(homeControllerProvider);
 
       expect(state.currentBankIndex, 0);
@@ -131,7 +156,8 @@ void main() {
       expect(state.quickActions.length, 15);
     });
 
-    test('setBankIndex should update selected bank index', () {
+    test('setBankIndex should update selected bank index', () async {
+      await container.read(walletControllerProvider.notifier).loadInitialData();
       final controller = container.read(homeControllerProvider.notifier);
 
       controller.setBankIndex(1);

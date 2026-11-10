@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sirc/widgets/jingang_widget.dart';
+import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 
 part 'home_controller.g.dart';
 
@@ -9,12 +10,14 @@ class BankCardItem {
   final String cardNumber;
   final String ownerName;
   final String expirationDate;
+  final String? cardType;
 
   const BankCardItem({
     required this.bankName,
     required this.cardNumber,
     required this.ownerName,
     required this.expirationDate,
+    this.cardType,
   });
 }
 
@@ -52,65 +55,79 @@ class HomeState {
 class HomeController extends _$HomeController {
   @override
   HomeState build() {
+    final wallet = ref.watch(walletControllerProvider);
     return HomeState(
-      weeklyPercentages: const [0.3, 0.5, 0.1, 0.6, 0.9, 0.2, 0.8],
-      banks: const [
-        BankCardItem(
-          bankName: "CNSS",
-          cardNumber: "8932 6283 3243 3232",
-          ownerName: "Juan Perez",
-          expirationDate: "02/20",
-        ),
-        BankCardItem(
-          bankName: "DXSS",
-          cardNumber: "8932 3223 3243 3232",
-          ownerName: "Juan Perez",
-          expirationDate: "12/29",
-        ),
-        BankCardItem(
-          bankName: "CID",
-          cardNumber: "8932 3283 3323 3232",
-          ownerName: "Juan Perez",
-          expirationDate: "11/22",
-        ),
-      ],
+      currentBankIndex: wallet.selectedCardIndex,
+      weeklyPercentages:
+          stateOrNull?.weeklyPercentages ??
+          const [0.3, 0.5, 0.1, 0.6, 0.9, 0.2, 0.8],
+      banks: wallet.cards
+          .map(
+            (card) => BankCardItem(
+              bankName: card.bankName,
+              cardNumber: card.cardNumber,
+              ownerName: card.ownerName,
+              expirationDate: card.expirationDate,
+              cardType: card.cardType,
+            ),
+          )
+          .toList(),
       quickActions: [
         ImgText("https://img.icons8.com/office/80/000000/bonds.png", "Bonds"),
         ImgText(
-            "https://img.icons8.com/office/80/000000/billing.png", "Billing"),
+          "https://img.icons8.com/office/80/000000/billing.png",
+          "Billing",
+        ),
         ImgText("https://img.icons8.com/office/80/000000/cash.png", "Cash"),
-        ImgText("https://img.icons8.com/office/80/000000/money-bag.png",
-            "Money Bag"),
-        ImgText("https://img.icons8.com/office/80/000000/wallet.png", "Wallet"),
-        ImgText("https://img.icons8.com/office/80/000000/bounced-check.png",
-            "Bounced Check"),
-        ImgText("https://img.icons8.com/office/80/000000/tax.png", "Tax"),
-        ImgText("https://img.icons8.com/office/80/000000/purchase-order.png",
-            "Purchase Order"),
-        ImgText("https://img.icons8.com/office/80/000000/payment-history.png",
-            "Payment History"),
-        ImgText("https://img.icons8.com/office/80/000000/card-in-use.png",
-            "Card In Use"),
-        ImgText("https://img.icons8.com/office/80/000000/card-security.png",
-            "Card Security"),
         ImgText(
-            "https://img.icons8.com/office/80/000000/bank-card-front-side--v1.png",
-            "Bank Card Front Side"),
-        ImgText("https://img.icons8.com/office/80/000000/bank-card-missing.png",
-            "bank card missing"),
-        ImgText("https://img.icons8.com/office/80/000000/credit-control.png",
-            "Credit Control"),
-        ImgText("https://img.icons8.com/office/80/000000/commodity.png",
-            "Commodity"),
+          "https://img.icons8.com/office/80/000000/money-bag.png",
+          "Money Bag",
+        ),
+        ImgText("https://img.icons8.com/office/80/000000/wallet.png", "Wallet"),
+        ImgText(
+          "https://img.icons8.com/office/80/000000/bounced-check.png",
+          "Bounced Check",
+        ),
+        ImgText("https://img.icons8.com/office/80/000000/tax.png", "Tax"),
+        ImgText(
+          "https://img.icons8.com/office/80/000000/purchase-order.png",
+          "Purchase Order",
+        ),
+        ImgText(
+          "https://img.icons8.com/office/80/000000/payment-history.png",
+          "Payment History",
+        ),
+        ImgText(
+          "https://img.icons8.com/office/80/000000/card-in-use.png",
+          "Card In Use",
+        ),
+        ImgText(
+          "https://img.icons8.com/office/80/000000/card-security.png",
+          "Card Security",
+        ),
+        ImgText(
+          "https://img.icons8.com/office/80/000000/bank-card-front-side--v1.png",
+          "Bank Card Front Side",
+        ),
+        ImgText(
+          "https://img.icons8.com/office/80/000000/bank-card-missing.png",
+          "bank card missing",
+        ),
+        ImgText(
+          "https://img.icons8.com/office/80/000000/credit-control.png",
+          "Credit Control",
+        ),
+        ImgText(
+          "https://img.icons8.com/office/80/000000/commodity.png",
+          "Commodity",
+        ),
       ],
     );
   }
 
   /// 设置当前选中的银行卡索引
   void setBankIndex(int index) {
-    if (state.currentBankIndex != index) {
-      state = state.copyWith(currentBankIndex: index);
-    }
+    ref.read(walletControllerProvider.notifier).selectCard(index);
   }
 
   /// 更新折线图周百分比数据
