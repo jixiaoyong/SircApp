@@ -23,6 +23,15 @@ class SettingsZh implements SettingsLang {
   String get language => '语言';
 
   @override
+  String get appearance => '外观主题';
+  @override
+  String get themeLight => '亮色';
+  @override
+  String get themeDark => '暗色';
+  @override
+  String get themeSystem => '跟随系统';
+
+  @override
   String get translations => '翻译';
 
   @override

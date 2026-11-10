@@ -37,6 +37,18 @@ class HomeZh implements HomeLang {
   String get justNow => '刚刚';
 
   @override
+  String get noCardsInWallet => '暂无卡片，请前往钱包添加';
+
+  @override
+  String get recentTransactions => '最近交易';
+
+  @override
+  String get transactionSummary => '交易摘要';
+
+  @override
+  String get localExamples => '本地示例';
+
+  @override
   String get mon => '周一';
 
   @override

@@ -11,6 +11,10 @@ abstract class HomeLang {
   String get somethingLikeAds;
   String get stillWorkingOnIt;
   String get justNow;
+  String get noCardsInWallet;
+  String get recentTransactions;
+  String get transactionSummary;
+  String get localExamples;
 
   // 星期
   String get mon;

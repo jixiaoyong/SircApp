@@ -37,6 +37,18 @@ class HomeEn implements HomeLang {
   String get justNow => 'Just now';
 
   @override
+  String get noCardsInWallet => 'No cards yet. Add a card in Wallet.';
+
+  @override
+  String get recentTransactions => 'Transactions';
+
+  @override
+  String get transactionSummary => 'Transaction summary';
+
+  @override
+  String get localExamples => 'Local examples';
+
+  @override
   String get mon => 'Mon';
 
   @override
