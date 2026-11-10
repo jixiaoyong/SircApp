@@ -11,7 +11,7 @@ import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 
 void main() {
-  testWidgets('真实Tab切换不产生隐藏头像飞行，交易详情仍有Hero往返动画', (tester) async {
+  testWidgets('真实Tab切换无隐藏头像飞行，主从详情保留交易及Hero身份', (tester) async {
     SharedPreferences.setMockInitialValues({
       CommonKeys.IS_LOGIN_SUCCESS: true,
       CommonKeys.LOCAL_LANGUAGE: 'en_US',
@@ -76,20 +76,27 @@ void main() {
     }
 
     final hero = find.byType(Hero).first;
+    final tag = tester.widget<Hero>(hero).tag;
     await tester.ensureVisible(hero);
     await tester.tap(hero);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 80));
-    expect(flightCount(), greaterThan(0), reason: '钱包交易到详情仍应有正常Hero动画');
+    expect(flightCount(), 0, reason: '主从详情不跨左右窗格飞行');
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
     await tester.pump();
     expect(find.byType(HistoryDetailsPage), findsOneWidget);
+    final detail = tester.widget<HistoryDetailsPage>(
+      find.byType(HistoryDetailsPage),
+    );
+    expect(detail.heroTag, tag);
+    expect(detail.data.moneyActionName, isNotEmpty);
+    expect(detail.data.moneyAmount, isNotNull);
     expect(flightCount(), 0);
     router.pop();
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 80));
-    expect(flightCount(), greaterThan(0));
+    expect(flightCount(), 0);
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
     await tester.pump();

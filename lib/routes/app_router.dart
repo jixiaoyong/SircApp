@@ -18,12 +18,16 @@ import '../features/wallet/presentation/history_page.dart';
 import '../features/settings/presentation/about_page.dart';
 import '../features/settings/presentation/initial_page.dart';
 import '../features/settings/presentation/language_page.dart';
+import '../features/settings/presentation/appearance_page.dart';
 import '../features/settings/presentation/not_found_page.dart';
 import '../features/settings/presentation/notifications_page.dart';
 import '../features/wallet/domain/models/transaction.dart';
 import '../features/wallet/presentation/add_card_page.dart';
+import '../features/wallet/presentation/card_management_page.dart';
+import '../features/wallet/presentation/controllers/wallet_controller.dart';
 import '../features/wallet/presentation/history_details_page.dart';
 import 'app_routes.dart';
+import '../features/home/presentation/article_detail_page.dart';
 
 /*
 * @description: 基于 GoRouter 的现代声明式路由配置
@@ -91,15 +95,24 @@ GoRouter createAppRouter(
     routes: [
       GoRoute(
         path: AppRoutes.INITIAL,
-        builder: (context, state) => const InitialPage(),
+        pageBuilder: (context, state) => NoTransitionPage<void>(
+          key: state.pageKey,
+          child: const InitialPage(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.SIGN_IN,
-        builder: (context, state) => const SignInPage(),
+        pageBuilder: (context, state) => NoTransitionPage<void>(
+          key: state.pageKey,
+          child: const SignInPage(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.SIGN_UP,
-        builder: (context, state) => const SignUpPage(),
+        pageBuilder: (context, state) => NoTransitionPage<void>(
+          key: state.pageKey,
+          child: const SignUpPage(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.FORGET_PWD,
@@ -132,57 +145,36 @@ GoRouter createAppRouter(
           }.contains(state.uri.path),
         ),
         branches: [
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoutes.MAIN,
-                builder: (context, state) => const HomePage(),
-                routes: [_transactionRoute(takeTransactionExtra)],
-              ),
-            ],
+          _sourceBranch(AppRoutes.MAIN, const HomePage(), takeTransactionExtra),
+          _sourceBranch(
+            AppRoutes.WALLET,
+            const WalletPage(),
+            takeTransactionExtra,
           ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoutes.WALLET,
-                builder: (context, state) => const WalletPage(),
-                routes: [_transactionRoute(takeTransactionExtra)],
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoutes.HISTORY,
-                builder: (context, state) => const HistoryPage(),
-                routes: [_transactionRoute(takeTransactionExtra)],
-              ),
-            ],
+          _sourceBranch(
+            AppRoutes.HISTORY,
+            const HistoryPage(),
+            takeTransactionExtra,
           ),
           StatefulShellBranch(
             routes: [
               ShellRoute(
                 pageBuilder: (context, state, child) => NoTransitionPage<void>(
                   key: state.pageKey,
-                  child:
-                      state.uri.path ==
-                          '${AppRoutes.PERSON}/${AppRoutes.TRANSACTION_SEGMENT}'
-                      ? child
-                      : MenuDetailLayout(
-                          hasDetail: state.uri.path != AppRoutes.PERSON,
-                          list: const PersonPage(),
-                          paneKey: const ValueKey('person-pane'),
-                          child: child,
-                        ),
+                  child: MenuDetailLayout(
+                    hasDetail: state.uri.path != AppRoutes.PERSON,
+                    list: const PersonPage(),
+                    paneKey: const ValueKey('person-pane'),
+                    keepListMounted: true,
+                    child: child,
+                  ),
                 ),
                 routes: [
                   GoRoute(
                     path: AppRoutes.PERSON,
                     pageBuilder: (context, state) => NoTransitionPage<void>(
                       key: state.pageKey,
-                      child: MediaQuery.sizeOf(context).width >= 840
-                          ? const SizedBox.shrink()
-                          : const PersonPage(),
+                      child: const SizedBox.shrink(),
                     ),
                     routes: [
                       for (final field in ['email', 'phone', 'address'])
@@ -196,9 +188,10 @@ GoRouter createAppRouter(
                         ),
                       _menuDetailRoute(
                         'card',
-                        (onBack) => AboutPage(onBack: onBack),
+                        (onBack) => PersonCardsPage(onBack: onBack),
                         source: AppRoutes.PERSON,
                       ),
+                      ..._cardEditorRoutes(AppRoutes.PERSON),
                       _transactionRoute(takeTransactionExtra),
                     ],
                   ),
@@ -231,6 +224,10 @@ GoRouter createAppRouter(
                         (onBack) => LanguagePage(onBack: onBack),
                       ),
                       _menuDetailRoute(
+                        AppRoutes.APPEARANCE_SEGMENT,
+                        (onBack) => AppearancePage(onBack: onBack),
+                      ),
+                      _menuDetailRoute(
                         AppRoutes.NOTIFICATIONS_SEGMENT,
                         (onBack) => NotificationsPage(onBack: onBack),
                       ),
@@ -238,9 +235,9 @@ GoRouter createAppRouter(
                         AppRoutes.PASSWORD_SEGMENT,
                         (onBack) => PasswordPage(onBack: onBack),
                       ),
-                      _menuDetailRoute(
-                        AppRoutes.ADD_CARD_SEGMENT,
-                        (onBack) => AddCardPage(onBack: onBack),
+                      GoRoute(
+                        path: AppRoutes.ADD_CARD_SEGMENT,
+                        redirect: (context, state) => '/wallet/add-card',
                       ),
                     ],
                   ),
@@ -273,6 +270,124 @@ GoRouter createAppRouter(
   );
   return router;
 }
+
+StatefulShellBranch _sourceBranch(
+  String source,
+  Widget list,
+  Object? Function() takeExtra,
+) => StatefulShellBranch(
+  routes: [
+    ShellRoute(
+      pageBuilder: (context, state, child) => NoTransitionPage<void>(
+        key: state.pageKey,
+        child: MenuDetailLayout(
+          hasDetail: state.uri.path != source,
+          list: list,
+          paneKey: ValueKey('$source-pane'),
+          keepListMounted: true,
+          child: child,
+        ),
+      ),
+      routes: [
+        GoRoute(
+          path: source,
+          pageBuilder: (context, state) => NoTransitionPage<void>(
+            key: state.pageKey,
+            child: const SizedBox.shrink(),
+          ),
+          routes: [
+            if (source == AppRoutes.WALLET) ...[
+              _menuDetailRoute(
+                'cards',
+                (onBack) => CardManagementPage(onBack: onBack),
+                source: source,
+              ),
+              ..._cardEditorRoutes(source),
+            ],
+            _transactionRoute(takeExtra),
+            if (source == AppRoutes.MAIN)
+              GoRoute(
+                path: 'article/:id',
+                pageBuilder: (context, state) {
+                  final child = ArticleDetailPage(
+                    id: state.pathParameters['id']!,
+                  );
+                  return MediaQuery.sizeOf(context).width >= 840
+                      ? _MenuNoTransitionPage(key: state.pageKey, child: child)
+                      : _MenuMaterialPage(key: state.pageKey, child: child);
+                },
+              ),
+          ],
+        ),
+      ],
+    ),
+  ],
+);
+
+// 管理和编辑保持在来源分支内；直接深链也能返回该来源的管理页。
+List<GoRoute> _cardEditorRoutes(String source) => [
+  for (final path in ['add-card', 'edit-card/:id'])
+    GoRoute(
+      path: path,
+      pageBuilder: (context, routeState) {
+        final editingId = routeState.pathParameters['id'];
+        final managementPath = source == AppRoutes.PERSON
+            ? AppRoutes.PERSON_CARD
+            : '$source/cards';
+        final returnsToManagement =
+            source == AppRoutes.PERSON ||
+            editingId != null ||
+            routeState.uri.queryParameters['from'] == 'cards';
+        final backTo = returnsToManagement ? managementPath : source;
+        final detail = Consumer(
+          builder: (context, ref, _) {
+            final state = ref.watch(walletControllerProvider);
+            final card = state.cards
+                .where((card) => card.id == editingId)
+                .firstOrNull;
+            void back() {
+              if (returnsToManagement) {
+                context.replace(backTo);
+              } else if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go(backTo);
+              }
+            }
+
+            if (editingId != null && card == null) {
+              return Scaffold(
+                appBar: AppBar(leading: BackButton(onPressed: back)),
+                body: Center(
+                  child: Text(
+                    state.isLoading
+                        ? '…'
+                        : (Localizations.localeOf(context).languageCode == 'zh'
+                              ? '卡片不存在'
+                              : 'Card not found'),
+                  ),
+                ),
+              );
+            }
+            return PopScope(
+              canPop: !returnsToManagement,
+              onPopInvokedWithResult: (didPop, result) {
+                if (!didPop) back();
+              },
+              child: AddCardPage(
+                key: ValueKey(editingId ?? 'new-card'),
+                card: card,
+                onBack: back,
+              ),
+            );
+          },
+        );
+        return MediaQuery.sizeOf(context).width >= 840
+            ? _MenuNoTransitionPage(key: routeState.pageKey, child: detail)
+            : _MenuMaterialPage(key: routeState.pageKey, child: detail);
+      },
+    ),
+];
 
 GoRoute _menuDetailRoute(
   String path,
@@ -368,10 +483,10 @@ GoRoute _transactionRoute(Object? Function() takeLegacyExtra) => GoRoute(
   path: AppRoutes.TRANSACTION_SEGMENT,
   pageBuilder: (context, state) {
     final extra = state.extra ?? takeLegacyExtra();
-    return MaterialPage(
-      key: state.pageKey,
-      child: _TransactionDetail(extra: extra),
-    );
+    final child = _TransactionDetail(extra: extra);
+    return MediaQuery.sizeOf(context).width >= 840
+        ? _MenuNoTransitionPage(key: state.pageKey, child: child)
+        : _MenuMaterialPage(key: state.pageKey, child: child);
   },
 );
 
@@ -384,7 +499,7 @@ class _TransactionDetail extends StatefulWidget {
 }
 
 class _TransactionDetailState extends State<_TransactionDetail> {
-  late final Object? extra = widget.extra;
+  Object? get extra => widget.extra;
 
   @override
   Widget build(BuildContext context) {

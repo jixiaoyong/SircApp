@@ -55,7 +55,13 @@ class MainPage extends ConsumerWidget {
               ),
             // 各分支 Navigator 自带独立 HeroController；indexedStack
             // 负责 Offstage/TickerMode，无第二层五页 IndexedStack。
-            Expanded(child: navigationShell),
+            Expanded(
+              child: Semantics(
+                container: true,
+                explicitChildNodes: true,
+                child: navigationShell,
+              ),
+            ),
           ],
         ),
         bottomNavigationBar: isWideLayout || !showBottomNavigation
@@ -71,11 +77,16 @@ class MainPage extends ConsumerWidget {
                     .toList(),
                 onTap: selectTab,
                 currentIndex: currentIndex,
-                selectedItemColor: Theme.of(context).primaryColorDark,
+                type: BottomNavigationBarType.fixed,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                selectedItemColor: Theme.of(context).colorScheme.onSurface,
                 selectedLabelStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
-                unselectedItemColor: Theme.of(context).primaryColorLight,
+                unselectedItemColor: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant,
+                elevation: 0,
               ),
       ),
     );

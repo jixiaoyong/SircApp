@@ -6,7 +6,7 @@ import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/features/auth/presentation/sign_in_page.dart';
 import 'package:sirc/features/auth/presentation/sign_up_page.dart';
-import 'package:sirc/features/auth/presentation/sign_up_field.dart';
+import 'package:sirc/widgets/constrained_content.dart';
 import 'package:sirc/features/auth/presentation/forget_pwd_page.dart';
 import 'package:sirc/features/auth/presentation/set_pwd_page.dart';
 import 'package:sirc/features/wallet/presentation/add_card_page.dart';
@@ -40,14 +40,14 @@ void main() {
       final fieldFinder = find.byType(TextField);
       final decoration = tester.widget<TextField>(fieldFinder).decoration!;
       expect(decoration.floatingLabelBehavior, FloatingLabelBehavior.always);
-      expect(decoration.fillColor, theme.colorScheme.surfaceContainerLow);
+      expect(decoration.fillColor, theme.colorScheme.surfaceContainerHighest);
       expect(
         (decoration.enabledBorder! as OutlineInputBorder).borderSide.color,
-        theme.colorScheme.outlineVariant,
+        theme.colorScheme.outline,
       );
       expect(
         (decoration.focusedBorder! as OutlineInputBorder).borderSide.color,
-        theme.colorScheme.primary,
+        theme.colorScheme.secondary,
       );
       await tester.enterText(fieldFinder, 'invalid');
       await tester.pumpAndSettle();
@@ -120,7 +120,7 @@ void main() {
       const SetPwdPage(),
       const AddCardPage(),
     ]) {
-      testWidgets('${page.runtimeType} 宽度 $width 顶部局部限宽且键盘下可滚动', (
+      testWidgets('${page.runtimeType} 宽度 $width 局部限宽、对齐且键盘下可滚动', (
         tester,
       ) async {
         tester.view.physicalSize = Size(width, 900);
@@ -140,12 +140,14 @@ void main() {
         final contentWidth = width.clamp(0.0, 520.0);
         expect(rect.width, closeTo(contentWidth - 40, .01));
         expect(rect.left, closeTo((width - contentWidth) / 2 + 20, .01));
-        if (page is SignInPage || page is SignUpPage || page is SetPwdPage) {
+        if (page is SignInPage || page is SignUpPage) {
+          expect(find.byType(AppBar), findsNothing);
+          final content = tester.getRect(find.byType(ConstrainedContent));
+          final viewport = tester.getRect(find.byType(SingleChildScrollView));
+          expect(content.center.dy, closeTo(viewport.center.dy, .01));
+        } else if (page is SetPwdPage) {
           expect(
-            (page is SignUpPage
-                    ? tester.getRect(find.byType(SignUpField).first).top
-                    : rect.top) -
-                tester.getRect(find.byType(AppBar)).bottom,
+            rect.top - tester.getRect(find.byType(AppBar)).bottom,
             closeTo(20, .01),
           );
         }

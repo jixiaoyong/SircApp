@@ -1,86 +1,103 @@
 import 'package:flutter/material.dart';
+import 'package:sirc/core/theme/app_colors.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
-import 'package:sirc/data/common_data.dart';
-import 'package:sirc/utils/size_extension.dart';
+import 'package:sirc/features/wallet/presentation/wallet_page.dart';
+import 'package:sirc/utils/number_extension.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 
-/// 交易详情页面，展示更详尽的单笔交易信息与 Hero 动画
+/// Read-only transaction detail; the source-provided Hero identity is preserved.
 class HistoryDetailsPage extends StatelessWidget {
-  final Transaction data;
-  final String heroTag;
-
   const HistoryDetailsPage({
     super.key,
     required this.data,
     required this.heroTag,
   });
-
+  final Transaction data;
+  final String heroTag;
   @override
   Widget build(BuildContext context) {
-    final isMoneyIn = (data.moneyAmount ?? 0) >= 0;
-    final moneyArr =
-        (data.moneyAmount ?? 0).abs().toStringAsFixed(2).split(".");
-
+    final zh = Localizations.localeOf(context).languageCode == 'zh';
+    final amountColor = (data.moneyAmount ?? 0) < 0
+        ? AppColors.expense(context)
+        : AppColors.income(context);
     return Scaffold(
-      appBar: const OneTitleWithBackButtonAppBar(
-        title: "Details",
-      ),
+      appBar: OneTitleWithBackButtonAppBar(title: zh ? '交易详情' : 'Details'),
       body: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(
-          parent: BouncingScrollPhysics(),
-        ),
-        child: Column(
-          children: [
-            Hero(
-              tag: heroTag,
-              child: NetworkWebImage(
-                data.userIcon ?? '',
-                size: Size.square(CommonData.realScreenWidth),
-                fit: BoxFit.cover,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 10.dp),
-              child: Text(
-                data.moneyActionName ?? '',
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  fontSize: 20.sp,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 25.dp),
-              child: RichText(
-                text: TextSpan(
-                  text: "${isMoneyIn ? "+" : "-"}\$${moneyArr[0]}",
-                  children: [
-                    TextSpan(
-                      text: ".${moneyArr.length > 1 ? moneyArr[1] : '00'}",
-                      style: TextStyle(
-                        fontSize: 30.sp,
-                        fontWeight: FontWeight.normal,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 580),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  const SizedBox(height: 24),
+                  Hero(
+                    tag: heroTag,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: NetworkWebImage(
+                        data.userIcon ?? '',
+                        size: const Size.square(72),
+                        fit: BoxFit.cover,
                       ),
-                    )
-                  ],
-                  style: TextStyle(
-                    fontSize: 50.sp,
-                    fontWeight: FontWeight.w900,
-                    color: isMoneyIn ? Colors.green : Colors.red,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 20),
+                  Text(
+                    data.moneyActionName ?? '',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    data.moneyAmount.toFormatedMoneyStr,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      color: amountColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    data.time ?? '',
+                    style: TextStyle(color: AppColors.muted(context)),
+                  ),
+                  const SizedBox(height: 32),
+                  WalletPanel(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          zh ? '交易类型' : 'Transaction type',
+                          style: TextStyle(color: AppColors.muted(context)),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(data.moneyActionName ?? ''),
+                        const Divider(height: 32),
+                        Text(
+                          zh ? '金额' : 'Amount',
+                          style: TextStyle(color: AppColors.muted(context)),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          data.moneyAmount.toFormatedMoneyStr,
+                          style: TextStyle(color: amountColor),
+                        ),
+                        const Divider(height: 32),
+                        Text(
+                          zh ? '时间' : 'Time',
+                          style: TextStyle(color: AppColors.muted(context)),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(data.time ?? ''),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(20.dp),
-              child: Text(
-                isMoneyIn ? "🤑" : "😭",
-                style: TextStyle(fontSize: 60.sp),
-              ),
-            ),
-            SizedBox(height: 40.dp),
-          ],
+          ),
         ),
       ),
     );

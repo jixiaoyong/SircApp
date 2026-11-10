@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
+import 'package:sirc/features/auth/presentation/sign_in_page.dart';
+import 'package:sirc/features/auth/presentation/sign_up_page.dart';
+import 'package:sirc/features/auth/presentation/forget_pwd_page.dart';
+import 'package:sirc/features/settings/controllers/settings_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -9,9 +14,9 @@ import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/presentation/menu_page.dart';
 import 'package:sirc/features/home/presentation/person_page.dart';
 import 'package:sirc/features/settings/presentation/initial_page.dart';
-import 'package:sirc/features/settings/presentation/about_page.dart';
 import 'package:sirc/widgets/settings_item_tile.dart';
 import 'package:sirc/features/settings/presentation/language_page.dart';
+import 'package:sirc/features/settings/presentation/appearance_page.dart';
 import 'package:sirc/features/settings/presentation/notifications_page.dart';
 import 'package:sirc/features/auth/presentation/password_page.dart';
 import 'package:sirc/features/wallet/presentation/add_card_page.dart';
@@ -118,11 +123,85 @@ void main() {
     await finishTransition(tester);
   }
 
+  testWidgets('引导登录注册切换无返回栈和转场，忘记密码仍可返回', (tester) async {
+    final container = await createContainer();
+    final router = createAppRouter(container.read(storageServiceProvider));
+    addTearDown(router.dispose);
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp.router(
+          routerConfig: router,
+          theme: AppTheme.lightTheme,
+        ),
+      ),
+    );
+    await finishTransition(tester);
+    expect(find.byType(InitialPage), findsOneWidget);
+    expect(find.byType(AppBar), findsNothing);
+    final initialContext = tester.element(find.byType(InitialPage));
+    await container
+        .read(initialControllerProvider.notifier)
+        .goMainPage(initialContext);
+    await finishTransition(tester);
+    expect(find.byType(SignInPage), findsOneWidget);
+    expect(router.canPop(), isFalse);
+
+    void tapModeLink(String label) {
+      final rich = tester.widgetList<RichText>(find.byType(RichText));
+      final span = rich
+          .expand(
+            (widget) => (widget.text as TextSpan).children ?? <InlineSpan>[],
+          )
+          .whereType<TextSpan>()
+          .firstWhere(
+            (span) =>
+                span.text?.trim() == label &&
+                span.recognizer is TapGestureRecognizer,
+          );
+      (span.recognizer! as TapGestureRecognizer).onTap!();
+    }
+
+    for (var i = 0; i < 3; i++) {
+      tapModeLink(Languages.signUp);
+      await finishTransition(tester);
+      expect(find.byType(SignUpPage), findsOneWidget);
+      expect(router.routeInformationProvider.value.uri.path, AppRoutes.SIGN_UP);
+      expect(router.canPop(), isFalse);
+      expect(find.byType(AppBar), findsNothing);
+      expect(find.byType(BackButton), findsNothing);
+      expect(
+        ModalRoute.of(tester.element(find.byType(SignUpPage)))!
+            .transitionDuration,
+        Duration.zero,
+      );
+      tapModeLink(Languages.signIn);
+      await finishTransition(tester);
+      expect(find.byType(SignInPage), findsOneWidget);
+      expect(router.canPop(), isFalse);
+      expect(find.byType(AppBar), findsNothing);
+      expect(
+        ModalRoute.of(tester.element(find.byType(SignInPage)))!
+            .transitionDuration,
+        Duration.zero,
+      );
+    }
+    await tester.tap(find.text(Languages.forgetPasswords));
+    await finishTransition(tester);
+    expect(find.byType(ForgetPwdPage), findsOneWidget);
+    expect(router.canPop(), isTrue);
+    router.pop();
+    await finishTransition(tester);
+    expect(find.byType(SignInPage), findsOneWidget);
+    expect(router.canPop(), isFalse);
+    expect(tester.takeException(), isNull);
+  });
+
   const personDetails = [
     (Icons.email_outlined, '/person/email', PersonInformationPage),
     (Icons.phone_outlined, '/person/phone', PersonInformationPage),
     (Icons.location_on_outlined, '/person/address', PersonInformationPage),
-    (Icons.credit_card_outlined, '/person/card', AboutPage),
+    (Icons.credit_card_outlined, '/person/card', PersonCardsPage),
   ];
 
   for (final detail in personDetails) {
@@ -286,7 +365,7 @@ void main() {
       expect(find.byType(detail.$3), findsOneWidget);
       expect(tester.takeException(), isNull);
     }
-    await tapDetailBack(tester, AboutPage);
+    await tapDetailBack(tester, PersonCardsPage);
     expect(router.routeInformationProvider.value.uri.path, AppRoutes.PERSON);
     expect(router.canPop(), isFalse);
     expect(tester.element(find.byType(PersonPage)), same(person));
@@ -297,7 +376,6 @@ void main() {
     (Icons.language_outlined, '/menu/languages', LanguagePage),
     (Icons.notifications_outlined, '/menu/notifications', NotificationsPage),
     (Icons.lock_outlined, '/menu/password', PasswordPage),
-    (Icons.credit_card_outlined, '/menu/add-card', AddCardPage),
   ];
 
   Future<void> tapMenuDetail(WidgetTester tester, IconData icon) async {
@@ -495,6 +573,72 @@ void main() {
     });
   }
 
+  for (final width in [390.0, 1200.0]) {
+    testWidgets('钱包添加管理同级详情与旧深链 $width', (tester) async {
+      final container = await createContainer(loggedIn: true);
+      final router = createAppRouter(
+        container.read(storageServiceProvider),
+        initialLocation: '/wallet',
+      );
+      addTearDown(router.dispose);
+      tester.view.physicalSize = Size(width, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp.router(
+            routerConfig: router,
+            theme: AppTheme.lightTheme,
+          ),
+        ),
+      );
+      await finishTransition(tester);
+      await tester.tap(find.byKey(const ValueKey('manage-cards')));
+      await finishTransition(tester);
+      expect(router.routeInformationProvider.value.uri.path, '/wallet/cards');
+      await tester.tap(find.byKey(const ValueKey('edit-card-2')));
+      await finishTransition(tester);
+      expect(
+        router.routeInformationProvider.value.uri.path,
+        '/wallet/edit-card/2',
+      );
+      expect(find.byType(AddCardPage), findsOneWidget);
+      final fields = find.descendant(
+        of: find.byType(AddCardPage),
+        matching: find.byType(EditableText),
+      );
+      expect(
+        tester.widget<EditableText>(fields.first).controller.text,
+        'Juan Perez',
+      );
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AddCardPage),
+          matching: find.byType(BackButton),
+        ),
+      );
+      await finishTransition(tester);
+      expect(router.routeInformationProvider.value.uri.path, '/wallet/cards');
+      router.go('/menu/add-card');
+      await finishTransition(tester);
+      expect(
+        router.routeInformationProvider.value.uri.path,
+        '/wallet/add-card',
+      );
+      expect(find.byType(AddCardPage), findsOneWidget);
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AddCardPage),
+          matching: find.byType(BackButton),
+        ),
+      );
+      await finishTransition(tester);
+      expect(router.routeInformationProvider.value.uri.path, '/wallet');
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('匿名业务深链重定向至登录', (tester) async {
     final container = await createContainer();
     final router = container.read(appRouterProvider);
@@ -522,7 +666,7 @@ void main() {
     );
     addTearDown(router.dispose);
     tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(1200, 600);
+    tester.view.physicalSize = const Size(1200, 400);
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(
@@ -545,13 +689,13 @@ void main() {
     final scroll = find.descendant(of: menu, matching: find.byType(Scrollable));
     final scrollState = tester.state<ScrollableState>(scroll);
     expect(scrollState.position.maxScrollExtent, greaterThan(0));
-    scrollState.position.jumpTo(10);
+    scrollState.position.jumpTo(5);
     await tester.pump();
     final offset = scrollState.position.pixels;
     final cases = [
+      (Icons.brightness_6_outlined, AppRoutes.MENU_APPEARANCE, AppearancePage),
       (Icons.language_outlined, AppRoutes.MENU_LANGUAGES, LanguagePage),
       (Icons.lock_outlined, AppRoutes.MENU_PASSWORD, PasswordPage),
-      (Icons.credit_card_outlined, AppRoutes.ADD_CARD, AddCardPage),
       (
         Icons.notifications_outlined,
         AppRoutes.MENU_NOTIFICATIONS,
@@ -681,9 +825,9 @@ void main() {
   });
 
   for (final detailPath in [
+    AppRoutes.MENU_APPEARANCE,
     AppRoutes.MENU_LANGUAGES,
     AppRoutes.MENU_PASSWORD,
-    AppRoutes.ADD_CARD,
     AppRoutes.MENU_NOTIFICATIONS,
   ]) {
     testWidgets('宽屏详情深链返回全宽 $detailPath', (tester) async {
@@ -764,12 +908,6 @@ void main() {
           AppRoutes.MENU_PASSWORD,
           PasswordPage,
           Languages.oldPassword,
-        ),
-        (
-          Icons.credit_card_outlined,
-          AppRoutes.ADD_CARD,
-          AddCardPage,
-          'Visa Classic',
         ),
         (
           Icons.notifications_outlined,
@@ -1098,7 +1236,10 @@ void main() {
     ]) {
       router.go(path);
       await tester.pump();
-      expect(router.routeInformationProvider.value.uri.path, path);
+      expect(
+        router.routeInformationProvider.value.uri.path,
+        path == AppRoutes.ADD_CARD ? '/wallet/add-card' : path,
+      );
       expect(find.byType(NotFoundPage), findsNothing);
       expect(
         find.byType(PersonPage),

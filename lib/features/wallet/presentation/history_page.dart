@@ -1,274 +1,243 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sirc/core/localization/app_locale.dart';
-import 'package:sirc/core/localization/transaction_localization.dart';
+import 'package:sirc/core/theme/app_colors.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
-import 'package:sirc/routes/app_routes.dart';
-import 'package:sirc/utils/number_extension.dart';
-import 'package:sirc/utils/size_extension.dart';
-import 'package:sirc/widgets/line_graph.dart';
-import 'package:sirc/widgets/network_web_image.dart';
-import 'package:sirc/widgets/title_text.dart';
+import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 
-/// 交易历史视图，包含月度收支走势折线图、月份选择器、关键字检索与明细列表
 class HistoryPage extends ConsumerWidget {
-  final VoidCallback? onMenuTap;
-
   const HistoryPage({super.key, this.onMenuTap});
+  final VoidCallback? onMenuTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(localeProvider);
     final state = ref.watch(walletControllerProvider);
-    final userAvatar = ref.watch(
-      navigationControllerProvider.select((s) => s.userAvatar),
+    final controller = ref.read(walletControllerProvider.notifier);
+    final items = state.historyTransactions;
+    final zh = Localizations.localeOf(context).languageCode == 'zh';
+    final theme = Theme.of(context);
+    final periods = zh
+        ? ['全部', '本周', '本月']
+        : ['All', 'This week', 'This month'];
+    final total = items.fold<double>(
+      0,
+      (sum, item) => sum + (item.moneyAmount ?? 0).abs(),
     );
-
+    // All/month views group the visible dated records by weekday, not a fake week.
+    final buckets = List<double>.filled(7, 0);
+    for (final item in items) {
+      final date = WalletState.transactionDate(item, now: state.referenceDate);
+      if (date != null) {
+        buckets[date.weekday - 1] += (item.moneyAmount ?? 0).abs();
+      }
+    }
+    final summary = WalletPanel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            zh ? '总交易额' : 'Total transaction amount',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: AppColors.muted(context),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '\$ ${total.toStringAsFixed(2)}',
+            key: const ValueKey('history-total'),
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              letterSpacing: -1,
+              color: AppColors.ink(context),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            zh ? '按交易绝对金额汇总' : 'Sum of absolute transaction amounts',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: AppColors.muted(context),
+            ),
+          ),
+          WalletBars(
+            values: buckets,
+            labels: zh
+                ? const ['一', '二', '三', '四', '五', '六', '日']
+                : const ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+          ),
+          Text(
+            zh ? '所选记录 · 按星期汇总' : 'Selected records · grouped by weekday',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: AppColors.muted(context),
+            ),
+          ),
+        ],
+      ),
+    );
+    final filters = WalletPanel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            zh ? '按日期查阅' : 'Filter by date',
+            style: theme.textTheme.titleSmall,
+          ),
+          const SizedBox(height: 16),
+          DecoratedBox(
+            key: const ValueKey('history-segments'),
+            decoration: BoxDecoration(
+              color: AppColors.field(context),
+              borderRadius: BorderRadius.circular(11),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var i = 0; i < periods.length; i++)
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: i == 0 ? 0 : 4),
+                        child: TextButton(
+                          key: ValueKey('history-period-$i'),
+                          style: TextButton.styleFrom(
+                            foregroundColor: AppColors.ink(context),
+                            backgroundColor: state.historyPeriod == i
+                                ? theme.colorScheme.surface
+                                : Colors.transparent,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 12,
+                            ),
+                            minimumSize: const Size(0, 44),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            textStyle: theme.textTheme.labelMedium?.copyWith(
+                              fontWeight: state.historyPeriod == i
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                            ),
+                          ),
+                          onPressed: () => controller.setHistoryPeriod(i),
+                          child: Semantics(
+                            selected: state.historyPeriod == i,
+                            child: Text(
+                              periods[i],
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            '${periods[state.historyPeriod]} · ${items.length} ${zh ? '笔交易' : 'transactions'}',
+            style: theme.textTheme.bodySmall,
+          ),
+          const SizedBox(height: 12),
+          WalletDataNotice(state: state),
+        ],
+      ),
+    );
     return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       child: SafeArea(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.dp),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  TitleText(text: Languages.history),
-                  const Spacer(),
-                  Padding(
-                    padding: EdgeInsets.only(right: 10.dp),
-                    child: GestureDetector(
-                      onTap: () {
-                        if (onMenuTap != null) {
-                          onMenuTap!();
-                        } else {
-                          ref
-                              .read(navigationControllerProvider.notifier)
-                              .openDrawer();
-                        }
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(50.dp),
-                        child: NetworkWebImage(
-                          userAvatar,
-                          size: Size(50.dp, 50.dp),
-                          fit: BoxFit.cover,
-                        ),
+                  Expanded(
+                    child: Text(
+                      Languages.history,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -.5,
                       ),
                     ),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 20.dp),
-                          child: Text(
-                            "\$ ${state.availableBalance}",
-                            style: TextStyle(
-                              fontSize: 22.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.deepPurpleAccent,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 5.dp),
-                          child: RichText(
-                            text: TextSpan(
-                              text: "+20%",
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: Languages.lastMonth,
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
-                  const Spacer(),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 5.dp),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(15.dp)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.shade400,
-                          blurRadius: 5.dp,
-                          spreadRadius: 2.dp,
-                        )
-                      ],
-                    ),
-                    child: DropdownButton<String>(
-                      items: state.monthEnglishNameList.map((e) {
-                        return DropdownMenuItem<String>(
-                          value: e,
-                          child: Text(e),
-                        );
-                      }).toList(),
-                      value: state.monthEnglishNameList
-                              .contains(state.selectedMonth)
-                          ? state.selectedMonth
-                          : (state.monthEnglishNameList.isNotEmpty
-                              ? state.monthEnglishNameList.first
-                              : null),
-                      onChanged: (e) {
-                        if (e != null) {
-                          ref
-                              .read(walletControllerProvider.notifier)
-                              .selectMonth(e);
-                        }
-                      },
-                      underline: Container(),
-                    ),
+                  IconButton(
+                    tooltip: zh ? '打开菜单' : 'Open menu',
+                    onPressed:
+                        onMenuTap ??
+                        () => ref
+                            .read(navigationControllerProvider.notifier)
+                            .openDrawer(),
+                    icon: const Icon(Icons.menu),
                   ),
                 ],
               ),
-              Padding(
-                padding:
-                    EdgeInsets.symmetric(vertical: 20.dp, horizontal: 10.dp),
-                child: SizedBox(
-                  height: 200.dp,
-                  width: double.infinity,
-                  child: state.chartData.isNotEmpty
-                      ? LineGraph(
-                          data: state.chartData,
-                        )
-                      : const SizedBox.shrink(),
+              Text(
+                zh
+                    ? '查阅收支，了解每一笔交易'
+                    : 'Review your income, spending and transactions',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: AppColors.muted(context),
                 ),
               ),
-              Container(
-                margin:
-                    EdgeInsets.symmetric(horizontal: 10.dp, vertical: 20.dp),
-                padding:
-                    EdgeInsets.symmetric(horizontal: 10.dp, vertical: 5.dp),
-                height: 50.dp,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black12,
-                  ),
-                  borderRadius: BorderRadius.circular(10.dp),
-                ),
-                child: TextField(
-                  onChanged: (value) {
-                    ref
-                        .read(walletControllerProvider.notifier)
-                        .setSearchQuery(value);
-                  },
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: Languages.search,
-                    suffixIcon: const Icon(Icons.search),
-                  ),
+              const SizedBox(height: 22),
+              summary,
+              const SizedBox(height: 22),
+              filters,
+              const SizedBox(height: 22),
+              Text(
+                zh ? '搜索交易' : 'Search transactions',
+                style: theme.textTheme.labelMedium,
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                key: const ValueKey('history-search'),
+                initialValue: state.searchQuery,
+                onChanged: controller.setSearchQuery,
+                textInputAction: TextInputAction.search,
+                decoration: InputDecoration(
+                  hintText: zh ? '输入收支名称' : 'Search income or spending',
+                  prefixIcon: const Icon(Icons.search, size: 20),
                 ),
               ),
-              ...state.transactions.map((transaction) {
-                final data = transaction.localizedPlaceholders;
-                final String heroTag = "hero_history_${transaction.hashCode}";
-                return GestureDetector(
-                  onTap: () {
-                    context.push(
-                      AppRoutes.HISTORY_DETAILS,
-                      extra: {
-                        'data': data,
-                        'heroTag': heroTag,
-                      },
-                    );
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(10.dp),
-                    margin: EdgeInsets.symmetric(
-                      vertical: 10.dp,
-                      horizontal: 10.dp,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12.withValues(alpha: 0.1),
-                          offset: const Offset(0, 0),
-                          blurRadius: 10.dp,
-                          spreadRadius: 10.dp,
-                        )
-                      ],
-                      borderRadius: BorderRadius.circular(10.dp),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Hero(
-                          tag: heroTag,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5.dp),
-                            child: NetworkWebImage(
-                              data.userIcon ?? '',
-                              size: Size.square(50.dp),
-                              fit: BoxFit.fitHeight,
-                            ),
-                          ),
+              const SizedBox(height: 17),
+              if (state.isLoading) const LinearProgressIndicator(),
+              if (state.errorMessage != null) Text(state.errorMessage!),
+              Material(
+                key: const ValueKey('history-transaction-container'),
+                color: theme.colorScheme.surface,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  side: BorderSide(color: AppColors.line(context)),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: items.isEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Text(
+                          zh
+                              ? '当前条件下没有交易记录'
+                              : 'No transactions match these filters',
                         ),
-                        SizedBox(width: 10.dp),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                data.moneyActionName ?? '',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 8.dp),
-                                child: Text(
-                                  data.time ?? '',
-                                  style: TextStyle(
-                                    fontSize: 10.sp,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                      )
+                    : ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: items.length,
+                        separatorBuilder: (context, index) => Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: AppColors.line(context),
                         ),
-                        Text(
-                          data.moneyAmount.toFormatedMoneyStr,
-                          style: TextStyle(
-                            fontSize: 20.sp,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        itemBuilder: (context, index) => WalletTransactionRow(
+                          transaction: items[index],
+                          heroTag: 'hero_history_${items[index].hashCode}',
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
+                      ),
+              ),
             ],
           ),
         ),
