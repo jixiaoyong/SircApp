@@ -265,7 +265,9 @@ class HomeTopBodyWidget extends ConsumerWidget {
                   ],
                 ),
                 SizedBox(
-                  height: 150.dp,
+                  // 扣除内外各 20 的纵向留白后，为图标、金额和双行标签
+                  // 保留 120 逻辑像素；默认字体行高下内容至少需要 113。
+                  height: 160.dp,
                   child: ListView.builder(
                     itemBuilder: (context, index) {
                       return Padding(
