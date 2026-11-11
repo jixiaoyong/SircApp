@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/theme/app_theme.dart';
+import 'package:sirc/core/layout/adaptive_detail_layout.dart';
 import 'package:sirc/features/home/presentation/menu_page.dart';
 import 'package:sirc/widgets/settings_item_tile.dart';
 
@@ -29,10 +30,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: MenuDetailLayout(
+            body: AdaptiveDetailLayout(
               hasDetail: true,
-              list: const SizedBox.expand(),
-              child: detail,
+              primary: const SizedBox.expand(),
+              primaryPaneKey: const ValueKey('menu-pane'),
+              detail: detail,
             ),
           ),
         ),

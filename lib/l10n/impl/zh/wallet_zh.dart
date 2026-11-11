@@ -106,6 +106,27 @@ class WalletZh implements WalletLang {
   String get details => '明细';
 
   @override
+  String get transactionDetails => '交易详情';
+  @override
+  String get transactionUnavailable => '暂无交易详情';
+  @override
+  String get transactionType => '交易类型';
+  @override
+  String get amount => '金额';
+  @override
+  String get time => '时间';
+  @override
+  String get editCard => '编辑卡片';
+  @override
+  String get cardNotFound => '卡片不存在';
+  @override
+  String get cardLoading => '正在加载卡片…';
+  @override
+  String get saveCard => '保存';
+  @override
+  String get cardSaved => '卡片已保存';
+
+  @override
   String get noTransactions => '暂无交易记录';
 
   @override

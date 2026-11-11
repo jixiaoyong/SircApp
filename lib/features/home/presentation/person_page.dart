@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sirc/core/layout/app_layout.dart';
 import 'package:sirc/routes/source_detail_navigation.dart';
 import 'package:sirc/core/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -311,7 +312,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                                   .uri
                                   .path;
                               if (current == item.$3) return;
-                              if (MediaQuery.sizeOf(context).width >= 840 &&
+                              if (AppLayout.isWideWindow(context) &&
                                   current.startsWith('${AppRoutes.PERSON}/') &&
                                   current !=
                                       '${AppRoutes.PERSON}/${AppRoutes.TRANSACTION_SEGMENT}') {

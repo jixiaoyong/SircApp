@@ -4,6 +4,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/layout/app_layout.dart';
 
 void main() {
+  test('logical width uses the inclusive 840 layout boundary', () {
+    expect(AppLayout.isWideWidth(0), isFalse);
+    expect(AppLayout.isWideWidth(600), isFalse);
+    expect(AppLayout.isWideWidth(839.999), isFalse);
+    expect(AppLayout.isWideWidth(840), isTrue);
+    expect(AppLayout.isWideWidth(840.001), isTrue);
+    expect(AppLayout.isWideWidth(1200), isTrue);
+  });
+
   for (final width in [839.0, 840.0, 841.0]) {
     testWidgets('window width $width uses the application threshold', (
       tester,
@@ -35,6 +44,7 @@ void main() {
 
     late bool isWide;
     late double containerWidth;
+    late bool isWideContainer;
     await tester.pumpWidget(
       MaterialApp(
         home: Align(
@@ -47,6 +57,7 @@ void main() {
                 builder: (context) {
                   isWide = AppLayout.isWideWindow(context);
                   containerWidth = AppLayout.containerQuery(context).width;
+                  isWideContainer = AppLayout.isWideWidth(containerWidth);
                   return const SizedBox.shrink();
                 },
               ),
@@ -58,5 +69,6 @@ void main() {
 
     expect(isWide, isTrue);
     expect(containerWidth, 320);
+    expect(isWideContainer, isFalse);
   });
 }

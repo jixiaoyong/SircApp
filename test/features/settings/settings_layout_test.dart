@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/storage/storage_service.dart';
-import 'package:sirc/data/common_data.dart';
 import 'package:sirc/features/home/presentation/menu_page.dart';
 import 'package:sirc/features/settings/controllers/settings_controller.dart';
 import 'package:sirc/features/settings/presentation/initial_page.dart';
@@ -21,12 +20,7 @@ void main() {
     testWidgets('引导小屏大字在 $brightness 下可切换三个步骤', (tester) async {
       tester.view.physicalSize = const Size(320, 568);
       tester.view.devicePixelRatio = 1;
-      final previousWidth = CommonData.realScreenWidth;
-      CommonData.realScreenWidth = 320;
-      addTearDown(() {
-        tester.view.reset();
-        CommonData.realScreenWidth = previousWidth;
-      });
+      addTearDown(() => tester.view.reset());
       await tester.pumpWidget(
         ProviderScope(
           overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
@@ -72,12 +66,7 @@ void main() {
     testWidgets('引导末页按钮在宽度 $width 时居中并保留边距', (tester) async {
       tester.view.physicalSize = Size(width, 900);
       tester.view.devicePixelRatio = 1;
-      final previousWidth = CommonData.realScreenWidth;
-      CommonData.realScreenWidth = width;
-      addTearDown(() {
-        tester.view.reset();
-        CommonData.realScreenWidth = previousWidth;
-      });
+      addTearDown(() => tester.view.reset());
 
       await tester.pumpWidget(
         ProviderScope(

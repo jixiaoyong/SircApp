@@ -386,6 +386,46 @@ class Languages {
   ///- [en_US] Details
   static String get details => wallet.details;
 
+  ///- [zh_CN] 交易详情
+  ///- [en_US] Transaction details
+  static String get transactionDetails => wallet.transactionDetails;
+
+  ///- [zh_CN] 暂无交易详情
+  ///- [en_US] Transaction details unavailable
+  static String get transactionUnavailable => wallet.transactionUnavailable;
+
+  ///- [zh_CN] 交易类型
+  ///- [en_US] Transaction type
+  static String get transactionType => wallet.transactionType;
+
+  ///- [zh_CN] 金额
+  ///- [en_US] Amount
+  static String get amount => wallet.amount;
+
+  ///- [zh_CN] 时间
+  ///- [en_US] Time
+  static String get time => wallet.time;
+
+  ///- [zh_CN] 编辑卡片
+  ///- [en_US] Edit card
+  static String get editCard => wallet.editCard;
+
+  ///- [zh_CN] 卡片不存在
+  ///- [en_US] Card not found
+  static String get cardNotFound => wallet.cardNotFound;
+
+  ///- [zh_CN] 正在加载卡片…
+  ///- [en_US] Loading card…
+  static String get cardLoading => wallet.cardLoading;
+
+  ///- [zh_CN] 保存
+  ///- [en_US] Save
+  static String get saveCard => wallet.saveCard;
+
+  ///- [zh_CN] 卡片已保存
+  ///- [en_US] Card saved
+  static String get cardSaved => wallet.cardSaved;
+
   ///- [zh_CN] 暂无交易记录
   ///- [en_US] No transactions yet
   static String get noTransactions => wallet.noTransactions;
@@ -842,6 +882,16 @@ class Languages {
       "Receive": "Receive",
       "History": "History",
       "Details": "Details",
+      "Transaction details": "Transaction details",
+      "Transaction details unavailable": "Transaction details unavailable",
+      "Transaction type": "Transaction type",
+      "Amount": "Amount",
+      "Time": "Time",
+      "Edit card": "Edit card",
+      "Card not found": "Card not found",
+      "Loading card…": "Loading card…",
+      "Save": "Save",
+      "Card saved": "Card saved",
       "No transactions yet": "No transactions yet",
       "Money Out": "Money Out",
       "Money In": "Money In",
@@ -1023,6 +1073,16 @@ class Languages {
       "Receive": "接收",
       "History": "历史",
       "Details": "明细",
+      "Transaction details": "交易详情",
+      "Transaction details unavailable": "暂无交易详情",
+      "Transaction type": "交易类型",
+      "Amount": "金额",
+      "Time": "时间",
+      "Edit card": "编辑卡片",
+      "Card not found": "卡片不存在",
+      "Loading card…": "正在加载卡片…",
+      "Save": "保存",
+      "Card saved": "卡片已保存",
       "No transactions yet": "暂无交易记录",
       "Money Out": "转出",
       "Money In": "转入",

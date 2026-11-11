@@ -15,7 +15,9 @@ import '../../../routes/app_routes.dart';
 * @date: 22/04/19 (Refactored to Riverpod 2.x)
 */
 class NotFoundPage extends ConsumerWidget {
-  const NotFoundPage({super.key});
+  const NotFoundPage({super.key, this.path});
+
+  final String? path;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,6 +37,16 @@ class NotFoundPage extends ConsumerWidget {
               Languages.common.notFound,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
+            if (path != null) ...[
+              const SizedBox(height: 8),
+              SelectableText(
+                path!,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
             const SizedBox(height: 20),
             OutlinedButton(
               child: Text(Languages.common.goToHome),
@@ -54,6 +66,6 @@ Widget notFoundPagePreview() {
   return MaterialApp(
     theme: AppTheme.lightTheme,
     darkTheme: AppTheme.darkTheme,
-    home: const Scaffold(body: NotFoundPage()),
+    home: const Scaffold(body: NotFoundPage(path: "/404",)),
   );
 }

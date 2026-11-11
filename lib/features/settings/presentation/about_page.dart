@@ -133,7 +133,7 @@ class AboutPage extends ConsumerWidget {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => WebViewPage(url),
-        settings: const RouteSettings(name: AppRoutes.WEBVIEW),
+        settings: const RouteSettings(name: AppRouteNames.webView),
       ),
     );
   }

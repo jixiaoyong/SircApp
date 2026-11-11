@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/data/common_keys.dart';
-import 'package:sirc/features/wallet/presentation/history_details_page.dart';
+import 'package:sirc/features/wallet/presentation/transaction_detail_page.dart';
 import 'package:sirc/routes/app_router.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/network_web_image.dart';
@@ -85,13 +85,13 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
     await tester.pump();
-    expect(find.byType(HistoryDetailsPage), findsOneWidget);
-    final detail = tester.widget<HistoryDetailsPage>(
-      find.byType(HistoryDetailsPage),
+    expect(find.byType(TransactionDetailPage), findsOneWidget);
+    final detail = tester.widget<TransactionDetailPage>(
+      find.byType(TransactionDetailPage),
     );
     expect(detail.heroTag, tag);
-    expect(detail.data.moneyActionName, isNotEmpty);
-    expect(detail.data.moneyAmount, isNotNull);
+    expect(detail.data!.moneyActionName, isNotEmpty);
+    expect(detail.data!.moneyAmount, isNotNull);
     expect(flightCount(), 0);
     router.pop();
     await tester.pump();
@@ -101,7 +101,7 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     await tester.pump();
     expect(flightCount(), 0);
-    expect(find.byType(HistoryDetailsPage), findsNothing);
+    expect(find.byType(TransactionDetailPage), findsNothing);
     expect(tester.takeException(), isNull);
   });
 }

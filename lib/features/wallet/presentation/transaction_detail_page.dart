@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/theme/app_colors.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
@@ -7,23 +9,45 @@ import 'package:sirc/utils/number_extension.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 
-/// Read-only transaction detail; the source-provided Hero identity is preserved.
-class HistoryDetailsPage extends StatelessWidget {
-  const HistoryDetailsPage({
+/// 钱包业务负责解析旧入口参数与缺失数据；路由不补造交易。
+class TransactionDetailPage extends ConsumerWidget {
+  const TransactionDetailPage({
     super.key,
     required this.data,
     required this.heroTag,
   });
-  final Transaction data;
+
+  factory TransactionDetailPage.fromExtra({Key? key, Object? extra}) {
+    final candidate = extra is Map ? extra['data'] : extra;
+    final tag = extra is Map ? extra['heroTag'] : null;
+    return TransactionDetailPage(
+      key: key,
+      data: candidate is Transaction ? candidate : null,
+      heroTag: tag is String ? tag : 'default',
+    );
+  }
+
+  final Transaction? data;
   final String heroTag;
+
   @override
-  Widget build(BuildContext context) {
-    final zh = Localizations.localeOf(context).languageCode == 'zh';
-    final amountColor = (data.moneyAmount ?? 0) < 0
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(localeProvider);
+    final transaction = data;
+    final appBar = OneTitleWithBackButtonAppBar(
+      title: Languages.wallet.transactionDetails,
+    );
+    if (transaction == null) {
+      return Scaffold(
+        appBar: appBar,
+        body: Center(child: Text(Languages.wallet.transactionUnavailable)),
+      );
+    }
+    final amountColor = (transaction.moneyAmount ?? 0) < 0
         ? AppColors.expense(context)
         : AppColors.income(context);
     return Scaffold(
-      appBar: OneTitleWithBackButtonAppBar(title: zh ? '交易详情' : 'Details'),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Center(
           child: ConstrainedBox(
@@ -39,7 +63,7 @@ class HistoryDetailsPage extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(14),
                         child: NetworkWebImage(
-                          data.userIcon ?? '',
+                          transaction.userIcon ?? '',
                           size: const Size.square(72),
                           fit: BoxFit.cover,
                         ),
@@ -47,13 +71,13 @@ class HistoryDetailsPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      data.moneyActionName ?? '',
+                      transaction.moneyActionName ?? '',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      data.moneyAmount.toFormatedMoneyStr,
+                      transaction.moneyAmount.toFormatedMoneyStr,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headlineLarge
                           ?.copyWith(
@@ -63,7 +87,7 @@ class HistoryDetailsPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      data.time ?? '',
+                      transaction.time ?? '',
                       style: TextStyle(color: AppColors.muted(context)),
                     ),
                     const SizedBox(height: 32),
@@ -72,28 +96,28 @@ class HistoryDetailsPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            zh ? '交易类型' : 'Transaction type',
+                            Languages.wallet.transactionType,
                             style: TextStyle(color: AppColors.muted(context)),
                           ),
                           const SizedBox(height: 8),
-                          Text(data.moneyActionName ?? ''),
+                          Text(transaction.moneyActionName ?? ''),
                           const Divider(height: 32),
                           Text(
-                            zh ? '金额' : 'Amount',
+                            Languages.wallet.amount,
                             style: TextStyle(color: AppColors.muted(context)),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            data.moneyAmount.toFormatedMoneyStr,
+                            transaction.moneyAmount.toFormatedMoneyStr,
                             style: TextStyle(color: amountColor),
                           ),
                           const Divider(height: 32),
                           Text(
-                            zh ? '时间' : 'Time',
+                            Languages.wallet.time,
                             style: TextStyle(color: AppColors.muted(context)),
                           ),
                           const SizedBox(height: 8),
-                          Text(data.time ?? ''),
+                          Text(transaction.time ?? ''),
                         ],
                       ),
                     ),

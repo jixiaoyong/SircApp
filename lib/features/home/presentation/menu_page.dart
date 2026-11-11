@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sirc/core/layout/app_layout.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/features/settings/controllers/settings_controller.dart';
 import 'package:sirc/core/localization/app_locale.dart';
@@ -26,6 +27,8 @@ final fingerprintEnabledProvider =
     NotifierProvider<FingerprintEnabledNotifier, bool>(
       FingerprintEnabledNotifier.new,
     );
+
+enum _MenuAction { language, password, fingerprint, logout }
 
 /// 柔灰菜单列表；保留详情导航、指纹单次切换与登出确认语义。
 class MenuPage extends ConsumerWidget {
@@ -57,18 +60,18 @@ class MenuPage extends ConsumerWidget {
     // 监听全局语言变更，实时刷新菜单项文本
     ref.watch(localeProvider);
     final isFingerprintOpen = ref.watch(fingerprintEnabledProvider);
-    final isWide = MediaQuery.sizeOf(context).width >= 840;
+    final isWide = AppLayout.isWideWindow(context);
     final colors = Theme.of(context).colorScheme;
 
     final menuItems = [
-      (Icons.language_outlined, Languages.language, AppRoutes.MENU_LANGUAGES),
-      (Icons.lock_outlined, Languages.changePassword, AppRoutes.MENU_PASSWORD),
+      (Icons.language_outlined, Languages.language, _MenuAction.language),
+      (Icons.lock_outlined, Languages.changePassword, _MenuAction.password),
       (
         Icons.fingerprint_outlined,
         Languages.fingerprintLogin,
-        AppRoutes.FINGERPRINT,
+        _MenuAction.fingerprint,
       ),
-      (Icons.logout, Languages.logout, AppRoutes.LOGOUT),
+      (Icons.logout, Languages.logout, _MenuAction.logout),
     ];
 
     final list = SingleChildScrollView(
@@ -140,7 +143,7 @@ class MenuPage extends ConsumerWidget {
                   ),
                 ),
                 ...menuItems.map((item) {
-                  final bool isFingerprint = item.$3 == AppRoutes.FINGERPRINT;
+                  final bool isFingerprint = item.$3 == _MenuAction.fingerprint;
 
                   return Container(
                     margin: EdgeInsets.zero,
@@ -173,7 +176,7 @@ class MenuPage extends ConsumerWidget {
                             ref
                                 .read(fingerprintEnabledProvider.notifier)
                                 .update((val) => !val);
-                          } else if (AppRoutes.LOGOUT == item.$3) {
+                          } else if (_MenuAction.logout == item.$3) {
                             showDialog(
                               context: context,
                               builder: (dialogContext) => AlertDialog(
@@ -208,7 +211,13 @@ class MenuPage extends ConsumerWidget {
                               ),
                             );
                           } else {
-                            _openDetail(context, item.$3, isWide);
+                            _openDetail(
+                              context,
+                              item.$3 == _MenuAction.language
+                                  ? AppRoutes.MENU_LANGUAGES
+                                  : AppRoutes.MENU_PASSWORD,
+                              isWide,
+                            );
                           }
                         },
                       ),
@@ -222,74 +231,5 @@ class MenuPage extends ConsumerWidget {
       ),
     );
     return list;
-  }
-}
-
-/// Menu stays outside the detail Navigator, including when its pane is closed.
-class MenuDetailLayout extends StatefulWidget {
-  const MenuDetailLayout({
-    super.key,
-    required this.hasDetail,
-    required this.child,
-    this.list = const MenuPage(listOnly: true),
-    this.paneKey = const ValueKey('menu-pane'),
-    this.keepListMounted = false,
-  });
-
-  final bool hasDetail;
-  final Widget child;
-  final Widget list;
-  final Key paneKey;
-  final bool keepListMounted;
-
-  @override
-  State<MenuDetailLayout> createState() => _MenuDetailLayoutState();
-}
-
-class _MenuDetailLayoutState extends State<MenuDetailLayout> {
-  // 跨断点移动详情 Navigator 时保留其页面与输入状态。
-  final _detailKey = GlobalKey();
-
-  @override
-  Widget build(BuildContext context) {
-    final hasDetail = widget.hasDetail;
-    // Navigator 的 ModalBarrier 只应屏蔽详情内部，不能吞掉来源窗格语义。
-    final detail = Semantics(
-      container: true,
-      explicitChildNodes: true,
-      child: KeyedSubtree(key: _detailKey, child: widget.child),
-    );
-    final isWide = MediaQuery.sizeOf(context).width >= 840;
-    if (!isWide && !widget.keepListMounted) return detail;
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final showList = isWide || !hasDetail;
-        final paneWidth = !showList
-            ? 0.0
-            : isWide && hasDetail
-            ? (constraints.maxWidth - 1) / 2
-            : constraints.maxWidth;
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Offstage(
-              offstage: !showList,
-              child: SizedBox(
-                key: widget.paneKey,
-                width: showList ? paneWidth : constraints.maxWidth,
-                child: HeroMode(enabled: !hasDetail, child: widget.list),
-              ),
-            ),
-            SizedBox(
-              width: isWide && hasDetail ? 1 : 0,
-              child: const VerticalDivider(width: 1),
-            ),
-            Expanded(
-              child: Offstage(offstage: !hasDetail, child: detail),
-            ),
-          ],
-        );
-      },
-    );
   }
 }

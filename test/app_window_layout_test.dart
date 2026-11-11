@@ -8,7 +8,6 @@ import 'package:sirc/widgets/constrained_content.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/storage/storage_service.dart';
-import 'package:sirc/data/common_data.dart';
 import 'package:sirc/main.dart';
 import 'package:sirc/routes/app_router.dart';
 import 'package:sirc/routes/app_routes.dart';
@@ -86,7 +85,6 @@ void main() {
       expect(rect.left, 0);
       expect(rect.width, width);
       expect(MediaQuery.sizeOf(tester.element(scaffold)).width, width);
-      expect(CommonData.realScreenWidth, width);
       final fields = find.byType(TextField);
       expect(fields, findsNWidgets(2));
       final expectedFieldWidth = width.clamp(0.0, 520.0) - 40;

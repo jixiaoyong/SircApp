@@ -13,30 +13,32 @@ import 'package:sirc/widgets/constrained_content.dart';
 import 'package:sirc/widgets/common_text_filed.dart';
 import 'package:sirc/widgets/verify_code_widget.dart';
 
-/// 添加银行卡页面，支持 3D 悬浮投影、手势交互倾斜与表单录入校验
-class AddCardPage extends ConsumerStatefulWidget {
-  const AddCardPage({super.key, this.onBack, this.card});
+/// 卡片新增与编辑入口；自行查询待编辑卡片并处理加载与不存在状态。
+class CardEditorPage extends ConsumerStatefulWidget {
+  const CardEditorPage({super.key, this.onBack, this.editingId});
 
   final VoidCallback? onBack;
-  final BankCard? card;
+  final String? editingId;
 
   @override
-  ConsumerState<AddCardPage> createState() => _AddCardPageState();
+  ConsumerState<CardEditorPage> createState() => _CardEditorPageState();
 }
 
-class _AddCardPageState extends ConsumerState<AddCardPage> {
+class _CardEditorPageState extends ConsumerState<CardEditorPage> {
   final _owner = TextEditingController();
   final _number = TextEditingController();
   VoidCallback? get onBack => widget.onBack;
 
-  @override
-  void initState() {
-    super.initState();
-    _owner.text = widget.card?.ownerName ?? '';
-    _number.text = widget.card?.cardNumber ?? '';
+  bool _formInitialized = false;
+
+  void _initializeForm(BankCard? card) {
+    if (_formInitialized) return;
+    _formInitialized = true;
+    _owner.text = card?.ownerName ?? '';
+    _number.text = card?.cardNumber ?? '';
     Future.microtask(() {
       if (!mounted) return;
-      ref.read(addCardControllerProvider.notifier).startEditing(widget.card);
+      ref.read(addCardControllerProvider.notifier).startEditing(card);
       _owner.text = ref.read(addCardControllerProvider).ownerName;
     });
   }
@@ -57,13 +59,31 @@ class _AddCardPageState extends ConsumerState<AddCardPage> {
   @override
   Widget build(BuildContext context) {
     ref.watch(localeProvider);
+    final wallet = ref.watch(walletControllerProvider);
+    final editingId = widget.editingId;
+    final card = wallet.cards.where((card) => card.id == editingId).firstOrNull;
+    if (editingId != null && card == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(Languages.wallet.editCard),
+          leading: onBack == null ? null : BackButton(onPressed: onBack),
+        ),
+        body: Center(
+          child: Text(
+            wallet.isLoading
+                ? Languages.wallet.cardLoading
+                : Languages.wallet.cardNotFound,
+          ),
+        ),
+      );
+    }
+    _initializeForm(card);
     final state = ref.watch(addCardControllerProvider);
     final controller = ref.read(addCardControllerProvider.notifier);
     final isButtonEnable = state.isUserInputValid;
-    final zh = Localizations.localeOf(context).languageCode == 'zh';
-    final title = widget.card == null
+    final title = editingId == null
         ? Languages.addCard
-        : (zh ? '编辑卡片' : 'Edit card');
+        : Languages.wallet.editCard;
 
     return Scaffold(
       appBar: AppBar(
@@ -268,14 +288,14 @@ class _AddCardPageState extends ConsumerState<AddCardPage> {
                         ),
                       ),
                       CommonTextButton(
-                        text: widget.card == null
+                        text: editingId == null
                             ? title
-                            : (zh ? '保存' : 'Save'),
+                            : Languages.wallet.saveCard,
                         isButtonEnabled: isButtonEnable && !state.isSubmitting,
                         onTap: () async {
                           final success = await controller.addCard();
                           if (success && context.mounted) {
-                            Toast.show(zh ? '卡片已保存' : 'Card saved');
+                            Toast.show(Languages.wallet.cardSaved);
                             if (onBack != null) {
                               onBack!();
                             } else {

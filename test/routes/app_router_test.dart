@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:sirc/features/auth/presentation/sign_in_page.dart';
 import 'package:sirc/features/auth/presentation/sign_up_page.dart';
 import 'package:sirc/features/auth/presentation/forget_pwd_page.dart';
+import 'package:sirc/core/layout/adaptive_detail_layout.dart';
 import 'package:sirc/features/settings/controllers/settings_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31,7 +32,7 @@ import 'package:sirc/features/home/presentation/slide_menu_page.dart';
 import 'package:sirc/features/home/presentation/home_page.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 import 'package:sirc/features/wallet/presentation/history_page.dart';
-import 'package:sirc/features/wallet/presentation/history_details_page.dart';
+import 'package:sirc/features/wallet/presentation/transaction_detail_page.dart';
 
 // AboutPage embeds native HTML; use the same test-only platform contract as its page tests.
 // ignore: depend_on_referenced_packages
@@ -194,6 +195,117 @@ void main() {
     await finishTransition(tester);
     expect(find.byType(SignInPage), findsOneWidget);
     expect(router.canPop(), isFalse);
+    expect(tester.takeException(), isNull);
+  });
+
+  for (final extra in <Object?>[
+    null,
+    'invalid',
+    <String, Object?>{'data': 'not a transaction', 'heroTag': 42},
+    <Object, Object?>{1: 'wrong key', 'data': false},
+  ]) {
+    testWidgets('交易缺参或非法参数显示业务空态并返回 $extra', (tester) async {
+      final container = await createContainer(loggedIn: true);
+      final router = createAppRouter(
+        container.read(storageServiceProvider),
+        initialLocation: '/wallet',
+      );
+      addTearDown(router.dispose);
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(1200, 900);
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp.router(
+            routerConfig: router,
+            theme: AppTheme.lightTheme,
+          ),
+        ),
+      );
+      await finishTransition(tester);
+      router.push('/wallet/transaction', extra: extra);
+      await finishTransition(tester);
+      expect(
+        find.text(Languages.wallet.transactionUnavailable),
+        findsOneWidget,
+      );
+      expect(find.byType(NotFoundPage), findsNothing);
+      expect(
+        tester
+            .widget<TransactionDetailPage>(find.byType(TransactionDetailPage))
+            .data,
+        isNull,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(TransactionDetailPage),
+          matching: find.byType(Hero),
+        ),
+        findsNothing,
+      );
+      await tapDetailBack(tester, TransactionDetailPage);
+      expect(router.routeInformationProvider.value.uri.path, '/wallet');
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  for (final source in ['/wallet', '/person']) {
+    testWidgets('不存在卡片保留来源管理返回策略 $source', (tester) async {
+      final container = await createContainer(loggedIn: true);
+      final router = createAppRouter(
+        container.read(storageServiceProvider),
+        initialLocation: '$source/edit-card/missing',
+      );
+      addTearDown(router.dispose);
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(1200, 900);
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp.router(
+            routerConfig: router,
+            theme: AppTheme.lightTheme,
+          ),
+        ),
+      );
+      await finishTransition(tester);
+      expect(find.text(Languages.wallet.cardNotFound), findsOneWidget);
+      expect(find.byType(NotFoundPage), findsNothing);
+      await tester.binding.handlePopRoute();
+      await finishTransition(tester);
+      expect(
+        router.routeInformationProvider.value.uri.path,
+        source == '/person' ? '/person/card' : '/wallet/cards',
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('刷新交易深链没有extra时显示本地空态并返回来源', (tester) async {
+    final container = await createContainer(loggedIn: true);
+    final router = createAppRouter(
+      container.read(storageServiceProvider),
+      initialLocation: '/history/transaction',
+    );
+    addTearDown(router.dispose);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1200, 900);
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp.router(
+          routerConfig: router,
+          theme: AppTheme.lightTheme,
+        ),
+      ),
+    );
+    await finishTransition(tester);
+    expect(find.text(Languages.wallet.transactionUnavailable), findsOneWidget);
+    await tapDetailBack(tester, TransactionDetailPage);
+    expect(router.routeInformationProvider.value.uri.path, '/history');
     expect(tester.takeException(), isNull);
   });
 
@@ -431,7 +543,7 @@ void main() {
         expect(
           path.endsWith('/${AppRoutes.TRANSACTION_SEGMENT}')
               ? GoRouterState.of(
-                  tester.element(find.byType(HistoryDetailsPage)),
+                  tester.element(find.byType(TransactionDetailPage)),
                 ).uri.path
               : router.routeInformationProvider.value.uri.path,
           path,
@@ -442,7 +554,7 @@ void main() {
             .widget<MainPage>(find.byType(MainPage))
             .navigationShell;
         final activeType = path.endsWith('/${AppRoutes.TRANSACTION_SEGMENT}')
-            ? HistoryDetailsPage
+            ? TransactionDetailPage
             : [
                 HomePage,
                 WalletPage,
@@ -520,19 +632,19 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
       expect(
-        GoRouterState.of(tester.element(find.byType(HistoryDetailsPage)))
+        GoRouterState.of(tester.element(find.byType(TransactionDetailPage)))
             .uri
             .path,
         '/wallet/transaction',
       );
       expect(
         tester
-            .widget<HistoryDetailsPage>(find.byType(HistoryDetailsPage))
+            .widget<TransactionDetailPage>(find.byType(TransactionDetailPage))
             .heroTag,
         tag,
       );
       await finishTransition(tester);
-      final detailElement = tester.element(find.byType(HistoryDetailsPage));
+      final detailElement = tester.element(find.byType(TransactionDetailPage));
       expect(
         find.byType(BottomNavigationBar),
         findsNothing,
@@ -548,27 +660,27 @@ void main() {
       expect(
         identical(
           detailElement,
-          tester.element(find.byType(HistoryDetailsPage)),
+          tester.element(find.byType(TransactionDetailPage)),
         ),
         isTrue,
       );
       expect(
         tester
-            .widget<HistoryDetailsPage>(find.byType(HistoryDetailsPage))
+            .widget<TransactionDetailPage>(find.byType(TransactionDetailPage))
             .heroTag,
         tag,
       );
       await tester.tap(
         find
             .descendant(
-              of: find.byType(HistoryDetailsPage),
+              of: find.byType(TransactionDetailPage),
               matching: find.byIcon(Icons.arrow_back),
             )
             .first,
       );
       await finishTransition(tester);
       expect(router.routeInformationProvider.value.uri.path, AppRoutes.WALLET);
-      expect(find.byType(HistoryDetailsPage), findsNothing);
+      expect(find.byType(TransactionDetailPage), findsNothing);
       expect(tester.takeException(), isNull);
     });
   }
@@ -603,9 +715,9 @@ void main() {
         router.routeInformationProvider.value.uri.path,
         '/wallet/edit-card/2',
       );
-      expect(find.byType(AddCardPage), findsOneWidget);
+      expect(find.byType(CardEditorPage), findsOneWidget);
       final fields = find.descendant(
-        of: find.byType(AddCardPage),
+        of: find.byType(CardEditorPage),
         matching: find.byType(EditableText),
       );
       expect(
@@ -614,7 +726,7 @@ void main() {
       );
       await tester.tap(
         find.descendant(
-          of: find.byType(AddCardPage),
+          of: find.byType(CardEditorPage),
           matching: find.byType(BackButton),
         ),
       );
@@ -626,10 +738,10 @@ void main() {
         router.routeInformationProvider.value.uri.path,
         '/wallet/add-card',
       );
-      expect(find.byType(AddCardPage), findsOneWidget);
+      expect(find.byType(CardEditorPage), findsOneWidget);
       await tester.tap(
         find.descendant(
-          of: find.byType(AddCardPage),
+          of: find.byType(CardEditorPage),
           matching: find.byType(BackButton),
         ),
       );
@@ -716,7 +828,7 @@ void main() {
     final menuElement = tester.element(menu);
     final mainElement = tester.element(find.byType(MainPage));
     final rail = tester.getRect(find.byType(NavigationRail));
-    final full = tester.getRect(find.byType(MenuDetailLayout));
+    final full = tester.getRect(find.byType(AdaptiveDetailLayout));
     final pane = find.byKey(const ValueKey('menu-pane'));
     expect(tester.getSize(pane).width, full.width);
     final scroll = find.descendant(of: menu, matching: find.byType(Scrollable));
@@ -852,7 +964,7 @@ void main() {
     );
     expect(
       tester.getSize(find.byKey(const ValueKey('menu-pane'))).width,
-      tester.getSize(find.byType(MenuDetailLayout)).width,
+      tester.getSize(find.byType(AdaptiveDetailLayout)).width,
     );
     expect(tester.takeException(), isNull);
   });
@@ -896,7 +1008,7 @@ void main() {
       expect(router.routeInformationProvider.value.uri.path, AppRoutes.MENU);
       expect(
         tester.getSize(find.byKey(const ValueKey('menu-pane'))).width,
-        tester.getSize(find.byType(MenuDetailLayout)).width,
+        tester.getSize(find.byType(AdaptiveDetailLayout)).width,
       );
       expect(router.canPop(), isFalse);
       expect(tester.takeException(), isNull);
@@ -1037,7 +1149,7 @@ void main() {
 
       final inputValues = detail.$3 == PasswordPage
           ? ['old-password', 'new-password', 'new-password']
-          : detail.$3 == AddCardPage
+          : detail.$3 == CardEditorPage
           ? ['Test Owner', '4111111111111111']
           : <String>[];
       Finder fields() => find.descendant(
@@ -1232,6 +1344,9 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
       expect(find.byType(NotFoundPage), findsOneWidget);
+      expect(find.text('/missing'), findsOneWidget);
+      expect(find.textContaining('secret-value'), findsNothing);
+      expect(find.textContaining('private-fragment'), findsNothing);
       expect(messages.join(), contains('Router 404: uri=/missing, error='));
       expect(messages.join(), isNot(contains('secret-value')));
       expect(messages.join(), isNot(contains('private-fragment')));
@@ -1300,7 +1415,6 @@ void main() {
       AppRoutes.MENU_PASSWORD,
       AppRoutes.MENU_LANGUAGES,
       AppRoutes.MENU_NOTIFICATIONS,
-      AppRoutes.HISTORY_DETAILS,
     ]) {
       router.go(path);
       expect(router.routeInformationProvider.value.uri.path, path);

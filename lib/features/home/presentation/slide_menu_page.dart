@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sirc/core/layout/app_layout.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/routes/app_routes.dart';
@@ -12,13 +13,11 @@ import 'package:sirc/widgets/network_web_image.dart';
 /// 侧滑抽屉 Widget，支持平移缩放视觉与抽屉动画
 class SlideMenuPage extends ConsumerStatefulWidget {
   final Widget child;
-  final double? screenWidth;
   final ValueChanged<int> onBranchSelected;
 
   const SlideMenuPage({
     super.key,
     required this.child,
-    this.screenWidth,
     required this.onBranchSelected,
   });
 
@@ -154,7 +153,7 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
           menuWidth + 16,
           math.max(0.0, screenWidth - 72),
         );
-        final endScale = screenWidth >= 840 ? 0.96 : 0.92;
+        final endScale = AppLayout.isWideWidth(screenWidth) ? 0.96 : 0.92;
         final scale = 1 - (1 - endScale) * _percentage;
         final shadowScale = scale - 0.02 * _percentage;
 

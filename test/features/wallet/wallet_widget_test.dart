@@ -6,7 +6,7 @@ import 'package:sirc/features/wallet/domain/models/bank_card.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 import 'package:sirc/features/wallet/presentation/history_page.dart';
-import 'package:sirc/features/wallet/presentation/history_details_page.dart';
+import 'package:sirc/features/wallet/presentation/transaction_detail_page.dart';
 import 'package:sirc/features/home/presentation/person_page.dart';
 
 class TestWalletController extends WalletController {
@@ -198,7 +198,7 @@ void main() {
         const WalletPage(),
         const HistoryPage(),
         const PersonPage(),
-        HistoryDetailsPage(
+        TransactionDetailPage(
           data: Transaction(
             moneyAmount: -20,
             moneyActionName: 'Coffee',

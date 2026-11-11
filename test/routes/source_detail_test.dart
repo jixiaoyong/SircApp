@@ -15,13 +15,33 @@ import 'package:sirc/features/wallet/presentation/add_card_page.dart';
 import 'package:sirc/features/wallet/presentation/card_management_page.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/core/localization/app_locale.dart';
-import 'package:sirc/features/wallet/presentation/history_details_page.dart';
+import 'package:sirc/features/wallet/presentation/transaction_detail_page.dart';
 import 'package:sirc/features/wallet/presentation/history_page.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 import 'package:sirc/routes/app_router.dart';
 import 'package:sirc/routes/source_detail_navigation.dart';
 
 void main() {
+  test('交易业务入口兼容裸交易、Map及非法Hero标识', () {
+    final transaction = Transaction(
+      moneyActionName: 'Actual record',
+      moneyAmount: -12,
+    );
+    expect(
+      TransactionDetailPage.fromExtra(extra: transaction).data,
+      same(transaction),
+    );
+    final mapped = TransactionDetailPage.fromExtra(
+      extra: {'data': transaction, 'heroTag': 'source-hero'},
+    );
+    expect(mapped.data, same(transaction));
+    expect(mapped.heroTag, 'source-hero');
+    final invalidTag = TransactionDetailPage.fromExtra(
+      extra: {'data': transaction, 'heroTag': 123},
+    );
+    expect(invalidTag.data, same(transaction));
+    expect(invalidTag.heroTag, 'default');
+  });
   Future<void> frames(WidgetTester tester) async {
     await tester.pump();
     for (var i = 0; i < 4; i++) {
@@ -83,10 +103,10 @@ void main() {
           await frames(tester);
         } else if (initial.contains('add-card') ||
             initial.contains('edit-card')) {
-          expect(find.byType(AddCardPage), findsOneWidget);
+          expect(find.byType(CardEditorPage), findsOneWidget);
           await tester.tap(
             find.descendant(
-              of: find.byType(AddCardPage),
+              of: find.byType(CardEditorPage),
               matching: find.byType(BackButton),
             ),
           );
@@ -117,9 +137,11 @@ void main() {
             router.routeInformationProvider.value.uri.path,
             edit ? '$source/edit-card/1' : '$source/add-card',
           );
-          expect(find.byType(AddCardPage), findsOneWidget);
+          expect(find.byType(CardEditorPage), findsOneWidget);
           expect(
-            tester.widget<AddCardPage>(find.byType(AddCardPage)).card?.id,
+            tester
+                .widget<CardEditorPage>(find.byType(CardEditorPage))
+                .editingId,
             edit ? '1' : null,
           );
           // 系统返回和页面返回均应回到相同来源的管理页。
@@ -128,7 +150,7 @@ void main() {
           } else {
             await tester.tap(
               find.descendant(
-                of: find.byType(AddCardPage),
+                of: find.byType(CardEditorPage),
                 matching: find.byType(BackButton),
               ),
             );
@@ -229,8 +251,8 @@ void main() {
         );
         expect(
           tester
-              .widget<HistoryDetailsPage>(find.byType(HistoryDetailsPage))
-              .data
+              .widget<TransactionDetailPage>(find.byType(TransactionDetailPage))
+              .data!
               .moneyActionName,
           'record-$index',
         );
@@ -239,11 +261,14 @@ void main() {
           '${source.$1}/transaction',
         );
       }
-      final detail = tester.element(find.byType(HistoryDetailsPage));
+      final detail = tester.element(find.byType(TransactionDetailPage));
       for (final width in [839.0, 840.0, 390.0, 1200.0]) {
         tester.view.physicalSize = Size(width, 1100);
         await frames(tester);
-        expect(tester.element(find.byType(HistoryDetailsPage)), same(detail));
+        expect(
+          tester.element(find.byType(TransactionDetailPage)),
+          same(detail),
+        );
         expect(
           find.byType(source.$2),
           width >= 840 ? findsOneWidget : findsNothing,
@@ -256,7 +281,7 @@ void main() {
       }
       await tester.tap(
         find.descendant(
-          of: find.byType(HistoryDetailsPage),
+          of: find.byType(TransactionDetailPage),
           matching: find.byIcon(Icons.arrow_back),
         ),
       );

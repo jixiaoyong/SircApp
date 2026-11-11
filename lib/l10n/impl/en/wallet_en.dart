@@ -106,6 +106,27 @@ class WalletEn implements WalletLang {
   String get details => 'Details';
 
   @override
+  String get transactionDetails => 'Transaction details';
+  @override
+  String get transactionUnavailable => 'Transaction details unavailable';
+  @override
+  String get transactionType => 'Transaction type';
+  @override
+  String get amount => 'Amount';
+  @override
+  String get time => 'Time';
+  @override
+  String get editCard => 'Edit card';
+  @override
+  String get cardNotFound => 'Card not found';
+  @override
+  String get cardLoading => 'Loading card…';
+  @override
+  String get saveCard => 'Save';
+  @override
+  String get cardSaved => 'Card saved';
+
+  @override
   String get noTransactions => 'No transactions yet';
 
   @override

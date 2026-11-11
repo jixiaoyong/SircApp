@@ -34,6 +34,16 @@ abstract class WalletLang {
   String get receive;
   String get history;
   String get details;
+  String get transactionDetails;
+  String get transactionUnavailable;
+  String get transactionType;
+  String get amount;
+  String get time;
+  String get editCard;
+  String get cardNotFound;
+  String get cardLoading;
+  String get saveCard;
+  String get cardSaved;
   String get noTransactions;
   String get outgoing;
   String get incoming;
