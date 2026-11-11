@@ -26,29 +26,64 @@ class AppearancePage extends ConsumerWidget {
         title: Languages.settings.appearance,
         onBack: onBack,
       ),
-      body: ListView.separated(
+      body: ListView(
         padding: const EdgeInsets.all(24),
-        itemCount: choices.length,
-        itemBuilder: (context, index) {
-          final (mode, label) = choices[index];
-          final selected = current == mode;
-          return ListTile(
-            key: ValueKey('theme-${mode.name}'),
+        children: [
+          Material(
+            key: const ValueKey('appearance-options-group'),
+            color: colors.surface,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
+              side: BorderSide(color: colors.outlineVariant),
             ),
-            tileColor: colors.surface,
-            selected: selected,
-            selectedColor: colors.onSurface,
-            title: Text(label),
-            trailing: selected
-                ? Icon(Icons.check_circle_outline, color: colors.onSurface)
-                : null,
-            onTap: () =>
-                ref.read(themeModeProvider.notifier).setThemeMode(mode),
-          );
-        },
-        separatorBuilder: (context, index) => const Divider(),
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              children: [
+                for (var index = 0; index < choices.length; index++) ...[
+                  if (index > 0)
+                    Divider(
+                      height: 1,
+                      thickness: 1,
+                      indent: 16,
+                      endIndent: 16,
+                      color:
+                          current == choices[index - 1].$1 ||
+                              current == choices[index].$1
+                          ? Colors.transparent
+                          : colors.onSurfaceVariant.withValues(alpha: 0.2),
+                    ),
+                  ListTile(
+                    key: ValueKey('theme-${choices[index].$1.name}'),
+                    minTileHeight: 48,
+                    selected: current == choices[index].$1,
+                    selectedTileColor: Color.alphaBlend(
+                      colors.primary.withValues(alpha: 0.10),
+                      colors.surface,
+                    ),
+                    selectedColor: colors.onSurface,
+                    title: Text(
+                      choices[index].$2,
+                      style: TextStyle(
+                        fontWeight: current == choices[index].$1
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                      ),
+                    ),
+                    trailing: current == choices[index].$1
+                        ? Icon(
+                            Icons.check_circle_outline,
+                            color: colors.primary,
+                          )
+                        : null,
+                    onTap: () => ref
+                        .read(themeModeProvider.notifier)
+                        .setThemeMode(choices[index].$1),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

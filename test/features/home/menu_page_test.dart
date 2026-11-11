@@ -73,6 +73,30 @@ void main() {
           ),
         ),
       );
+      final group = find.byKey(const ValueKey('menu-settings-group'));
+      final material = tester.widget<Material>(group);
+      expect(material.clipBehavior, Clip.antiAlias);
+      final shape = material.shape! as RoundedRectangleBorder;
+      expect(shape.borderRadius, BorderRadius.circular(14));
+      expect(shape.side.style, BorderStyle.solid);
+      expect(
+        find.descendant(of: group, matching: find.byType(SettingsItemTile)),
+        findsNWidgets(5),
+      );
+      expect(
+        find.descendant(of: group, matching: find.byType(Material)),
+        findsNothing,
+      );
+      expect(
+        find.descendant(of: group, matching: find.byIcon(Icons.logout)),
+        findsOneWidget,
+      );
+      for (final divider in tester.widgetList<Divider>(
+        find.descendant(of: group, matching: find.byType(Divider)),
+      )) {
+        expect(divider.indent, greaterThan(0));
+        expect(divider.color!.a, lessThan(0.5));
+      }
       final fingerprint = find.byWidgetPredicate(
         (widget) =>
             widget is SettingsItemTile &&
