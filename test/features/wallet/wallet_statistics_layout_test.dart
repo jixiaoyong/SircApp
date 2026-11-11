@@ -14,7 +14,9 @@ void expectVerticalStatistics(WidgetTester tester, double availableWidth) {
     find.byKey(const ValueKey('wallet-transactions')),
   );
   final cards = tester.getRect(find.byKey(const ValueKey('wallet-cards')));
-  expect(statistics.width, closeTo(availableWidth.clamp(0, 1017) - 56, 1));
+  final frameWidth = availableWidth.clamp(0.0, 1017.0);
+  final gutter = 16 + 16 * ((frameWidth - 320) / 240).clamp(0.0, 1.0);
+  expect(statistics.width, closeTo(frameWidth - gutter * 2, 1));
   expect(transactions.width, closeTo(statistics.width, .01));
   expect(transactions.left, closeTo(statistics.left, .01));
   expect(statistics.top, greaterThan(cards.bottom));

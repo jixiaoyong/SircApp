@@ -145,14 +145,16 @@ void main() {
           find.byKey(const ValueKey('home-articles')),
         );
         final cards = tester.getRect(find.byType(HomeBankCardCarousel));
-        expect(cards.width, width - 40);
+        final gutter = 16 + 16 * ((width - 320) / 240).clamp(0.0, 1.0);
+        final expectedContentWidth = width - gutter * 2;
+        expect(cards.width, closeTo(expectedContentWidth, 1));
         if (width == 1200 && scale == 1) {
           expect(summary.top, graph.top);
           expect(summary.left, greaterThan(graph.right));
         } else {
           expect(summary.top, greaterThanOrEqualTo(graph.bottom));
         }
-        expect(transactions.width, width - 40);
+        expect(transactions.width, closeTo(expectedContentWidth, 1));
         expect(articles.width, transactions.width);
         expect(articles.top, greaterThanOrEqualTo(transactions.bottom));
         expect(find.byKey(const ValueKey('home-avatar')), findsOneWidget);

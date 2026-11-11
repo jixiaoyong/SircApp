@@ -14,6 +14,7 @@ import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/bank_card_widget.dart';
 import 'package:sirc/features/wallet/domain/models/bank_card.dart';
 import 'package:sirc/widgets/network_web_image.dart';
+import 'package:sirc/widgets/page_gutter.dart';
 
 class WalletPage extends ConsumerWidget {
   const WalletPage({super.key, this.onMenuTap});
@@ -148,10 +149,10 @@ class WalletPage extends ConsumerWidget {
     );
     return SingleChildScrollView(
       child: SafeArea(
-        child: Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 1017),
-            padding: const EdgeInsets.all(28),
+        child: PageGutter(
+          maxWidth: 1017,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 28),
             child: LayoutScope(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

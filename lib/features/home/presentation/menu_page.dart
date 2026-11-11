@@ -9,6 +9,7 @@ import 'package:sirc/features/auth/data/auth_repository.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/settings_item_tile.dart';
 import 'package:sirc/widgets/title_text.dart';
+import 'package:sirc/widgets/page_gutter.dart';
 
 /// 指纹登录开关状态 Notifier (全面适配 Riverpod 3.x)
 class FingerprintEnabledNotifier extends Notifier<bool> {
@@ -72,72 +73,52 @@ class MenuPage extends ConsumerWidget {
 
     final list = SingleChildScrollView(
       child: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(25),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TitleText(text: Languages.settings.title),
-                  GestureDetector(
-                    onTap: () {
-                      _openDetail(
-                        context,
-                        AppRoutes.MENU_NOTIFICATIONS,
-                        isWide,
-                      );
-                    },
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: Stack(
-                        children: [
-                          const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: Icon(Icons.notifications_outlined),
-                          ),
-                          Positioned(
-                            top: 0,
-                            right: 0,
-                            child: Container(
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: colors.error,
-                                shape: BoxShape.circle,
+        child: PageGutter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 25),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TitleText(text: Languages.settings.title),
+                    GestureDetector(
+                      onTap: () {
+                        _openDetail(
+                          context,
+                          AppRoutes.MENU_NOTIFICATIONS,
+                          isWide,
+                        );
+                      },
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Stack(
+                          children: [
+                            const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: Icon(Icons.notifications_outlined),
+                            ),
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: colors.error,
+                                  shape: BoxShape.circle,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Container(
-                margin: EdgeInsets.zero,
-                child: Material(
-                  color: colors.surface,
-                  shape: Border(
-                    bottom: BorderSide(color: colors.outlineVariant),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: SettingsItemTile(
-                    key: const ValueKey('appearance-setting'),
-                    icon: Icons.brightness_6_outlined,
-                    title: Languages.settings.appearance,
-                    subtitle: _themeLabel(ref.watch(themeModeProvider)),
-                    onTap: () =>
-                        _openDetail(context, AppRoutes.MENU_APPEARANCE, isWide),
-                  ),
+                  ],
                 ),
-              ),
-              ...menuItems.map((item) {
-                final bool isFingerprint = item.$3 == AppRoutes.FINGERPRINT;
-
-                return Container(
+                Container(
                   margin: EdgeInsets.zero,
                   child: Material(
                     color: colors.surface,
@@ -146,71 +127,96 @@ class MenuPage extends ConsumerWidget {
                     ),
                     clipBehavior: Clip.antiAlias,
                     child: SettingsItemTile(
-                      icon: item.$1,
-                      title: item.$2,
-                      iconBackgroundColor: colors.surfaceContainerHighest,
-                      trailing: isFingerprint
-                          ? CupertinoSwitch(
-                              value: isFingerprintOpen,
-                              activeTrackColor: colors.primary,
-                              onChanged: (v) {
-                                ref
-                                        .read(
-                                          fingerprintEnabledProvider.notifier,
-                                        )
-                                        .state =
-                                    v;
-                              },
-                            )
-                          : const Icon(Icons.keyboard_arrow_right),
-                      onTap: () {
-                        if (isFingerprint) {
-                          ref
-                              .read(fingerprintEnabledProvider.notifier)
-                              .update((val) => !val);
-                        } else if (AppRoutes.LOGOUT == item.$3) {
-                          showDialog(
-                            context: context,
-                            builder: (dialogContext) => AlertDialog(
-                              title: Text(Languages.logout),
-                              content: Text(Languages.sureToLogout),
-                              actions: [
-                                OutlinedButton(
-                                  child: Text(Languages.cancel),
-                                  onPressed: () {
-                                    Navigator.of(dialogContext).pop();
-                                  },
-                                ),
-                                OutlinedButton(
-                                  child: Text(
-                                    Languages.logoutAndCleanData,
-                                    style: TextStyle(color: colors.error),
-                                  ),
-                                  onPressed: () async {
-                                    await ref
-                                        .read(storageServiceProvider)
-                                        .clearUserData();
-                                    if (dialogContext.mounted) {
-                                      Navigator.of(dialogContext).pop();
-                                    }
-                                    // 清空持久化后仍需发布登出通知，由统一守卫回到登录页。
-                                    await ref
-                                        .read(authRepositoryProvider)
-                                        .logout();
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
-                        } else {
-                          _openDetail(context, item.$3, isWide);
-                        }
-                      },
+                      key: const ValueKey('appearance-setting'),
+                      icon: Icons.brightness_6_outlined,
+                      title: Languages.settings.appearance,
+                      subtitle: _themeLabel(ref.watch(themeModeProvider)),
+                      onTap: () => _openDetail(
+                        context,
+                        AppRoutes.MENU_APPEARANCE,
+                        isWide,
+                      ),
                     ),
                   ),
-                );
-              }),
-            ],
+                ),
+                ...menuItems.map((item) {
+                  final bool isFingerprint = item.$3 == AppRoutes.FINGERPRINT;
+
+                  return Container(
+                    margin: EdgeInsets.zero,
+                    child: Material(
+                      color: colors.surface,
+                      shape: Border(
+                        bottom: BorderSide(color: colors.outlineVariant),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: SettingsItemTile(
+                        icon: item.$1,
+                        title: item.$2,
+                        iconBackgroundColor: colors.surfaceContainerHighest,
+                        trailing: isFingerprint
+                            ? CupertinoSwitch(
+                                value: isFingerprintOpen,
+                                activeTrackColor: colors.primary,
+                                onChanged: (v) {
+                                  ref
+                                          .read(
+                                            fingerprintEnabledProvider.notifier,
+                                          )
+                                          .state =
+                                      v;
+                                },
+                              )
+                            : const Icon(Icons.keyboard_arrow_right),
+                        onTap: () {
+                          if (isFingerprint) {
+                            ref
+                                .read(fingerprintEnabledProvider.notifier)
+                                .update((val) => !val);
+                          } else if (AppRoutes.LOGOUT == item.$3) {
+                            showDialog(
+                              context: context,
+                              builder: (dialogContext) => AlertDialog(
+                                title: Text(Languages.logout),
+                                content: Text(Languages.sureToLogout),
+                                actions: [
+                                  OutlinedButton(
+                                    child: Text(Languages.cancel),
+                                    onPressed: () {
+                                      Navigator.of(dialogContext).pop();
+                                    },
+                                  ),
+                                  OutlinedButton(
+                                    child: Text(
+                                      Languages.logoutAndCleanData,
+                                      style: TextStyle(color: colors.error),
+                                    ),
+                                    onPressed: () async {
+                                      await ref
+                                          .read(storageServiceProvider)
+                                          .clearUserData();
+                                      if (dialogContext.mounted) {
+                                        Navigator.of(dialogContext).pop();
+                                      }
+                                      // 清空持久化后仍需发布登出通知，由统一守卫回到登录页。
+                                      await ref
+                                          .read(authRepositoryProvider)
+                                          .logout();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else {
+                            _openDetail(context, item.$3, isWide);
+                          }
+                        },
+                      ),
+                    ),
+                  );
+                }),
+              ],
+            ),
           ),
         ),
       ),

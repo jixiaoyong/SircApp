@@ -19,6 +19,7 @@ import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/jingang_widget.dart';
 import 'package:sirc/features/home/presentation/home_transaction_chart.dart';
 import 'package:sirc/widgets/network_web_image.dart';
+import 'package:sirc/widgets/page_gutter.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -186,40 +187,42 @@ class HomeTopBodyWidget extends ConsumerWidget {
         statusBarBrightness: dark ? Brightness.dark : Brightness.light,
       ),
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: LayoutScope(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final beside =
-                    ResponsiveQuery.of(context).width >= 760 &&
-                    MediaQuery.textScalerOf(context).scale(14) < 24;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    headerAndCards,
-                    const SizedBox(height: 18),
-                    if (beside)
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(child: graph),
-                          const SizedBox(width: 22),
-                          const Expanded(child: HomeSummaryCards()),
-                        ],
-                      )
-                    else ...[
-                      graph,
+        child: PageGutter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: LayoutScope(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final beside =
+                      ResponsiveQuery.of(context).width >= 760 &&
+                      MediaQuery.textScalerOf(context).scale(14) < 24;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      headerAndCards,
                       const SizedBox(height: 18),
-                      const HomeSummaryCards(),
+                      if (beside)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: graph),
+                            const SizedBox(width: 22),
+                            const Expanded(child: HomeSummaryCards()),
+                          ],
+                        )
+                      else ...[
+                        graph,
+                        const SizedBox(height: 18),
+                        const HomeSummaryCards(),
+                      ],
+                      const SizedBox(height: 18),
+                      const HomeTransactionsPanel(),
+                      const SizedBox(height: 18),
+                      const HomeArticlesPanel(),
                     ],
-                    const SizedBox(height: 18),
-                    const HomeTransactionsPanel(),
-                    const SizedBox(height: 18),
-                    const HomeArticlesPanel(),
-                  ],
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ),
