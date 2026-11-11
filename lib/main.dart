@@ -15,7 +15,6 @@ import 'package:sirc/features/settings/controllers/settings_controller.dart';
 import 'data/common_data.dart';
 
 /// a finance $ banking app
-/// UI copy from https://hbimg.huabanimg.com/71e943643aac8a17dedaee0445a0e27aec8023d212e8d8-5fkAOb
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) {
