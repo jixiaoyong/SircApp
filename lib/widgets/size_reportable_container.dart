@@ -11,8 +11,11 @@ class SizeReportableContainer extends StatefulWidget {
   final Widget child;
   final ValueChanged<Size?> onSizeChange;
 
-  const SizeReportableContainer(
-      {super.key, required this.child, required this.onSizeChange});
+  const SizeReportableContainer({
+    super.key,
+    required this.child,
+    required this.onSizeChange,
+  });
 
   @override
   State<SizeReportableContainer> createState() =>
@@ -35,11 +38,6 @@ class _SizeReportableContainerState extends State<SizeReportableContainer> {
         widget.onSizeChange(size);
       }
     });
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        widget.child,
-      ],
-    );
+    return Column(mainAxisSize: MainAxisSize.min, children: [widget.child]);
   }
 }

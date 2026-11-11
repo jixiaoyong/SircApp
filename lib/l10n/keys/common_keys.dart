@@ -11,4 +11,3 @@ abstract class CommonLang {
   String get notFound;
   String get goToHome;
 }
-

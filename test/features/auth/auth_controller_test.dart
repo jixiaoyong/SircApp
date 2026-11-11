@@ -18,9 +18,7 @@ void main() {
     prefs = await SharedPreferences.getInstance();
 
     container = ProviderContainer(
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(prefs),
-      ],
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
     );
   });
 
@@ -56,7 +54,10 @@ void main() {
 
     test('邮箱格式与长度校验', () {
       expect(UsernamePwdUtils.checkUserEmail('a@b'), isNotNull);
-      expect(UsernamePwdUtils.checkUserEmail('invalid_email_format'), isNotNull);
+      expect(
+        UsernamePwdUtils.checkUserEmail('invalid_email_format'),
+        isNotNull,
+      );
       expect(UsernamePwdUtils.checkUserEmail('test@example.com'), isNull);
     });
   });
@@ -82,12 +83,20 @@ void main() {
       await repo.initDefaultUserIfNeeded();
 
       // 正确密码
-      final loginSuccess = await repo.login('jixiaoyong', '123456', mockDelay: Duration.zero);
+      final loginSuccess = await repo.login(
+        'jixiaoyong',
+        '123456',
+        mockDelay: Duration.zero,
+      );
       expect(loginSuccess, isTrue);
       expect(repo.isUserLoggedIn(), isTrue);
 
       // 错误密码
-      final loginFail = await repo.login('jixiaoyong', 'wrong_pwd', mockDelay: Duration.zero);
+      final loginFail = await repo.login(
+        'jixiaoyong',
+        'wrong_pwd',
+        mockDelay: Duration.zero,
+      );
       expect(loginFail, isFalse);
     });
 
@@ -103,7 +112,10 @@ void main() {
       expect(success, isTrue);
       expect(repo.getSavedUserName(), equals('new_user'));
       expect(repo.getSavedUserEmail(), equals('new@test.com'));
-      expect(repo.getSavedUserPwdMd5(), equals(Md5Utils.generateMd5('newpassword')));
+      expect(
+        repo.getSavedUserPwdMd5(),
+        equals(Md5Utils.generateMd5('newpassword')),
+      );
     });
 
     test('重置密码与修改密码', () async {
@@ -170,14 +182,19 @@ void main() {
     });
 
     test('ForgetPwdNotifier & SetPwdNotifier: 找回与重置密码', () async {
-      final forgetNotifier = container.read(forgetPwdControllerProvider.notifier);
+      final forgetNotifier = container.read(
+        forgetPwdControllerProvider.notifier,
+      );
       forgetNotifier.setUserEmail('user@test.com');
       forgetNotifier.setVerifyCode('123456');
 
       expect(forgetNotifier.isEmailAndVerifyCodeValid(), isTrue);
 
       await forgetNotifier.verifyEmailAndResetPwd(mockDelay: Duration.zero);
-      expect(container.read(forgetPwdControllerProvider).isVerifySuccess, isTrue);
+      expect(
+        container.read(forgetPwdControllerProvider).isVerifySuccess,
+        isTrue,
+      );
 
       final setPwdNotifier = container.read(setPwdControllerProvider.notifier);
       setPwdNotifier.setUserName('user@test.com');
@@ -206,7 +223,10 @@ void main() {
 
       await notifier.changePassword(mockDelay: Duration.zero);
       expect(container.read(passwordControllerProvider).isSuccess, isTrue);
-      expect(repo.getSavedUserPwdMd5(), equals(Md5Utils.generateMd5('newpwd666')));
+      expect(
+        repo.getSavedUserPwdMd5(),
+        equals(Md5Utils.generateMd5('newpwd666')),
+      );
     });
   });
 }

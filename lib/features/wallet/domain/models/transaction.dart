@@ -24,13 +24,12 @@ class Transaction {
     String? moneyActionName,
     double? moneyAmount,
     String? time,
-  }) =>
-      Transaction(
-        userIcon: userIcon ?? this.userIcon,
-        moneyActionName: moneyActionName ?? this.moneyActionName,
-        moneyAmount: moneyAmount ?? this.moneyAmount,
-        time: time ?? this.time,
-      );
+  }) => Transaction(
+    userIcon: userIcon ?? this.userIcon,
+    moneyActionName: moneyActionName ?? this.moneyActionName,
+    moneyAmount: moneyAmount ?? this.moneyAmount,
+    time: time ?? this.time,
+  );
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

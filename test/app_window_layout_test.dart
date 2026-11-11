@@ -12,7 +12,6 @@ import 'package:sirc/data/common_data.dart';
 import 'package:sirc/main.dart';
 import 'package:sirc/routes/app_router.dart';
 import 'package:sirc/routes/app_routes.dart';
-import 'package:sirc/utils/size_extension.dart';
 
 void main() {
   testWidgets('1461 视口内父约束独立 resize，登录局部 query 和固定尺寸同步', (tester) async {
@@ -54,8 +53,8 @@ void main() {
       expect(tester.getSize(fields.first).width, expectedWidth - 40);
       expect(tester.getRect(fields.first).center.dx, closeTo(width / 2, 0.01));
       expect(tester.widget<ConstrainedContent>(form).maxWidth, expectedWidth);
-      expect(24.dp, 24);
-      expect(16.sp, 16);
+      expect(24, 24);
+      expect(16, 16);
       expect(tester.takeException(), isNull);
     }
     await tester.pumpWidget(const SizedBox.shrink());
@@ -98,8 +97,8 @@ void main() {
         );
       }
       expect(tester.getRect(fields.first).center.dx, closeTo(width / 2, 0.01));
-      expect(24.dp, 24);
-      expect(16.sp, 16);
+      expect(24, 24);
+      expect(16, 16);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();

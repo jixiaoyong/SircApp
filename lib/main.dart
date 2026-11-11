@@ -11,7 +11,6 @@ import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/routes/app_router.dart';
 import 'package:sirc/features/settings/controllers/settings_controller.dart';
-import 'package:sirc/utils/size_extension.dart' as size_ext;
 
 import 'data/common_data.dart';
 
@@ -67,7 +66,6 @@ class MyApp extends ConsumerWidget {
         );
         // 页面使用完整窗口宽度，控件尺寸不随窗口宽度缩放。
         CommonData.realScreenWidth = mediaQuery.size.width;
-        size_ext.SizeExtension.dpScale = 1;
 
         return child ?? const SizedBox();
       },

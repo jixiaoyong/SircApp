@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:sirc/routes/source_detail_navigation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
@@ -151,75 +152,77 @@ class WalletPage extends ConsumerWidget {
           child: Container(
             constraints: const BoxConstraints(maxWidth: 1017),
             padding: const EdgeInsets.all(28),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        zh ? '钱包' : 'Wallet',
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                    ),
-                    IconButton(
-                      tooltip: zh ? '打开菜单' : 'Open menu',
-                      onPressed:
-                          onMenuTap ??
-                          () => ref
-                              .read(navigationControllerProvider.notifier)
-                              .openDrawer(),
-                      icon: const Icon(Icons.menu),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                if (state.isLoading) const LinearProgressIndicator(),
-                if (state.errorMessage != null) Text(state.errorMessage!),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final beside =
-                        constraints.maxWidth >= 760 &&
-                        MediaQuery.textScalerOf(context).scale(14) < 24;
-                    return Flex(
-                      direction: beside ? Axis.horizontal : Axis.vertical,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Flexible(flex: beside ? 1 : 0, child: balance),
-                        SizedBox(
-                          width: beside ? 16 : 0,
-                          height: beside ? 0 : 16,
-                        ),
-                        Flexible(flex: beside ? 1 : 0, child: cards),
-                      ],
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                stats,
-                const SizedBox(height: 16),
-                WalletPanel(
-                  key: const ValueKey('wallet-transactions'),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            child: LayoutScope(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      Text(
-                        zh ? '交易记录' : 'Transactions',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                      Expanded(
+                        child: Text(
+                          zh ? '钱包' : 'Wallet',
+                          style: Theme.of(context).textTheme.headlineSmall,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      WalletTransactionList(
-                        items: items.take(3).toList(),
-                        heroPrefix: 'heroTag_',
-                        designStyle: true,
+                      IconButton(
+                        tooltip: zh ? '打开菜单' : 'Open menu',
+                        onPressed:
+                            onMenuTap ??
+                            () => ref
+                                .read(navigationControllerProvider.notifier)
+                                .openDrawer(),
+                        icon: const Icon(Icons.menu),
                       ),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 20),
+                  if (state.isLoading) const LinearProgressIndicator(),
+                  if (state.errorMessage != null) Text(state.errorMessage!),
+                  Builder(
+                    builder: (context) {
+                      final beside =
+                          ResponsiveQuery.of(context).width >= 760 &&
+                          MediaQuery.textScalerOf(context).scale(14) < 24;
+                      return Flex(
+                        direction: beside ? Axis.horizontal : Axis.vertical,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Flexible(flex: beside ? 1 : 0, child: balance),
+                          SizedBox(
+                            width: beside ? 16 : 0,
+                            height: beside ? 0 : 16,
+                          ),
+                          Flexible(flex: beside ? 1 : 0, child: cards),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  stats,
+                  const SizedBox(height: 16),
+                  WalletPanel(
+                    key: const ValueKey('wallet-transactions'),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          zh ? '交易记录' : 'Transactions',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        WalletTransactionList(
+                          items: items.take(3).toList(),
+                          heroPrefix: 'heroTag_',
+                          designStyle: true,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

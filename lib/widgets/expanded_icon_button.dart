@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sirc/utils/size_extension.dart';
 
 /*
 * @description: TODO
@@ -28,7 +27,7 @@ class ExpandedIconButton extends StatefulWidget {
     required this.colors,
     required this.text,
     this.isExpanded = false,
-  })  : minWidth = minWidth ?? height;
+  }) : minWidth = minWidth ?? height;
 
   @override
   State<ExpandedIconButton> createState() => _ExpandedIconButtonState();
@@ -95,12 +94,13 @@ class _ExpandedIconButtonState extends State<ExpandedIconButton>
           ? EdgeInsets.all(0.1 * widget.height)
           : EdgeInsets.zero,
       decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: widget.colors,
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          borderRadius: BorderRadius.circular(widget.height / 2)),
+        gradient: LinearGradient(
+          colors: widget.colors,
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        borderRadius: BorderRadius.circular(widget.height / 2),
+      ),
       child: GestureDetector(
         onTap: widget.onPressed,
         child: Stack(
@@ -115,10 +115,7 @@ class _ExpandedIconButtonState extends State<ExpandedIconButton>
                   child: Text(
                     widget.text,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.sp,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
               ),

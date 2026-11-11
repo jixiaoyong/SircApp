@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/localization/app_locale.dart';
 import '../../../data/common_data.dart';
 import '../../../gen_a/A.dart';
-import '../../../utils/size_extension.dart';
 import '../../../widgets/constrained_content.dart';
 import '../../../widgets/title_text.dart';
 import '../controllers/settings_controller.dart';
@@ -78,7 +77,7 @@ class _InitialPageState extends ConsumerState<InitialPage> {
 
                     return Container(
                       color: Theme.of(context).scaffoldBackgroundColor,
-                      padding: EdgeInsets.only(right: 20.dp, left: 20.dp),
+                      padding: EdgeInsets.only(right: 20, left: 20),
                       child: LayoutBuilder(
                         builder: (context, constraints) {
                           final viewportHeight = constraints.maxHeight;
@@ -100,10 +99,10 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                     height: imageHeight,
                                     fit: BoxFit.contain,
                                   ),
-                                  SizedBox(height: 32.dp),
+                                  SizedBox(height: 32),
                                   SizedBox(
                                     key: ValueKey('initial_indicators_$index'),
-                                    height: 10.dp,
+                                    height: 10,
                                     child: ListView.builder(
                                       shrinkWrap: true,
                                       scrollDirection: Axis.horizontal,
@@ -111,10 +110,10 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                       itemBuilder: (context, subIndex) {
                                         return Container(
                                           margin: EdgeInsets.symmetric(
-                                            horizontal: 5.dp,
+                                            horizontal: 5,
                                           ),
-                                          height: 10.dp,
-                                          width: 10.dp,
+                                          height: 10,
+                                          width: 10,
                                           decoration: BoxDecoration(
                                             color: subIndex == index
                                                 ? Theme.of(context)
@@ -124,7 +123,7 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                                       .colorScheme
                                                       .outlineVariant,
                                             borderRadius: BorderRadius.circular(
-                                              10.dp,
+                                              10,
                                             ),
                                           ),
                                         );
@@ -134,7 +133,7 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                   TitleText(text: title),
                                   Padding(
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: 20.dp,
+                                      horizontal: 20,
                                     ),
                                     child: Text(
                                       subtitle,
@@ -143,7 +142,7 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                         color: Theme.of(context)
                                             .colorScheme
                                             .onSurfaceVariant,
-                                        fontSize: 15.sp,
+                                        fontSize: 15,
                                         height: 1.5,
                                       ),
                                     ),
@@ -159,12 +158,12 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                             );
                                           },
                                           child: Container(
-                                            height: 50.dp,
-                                            width: 50.dp,
-                                            margin: EdgeInsets.only(top: 30.dp),
+                                            height: 50,
+                                            width: 50,
+                                            margin: EdgeInsets.only(top: 30),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(14.dp),
+                                                  BorderRadius.circular(14),
                                               color: Theme.of(context)
                                                   .colorScheme
                                                   .primary,
@@ -188,20 +187,18 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                           },
                                           child: Padding(
                                             padding: EdgeInsets.fromLTRB(
-                                              30.dp,
-                                              30.dp,
-                                              30.dp,
+                                              30,
+                                              30,
+                                              30,
                                               0,
                                             ),
                                             child: ConstrainedContent(
                                               maxWidth: 360,
                                               child: Container(
-                                                height: 50.dp,
+                                                height: 50,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                        14.dp,
-                                                      ),
+                                                      BorderRadius.circular(14),
                                                   color: Theme.of(context)
                                                       .colorScheme
                                                       .primary,
@@ -213,7 +210,7 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                                                       color: Theme.of(context)
                                                           .colorScheme
                                                           .onPrimary,
-                                                      fontSize: 20.sp,
+                                                      fontSize: 20,
                                                     ),
                                                   ),
                                                 ),
@@ -248,7 +245,7 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                       child: Text(
                         Languages.somethingLikeAds,
                         style: TextStyle(
-                          fontSize: 15.sp,
+                          fontSize: 15,
                           color: Colors.white.withValues(alpha: 0.8),
                         ),
                       ),

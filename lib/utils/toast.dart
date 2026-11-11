@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../core/localization/app_locale.dart';
 import '../core/router/nav_keys.dart';
 
@@ -36,7 +37,9 @@ class Toast {
           ),
           behavior: SnackBarBehavior.floating,
           backgroundColor: const Color(0xCC000000),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 48),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           duration: Duration(seconds: duration),

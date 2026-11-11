@@ -33,4 +33,3 @@ class CommonZh implements CommonLang {
   @override
   String get goToHome => '返回首页';
 }
-

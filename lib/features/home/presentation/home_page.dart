@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart'
+    hide SizeExtension;
 import 'package:flutter/services.dart';
 import 'package:sirc/routes/source_detail_navigation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +8,6 @@ import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/controllers/home_controller.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/core/theme/app_colors.dart';
-import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/utils/toast.dart';
 import 'package:sirc/widgets/bank_card_widget.dart';
 import 'package:sirc/widgets/expandable_page_view.dart';
@@ -113,7 +114,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
       children: [
         const HomeBankCardCarousel(),
         Padding(
-          padding: EdgeInsets.only(top: 10.dp),
+          padding: EdgeInsets.only(top: 10),
           child: JingangWidget(
             // 行高由图标和两行文字决定，不随每列宽度增长。
             mainAxisExtent: 80,
@@ -121,7 +122,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
             data: homeState.quickActions,
             // 分页滑条高 10px、上下 margin 各 10px，完整预留空间，
             // 不挤占最后一排文字，也不改变图标、文字及网格行高。
-            indicatorOffset: Offset(0, -30.dp),
+            indicatorOffset: Offset(0, -30),
             itemBuilder:
                 (BuildContext context, int index, int pageIndex, data) {
                   return GestureDetector(
@@ -132,7 +133,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox.square(
-                          dimension: 40.dp,
+                          dimension: 40,
                           child: NetworkWebImage(
                             data.imageUrl,
                             fit: BoxFit.contain,
@@ -140,7 +141,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(top: 2.dp),
+                          padding: EdgeInsets.only(top: 2),
                           child: Text(
                             _quickActionLabel(data.title),
                             overflow: TextOverflow.clip,
@@ -148,7 +149,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               height: 1,
-                              fontSize: 11.sp,
+                              fontSize: 11,
                               color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w500,
                             ),
@@ -174,7 +175,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
     );
     final graph = Container(
       key: const ValueKey('home-weekly-graph'),
-      padding: EdgeInsets.symmetric(horizontal: 16.dp),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: const HomeTransactionChart(),
     );
     final dark = Theme.of(context).brightness == Brightness.dark;
@@ -187,37 +188,39 @@ class HomeTopBodyWidget extends ConsumerWidget {
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final beside =
-                  constraints.maxWidth >= 760 &&
-                  MediaQuery.textScalerOf(context).scale(14) < 24;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  headerAndCards,
-                  const SizedBox(height: 18),
-                  if (beside)
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: graph),
-                        const SizedBox(width: 22),
-                        const Expanded(child: HomeSummaryCards()),
-                      ],
-                    )
-                  else ...[
-                    graph,
+          child: LayoutScope(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final beside =
+                    ResponsiveQuery.of(context).width >= 760 &&
+                    MediaQuery.textScalerOf(context).scale(14) < 24;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    headerAndCards,
                     const SizedBox(height: 18),
-                    const HomeSummaryCards(),
+                    if (beside)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: graph),
+                          const SizedBox(width: 22),
+                          const Expanded(child: HomeSummaryCards()),
+                        ],
+                      )
+                    else ...[
+                      graph,
+                      const SizedBox(height: 18),
+                      const HomeSummaryCards(),
+                    ],
+                    const SizedBox(height: 18),
+                    const HomeTransactionsPanel(),
+                    const SizedBox(height: 18),
+                    const HomeArticlesPanel(),
                   ],
-                  const SizedBox(height: 18),
-                  const HomeTransactionsPanel(),
-                  const SizedBox(height: 18),
-                  const HomeArticlesPanel(),
-                ],
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -282,6 +285,7 @@ class _HomeBankCardPagesState extends State<_HomeBankCardPages>
       _selectionHighlight.reset();
     }
   }
+
   bool _dragging = false;
   bool _selecting = false;
   static const _gap = 18.0;
@@ -449,12 +453,15 @@ class _HomeBankCardPagesState extends State<_HomeBankCardPages>
                                   ownerName: card.ownerName,
                                   expirationDate: card.expirationDate,
                                   cardType: card.cardType,
-                                  isSelected: homeState.currentBankIndex == index,
+                                  isSelected:
+                                      homeState.currentBankIndex == index,
                                   selectionHighlightProgress:
                                       homeState.currentBankIndex == index &&
                                           _selectionHighlight.isAnimating &&
                                           _selectionHighlight.value < 1 &&
-                                          !MediaQuery.disableAnimationsOf(context)
+                                          !MediaQuery.disableAnimationsOf(
+                                            context,
+                                          )
                                       ? _selectionHighlight.value
                                       : null,
                                 ),

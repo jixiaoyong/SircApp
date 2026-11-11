@@ -7,7 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/localization/app_locale.dart';
 import '../../../gen_a/A.dart';
 import '../../../routes/app_routes.dart';
-import '../../../utils/size_extension.dart';
 import '../../../widgets/one_title_with_back_button_appbar.dart';
 import '../../../widgets/settings_item_tile.dart';
 
@@ -43,21 +42,21 @@ class AboutPage extends ConsumerWidget {
         physics: const AlwaysScrollableScrollPhysics(
           parent: BouncingScrollPhysics(),
         ),
-        padding: EdgeInsets.all(15.dp),
+        padding: EdgeInsets.all(15),
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 20.dp),
+              padding: EdgeInsets.only(top: 20),
               child: Center(
                 child: Image.asset(
                   A.assets_ic_launcher,
-                  width: 100.dp,
-                  height: 100.dp,
+                  width: 100,
+                  height: 100,
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.dp),
+              padding: EdgeInsets.symmetric(vertical: 10),
               child: EmbedWebView(
                 aboutText,
                 backgroundColor:
@@ -66,7 +65,7 @@ class AboutPage extends ConsumerWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(bottom: 20.dp),
+              padding: EdgeInsets.only(bottom: 20),
               child: RichText(
                 text: TextSpan(
                   children: [
@@ -120,7 +119,7 @@ class AboutPage extends ConsumerWidget {
                     ),
                   ],
                   style: TextStyle(
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
@@ -128,7 +127,7 @@ class AboutPage extends ConsumerWidget {
             ),
             Material(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(14.dp),
+              borderRadius: BorderRadius.circular(14),
               clipBehavior: Clip.antiAlias,
               child: Column(
                 children: [
@@ -156,9 +155,9 @@ class AboutPage extends ConsumerWidget {
                 ],
               ),
             ),
-            SizedBox(height: 30.dp),
+            SizedBox(height: 30),
             Padding(
-              padding: EdgeInsets.all(10.dp),
+              padding: EdgeInsets.all(10),
               child: Builder(
                 builder: (context) {
                   final int currentYear = DateTime.now().year;
@@ -169,7 +168,7 @@ class AboutPage extends ConsumerWidget {
                     "Copyright (c) $copyrightYear by jixiaoyong, \nAll Rights Reserved.",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 12,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   );

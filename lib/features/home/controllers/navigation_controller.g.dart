@@ -18,15 +18,15 @@ final class NavigationControllerProvider
     extends $NotifierProvider<NavigationController, NavigationState> {
   /// 底部导航与抽屉控制器
   NavigationControllerProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'navigationControllerProvider',
-          isAutoDispose: false,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'navigationControllerProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$navigationControllerHash();
@@ -55,11 +55,14 @@ abstract class _$NavigationController extends $Notifier<NavigationState> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<NavigationState, NavigationState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<NavigationState, NavigationState>,
-        NavigationState,
-        Object?,
-        Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<NavigationState, NavigationState>,
+              NavigationState,
+              Object?,
+              Object?
+            >;
     element.handleCreate(ref, build);
   }
 }

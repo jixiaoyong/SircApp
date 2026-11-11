@@ -639,6 +639,39 @@ void main() {
     });
   }
 
+  testWidgets('应用导航断点使用窗口宽度而非嵌套容器约束', (tester) async {
+    final container = await createContainer(loggedIn: true);
+    final router = createAppRouter(
+      container.read(storageServiceProvider),
+      initialLocation: AppRoutes.MENU,
+    );
+    addTearDown(router.dispose);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1200, 900);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp.router(
+          routerConfig: router,
+          theme: AppTheme.lightTheme,
+          builder: (context, child) => Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(width: 700, height: 900, child: child!),
+          ),
+        ),
+      ),
+    );
+    await finishTransition(tester);
+
+    expect(find.byType(NavigationRail), findsOneWidget);
+    expect(find.byType(BottomNavigationBar), findsNothing);
+    expect(find.byType(MenuPage), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('匿名业务深链重定向至登录', (tester) async {
     final container = await createContainer();
     final router = container.read(appRouterProvider);

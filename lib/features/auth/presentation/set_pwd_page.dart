@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/data/common_keys.dart';
 import 'package:sirc/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/common_text_button.dart';
 import 'package:sirc/widgets/constrained_content.dart';
 import 'package:sirc/widgets/password_text_field.dart';
@@ -55,8 +54,8 @@ class _SetPwdPageState extends ConsumerState<SetPwdPage> {
           builder: (context) => AlertDialog(
             title: Text(Languages.loading),
             content: SizedBox(
-              height: 50.dp,
-              width: 50.dp,
+              height: 50,
+              width: 50,
               child: const Center(child: CircularProgressIndicator()),
             ),
           ),

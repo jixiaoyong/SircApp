@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sirc/features/wallet/presentation/card_brand_label.dart';
 import 'package:sirc/gen_a/A.dart';
-import 'package:sirc/utils/size_extension.dart';
 
 /*
 * @description: TODO
@@ -48,7 +47,7 @@ class BankCardWidget extends StatelessWidget {
     return DecoratedBox(
       key: const ValueKey('bank-card-iridescent-edge'),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.dp),
+        borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
           begin: const Alignment(-0.819152, -0.573576),
           end: const Alignment(0.819152, 0.573576),
@@ -76,10 +75,10 @@ class BankCardWidget extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(2.dp),
+        padding: EdgeInsets.all(2),
         child: Container(
-          height: (height ?? 200.dp) - 4.dp,
-          width: width == null ? null : width! - 4.dp,
+          height: (height ?? 200) - 4,
+          width: width == null ? null : width! - 4,
           key: const ValueKey('bank-card-dark-surface'),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -88,15 +87,15 @@ class BankCardWidget extends StatelessWidget {
               colors: [Color(0xFF2E363B), Color(0xFF252B30), Color(0xFF2B3034)],
               stops: [0, .6, 1],
             ),
-            borderRadius: BorderRadius.circular(18.dp),
+            borderRadius: BorderRadius.circular(18),
           ),
           child: CustomPaint(
             painter: _CardSelectionHighlightPainter(
               progress: selectionHighlightProgress,
-              radius: 18.dp,
+              radius: 18,
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
+              padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -106,29 +105,29 @@ class BankCardWidget extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 26.sp,
+                      fontSize: 26,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                       fontStyle: FontStyle.italic,
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: 2.dp),
+                    padding: EdgeInsets.symmetric(vertical: 2),
                     child: Image.asset(
                       A.assets_imgs_bank_chip,
-                      height: 32.dp,
+                      height: 32,
                       fit: BoxFit.fitHeight,
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4.dp),
+                    padding: EdgeInsets.symmetric(horizontal: 4),
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.centerLeft,
                       child: Text(
                         cardNumber,
                         style: TextStyle(
-                          fontSize: 20.sp,
+                          fontSize: 20,
                           color: Colors.white.withValues(alpha: 0.85),
                           letterSpacing: 1.5,
                         ),
@@ -136,7 +135,7 @@ class BankCardWidget extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4.dp),
+                    padding: EdgeInsets.symmetric(horizontal: 4),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -152,16 +151,16 @@ class BankCardWidget extends StatelessWidget {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                     color: Colors.white.withValues(alpha: 0.7),
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 12.dp),
+                              SizedBox(width: 12),
                               Text(
                                 expirationDate,
                                 style: TextStyle(
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -169,7 +168,7 @@ class BankCardWidget extends StatelessWidget {
                             ],
                           ),
                         ),
-                        SizedBox(width: 8.dp),
+                        SizedBox(width: 8),
                         Flexible(
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
@@ -177,7 +176,7 @@ class BankCardWidget extends StatelessWidget {
                             child: Text(
                               cardBrandLabel(cardType),
                               style: TextStyle(
-                                fontSize: 18.sp,
+                                fontSize: 18,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500,
                               ),

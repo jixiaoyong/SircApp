@@ -10,18 +10,16 @@ import 'app_locale.dart';
 /// 不翻译真实交易名称，也不将相对时间文案当作时间戳或进行时区换算。
 extension TransactionLocalization on Transaction {
   Transaction get localizedPlaceholders => copyWith(
-        moneyActionName: {
+    moneyActionName:
+        {
           const CommonEn().something,
           const CommonZh().something,
           '某些东西', // 兼容已缓存的旧中文占位文案。
         }.contains(moneyActionName)
-            ? Languages.something
-            : moneyActionName,
-        time: {
-          const HomeEn().justNow,
-          const HomeZh().justNow,
-        }.contains(time)
-            ? Languages.justNow
-            : time,
-      );
+        ? Languages.something
+        : moneyActionName,
+    time: {const HomeEn().justNow, const HomeZh().justNow}.contains(time)
+        ? Languages.justNow
+        : time,
+  );
 }

@@ -57,8 +57,7 @@ class AuthEn implements AuthLang {
       'Original password incorrect or update failed';
 
   @override
-  String get passwordInconsistent =>
-      'The passwords entered twice do not match';
+  String get passwordInconsistent => 'The passwords entered twice do not match';
 
   @override
   String get passwordNotSame => 'the password is not same';
@@ -76,12 +75,10 @@ class AuthEn implements AuthLang {
       'the length of user password must be less than 12';
 
   @override
-  String get usernameLengthMin =>
-      'the length of username must be more than 3';
+  String get usernameLengthMin => 'the length of username must be more than 3';
 
   @override
-  String get usernameLengthMax =>
-      'the length of username must be less than 10';
+  String get usernameLengthMax => 'the length of username must be less than 10';
 
   @override
   String get email => 'E-mail';
@@ -96,8 +93,7 @@ class AuthEn implements AuthLang {
   String get emailLengthMin => 'the length of user email must be more than 5';
 
   @override
-  String get emailLengthMax =>
-      'the length of user email must be less than 30';
+  String get emailLengthMax => 'the length of user email must be less than 30';
 
   @override
   String get enterEmailToResetPassword =>
@@ -169,4 +165,3 @@ class AuthEn implements AuthLang {
   @override
   String get phoneNumber => 'Phone Number';
 }
-

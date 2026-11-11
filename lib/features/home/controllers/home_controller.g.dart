@@ -18,15 +18,15 @@ final class HomeControllerProvider
     extends $NotifierProvider<HomeController, HomeState> {
   /// 首页控制器（纯业务逻辑，不与多语言直接耦合）
   HomeControllerProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'homeControllerProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'homeControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$homeControllerHash();
@@ -54,8 +54,14 @@ abstract class _$HomeController extends $Notifier<HomeState> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<HomeState, HomeState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<HomeState, HomeState>, HomeState, Object?, Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<HomeState, HomeState>,
+              HomeState,
+              Object?,
+              Object?
+            >;
     element.handleCreate(ref, build);
   }
 }

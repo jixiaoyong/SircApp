@@ -5,16 +5,12 @@ import 'package:sirc/widgets/network_web_image.dart';
 
 void main() {
   group('NetworkWebImage Tests', () {
-    testWidgets('renders fallback avatar when URL is empty or invalid',
-        (WidgetTester tester) async {
+    testWidgets('renders fallback avatar when URL is empty or invalid', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: NetworkWebImage(
-              '',
-              size: Size(50, 50),
-            ),
-          ),
+          home: Scaffold(body: NetworkWebImage('', size: Size(50, 50))),
         ),
       );
 
@@ -25,35 +21,29 @@ void main() {
       expect(find.text('Failed to load image'), findsNothing);
     });
 
-    testWidgets('renders non-avatar fallback icon when isAvatar is false',
-        (WidgetTester tester) async {
+    testWidgets('renders non-avatar fallback icon when isAvatar is false', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: NetworkWebImage(
-              null,
-              size: Size(40, 40),
-              isAvatar: false,
-            ),
+            body: NetworkWebImage(null, size: Size(40, 40), isAvatar: false),
           ),
         ),
       );
 
-      expect(
-          find.byIcon(Icons.image_not_supported_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.image_not_supported_outlined), findsOneWidget);
       expect(find.byIcon(Icons.person_rounded), findsNothing);
     });
 
-    testWidgets('renders custom fallbackWidget when provided',
-        (WidgetTester tester) async {
+    testWidgets('renders custom fallbackWidget when provided', (
+      WidgetTester tester,
+    ) async {
       const customKey = Key('custom_fallback');
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: NetworkWebImage(
-              '',
-              fallbackWidget: SizedBox(key: customKey),
-            ),
+            body: NetworkWebImage('', fallbackWidget: SizedBox(key: customKey)),
           ),
         ),
       );
@@ -61,8 +51,9 @@ void main() {
       expect(find.byKey(customKey), findsOneWidget);
     });
 
-    testWidgets('renders custom fallbackIcon when provided',
-        (WidgetTester tester) async {
+    testWidgets('renders custom fallbackIcon when provided', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -78,8 +69,9 @@ void main() {
       expect(find.byIcon(Icons.account_circle), findsOneWidget);
     });
 
-    testWidgets('renders fallbackAsset with App Logo when configured',
-        (WidgetTester tester) async {
+    testWidgets('renders fallbackAsset with App Logo when configured', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -95,8 +87,7 @@ void main() {
       expect(find.byType(Image), findsOneWidget);
     });
 
-    testWidgets('applies borderRadius correctly',
-        (WidgetTester tester) async {
+    testWidgets('applies borderRadius correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -112,19 +103,18 @@ void main() {
       final clipRRectFinder = find.byType(ClipRRect);
       expect(clipRRectFinder, findsOneWidget);
       final clipRRect = tester.widget<ClipRRect>(clipRRectFinder);
-      expect(clipRRect.borderRadius, const BorderRadius.all(Radius.circular(25)));
+      expect(
+        clipRRect.borderRadius,
+        const BorderRadius.all(Radius.circular(25)),
+      );
     });
 
-    testWidgets('renders small dimensions without overflow errors',
-        (WidgetTester tester) async {
+    testWidgets('renders small dimensions without overflow errors', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: NetworkWebImage(
-              '',
-              size: Size(16, 16),
-            ),
-          ),
+          home: Scaffold(body: NetworkWebImage('', size: Size(16, 16))),
         ),
       );
 

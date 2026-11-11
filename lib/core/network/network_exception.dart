@@ -24,7 +24,11 @@ class NetworkException implements Exception {
     this.details,
   });
 
-  factory NetworkException.fromStatusCode(int code, [String? message, dynamic details]) {
+  factory NetworkException.fromStatusCode(
+    int code, [
+    String? message,
+    dynamic details,
+  ]) {
     final type = switch (code) {
       400 => NetworkErrorType.badRequest,
       401 => NetworkErrorType.unauthorized,

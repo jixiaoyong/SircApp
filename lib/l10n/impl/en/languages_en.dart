@@ -24,4 +24,3 @@ class LanguagesEnUS implements LangKeys {
   @override
   CommonLang get common => const CommonEn();
 }
-

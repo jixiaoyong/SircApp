@@ -15,15 +15,15 @@ final walletControllerProvider = WalletControllerProvider._();
 final class WalletControllerProvider
     extends $NotifierProvider<WalletController, WalletState> {
   WalletControllerProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'walletControllerProvider',
-          isAutoDispose: false,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'walletControllerProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$walletControllerHash();
@@ -49,8 +49,14 @@ abstract class _$WalletController extends $Notifier<WalletState> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<WalletState, WalletState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<WalletState, WalletState>, WalletState, Object?, Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<WalletState, WalletState>,
+              WalletState,
+              Object?,
+              Object?
+            >;
     element.handleCreate(ref, build);
   }
 }
@@ -61,15 +67,15 @@ final addCardControllerProvider = AddCardControllerProvider._();
 final class AddCardControllerProvider
     extends $NotifierProvider<AddCardController, AddCardState> {
   AddCardControllerProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'addCardControllerProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'addCardControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$addCardControllerHash();
@@ -95,11 +101,14 @@ abstract class _$AddCardController extends $Notifier<AddCardState> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<AddCardState, AddCardState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<AddCardState, AddCardState>,
-        AddCardState,
-        Object?,
-        Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AddCardState, AddCardState>,
+              AddCardState,
+              Object?,
+              Object?
+            >;
     element.handleCreate(ref, build);
   }
 }

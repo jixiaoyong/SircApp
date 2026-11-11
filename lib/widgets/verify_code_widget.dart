@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sirc/utils/size_extension.dart';
 
 /*
 * @description: verify code widget
@@ -112,7 +111,7 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
           ),
         ),
         SizedBox(
-          height: 50.dp,
+          height: 50,
           width: double.infinity,
           child: ListView.separated(
             itemBuilder: (context, index) {
@@ -143,9 +142,9 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
                 child:
                     widget.itemBuilder?.call(context, index) ??
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 2.dp),
-                      height: 50.dp,
-                      width: 50.dp,
+                      margin: EdgeInsets.symmetric(horizontal: 2),
+                      height: 50,
+                      width: 50,
                       decoration: BoxDecoration(
                         color: Theme.of(context)
                             .colorScheme
@@ -155,7 +154,7 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
                               ? Theme.of(context).colorScheme.secondary
                               : Theme.of(context).colorScheme.outline,
                         ),
-                        borderRadius: BorderRadius.all(Radius.circular(14.dp)),
+                        borderRadius: BorderRadius.all(Radius.circular(14)),
                       ),
                       child: Center(
                         child: Text(
@@ -163,7 +162,7 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.onSurface,
-                            fontSize: 20.sp,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

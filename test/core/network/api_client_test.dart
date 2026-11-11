@@ -25,7 +25,10 @@ void main() {
       expect(success.isSuccess, isTrue);
       expect(success.data?['id'], 123);
 
-      final failure = ApiResponse<dynamic>.failure(statusCode: 400, message: 'Invalid param');
+      final failure = ApiResponse<dynamic>.failure(
+        statusCode: 400,
+        message: 'Invalid param',
+      );
       expect(failure.isSuccess, isFalse);
       expect(failure.message, 'Invalid param');
     });

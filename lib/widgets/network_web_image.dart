@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
@@ -101,10 +102,7 @@ class NetworkWebImage extends StatelessWidget {
     }
 
     if (borderRadius != null) {
-      content = ClipRRect(
-        borderRadius: borderRadius!,
-        child: content,
-      );
+      content = ClipRRect(borderRadius: borderRadius!, child: content);
     }
 
     return AnimatedSwitcher(
@@ -118,8 +116,16 @@ class NetworkWebImage extends StatelessWidget {
   Widget _buildLoading(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final w = _resolveDimension(_effectiveWidth, constraints.maxWidth, 48.0);
-        final h = _resolveDimension(_effectiveHeight, constraints.maxHeight, 48.0);
+        final w = _resolveDimension(
+          _effectiveWidth,
+          constraints.maxWidth,
+          48.0,
+        );
+        final h = _resolveDimension(
+          _effectiveHeight,
+          constraints.maxHeight,
+          48.0,
+        );
         final minDim = min(w, h);
         final indicatorSize = (minDim * 0.38).clamp(12.0, 26.0);
         final strokeWidth = indicatorSize < 18.0 ? 1.8 : 2.2;
@@ -127,9 +133,7 @@ class NetworkWebImage extends StatelessWidget {
         return Container(
           width: _effectiveWidth,
           height: _effectiveHeight,
-          decoration: BoxDecoration(
-            color: Colors.blue.withValues(alpha: 0.05),
-          ),
+          decoration: BoxDecoration(color: Colors.blue.withValues(alpha: 0.05)),
           alignment: Alignment.center,
           child: SizedBox(
             width: indicatorSize,
@@ -147,8 +151,16 @@ class NetworkWebImage extends StatelessWidget {
   Widget _buildFallback(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final w = _resolveDimension(_effectiveWidth, constraints.maxWidth, 48.0);
-        final h = _resolveDimension(_effectiveHeight, constraints.maxHeight, 48.0);
+        final w = _resolveDimension(
+          _effectiveWidth,
+          constraints.maxWidth,
+          48.0,
+        );
+        final h = _resolveDimension(
+          _effectiveHeight,
+          constraints.maxHeight,
+          48.0,
+        );
         final minDim = min(w, h);
 
         Widget innerChild;
@@ -187,21 +199,21 @@ class NetworkWebImage extends StatelessWidget {
 
   Widget _buildDefaultIcon(double minDim) {
     final iconSize = (minDim * 0.52).clamp(14.0, 80.0);
-    final iconData = fallbackIcon ??
+    final iconData =
+        fallbackIcon ??
         (isAvatar ? Icons.person_rounded : Icons.image_not_supported_outlined);
     final iconColor = isAvatar
         ? const Color(0xFF6366F1).withValues(alpha: 0.75) // Indigo accent
         : const Color(0xFF94A3B8); // Slate 400
 
-    return Icon(
-      iconData,
-      size: iconSize,
-      color: iconColor,
-    );
+    return Icon(iconData, size: iconSize, color: iconColor);
   }
 
   double _resolveDimension(
-      double? directValue, double constraintMax, double fallback) {
+    double? directValue,
+    double constraintMax,
+    double fallback,
+  ) {
     if (directValue != null && directValue > 0) return directValue;
     if (constraintMax.isFinite && constraintMax > 0) return constraintMax;
     return fallback;

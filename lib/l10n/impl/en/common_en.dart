@@ -33,4 +33,3 @@ class CommonEn implements CommonLang {
   @override
   String get goToHome => 'Go to Home';
 }
-

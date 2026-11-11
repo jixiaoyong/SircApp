@@ -45,10 +45,14 @@ class SignInState {
     return SignInState(
       userName: userName ?? this.userName,
       userPwd: userPwd ?? this.userPwd,
-      userNameError: userNameError != null ? userNameError() : this.userNameError,
+      userNameError: userNameError != null
+          ? userNameError()
+          : this.userNameError,
       userPwdError: userPwdError != null ? userPwdError() : this.userPwdError,
       isLoading: isLoading ?? this.isLoading,
-      isLoginSuccess: isLoginSuccess != null ? isLoginSuccess() : this.isLoginSuccess,
+      isLoginSuccess: isLoginSuccess != null
+          ? isLoginSuccess()
+          : this.isLoginSuccess,
       isUserInputValid: isUserInputValid ?? this.isUserInputValid,
       socialList: socialList ?? this.socialList,
     );
@@ -76,7 +80,11 @@ class SignInController extends _$SignInController {
 
   void setUserName(String value) {
     final error = UsernamePwdUtils.checkUserName(value);
-    final isValid = error == null && state.userPwdError == null && value.isNotEmpty && state.userPwd.isNotEmpty;
+    final isValid =
+        error == null &&
+        state.userPwdError == null &&
+        value.isNotEmpty &&
+        state.userPwd.isNotEmpty;
     state = state.copyWith(
       userName: value,
       userNameError: () => error,
@@ -86,7 +94,11 @@ class SignInController extends _$SignInController {
 
   void setUserPwd(String value) {
     final error = UsernamePwdUtils.checkPassword(value);
-    final isValid = state.userNameError == null && error == null && state.userName.isNotEmpty && value.isNotEmpty;
+    final isValid =
+        state.userNameError == null &&
+        error == null &&
+        state.userName.isNotEmpty &&
+        value.isNotEmpty;
     state = state.copyWith(
       userPwd: value,
       userPwdError: () => error,
@@ -113,10 +125,7 @@ class SignInController extends _$SignInController {
       mockDelay: mockDelay,
     );
 
-    state = state.copyWith(
-      isLoading: false,
-      isLoginSuccess: () => success,
-    );
+    state = state.copyWith(isLoading: false, isLoginSuccess: () => success);
   }
 
   void resetLoginStatus() {
@@ -182,12 +191,20 @@ class SignUpState {
       userEmail: userEmail ?? this.userEmail,
       userPwd: userPwd ?? this.userPwd,
       userConfirmPwd: userConfirmPwd ?? this.userConfirmPwd,
-      userNameError: userNameError != null ? userNameError() : this.userNameError,
-      userEmailError: userEmailError != null ? userEmailError() : this.userEmailError,
+      userNameError: userNameError != null
+          ? userNameError()
+          : this.userNameError,
+      userEmailError: userEmailError != null
+          ? userEmailError()
+          : this.userEmailError,
       userPwdError: userPwdError != null ? userPwdError() : this.userPwdError,
-      userConfirmPwdError: userConfirmPwdError != null ? userConfirmPwdError() : this.userConfirmPwdError,
+      userConfirmPwdError: userConfirmPwdError != null
+          ? userConfirmPwdError()
+          : this.userConfirmPwdError,
       isLoading: isLoading ?? this.isLoading,
-      isRegisterSuccess: isRegisterSuccess != null ? isRegisterSuccess() : this.isRegisterSuccess,
+      isRegisterSuccess: isRegisterSuccess != null
+          ? isRegisterSuccess()
+          : this.isRegisterSuccess,
       isUserInputValid: isUserInputValid ?? this.isUserInputValid,
       socialList: socialList ?? this.socialList,
     );
@@ -240,8 +257,14 @@ class SignUpController extends _$SignUpController {
   }
 
   void setUserPwd(String value) {
-    final pwdError = UsernamePwdUtils.checkPassword(value, confirmPwd: state.userConfirmPwd);
-    final confirmError = UsernamePwdUtils.checkPassword(state.userConfirmPwd, confirmPwd: value);
+    final pwdError = UsernamePwdUtils.checkPassword(
+      value,
+      confirmPwd: state.userConfirmPwd,
+    );
+    final confirmError = UsernamePwdUtils.checkPassword(
+      state.userConfirmPwd,
+      confirmPwd: value,
+    );
     final isValid = _checkAllValid(
       nameError: state.userNameError,
       emailError: state.userEmailError,
@@ -261,8 +284,14 @@ class SignUpController extends _$SignUpController {
   }
 
   void setUserConfirmPwd(String value) {
-    final confirmError = UsernamePwdUtils.checkPassword(value, confirmPwd: state.userPwd);
-    final pwdError = UsernamePwdUtils.checkPassword(state.userPwd, confirmPwd: value);
+    final confirmError = UsernamePwdUtils.checkPassword(
+      value,
+      confirmPwd: state.userPwd,
+    );
+    final pwdError = UsernamePwdUtils.checkPassword(
+      state.userPwd,
+      confirmPwd: value,
+    );
     final isValid = _checkAllValid(
       nameError: state.userNameError,
       emailError: state.userEmailError,
@@ -291,7 +320,10 @@ class SignUpController extends _$SignUpController {
     required String pwd,
     required String confirmPwd,
   }) {
-    if (nameError != null || emailError != null || pwdError != null || confirmPwdError != null) {
+    if (nameError != null ||
+        emailError != null ||
+        pwdError != null ||
+        confirmPwdError != null) {
       return false;
     }
     if (name.isEmpty || email.isEmpty || pwd.isEmpty || confirmPwd.isEmpty) {
@@ -332,10 +364,7 @@ class SignUpController extends _$SignUpController {
       ref.read(signInControllerProvider.notifier).setUserPwd(state.userPwd);
     }
 
-    state = state.copyWith(
-      isLoading: false,
-      isRegisterSuccess: () => success,
-    );
+    state = state.copyWith(isLoading: false, isRegisterSuccess: () => success);
   }
 
   void resetRegisterStatus() {
@@ -385,11 +414,17 @@ class ForgetPwdState {
     return ForgetPwdState(
       userEmail: userEmail ?? this.userEmail,
       verifyCode: verifyCode ?? this.verifyCode,
-      userEmailError: userEmailError != null ? userEmailError() : this.userEmailError,
+      userEmailError: userEmailError != null
+          ? userEmailError()
+          : this.userEmailError,
       isVerifyingCode: isVerifyingCode ?? this.isVerifyingCode,
-      lastSendVerifyCodeTime: lastSendVerifyCodeTime ?? this.lastSendVerifyCodeTime,
-      isWaitingForVerifyCode: isWaitingForVerifyCode ?? this.isWaitingForVerifyCode,
-      isVerifySuccess: isVerifySuccess != null ? isVerifySuccess() : this.isVerifySuccess,
+      lastSendVerifyCodeTime:
+          lastSendVerifyCodeTime ?? this.lastSendVerifyCodeTime,
+      isWaitingForVerifyCode:
+          isWaitingForVerifyCode ?? this.isWaitingForVerifyCode,
+      isVerifySuccess: isVerifySuccess != null
+          ? isVerifySuccess()
+          : this.isVerifySuccess,
     );
   }
 }
@@ -401,10 +436,7 @@ class ForgetPwdController extends _$ForgetPwdController {
 
   void setUserEmail(String value) {
     final error = UsernamePwdUtils.checkUserEmail(value);
-    state = state.copyWith(
-      userEmail: value,
-      userEmailError: () => error,
-    );
+    state = state.copyWith(userEmail: value, userEmailError: () => error);
   }
 
   void setVerifyCode(String value) {
@@ -490,7 +522,9 @@ class SetPwdState {
       userPwd: userPwd ?? this.userPwd,
       userConfirmPwd: userConfirmPwd ?? this.userConfirmPwd,
       userPwdError: userPwdError != null ? userPwdError() : this.userPwdError,
-      userConfirmPwdError: userConfirmPwdError != null ? userConfirmPwdError() : this.userConfirmPwdError,
+      userConfirmPwdError: userConfirmPwdError != null
+          ? userConfirmPwdError()
+          : this.userConfirmPwdError,
       isUserInputValid: isUserInputValid ?? this.isUserInputValid,
       isWaitSetPwdResult: isWaitSetPwdResult ?? this.isWaitSetPwdResult,
       isSuccess: isSuccess != null ? isSuccess() : this.isSuccess,
@@ -508,9 +542,20 @@ class SetPwdController extends _$SetPwdController {
   }
 
   void setUserPwd(String value) {
-    final pwdError = UsernamePwdUtils.checkPassword(value, confirmPwd: state.userConfirmPwd);
-    final confirmError = UsernamePwdUtils.checkPassword(state.userConfirmPwd, confirmPwd: value);
-    final isValid = pwdError == null && confirmError == null && value.isNotEmpty && state.userConfirmPwd.isNotEmpty && value == state.userConfirmPwd;
+    final pwdError = UsernamePwdUtils.checkPassword(
+      value,
+      confirmPwd: state.userConfirmPwd,
+    );
+    final confirmError = UsernamePwdUtils.checkPassword(
+      state.userConfirmPwd,
+      confirmPwd: value,
+    );
+    final isValid =
+        pwdError == null &&
+        confirmError == null &&
+        value.isNotEmpty &&
+        state.userConfirmPwd.isNotEmpty &&
+        value == state.userConfirmPwd;
     state = state.copyWith(
       userPwd: value,
       userPwdError: () => pwdError,
@@ -520,9 +565,20 @@ class SetPwdController extends _$SetPwdController {
   }
 
   void setUserConfirmPwd(String value) {
-    final confirmError = UsernamePwdUtils.checkPassword(value, confirmPwd: state.userPwd);
-    final pwdError = UsernamePwdUtils.checkPassword(state.userPwd, confirmPwd: value);
-    final isValid = pwdError == null && confirmError == null && state.userPwd.isNotEmpty && value.isNotEmpty && state.userPwd == value;
+    final confirmError = UsernamePwdUtils.checkPassword(
+      value,
+      confirmPwd: state.userPwd,
+    );
+    final pwdError = UsernamePwdUtils.checkPassword(
+      state.userPwd,
+      confirmPwd: value,
+    );
+    final isValid =
+        pwdError == null &&
+        confirmError == null &&
+        state.userPwd.isNotEmpty &&
+        value.isNotEmpty &&
+        state.userPwd == value;
     state = state.copyWith(
       userConfirmPwd: value,
       userConfirmPwdError: () => confirmError,
@@ -551,10 +607,7 @@ class SetPwdController extends _$SetPwdController {
       mockDelay: mockDelay,
     );
 
-    state = state.copyWith(
-      isWaitSetPwdResult: false,
-      isSuccess: () => success,
-    );
+    state = state.copyWith(isWaitSetPwdResult: false, isSuccess: () => success);
   }
 
   void resetSuccessStatus() {
@@ -608,7 +661,8 @@ class PasswordState {
       confirmPassword: confirmPassword ?? this.confirmPassword,
       isOldPasswordVisible: isOldPasswordVisible ?? this.isOldPasswordVisible,
       isNewPasswordVisible: isNewPasswordVisible ?? this.isNewPasswordVisible,
-      isConfirmPasswordVisible: isConfirmPasswordVisible ?? this.isConfirmPasswordVisible,
+      isConfirmPasswordVisible:
+          isConfirmPasswordVisible ?? this.isConfirmPasswordVisible,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       isLoading: isLoading ?? this.isLoading,
       isSuccess: isSuccess != null ? isSuccess() : this.isSuccess,
@@ -654,7 +708,11 @@ class PasswordController extends _$PasswordController {
     state = state.copyWith(isConfirmPasswordVisible: visible);
   }
 
-  String? _validatePasswords({String? oldPwd, String? newPwd, String? confirmPwd}) {
+  String? _validatePasswords({
+    String? oldPwd,
+    String? newPwd,
+    String? confirmPwd,
+  }) {
     final oldP = oldPwd ?? state.oldPassword;
     final newP = newPwd ?? state.newPassword;
     final confirmP = confirmPwd ?? state.confirmPassword;
@@ -695,10 +753,7 @@ class PasswordController extends _$PasswordController {
       mockDelay: mockDelay,
     );
 
-    state = state.copyWith(
-      isLoading: false,
-      isSuccess: () => success,
-    );
+    state = state.copyWith(isLoading: false, isSuccess: () => success);
   }
 
   void resetSuccessStatus() {

@@ -10,7 +10,6 @@ import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/number_extension.dart';
-import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/settings_item_tile.dart';
 import 'package:sirc/core/storage/storage_service.dart';
@@ -44,7 +43,7 @@ class PersonInformationPage extends ConsumerWidget {
     return Scaffold(
       appBar: OneTitleWithBackButtonAppBar(title: title, onBack: onBack),
       body: Padding(
-        padding: EdgeInsets.all(24.dp),
+        padding: EdgeInsets.all(24),
         child: SelectableText(
           value,
           key: const ValueKey('person-information-value'),
@@ -135,7 +134,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                   ],
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 20.dp),
+                  padding: EdgeInsets.only(top: 20),
                   child: GestureDetector(
                     onTap: () {
                       context.push(AppRoutes.PERSON_EMAIL);
@@ -143,10 +142,10 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                     child: Tooltip(
                       message: zh ? '查看只读个人资料' : 'View read-only profile',
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(50.dp),
+                        borderRadius: BorderRadius.circular(50),
                         child: NetworkWebImage(
                           navState.userAvatar,
-                          size: Size(100.dp, 100.dp),
+                          size: Size(100, 100),
                           fit: BoxFit.fitHeight,
                         ),
                       ),
@@ -154,11 +153,11 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10.dp, 0, 8.dp),
+                  padding: EdgeInsets.fromLTRB(0, 10, 0, 8),
                   child: Text(
                     navState.userName,
                     style: TextStyle(
-                      fontSize: 20.sp,
+                      fontSize: 20,
                       color: AppColors.ink(context),
                     ),
                   ),
@@ -166,16 +165,16 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                 Text(
                   Languages.totalSpending,
                   style: TextStyle(
-                    fontSize: 16.sp,
+                    fontSize: 16,
                     color: AppColors.muted(context),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 10.dp, bottom: 30.dp),
+                  padding: EdgeInsets.only(top: 10, bottom: 30),
                   child: Text(
                     '\$${spending.toStringAsFixed(2)}',
                     style: TextStyle(
-                      fontSize: 18.sp,
+                      fontSize: 18,
                       color: AppColors.expense(context),
                       fontWeight: FontWeight.bold,
                     ),
@@ -183,7 +182,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                 ),
                 SizedBox(
                   height:
-                      240.dp +
+                      240 +
                       (MediaQuery.textScalerOf(context).scale(180) - 180).clamp(
                         0,
                         180,
@@ -207,16 +206,16 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                         },
                         child: Container(
                           height:
-                              240.dp +
+                              240 +
                               (MediaQuery.textScalerOf(context).scale(180) -
                                       180)
                                   .clamp(0, 180),
-                          width: 150.dp,
+                          width: 150,
                           margin: EdgeInsets.symmetric(
-                            vertical: 15.dp,
-                            horizontal: 10.dp,
+                            vertical: 15,
+                            horizontal: 10,
                           ),
-                          padding: EdgeInsets.all(10.dp),
+                          padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.surface,
                             borderRadius: BorderRadius.circular(14),
@@ -228,20 +227,20 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                               Hero(
                                 tag: heroTag,
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(50.dp),
+                                  borderRadius: BorderRadius.circular(50),
                                   child: NetworkWebImage(
                                     data.userIcon!,
-                                    size: Size.square(50.dp),
+                                    size: Size.square(50),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(top: 5.dp),
+                                padding: EdgeInsets.only(top: 5),
                                 child: Text(
                                   data.moneyAmount.toFormatedMoneyStr,
                                   style: TextStyle(
-                                    fontSize: 18.sp,
+                                    fontSize: 18,
                                     color: (data.moneyAmount ?? 0) < 0
                                         ? AppColors.expense(context)
                                         : AppColors.income(context),
@@ -255,16 +254,16 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  fontSize: 18.sp,
+                                  fontSize: 18,
                                   color: textColor,
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(top: 2.dp),
+                                padding: EdgeInsets.only(top: 2),
                                 child: Text(
                                   data.time!,
                                   style: TextStyle(
-                                    fontSize: 10.sp,
+                                    fontSize: 10,
                                     color: textColor.withValues(alpha: 0.8),
                                   ),
                                 ),
@@ -277,19 +276,16 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: 10.dp,
-                    vertical: 20.dp,
-                  ),
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(14.dp),
+                    borderRadius: BorderRadius.circular(14),
                     border: Border.all(color: AppColors.line(context)),
                   ),
                   child: Material(
                     color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(14.dp),
+                    borderRadius: BorderRadius.circular(14),
                     clipBehavior: Clip.antiAlias,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,8 +344,8 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                               Divider(
                                 height: 1,
                                 thickness: 1,
-                                indent: 20.dp,
-                                endIndent: 20.dp,
+                                indent: 20,
+                                endIndent: 20,
                                 color: AppColors.muted(context)
                                     .withValues(alpha: 0.2),
                               ),

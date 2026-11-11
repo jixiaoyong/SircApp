@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/network/api_client.dart';
 import 'package:sirc/core/storage/storage_service.dart';
@@ -45,10 +46,7 @@ class AuthRepository {
     if (!isUserLoggedIn()) return null;
     final username = getSavedUserName();
     if (username == null || username.isEmpty) return null;
-    return User(
-      username: username,
-      email: getSavedUserEmail(),
-    );
+    return User(username: username, email: getSavedUserEmail());
   }
 
   /// 登录逻辑：比较用户名与密码 MD5
@@ -57,13 +55,15 @@ class AuthRepository {
     String password, {
     Duration? mockDelay,
   }) async {
-    final delay = mockDelay ?? Duration(seconds: MockUtils.random.nextInt(3) + 1);
+    final delay =
+        mockDelay ?? Duration(seconds: MockUtils.random.nextInt(3) + 1);
     if (delay > Duration.zero) {
       await Future.delayed(delay);
     }
 
     final localUserName = _storageService.userName ?? "jixiaoyong";
-    final localUserPwdMd5 = _storageService.userPwd ?? Md5Utils.generateMd5("123456");
+    final localUserPwdMd5 =
+        _storageService.userPwd ?? Md5Utils.generateMd5("123456");
     final userPwdMd5 = Md5Utils.generateMd5(password);
 
     if (localUserName == username && userPwdMd5 == localUserPwdMd5) {
@@ -81,7 +81,8 @@ class AuthRepository {
     String password, {
     Duration? mockDelay,
   }) async {
-    final delay = mockDelay ?? Duration(seconds: MockUtils.random.nextInt(3) + 1);
+    final delay =
+        mockDelay ?? Duration(seconds: MockUtils.random.nextInt(3) + 1);
     if (delay > Duration.zero) {
       await Future.delayed(delay);
     }
@@ -99,7 +100,8 @@ class AuthRepository {
     String code, {
     Duration? mockDelay,
   }) async {
-    final delay = mockDelay ?? Duration(seconds: MockUtils.random.nextInt(3) + 1);
+    final delay =
+        mockDelay ?? Duration(seconds: MockUtils.random.nextInt(3) + 1);
     if (delay > Duration.zero) {
       await Future.delayed(delay);
     }
@@ -113,7 +115,8 @@ class AuthRepository {
     String newPassword, {
     Duration? mockDelay,
   }) async {
-    final delay = mockDelay ?? Duration(seconds: MockUtils.random.nextInt(2) + 1);
+    final delay =
+        mockDelay ?? Duration(seconds: MockUtils.random.nextInt(2) + 1);
     if (delay > Duration.zero) {
       await Future.delayed(delay);
     }
@@ -131,7 +134,8 @@ class AuthRepository {
     String newPassword, {
     Duration? mockDelay,
   }) async {
-    final delay = mockDelay ?? Duration(seconds: MockUtils.random.nextInt(2) + 1);
+    final delay =
+        mockDelay ?? Duration(seconds: MockUtils.random.nextInt(2) + 1);
     if (delay > Duration.zero) {
       await Future.delayed(delay);
     }

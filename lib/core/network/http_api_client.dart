@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:http/http.dart' as http;
+
 import 'api_client.dart';
 import 'api_response.dart';
 import 'network_exception.dart';
@@ -18,28 +20,25 @@ class HttpApiClient implements ApiClient {
     http.Client? client,
     this.timeout = const Duration(seconds: 15),
     Map<String, String>? defaultHeaders,
-  })  : _client = client ?? http.Client(),
-        defaultHeaders = defaultHeaders ??
-            {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-            };
+  }) : _client = client ?? http.Client(),
+       defaultHeaders =
+           defaultHeaders ??
+           {'Content-Type': 'application/json', 'Accept': 'application/json'};
 
   Uri _buildUri(String path, [Map<String, dynamic>? queryParameters]) {
     final fullUrl = path.startsWith('http') ? path : '$baseUrl$path';
     final uri = Uri.parse(fullUrl);
     if (queryParameters != null && queryParameters.isNotEmpty) {
-      final stringParams = queryParameters.map((k, v) => MapEntry(k, v.toString()));
+      final stringParams = queryParameters.map(
+        (k, v) => MapEntry(k, v.toString()),
+      );
       return uri.replace(queryParameters: stringParams);
     }
     return uri;
   }
 
   Map<String, String> _mergeHeaders(Map<String, String>? headers) {
-    return {
-      ...defaultHeaders,
-      if (headers != null) ...headers,
-    };
+    return {...defaultHeaders, if (headers != null) ...headers};
   }
 
   @override
@@ -101,10 +100,7 @@ class HttpApiClient implements ApiClient {
     T Function(dynamic json)? fromJson,
   }) async {
     return _sendRequest(
-      () => _client.delete(
-        _buildUri(path),
-        headers: _mergeHeaders(headers),
-      ),
+      () => _client.delete(_buildUri(path), headers: _mergeHeaders(headers)),
       fromJson: fromJson,
     );
   }
