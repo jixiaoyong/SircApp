@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../routes/app_routes.dart';
 
 /*
@@ -15,17 +16,29 @@ class NotFoundPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
-      children: [
-        const Icon(Icons.details, size: 100),
-        const Text('Not Found'),
-        OutlinedButton(
-          child: const Text('Go to Home'),
-          onPressed: () {
-            context.go(AppRoutes.INITIAL);
-          },
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.details,
+              size: 64,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(height: 20),
+            Text('Not Found', style: Theme.of(context).textTheme.headlineSmall),
+            const SizedBox(height: 20),
+            OutlinedButton(
+              child: const Text('Go to Home'),
+              onPressed: () {
+                context.go(AppRoutes.MAIN);
+              },
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

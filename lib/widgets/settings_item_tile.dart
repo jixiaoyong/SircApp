@@ -23,22 +23,40 @@ class SettingsItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      minTileHeight: 88.dp,
-      minVerticalPadding: 12.dp,
+      visualDensity: VisualDensity.standard,
+      minTileHeight: 64,
+      minVerticalPadding: 14,
       contentPadding: EdgeInsets.symmetric(horizontal: 16.dp),
       horizontalTitleGap: 16.dp,
-      minLeadingWidth: 40.dp,
+      minLeadingWidth: 36.dp,
       leading: Container(
-        width: 40.dp,
-        height: 40.dp,
+        width: 36.dp,
+        height: 36.dp,
         decoration: BoxDecoration(
-          color: iconBackgroundColor,
-          shape: BoxShape.circle,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: Center(child: Icon(icon, size: 24.dp, color: Colors.white)),
+        child: Center(
+          child: Icon(
+            icon,
+            size: 20.dp,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
       ),
-      title: Text(title),
-      subtitle: subtitle == null ? null : Text(subtitle!),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+      ),
+      subtitle: subtitle == null
+          ? null
+          : Text(
+              subtitle!,
+              style: TextStyle(
+                fontSize: 11,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
       titleAlignment: ListTileTitleAlignment.center,
       trailing: trailing ?? const Icon(Icons.keyboard_arrow_right),
       onTap: onTap,

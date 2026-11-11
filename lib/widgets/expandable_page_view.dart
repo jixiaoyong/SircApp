@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:sirc/utils/logger.dart';
 
 import 'size_reportable_container.dart';
 
@@ -154,8 +153,6 @@ class _ExpandablePageViewState extends State<ExpandablePageView> {
                             _currentPageHeight = size.height;
                           }
                           setState(() {});
-                          LogUtils.d(
-                              "index: $index, size: $size, _viewPageHeightList: $_viewPageHeightList");
                         }
                       },
                       child: widget.pageBuilder(context, index),

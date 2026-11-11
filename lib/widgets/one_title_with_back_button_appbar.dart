@@ -10,21 +10,23 @@ import 'package:flutter/material.dart';
 class OneTitleWithBackButtonAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   final String title;
+  final VoidCallback? onBack;
 
-  const OneTitleWithBackButtonAppBar({
-    super.key,
-    this.title = '',
-  });
+  const OneTitleWithBackButtonAppBar({super.key, this.title = '', this.onBack});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title, style: const TextStyle(color: Colors.black)),
-      backgroundColor: Colors.white,
-      leading: GestureDetector(
-        child: const Icon(Icons.arrow_back, color: Colors.black),
-        onTap: () {
-          Navigator.of(context).maybePop();
+      title: Text(title),
+      leading: IconButton(
+        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          if (onBack != null) {
+            onBack!();
+          } else {
+            Navigator.of(context).maybePop();
+          }
         },
       ),
       elevation: 0,

@@ -12,8 +12,9 @@ class ImgText {
 main() {
   final list = List.generate(28, (index) {
     var data = ImgText(
-        "https://www.bing.com/th/id/ABT4B60F8D67F10805ACFA316E3A1A576953BF17EBFF560304B89FB2B7190DFB925?qlt=90&pid=InlineBlock",
-        "title$index");
+      "https://www.bing.com/th/id/ABT4B60F8D67F10805ACFA316E3A1A576953BF17EBFF560304B89FB2B7190DFB925?qlt=90&pid=InlineBlock",
+      "title$index",
+    );
     return data;
   });
   runApp(
@@ -33,10 +34,7 @@ main() {
                     width: 40,
                     fit: BoxFit.fitHeight,
                   ),
-                  Text(
-                    data.title,
-                    overflow: TextOverflow.clip,
-                  )
+                  Text(data.title, overflow: TextOverflow.clip),
                 ],
               ),
             );
@@ -72,16 +70,17 @@ class JingangWidget<T> extends StatefulWidget {
   final ExpandablePageItemBuilder itemBuilder;
 
   // item builder
-  const JingangWidget(
-      {super.key,
-      required this.data,
-      required this.itemBuilder,
-      this.indicatorBuilder,
-      this.indicatorOffset = const Offset(0, 0),
-      this.childAspectRatio = 0.55,
-      this.mainAxisExtent,
-      this.childCountPerRow = 6,
-      this.childCountPerPage = 12});
+  const JingangWidget({
+    super.key,
+    required this.data,
+    required this.itemBuilder,
+    this.indicatorBuilder,
+    this.indicatorOffset = const Offset(0, 0),
+    this.childAspectRatio = 0.55,
+    this.mainAxisExtent,
+    this.childCountPerRow = 6,
+    this.childCountPerPage = 12,
+  });
 
   @override
   State<JingangWidget> createState() => _JingangWidgetState();
@@ -90,42 +89,61 @@ class JingangWidget<T> extends StatefulWidget {
 class _JingangWidgetState extends State<JingangWidget> {
   @override
   Widget build(BuildContext context) {
-    var childCount = widget.data.length;
-
-    return ExpandablePageView(
-      pageBuilder: (context, index) {
-        final int childIndexStart = index * widget.childCountPerPage;
-        final int childIndexExpectEnd =
-            childIndexStart + widget.childCountPerPage - 1;
-        final int childIndexEnd = childIndexExpectEnd > childCount - 1
-            ? childCount - 1
-            : childIndexExpectEnd;
-        return GridView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: widget.childCountPerRow,
-              mainAxisExtent: widget.mainAxisExtent,
-              childAspectRatio: widget.childAspectRatio),
-          itemBuilder: (context, subIndex) {
-            // the index of the child in the total children
-            final int childIndex = childIndexStart + subIndex;
-            var data = widget.data[childIndex];
-            return widget.itemBuilder(context, subIndex, index, data);
-          },
-          itemCount: childIndexEnd - childIndexStart + 1,
-          shrinkWrap: true,
+    final childCount = widget.data.length;
+    if (childCount == 0) return const SizedBox.shrink();
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final scale = MediaQuery.textScalerOf(context).scale(11) / 11;
+        // 约 52px 单元可在常见手机内容区提供六列；大字扩大点击/文字空间。
+        final minWidth = 52.0 * scale.clamp(1.0, 2.5);
+        final columns = (constraints.maxWidth / minWidth).floor().clamp(
+          1,
+          childCount,
         );
-      },
-      pageCount: (widget.data.length / widget.childCountPerPage).ceil(),
-      childAspectRatio: widget.childAspectRatio,
-      indicatorOffset: widget.indicatorOffset,
-      indicatorBuilder: widget.indicatorBuilder ??
-          (context, onPageSelected, scrollPercentage) {
-            return ScrollableIndicator(
-              onPageSelected: onPageSelected,
-              scrollPercentage: scrollPercentage,
+        final rows = (widget.childCountPerPage / widget.childCountPerRow)
+            .ceil();
+        final perPage = columns * rows;
+        final extent = widget.mainAxisExtent == null
+            ? null
+            : widget.mainAxisExtent! + (scale - 1).clamp(0, 3) * 32;
+        return ExpandablePageView(
+          key: ValueKey('jingang-$columns-$perPage'),
+          pageBuilder: (context, index) {
+            final int childIndexStart = index * perPage;
+            final int childIndexExpectEnd = childIndexStart + perPage - 1;
+            final int childIndexEnd = childIndexExpectEnd > childCount - 1
+                ? childCount - 1
+                : childIndexExpectEnd;
+            return GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: columns,
+                mainAxisExtent: extent,
+                childAspectRatio: widget.childAspectRatio,
+              ),
+              itemBuilder: (context, subIndex) {
+                // the index of the child in the total children
+                final int childIndex = childIndexStart + subIndex;
+                var data = widget.data[childIndex];
+                return widget.itemBuilder(context, subIndex, index, data);
+              },
+              itemCount: childIndexEnd - childIndexStart + 1,
+              shrinkWrap: true,
             );
           },
+          pageCount: (childCount / perPage).ceil(),
+          childAspectRatio: widget.childAspectRatio,
+          indicatorOffset: widget.indicatorOffset,
+          indicatorBuilder:
+              widget.indicatorBuilder ??
+              (context, onPageSelected, scrollPercentage) {
+                return ScrollableIndicator(
+                  onPageSelected: onPageSelected,
+                  scrollPercentage: scrollPercentage,
+                );
+              },
+        );
+      },
     );
   }
 }
@@ -135,4 +153,8 @@ class _JingangWidgetState extends State<JingangWidget> {
 /// [pageIndex] is the index of the page
 /// [data] is the data of the item
 typedef ExpandablePageItemBuilder<T> = Widget Function(
-    BuildContext context, int index, int pageIndex, T data);
+  BuildContext context,
+  int index,
+  int pageIndex,
+  T data,
+);

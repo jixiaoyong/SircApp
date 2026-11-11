@@ -23,6 +23,15 @@ class SettingsEn implements SettingsLang {
   String get language => 'Language';
 
   @override
+  String get appearance => 'Appearance';
+  @override
+  String get themeLight => 'Light';
+  @override
+  String get themeDark => 'Dark';
+  @override
+  String get themeSystem => 'Follow system';
+
+  @override
   String get translations => 'Translations';
 
   @override
@@ -33,6 +42,9 @@ class SettingsEn implements SettingsLang {
 
   @override
   String get localAddress => 'Local Address';
+
+  @override
+  String get notSet => 'Not set';
 
   @override
   String get person => 'Person';

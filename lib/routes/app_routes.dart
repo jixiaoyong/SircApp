@@ -12,13 +12,34 @@ abstract class AppRoutes {
   static const FORGET_PWD = "/forget_pwd";
   static const SET_PWD = "/set_pwd";
   static const MAIN = "/main";
-  static const LANGUAGES = "/languages";
-  static const NOTIFICATIONS = "/notifications";
-  static const PASSWORD = "/password";
+  static const WALLET = "/wallet";
+  static const HISTORY = "/history";
+  static const PERSON = "/person";
+  static const MENU = "/menu";
+
+  // nested GoRoute 使用相对片段，导航与 URL 比较使用完整路径。
+  static const APPEARANCE_SEGMENT = "appearance";
+  static const LANGUAGES_SEGMENT = "languages";
+  static const NOTIFICATIONS_SEGMENT = "notifications";
+  static const PASSWORD_SEGMENT = "password";
+  static const ADD_CARD_SEGMENT = "add-card";
+  static const TRANSACTION_SEGMENT = "transaction";
+
+  static const PERSON_EMAIL = "$PERSON/email";
+  static const PERSON_PHONE = "$PERSON/phone";
+  static const PERSON_ADDRESS = "$PERSON/address";
+  static const PERSON_CARD = "$PERSON/card";
+
+  static const MENU_APPEARANCE = "$MENU/$APPEARANCE_SEGMENT";
+  static const MENU_LANGUAGES = "$MENU/$LANGUAGES_SEGMENT";
+  static const MENU_NOTIFICATIONS = "$MENU/$NOTIFICATIONS_SEGMENT";
+  static const MENU_PASSWORD = "$MENU/$PASSWORD_SEGMENT";
   static const FINGERPRINT = "/fingerprint";
-  static const ADD_CARD = "/add_card";
+  static const ADD_CARD = "$MENU/$ADD_CARD_SEGMENT";
   static const LOGOUT = "/logout";
   static const NOT_FOUND = "/not_found";
   static const ABOUT = "/about";
   static const HISTORY_DETAILS = "/history_details";
+  static const WALLET_TRANSACTION = "$WALLET/$TRANSACTION_SEGMENT";
+  static const WEBVIEW = "/webview";
 }

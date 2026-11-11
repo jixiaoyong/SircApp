@@ -11,6 +11,7 @@ import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/data/common_data.dart';
 import 'package:sirc/main.dart';
 import 'package:sirc/routes/app_router.dart';
+import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/size_extension.dart';
 
 void main() {
@@ -50,7 +51,7 @@ void main() {
       final expectedWidth = width.clamp(0.0, 520.0);
       final fields = find.byType(TextField);
       expect(fields, findsNWidgets(2));
-      expect(tester.getSize(fields.first).width, expectedWidth - 32);
+      expect(tester.getSize(fields.first).width, expectedWidth - 40);
       expect(tester.getRect(fields.first).center.dx, closeTo(width / 2, 0.01));
       expect(tester.widget<ConstrainedContent>(form).maxWidth, expectedWidth);
       expect(24.dp, 24);
@@ -78,7 +79,7 @@ void main() {
       await tester.pumpAndSettle();
       router = ProviderScope.containerOf(tester.element(find.byType(MyApp)))
           .read(appRouterProvider);
-      router.go('/sign_in');
+      router.go(AppRoutes.SIGN_IN);
       await tester.pumpAndSettle();
 
       final scaffold = find.byType(Scaffold);
@@ -89,7 +90,7 @@ void main() {
       expect(CommonData.realScreenWidth, width);
       final fields = find.byType(TextField);
       expect(fields, findsNWidgets(2));
-      final expectedFieldWidth = width.clamp(0.0, 520.0) - 32;
+      final expectedFieldWidth = width.clamp(0.0, 520.0) - 40;
       for (final field in fields.evaluate()) {
         expect(
           tester.getSize(find.byWidget(field.widget)).width,

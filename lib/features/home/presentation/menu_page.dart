@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sirc/core/storage/storage_service.dart';
+import 'package:sirc/features/settings/controllers/settings_controller.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/auth/data/auth_repository.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/settings_item_tile.dart';
-import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/title_text.dart';
 
 /// 指纹登录开关状态 Notifier (全面适配 Riverpod 3.x)
@@ -23,54 +23,70 @@ class FingerprintEnabledNotifier extends Notifier<bool> {
 /// 指纹登录开关状态 Provider
 final fingerprintEnabledProvider =
     NotifierProvider<FingerprintEnabledNotifier, bool>(
-  FingerprintEnabledNotifier.new,
-);
+      FingerprintEnabledNotifier.new,
+    );
 
-/// 菜单列表页面，视觉与交互 100% 保持一致
+/// 柔灰菜单列表；保留详情导航、指纹单次切换与登出确认语义。
 class MenuPage extends ConsumerWidget {
-  const MenuPage({super.key});
+  final bool listOnly;
 
-  static const List<Color> _menuColors = [
-    Color(0xFF7E57C2), // 深紫
-    Color(0xFFFFA726), // 橙色
-    Color(0xFF42A5F5), // 蓝色
-    Color(0xFF26A69A), // 青绿
-    Color(0xFFEF5350), // 红色
-  ];
+  const MenuPage({super.key, this.listOnly = false});
+
+  void _openDetail(BuildContext context, String location, bool isWide) {
+    if (isWide) {
+      final router = GoRouter.of(context);
+      final current = router.routeInformationProvider.value.uri.path;
+      if (current == location) return;
+      if (current.startsWith('${AppRoutes.MENU}/')) {
+        Router.neglect(context, () => router.replace<void>(location));
+        return;
+      }
+    }
+    context.push(location);
+  }
+
+  String _themeLabel(ThemeMode mode) => switch (mode) {
+    ThemeMode.light => Languages.settings.themeLight,
+    ThemeMode.dark => Languages.settings.themeDark,
+    ThemeMode.system => Languages.settings.themeSystem,
+  };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 监听全局语言变更，实时刷新菜单项文本
     ref.watch(localeProvider);
     final isFingerprintOpen = ref.watch(fingerprintEnabledProvider);
+    final isWide = MediaQuery.sizeOf(context).width >= 840;
+    final colors = Theme.of(context).colorScheme;
 
     final menuItems = [
-      (Icons.language_outlined, Languages.language, AppRoutes.LANGUAGES),
-      (Icons.lock_outlined, Languages.changePassword, AppRoutes.PASSWORD),
+      (Icons.language_outlined, Languages.language, AppRoutes.MENU_LANGUAGES),
+      (Icons.lock_outlined, Languages.changePassword, AppRoutes.MENU_PASSWORD),
       (
         Icons.fingerprint_outlined,
         Languages.fingerprintLogin,
-        AppRoutes.FINGERPRINT
+        AppRoutes.FINGERPRINT,
       ),
-      (Icons.credit_card_outlined, Languages.addCard, AppRoutes.ADD_CARD),
       (Icons.logout, Languages.logout, AppRoutes.LOGOUT),
     ];
 
-    return SingleChildScrollView(
+    final list = SingleChildScrollView(
       child: SafeArea(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10.dp),
+          padding: const EdgeInsets.all(25),
           child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TitleText(
-                    text: Languages.settings.title,
-                  ),
+                  TitleText(text: Languages.settings.title),
                   GestureDetector(
                     onTap: () {
-                      context.push(AppRoutes.NOTIFICATIONS);
+                      _openDetail(
+                        context,
+                        AppRoutes.MENU_NOTIFICATIONS,
+                        isWide,
+                      );
                     },
                     child: SizedBox(
                       width: 24,
@@ -88,8 +104,8 @@ class MenuPage extends ConsumerWidget {
                             child: Container(
                               width: 8,
                               height: 8,
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
+                              decoration: BoxDecoration(
+                                color: colors.error,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -100,32 +116,50 @@ class MenuPage extends ConsumerWidget {
                   ),
                 ],
               ),
-              ...menuItems.asMap().entries.map((entry) {
-                final index = entry.key;
-                final item = entry.value;
+              Container(
+                margin: EdgeInsets.zero,
+                child: Material(
+                  color: colors.surface,
+                  shape: Border(
+                    bottom: BorderSide(color: colors.outlineVariant),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: SettingsItemTile(
+                    key: const ValueKey('appearance-setting'),
+                    icon: Icons.brightness_6_outlined,
+                    title: Languages.settings.appearance,
+                    subtitle: _themeLabel(ref.watch(themeModeProvider)),
+                    onTap: () =>
+                        _openDetail(context, AppRoutes.MENU_APPEARANCE, isWide),
+                  ),
+                ),
+              ),
+              ...menuItems.map((item) {
                 final bool isFingerprint = item.$3 == AppRoutes.FINGERPRINT;
-                final Color iconBgColor =
-                    _menuColors[index % _menuColors.length];
 
                 return Container(
-                  margin: EdgeInsets.symmetric(vertical: 10.dp),
+                  margin: EdgeInsets.zero,
                   child: Material(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.dp),
-                    elevation: 5,
-                    shadowColor: Colors.grey.withValues(alpha: 0.5),
+                    color: colors.surface,
+                    shape: Border(
+                      bottom: BorderSide(color: colors.outlineVariant),
+                    ),
                     clipBehavior: Clip.antiAlias,
                     child: SettingsItemTile(
                       icon: item.$1,
                       title: item.$2,
-                      iconBackgroundColor: iconBgColor.withValues(alpha: 0.5),
+                      iconBackgroundColor: colors.surfaceContainerHighest,
                       trailing: isFingerprint
                           ? CupertinoSwitch(
                               value: isFingerprintOpen,
+                              activeTrackColor: colors.primary,
                               onChanged: (v) {
                                 ref
-                                    .read(fingerprintEnabledProvider.notifier)
-                                    .state = v;
+                                        .read(
+                                          fingerprintEnabledProvider.notifier,
+                                        )
+                                        .state =
+                                    v;
                               },
                             )
                           : const Icon(Icons.keyboard_arrow_right),
@@ -150,12 +184,12 @@ class MenuPage extends ConsumerWidget {
                                 OutlinedButton(
                                   child: Text(
                                     Languages.logoutAndCleanData,
-                                    style: const TextStyle(color: Colors.red),
+                                    style: TextStyle(color: colors.error),
                                   ),
                                   onPressed: () async {
-                                    final prefs =
-                                        await SharedPreferences.getInstance();
-                                    await prefs.clear();
+                                    await ref
+                                        .read(storageServiceProvider)
+                                        .clearUserData();
                                     if (dialogContext.mounted) {
                                       Navigator.of(dialogContext).pop();
                                     }
@@ -169,7 +203,7 @@ class MenuPage extends ConsumerWidget {
                             ),
                           );
                         } else {
-                          context.push(item.$3);
+                          _openDetail(context, item.$3, isWide);
                         }
                       },
                     ),
@@ -180,6 +214,76 @@ class MenuPage extends ConsumerWidget {
           ),
         ),
       ),
+    );
+    return list;
+  }
+}
+
+/// Menu stays outside the detail Navigator, including when its pane is closed.
+class MenuDetailLayout extends StatefulWidget {
+  const MenuDetailLayout({
+    super.key,
+    required this.hasDetail,
+    required this.child,
+    this.list = const MenuPage(listOnly: true),
+    this.paneKey = const ValueKey('menu-pane'),
+    this.keepListMounted = false,
+  });
+
+  final bool hasDetail;
+  final Widget child;
+  final Widget list;
+  final Key paneKey;
+  final bool keepListMounted;
+
+  @override
+  State<MenuDetailLayout> createState() => _MenuDetailLayoutState();
+}
+
+class _MenuDetailLayoutState extends State<MenuDetailLayout> {
+  // 跨断点移动详情 Navigator 时保留其页面与输入状态。
+  final _detailKey = GlobalKey();
+
+  @override
+  Widget build(BuildContext context) {
+    final hasDetail = widget.hasDetail;
+    // Navigator 的 ModalBarrier 只应屏蔽详情内部，不能吞掉来源窗格语义。
+    final detail = Semantics(
+      container: true,
+      explicitChildNodes: true,
+      child: KeyedSubtree(key: _detailKey, child: widget.child),
+    );
+    final isWide = MediaQuery.sizeOf(context).width >= 840;
+    if (!isWide && !widget.keepListMounted) return detail;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final showList = isWide || !hasDetail;
+        final paneWidth = !showList
+            ? 0.0
+            : isWide && hasDetail
+            ? (constraints.maxWidth - 1) / 2
+            : constraints.maxWidth;
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Offstage(
+              offstage: !showList,
+              child: SizedBox(
+                key: widget.paneKey,
+                width: showList ? paneWidth : constraints.maxWidth,
+                child: HeroMode(enabled: !hasDetail, child: widget.list),
+              ),
+            ),
+            SizedBox(
+              width: isWide && hasDetail ? 1 : 0,
+              child: const VerticalDivider(width: 1),
+            ),
+            Expanded(
+              child: Offstage(offstage: !hasDetail, child: detail),
+            ),
+          ],
+        );
+      },
     );
   }
 }

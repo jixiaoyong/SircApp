@@ -1,0 +1,137 @@
+name: Screenshot preview
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        type: choice
+        options: [preview, pr]
+        default: preview
+      source_ref:
+        description: Source branch or SHA (PR mode must equal target startup SHA)
+        default: dev
+      target_branch:
+        description: PR target branch (never written directly)
+        default: dev
+permissions:
+  contents: read
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    outputs:
+      source: ${{ steps.refs.outputs.source }}
+      target: ${{ steps.refs.outputs.target }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: refs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE: ${{ inputs.source_ref }}
+          TARGET: ${{ inputs.target_branch }}
+          MODE: ${{ inputs.mode }}
+        run: |
+          set -euo pipefail
+          git check-ref-format "refs/heads/$TARGET"
+          source=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SOURCE" --jq .sha)
+          target=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$TARGET" --jq .object.sha)
+          if [ "$MODE" = pr ]; then
+            test "$GITHUB_REF" = "refs/heads/${{ github.event.repository.default_branch }}"
+            test "$source" = "$target"
+            test "${{ github.event.repository.fork }}" = false
+          fi
+          printf 'source=%s\ntarget=%s\n' "$source" "$target" >> "$GITHUB_OUTPUT"
+  capture:
+    needs: resolve
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve.outputs.source }}
+          persist-credentials: false
+      # Run trusted harness from the workflow ref, never scripts from arbitrary source_ref.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: harness
+          persist-credentials: false
+      - run: mkdir -p tool/screenshots && cp -R harness/tool/screenshots/. tool/screenshots/
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.9'
+          channel: stable
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          python -m pip install -r tool/screenshots/requirements.txt
+          python -m playwright install --with-deps chromium
+          python tool/screenshots/run.py --output .screenshots/ci
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          # The output lives under a hidden directory; opt in explicitly.
+          include-hidden-files: true
+          path: |
+            .screenshots/ci/final
+            .screenshots/ci/raw
+            .screenshots/ci/*.json
+            .screenshots/ci/*.log
+            .screenshots/ci/failure.*
+            .screenshots/ci/trace.zip
+          if-no-files-found: warn
+  write-pr:
+    if: inputs.mode == 'pr' && github.event.repository.fork == false && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    needs: [resolve, capture]
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve.outputs.target }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: screenshots
+          path: downloaded
+      # No source code or artifact scripts executed in this privileged job.
+      - name: Validate and copy only five images
+        env:
+          EXPECTED: ${{ needs.resolve.outputs.source }}
+        run: |
+          python - <<'PY'
+          import json, os, pathlib, shutil
+          root = pathlib.Path('downloaded')
+          meta = json.loads((root/'metadata.json').read_text())
+          assert meta['status'] == 'passed' and meta['source_sha'] == os.environ['EXPECTED']
+          names = ['home-diagonal.webp', 'wallet-diagonal.webp', 'home-light-en-narrow.webp', 'wallet-dark-zh-narrow.webp', 'settings-appearance-wide.webp']
+          assert sorted(p.name for p in (root/'final').iterdir()) == sorted(names)
+          for name in names:
+              p = root/'final'/name
+              assert p.is_file() and not p.is_symlink() and p.stat().st_size < 10000000
+              data = p.read_bytes()
+              assert data[:4] == b'RIFF' and data[8:12] == b'WEBP'
+              shutil.copyfile(p, pathlib.Path('doc/imgs')/name)
+          PY
+      - name: Create guarded screenshot PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET: ${{ inputs.target_branch }}
+          EXPECTED: ${{ needs.resolve.outputs.target }}
+        run: |
+          set -euo pipefail
+          git add -- doc/imgs/home-diagonal.webp doc/imgs/wallet-diagonal.webp doc/imgs/home-light-en-narrow.webp doc/imgs/wallet-dark-zh-narrow.webp doc/imgs/settings-appearance-wide.webp
+          if git diff --cached --quiet; then exit 0; fi
+          current=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$TARGET" --jq .object.sha)
+          test "$current" = "$EXPECTED"
+          branch="screenshots/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git switch -c "$branch"
+          git -c user.name=github-actions -c user.email=github-actions@users.noreply.github.com commit -m 'docs: 更新五张自动化截图'
+          # Ephemeral authentication: no credential stored for the source build.
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $auth" push origin "HEAD:refs/heads/$branch"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$TARGET" --jq .object.sha)" = "$EXPECTED"
+          gh pr create --base "$TARGET" --head "$branch" --title 'docs: 更新自动化截图' --body "来源固定 SHA: $EXPECTED；仅更新五张截图，请人工核验后合并。"

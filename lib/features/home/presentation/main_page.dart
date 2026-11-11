@@ -1,80 +1,27 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/data/common_data.dart';
-import 'package:sirc/features/home/controllers/navigation_controller.dart';
-import 'package:sirc/features/home/presentation/home_page.dart';
-import 'package:sirc/features/home/presentation/menu_page.dart';
-import 'package:sirc/features/home/presentation/person_page.dart';
 import 'package:sirc/features/home/presentation/slide_menu_page.dart';
-import 'package:sirc/features/wallet/presentation/history_page.dart';
-import 'package:sirc/features/wallet/presentation/wallet_page.dart';
-import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/toast.dart';
 
-/// 应用主框架页面，集成侧滑抽屉、IndexedStack 多页面与底部导航栏
-class MainPage extends ConsumerStatefulWidget {
-  final int initialIndex;
+/// 单一主框架；分支页面及返回栈由 StatefulNavigationShell 持有。
+class MainPage extends ConsumerWidget {
+  const MainPage({
+    super.key,
+    required this.navigationShell,
+    required this.showBottomNavigation,
+  });
 
-  const MainPage({super.key, this.initialIndex = 0});
-
-  @override
-  ConsumerState<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends ConsumerState<MainPage> {
-  static const _tabRoutes = [
-    AppRoutes.MAIN,
-    '/wallet',
-    '/history',
-    '/person',
-    '/menu',
-  ];
+  final StatefulNavigationShell navigationShell;
+  final bool showBottomNavigation;
 
   @override
-  void initState() {
-    super.initState();
-    if (widget.initialIndex > 0) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref
-            .read(navigationControllerProvider.notifier)
-            .changeIndex(widget.initialIndex);
-      });
-    }
-  }
-
-  @override
-  void didUpdateWidget(covariant MainPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.initialIndex != oldWidget.initialIndex) {
-      ref
-          .read(navigationControllerProvider.notifier)
-          .changeIndex(widget.initialIndex);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     Toast.init(context);
-
-    // 监听当前选中的 Tab 索引
-    final currentIndex = ref.watch(
-      navigationControllerProvider.select((s) => s.currentIndex),
-    );
-
-    // 监听全局语言变化以动态刷新底部导航栏标签
     ref.watch(localeProvider);
-
-    final homePages = [
-      const HomePage(),
-      const WalletPage(),
-      const HistoryPage(),
-      const PersonPage(),
-      const MenuPage(),
-    ];
-
+    final currentIndex = navigationShell.currentIndex;
     final isWideLayout = MediaQuery.sizeOf(context).width >= 840;
     final navigationItems = [
       (Icons.home_outlined, Languages.home.title),
@@ -84,58 +31,62 @@ class _MainPageState extends ConsumerState<MainPage> {
       (Icons.menu_outlined, Languages.menu),
     ];
 
-    void selectTab(int index) {
-      ref.read(navigationControllerProvider.notifier).changeIndex(index);
-      if (kIsWeb && index < _tabRoutes.length) {
-        SystemNavigator.routeInformationUpdated(
-          uri: Uri.parse(_tabRoutes[index]),
-        );
-      }
-    }
-
-    final navigation = isWideLayout
-        ? NavigationRail(
-            selectedIndex: currentIndex,
-            onDestinationSelected: selectTab,
-            labelType: NavigationRailLabelType.all,
-            destinations: navigationItems
-                .map((item) => NavigationRailDestination(
-                      icon: Icon(item.$1),
-                      label: Text(item.$2),
-                    ))
-                .toList(),
-          )
-        : null;
+    void selectTab(int index) => navigationShell.goBranch(index);
 
     return SlideMenuPage(
       screenWidth: CommonData.realScreenWidth,
+      onBranchSelected: selectTab,
       child: Scaffold(
         body: Row(
           children: [
-            if (navigation != null) navigation,
+            if (isWideLayout)
+              NavigationRail(
+                selectedIndex: currentIndex,
+                onDestinationSelected: selectTab,
+                labelType: NavigationRailLabelType.all,
+                destinations: navigationItems
+                    .map(
+                      (item) => NavigationRailDestination(
+                        icon: Icon(item.$1),
+                        label: Text(item.$2),
+                      ),
+                    )
+                    .toList(),
+              ),
+            // 各分支 Navigator 自带独立 HeroController；indexedStack
+            // 负责 Offstage/TickerMode，无第二层五页 IndexedStack。
             Expanded(
-              child: IndexedStack(
-                index: currentIndex,
-                children: homePages,
+              child: Semantics(
+                container: true,
+                explicitChildNodes: true,
+                child: navigationShell,
               ),
             ),
           ],
         ),
-        bottomNavigationBar: isWideLayout
+        bottomNavigationBar: isWideLayout || !showBottomNavigation
             ? null
             : BottomNavigationBar(
                 items: navigationItems
-                    .map((item) => BottomNavigationBarItem(
-                          icon: Icon(item.$1),
-                          label: item.$2,
-                        ))
+                    .map(
+                      (item) => BottomNavigationBarItem(
+                        icon: Icon(item.$1),
+                        label: item.$2,
+                      ),
+                    )
                     .toList(),
                 onTap: selectTab,
                 currentIndex: currentIndex,
-                selectedItemColor: Theme.of(context).primaryColorDark,
-                selectedLabelStyle:
-                    const TextStyle(fontWeight: FontWeight.bold),
-                unselectedItemColor: Theme.of(context).primaryColorLight,
+                type: BottomNavigationBarType.fixed,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                selectedItemColor: Theme.of(context).colorScheme.onSurface,
+                selectedLabelStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+                unselectedItemColor: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant,
+                elevation: 0,
               ),
       ),
     );

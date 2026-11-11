@@ -52,7 +52,7 @@ class WalletEn implements WalletLang {
   String get cvv => 'CVV';
 
   @override
-  String get cardCredit => 'Card Credit';
+  String get cardCredit => 'Cards';
 
   @override
   String get pleaseEnterBankCardNumber => 'Please enter bank card number';
@@ -106,5 +106,15 @@ class WalletEn implements WalletLang {
   String get details => 'Details';
 
   @override
-  String cardCount(int count) => count == 1 ? '1 card in total' : '$count cards in total';
+  String get noTransactions => 'No transactions yet';
+
+  @override
+  String get outgoing => 'Money Out';
+
+  @override
+  String get incoming => 'Money In';
+
+  @override
+  String cardCount(int count) =>
+      count == 1 ? '1 card in total' : '$count cards in total';
 }

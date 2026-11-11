@@ -37,6 +37,64 @@ class HomeZh implements HomeLang {
   String get justNow => '刚刚';
 
   @override
+  String get noCardsInWallet => '暂无卡片，请前往钱包添加';
+
+  @override
+  String get recentTransactions => '最近交易';
+
+  @override
+  String get transactionSummary => '交易摘要';
+
+  @override
+  String get localExamples => '本地示例';
+
+  @override
+  String get chartWeek => '本周';
+  @override
+  String get chartMonth => '本月';
+  @override
+  String get chartVolume => '每日交易总额';
+  @override
+  String get chartVolumeHint => '收入与支出绝对值之和，非余额或净额';
+  @override
+  String get chartEmpty => '本周期暂无交易';
+  @override
+  String get chartZero => '每日交易总额均为零';
+  @override
+  String get chartFuture => '尚未到该日期';
+  @override
+  String get chartUndated => '日期不明确的记录未计入';
+
+  @override
+  String get bonds => '债券';
+  @override
+  String get billing => '账单';
+  @override
+  String get cash => '现金';
+  @override
+  String get moneyBag => '钱袋';
+  @override
+  String get bouncedCheck => '退票';
+  @override
+  String get tax => '税务';
+  @override
+  String get purchaseOrder => '采购订单';
+  @override
+  String get paymentHistory => '付款记录';
+  @override
+  String get cardInUse => '用卡';
+  @override
+  String get cardSecurity => '卡片安全';
+  @override
+  String get bankCardFrontSide => '卡片正面';
+  @override
+  String get bankCardMissing => '卡片遗失';
+  @override
+  String get creditControl => '信用管理';
+  @override
+  String get commodity => '商品';
+
+  @override
   String get mon => '周一';
 
   @override

@@ -1,9 +1,6 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/features/wallet/presentation/card_brand_label.dart';
 import 'package:sirc/gen_a/A.dart';
-import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/utils/size_extension.dart';
 
 /*
@@ -21,8 +18,8 @@ class BankCardWidget extends StatelessWidget {
   final String? cardType;
   final double? height;
   final double? width;
-
-  final isMasterCard = MockUtils.random.nextBool();
+  final bool isSelected;
+  final double? selectionHighlightProgress;
 
   BankCardWidget({
     super.key,
@@ -33,6 +30,8 @@ class BankCardWidget extends StatelessWidget {
     this.cardType,
     this.height,
     this.width,
+    this.isSelected = false,
+    this.selectionHighlightProgress,
   }) : cardNumber = _formatCardNumber(cardNumber);
 
   static String _formatCardNumber(String raw) {
@@ -44,101 +43,202 @@ class BankCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20.dp),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+    // 方案 C：对应 design/bank-card-options.html 的 .card.c。
+    // 虹彩只占 2dp 边缘，卡面使用不透明深底，不叠加玻璃或外围彩光。
+    return DecoratedBox(
+      key: const ValueKey('bank-card-iridescent-edge'),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.dp),
+        gradient: LinearGradient(
+          begin: const Alignment(-0.819152, -0.573576),
+          end: const Alignment(0.819152, 0.573576),
+          colors: isSelected
+              ? const [
+                  Color(0xFFB0C7CC),
+                  Color(0xFFC6B7C6),
+                  Color(0xFF8CA2AC),
+                  Color(0xFFCFCEB5),
+                ]
+              : const [
+                  Color(0xFF91AAB0),
+                  Color(0xFFA99AA9),
+                  Color(0xFF697F89),
+                  Color(0xFFB4B39B),
+                ],
+          stops: const [0, .32, .65, 1],
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x12000000),
+            offset: Offset(0, 8),
+            blurRadius: 24,
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(2.dp),
         child: Container(
-          height: height ?? 200.dp,
-          width: width,
-          padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
+          height: (height ?? 200.dp) - 4.dp,
+          width: width == null ? null : width! - 4.dp,
+          key: const ValueKey('bank-card-dark-surface'),
           decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              border:
-                  Border.all(color: Colors.white.withValues(alpha: 0.5), width: 2.dp),
-              borderRadius: BorderRadius.circular(20.dp)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                bankName,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                    fontSize: 26.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontStyle: FontStyle.italic),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 2.dp),
-                child: Image.asset(
-                  A.assets_imgs_bank_chip,
-                  height: 32.dp,
-                  fit: BoxFit.fitHeight,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.dp),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    cardNumber,
+            gradient: const LinearGradient(
+              begin: Alignment(-0.766044, -0.642788),
+              end: Alignment(0.766044, 0.642788),
+              colors: [Color(0xFF2E363B), Color(0xFF252B30), Color(0xFF2B3034)],
+              stops: [0, .6, 1],
+            ),
+            borderRadius: BorderRadius.circular(18.dp),
+          ),
+          child: CustomPaint(
+            painter: _CardSelectionHighlightPainter(
+              progress: selectionHighlightProgress,
+              radius: 18.dp,
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    bankName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        fontSize: 20.sp,
-                        color: Colors.white.withValues(alpha: 0.85),
-                        letterSpacing: 1.5),
+                      fontSize: 26.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.dp),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              ownerName,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: Colors.white.withValues(alpha: 0.7)),
-                            ),
-                          ),
-                          SizedBox(width: 12.dp),
-                          Text(
-                            expirationDate,
-                            style: TextStyle(
-                                fontSize: 14.sp,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 2.dp),
+                    child: Image.asset(
+                      A.assets_imgs_bank_chip,
+                      height: 32.dp,
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.dp),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        cardNumber,
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          color: Colors.white.withValues(alpha: 0.85),
+                          letterSpacing: 1.5,
+                        ),
                       ),
                     ),
-                    SizedBox(width: 8.dp),
-                    Text(
-                      cardType ?? (isMasterCard ? Languages.masterCard : Languages.visa),
-                      style: TextStyle(
-                          fontSize: 18.sp,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.dp),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  ownerName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: Colors.white.withValues(alpha: 0.7),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 12.dp),
+                              Text(
+                                expirationDate,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 8.dp),
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              cardBrandLabel(cardType),
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
+}
+
+// Paint beneath the content: the narrow reflection never washes out card text.
+class _CardSelectionHighlightPainter extends CustomPainter {
+  const _CardSelectionHighlightPainter({
+    required this.progress,
+    required this.radius,
+  });
+
+  final double? progress;
+  final double radius;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final value = progress;
+    if (value == null || value <= 0 || value >= 1) return;
+    canvas.save();
+    canvas.clipRRect(
+      RRect.fromRectAndRadius(Offset.zero & size, Radius.circular(radius)),
+    );
+    final x = -size.width * .25 + size.width * 1.5 * value;
+    final band = Rect.fromLTWH(
+      x,
+      -size.height,
+      size.width * .14,
+      size.height * 3,
+    );
+    final fade = 1 - (2 * value - 1).abs();
+    canvas.skew(-.18, 0);
+    canvas.drawRect(
+      band,
+      Paint()
+        ..shader = LinearGradient(
+          colors: [
+            Colors.white.withValues(alpha: 0),
+            Colors.white.withValues(alpha: .12 * fade),
+            Colors.white.withValues(alpha: 0),
+          ],
+        ).createShader(band),
+    );
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _CardSelectionHighlightPainter oldDelegate) =>
+      oldDelegate.progress != progress || oldDelegate.radius != radius;
 }

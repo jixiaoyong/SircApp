@@ -1,204 +1,198 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/localization/app_locale.dart';
-import '../../../utils/size_extension.dart';
-import '../../../widgets/network_web_image.dart';
+import '../../../widgets/constrained_content.dart';
 import '../../../widgets/one_title_with_back_button_appbar.dart';
 import '../controllers/settings_controller.dart';
 
-/*
-* @description: 通知中心页面（Riverpod 现代架构）
-*
-* @author: jixiaoyong
-* @email: jixiaoyong1995@gmail.com
-* @date: 22/04/19 (Refactored to Riverpod 2.x)
-*/
+/// Transaction-backed notification centre. No notification permission or backend
+/// is implied by the local category and period filters.
 class NotificationsPage extends ConsumerWidget {
-  const NotificationsPage({super.key});
+  const NotificationsPage({super.key, this.onBack});
+
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 监听多语言变化以实时刷新界面文案
-    ref.watch(localeProvider);
-
+    final locale = ref.watch(localeProvider);
+    final zh = locale.languageCode == 'zh';
     final state = ref.watch(notificationsControllerProvider);
     final notifier = ref.read(notificationsControllerProvider.notifier);
+    final colors = Theme.of(context).colorScheme;
     final groups = state.notificationGroups;
+
+    Widget segments(
+      List<String> labels,
+      int selected,
+      ValueChanged<int> onSelected,
+      String key,
+    ) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: colors.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Wrap(
+          spacing: 4,
+          runSpacing: 4,
+          children: labels.asMap().entries.map((entry) {
+            final active = selected == entry.key;
+            return TextButton(
+              key: ValueKey('$key-${entry.key}'),
+              onPressed: () => onSelected(entry.key),
+              style: TextButton.styleFrom(
+                foregroundColor: active
+                    ? colors.onSurface
+                    : colors.onSurfaceVariant,
+                backgroundColor: active ? colors.surface : Colors.transparent,
+                minimumSize: const Size(48, 44),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Semantics(selected: active, child: Text(entry.value)),
+            );
+          }).toList(),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: OneTitleWithBackButtonAppBar(
         title: Languages.notifications,
+        onBack: onBack,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 10.dp),
+        padding: const EdgeInsets.all(24),
+        child: ConstrainedContent(
+          maxWidth: 720,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final titleStyle = DefaultTextStyle.of(context).style
-                      .merge(TextStyle(fontSize: 16.sp, color: Colors.grey));
-                  final menuStyle = Theme.of(context).textTheme.titleMedium!;
-                  double textWidth(String text, TextStyle style) {
-                    final painter = TextPainter(
-                      text: TextSpan(text: text, style: style),
-                      textDirection: Directionality.of(context),
-                      textScaler: MediaQuery.textScalerOf(context),
-                    )..layout();
-                    final width = painter.width;
-                    painter.dispose();
-                    return width;
-                  }
-
-                  final categories = state.categories;
-                  // Include the container padding and the dropdown icon.
-                  final menuWidth =
-                      categories
-                          .map((text) => textWidth(text, menuStyle))
-                          .reduce((a, b) => a > b ? a : b) +
-                      20.dp +
-                      24;
-                  final fitsInline =
-                      textWidth(Languages.category, titleStyle) +
-                          16.dp +
-                          menuWidth <=
-                      constraints.maxWidth;
-                  final title = Text(Languages.category, style: titleStyle);
-                  final dropdown = SizedBox(
-                    width: fitsInline ? menuWidth : constraints.maxWidth,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10.dp),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15.dp),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withValues(alpha: 0.5),
-                            offset: const Offset(0, 1),
-                            blurRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: DropdownButton<int>(
-                        value: state.currentCategoryIndex,
-                        isExpanded: true,
-                        itemHeight: null,
-                        style: menuStyle,
-                        items: categories.asMap().entries.map((entry) {
-                          return DropdownMenuItem(
-                            value: entry.key,
-                            child: Text(entry.value),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          notifier.setCategory(value ?? 0);
-                        },
-                        underline: Container(),
-                      ),
-                    ),
-                  );
-                  if (fitsInline) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [title, dropdown],
-                    );
-                  }
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      title,
-                      SizedBox(height: 8.dp),
-                      dropdown,
-                    ],
-                  );
-                },
+              Text(
+                zh ? '按类别和时间查阅已有交易。当前无独立通知服务；类别由交易名称识别，未识别的归入其他。' : 'Browse existing transactions by category and time. There is no separate notification service; categories use action labels, with unknown actions in Other.',
+                style: TextStyle(color: colors.onSurfaceVariant, height: 1.6),
               ),
-              ...groups.asMap().entries.map((entry) {
-                final int index = entry.key;
-                final (icon, title, items) = entry.value;
-                final bool isSelected = state.currentExpandIndex == index;
-
-                return Container(
-                  margin: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 5.dp),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.dp),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withValues(alpha: 0.5),
-                        blurRadius: 5.0,
-                        spreadRadius: 1.0,
-                        offset: const Offset(0.0, 1.0),
-                      ),
-                    ],
+              const SizedBox(height: 20),
+              segments(
+                state.categories,
+                state.currentCategoryIndex,
+                notifier.setCategory,
+                'period',
+              ),
+              const SizedBox(height: 20),
+              Text(
+                Languages.category,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              const SizedBox(height: 8),
+              segments(
+                groups.map((group) => group.$2).toList(),
+                state.currentExpandIndex,
+                notifier.selectNotificationCategory,
+                'category',
+              ),
+              const SizedBox(height: 24),
+              if (state.undatedCount > 0)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Text(
+                    zh
+                        ? '${state.undatedCount} 条记录缺少可解析日期（如“刚刚”），未纳入时间筛选。'
+                        : '${state.undatedCount} records have no parseable date (for example “Just now”) and are excluded from time filters.',
+                    key: const ValueKey('undated-notice'),
+                    style: TextStyle(
+                      color: colors.onSurfaceVariant,
+                      height: 1.6,
+                    ),
                   ),
-                  child: Material(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.dp),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 5.dp),
-                      child: Column(
+                ),
+              if (state.isLoading)
+                const Center(child: CircularProgressIndicator())
+              else if (state.error != null)
+                Text(
+                  zh
+                      ? '交易加载失败，请稍后重试。'
+                      : 'Unable to load transactions. Please try again later.',
+                  style: TextStyle(color: colors.error),
+                )
+              else if (state.visibleItems.isEmpty)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 40,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    border: Border.all(color: colors.outlineVariant),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Text(
+                    zh
+                        ? '当前筛选下暂无交易通知'
+                        : 'No transaction notifications for these filters',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: colors.onSurfaceVariant),
+                  ),
+                )
+              else
+                Container(
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    border: Border.all(color: colors.outlineVariant),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Column(
+                    children: state.visibleItems.asMap().entries.map((entry) {
+                      final item = entry.value;
+                      final amount = item.moneyAmount;
+                      return Column(
                         children: [
-                          ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.accents.elementAt(
-                                Colors.accents.length % (3 * index + 3),
-                              ),
-                              child: Icon(
-                                icon,
-                                color: Colors.white,
-                              ),
-                            ),
-                            title: Text(title),
-                            trailing: Icon(
-                              isSelected
-                                  ? Icons.keyboard_arrow_up_outlined
-                                  : Icons.keyboard_arrow_down_outlined,
-                            ),
-                            onTap: () {
-                              notifier.setIndexExpand(index);
-                            },
-                          ),
-                          if (isSelected)
-                            ...items.asMap().entries.map((subEntry) {
-                              final int subIndex = subEntry.key;
-                              final subItem = subEntry.value;
-
-                              return Padding(
-                                padding: EdgeInsets.symmetric(vertical: 5.dp),
-                                child: ListTile(
-                                  leading: Container(
-                                    width: 60.dp,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10.dp),
-                                      color: Colors.blueAccent.withValues(
-                                        alpha: 1 / (subIndex + 1),
+                          if (entry.key > 0)
+                            Divider(height: 1, color: colors.outlineVariant),
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Wrap(
+                              spacing: 16,
+                              runSpacing: 8,
+                              alignment: WrapAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(item.moneyActionName ?? ''),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      item.time ?? '',
+                                      style: TextStyle(
+                                        color: colors.onSurfaceVariant,
                                       ),
                                     ),
-                                    child: Center(
-                                      child: NetworkWebImage(
-                                        subItem.userIcon ?? "",
-                                        size: Size(40.dp, 40.dp),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  title: Text(subItem.moneyActionName ?? ""),
-                                  trailing: Text(
-                                    "\$${subItem.moneyAmount?.toStringAsFixed(2) ?? ""}",
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  amount == null
+                                      ? '—'
+                                      : '${amount >= 0 ? '+' : '−'} \$${amount.abs().toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    color: amount != null && amount < 0
+                                        ? colors.error
+                                        : colors.onSurface,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                              );
-                            }),
+                              ],
+                            ),
+                          ),
                         ],
-                      ),
-                    ),
+                      );
+                    }).toList(),
                   ),
-                );
-              }),
+                ),
             ],
           ),
         ),

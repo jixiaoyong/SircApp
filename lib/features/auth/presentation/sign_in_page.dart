@@ -1,10 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart'
-    show LayoutScope, ResponsiveQuery;
+    show LayoutScope;
+import 'package:sirc/widgets/common_text_filed.dart';
 import 'package:sirc/widgets/constrained_content.dart';
+import 'package:sirc/widgets/password_text_field.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/auth/presentation/controllers/auth_controller.dart';
@@ -86,7 +87,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                 child: Center(
                   child: Icon(
                     Icons.error_outline_outlined,
-                    color: Colors.red,
+                    color: Theme.of(context).colorScheme.error,
                     size: 80.toDouble(),
                   ),
                 ),
@@ -103,118 +104,38 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     final isLoginInProgress = state.isLoading;
     final isButtonEnabled = !isLoginInProgress && state.isUserInputValid;
 
-    final iconSize = 24.toDouble();
+    final colors = Theme.of(context).colorScheme;
+    final iconSize = 20.toDouble();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          Languages.signIn,
-          style: const TextStyle(color: Colors.black),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      backgroundColor: Colors.white,
       body: LayoutScope(
-        child: Builder(
-          builder: (localContext) {
-            final query = ResponsiveQuery.of(localContext);
-            final logicScreenHeight = query.height.clamp(0.0, 700.0);
-            return Center(
-              child: ConstrainedContent(
-                maxWidth: query.width.clamp(0.0, 520.0),
-                alignment: Alignment.center,
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.toDouble(),
-                      vertical: 20.toDouble(),
-                    ),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Center(
+                  child: ConstrainedContent(
+                    maxWidth: constraints.maxWidth.clamp(0.0, 520.0),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        Container(height: 0.15 * logicScreenHeight),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.toDouble()),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black12,
-                                offset: Offset(0, 4),
-                                blurRadius: 8,
-                              ),
-                            ],
-                            color: Colors.white,
-                          ),
-                          child: TextField(
-                            controller: nameTextFieldController,
-                            decoration: InputDecoration(
-                              hintText: Languages.username,
-                              hintStyle: const TextStyle(color: Colors.grey),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  10.toDouble(),
-                                ),
-                                borderSide: const BorderSide(
-                                  color: Colors.black12,
-                                  width: 0,
-                                ),
-                              ),
-                              labelText: Languages.username,
-                              errorText: state.userNameError,
-                              suffixIcon: Icon(
-                                Icons.person_outline,
-                                color: Colors.redAccent,
-                                size: iconSize,
-                              ),
-                            ),
-                            onChanged: (value) {
-                              notifier.setUserName(value);
-                            },
-                          ),
+                        CommonTextFiled(
+                          controller: nameTextFieldController,
+                          label: Languages.username,
+                          enabled: !isLoginInProgress,
+                          errorText: state.userNameError,
+                          suffixIcon: const Icon(Icons.person_outline),
+                          onChanged: notifier.setUserName,
                         ),
-                        Container(
-                          margin: EdgeInsets.only(top: 50.toDouble()),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.toDouble()),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black12,
-                                offset: Offset(0, 4),
-                                blurRadius: 8,
-                              ),
-                            ],
-                            color: Colors.white,
-                          ),
-                          child: TextField(
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20),
+                          child: PasswordTextField(
                             controller: pwdTextFieldController,
-                            decoration: InputDecoration(
-                              hintText: Languages.password,
-                              hintStyle: const TextStyle(color: Colors.grey),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  10.toDouble(),
-                                ),
-                                borderSide: const BorderSide(
-                                  color: Colors.black12,
-                                  width: 0,
-                                ),
-                              ),
-                              labelText: Languages.password,
-                              errorText: state.userPwdError,
-                              suffixIcon: Icon(
-                                Icons.lock_outlined,
-                                color: Colors.grey,
-                                size: iconSize,
-                              ),
-                            ),
-                            obscureText: true,
-                            keyboardType: TextInputType.visiblePassword,
-                            onChanged: (value) {
-                              notifier.setUserPwd(value);
-                            },
+                            label: Languages.password,
+                            enabled: !isLoginInProgress,
+                            errorText: state.userPwdError,
+                            onChanged: notifier.setUserPwd,
                           ),
                         ),
                         Row(
@@ -268,23 +189,37 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                             child: FilledButton(
                               style: FilledButton.styleFrom(
                                 minimumSize: const Size(0, 50),
-                                textStyle: const TextStyle(fontSize: 16),
+                                textStyle: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                              onPressed:
-                                  isButtonEnabled ? notifier.login : null,
+                              onPressed: isButtonEnabled
+                                  ? notifier.login
+                                  : null,
                               child: Text(Languages.login),
                             ),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: Text(
-                            Languages.orSignInWith,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          child: Row(
+                            children: [
+                              const Expanded(child: Divider()),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 13,
+                                ),
+                                child: Text(
+                                  Languages.orSignInWith,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: colors.onSurfaceVariant,
+                                  ),
+                                ),
+                              ),
+                              const Expanded(child: Divider()),
+                            ],
                           ),
                         ),
                         SizedBox(
@@ -307,17 +242,17 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                                     ),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(
-                                        8.toDouble(),
+                                        14.toDouble(),
                                       ),
                                       border: Border.all(
-                                        color: item.$2,
-                                        width: 1,
+                                        color: colors.outline,
+                                        width: 1.25,
                                       ),
                                     ),
                                     child: Center(
                                       child: Icon(
                                         item.$1,
-                                        color: item.$2,
+                                        color: colors.onSurface,
                                         size: iconSize,
                                       ),
                                     ),
@@ -329,25 +264,25 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                             ),
                           ),
                         ),
-                        Container(height: logicScreenHeight * 0.08),
+                        const SizedBox(height: 24),
                         RichText(
                           text: TextSpan(
                             text: Languages.dontHaveAccount,
                             style: TextStyle(
-                              color: Colors.black,
+                              color: colors.onSurfaceVariant,
                               fontSize: 12.toDouble(),
                             ),
                             children: [
                               TextSpan(
                                 text: " ${Languages.signUp}",
                                 style: TextStyle(
-                                  color: Colors.purple,
+                                  color: colors.onSurface,
+                                  decoration: TextDecoration.underline,
                                   fontSize: 12.toDouble(),
                                   fontWeight: FontWeight.w500,
                                 ),
                                 recognizer: TapGestureRecognizer()
-                                  ..onTap =
-                                      () => context.push(AppRoutes.SIGN_UP),
+                                  ..onTap = () => context.go(AppRoutes.SIGN_UP),
                               ),
                             ],
                           ),
@@ -357,8 +292,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                   ),
                 ),
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );

@@ -1,23 +1,40 @@
 import 'package:flutter/material.dart';
 
-/// 全局调色板配置与语义化颜色定义
+/// UI 2.0 semantic palette. Bank-card materials intentionally remain independent.
 class AppColors {
   AppColors._();
 
-  static const Color primary = Colors.indigoAccent;
-  static const Color background = Colors.white;
-  static const Color scaffoldBackground = Colors.white;
-  static const Color cardBackground = Color(0xFF1E293B);
+  static const primary = Color(0xFF26282B);
+  static const scaffoldBackground = Color(0xFFF7F7F7);
+  static const cardBackground = Color(0xFFFFFFFF);
+  static const textPrimary = Color(0xFF26282B);
+  static const textSecondary = Color(0xFF66686C);
+  static const textLight = Color(0xFF85888D);
+  static const border = Color(0xFFDEDEDE);
+  static const divider = border;
+  static const success = Color(0xFF277045);
+  static const error = Color(0xFFCF242C);
+  static const warning = Color(0xFFE3A35C);
+  static const info = Color(0xFF0066D6);
 
-  static const Color textPrimary = Color(0xFF1F2937);
-  static const Color textSecondary = Color(0xFF6B7280);
-  static const Color textLight = Color(0xFF9CA3AF);
-
-  static const Color border = Color(0xFFE5E7EB);
-  static const Color divider = Color(0xFFF3F4F6);
-
-  static const Color success = Color(0xFF10B981);
-  static const Color error = Color(0xFFEF4444);
-  static const Color warning = Color(0xFFF59E0B);
-  static const Color info = Color(0xFF3B82F6);
+  static Color background(BuildContext context) =>
+      Theme.of(context).scaffoldBackgroundColor;
+  static Color field(BuildContext context) =>
+      Theme.of(context).colorScheme.surfaceContainerHighest;
+  static Color ink(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+  static Color muted(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurfaceVariant;
+  static Color line(BuildContext context) =>
+      Theme.of(context).colorScheme.outlineVariant;
+  static Color focus(BuildContext context) =>
+      Theme.of(context).colorScheme.secondary;
+  static Color trend(BuildContext context) =>
+      Theme.of(context).colorScheme.tertiary;
+  static Color income(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+      ? const Color(0xFF8BD6A6)
+      : success;
+  static Color expense(BuildContext context) =>
+      Theme.of(context).colorScheme.error;
 }

@@ -37,6 +37,65 @@ class HomeEn implements HomeLang {
   String get justNow => 'Just now';
 
   @override
+  String get noCardsInWallet => 'No cards yet. Add a card in Wallet.';
+
+  @override
+  String get recentTransactions => 'Transactions';
+
+  @override
+  String get transactionSummary => 'Transaction summary';
+
+  @override
+  String get localExamples => 'Local examples';
+
+  @override
+  String get chartWeek => 'This week';
+  @override
+  String get chartMonth => 'This month';
+  @override
+  String get chartVolume => 'Daily transaction volume';
+  @override
+  String get chartVolumeHint =>
+      'Absolute income + expense, not balance or net amount';
+  @override
+  String get chartEmpty => 'No transactions in this period';
+  @override
+  String get chartZero => 'All daily transaction amounts are zero';
+  @override
+  String get chartFuture => 'Future date';
+  @override
+  String get chartUndated => 'Records with unknown dates excluded';
+
+  @override
+  String get bonds => 'Bonds';
+  @override
+  String get billing => 'Billing';
+  @override
+  String get cash => 'Cash';
+  @override
+  String get moneyBag => 'Money Bag';
+  @override
+  String get bouncedCheck => 'Bounced Check';
+  @override
+  String get tax => 'Tax';
+  @override
+  String get purchaseOrder => 'Purchase Order';
+  @override
+  String get paymentHistory => 'Payment History';
+  @override
+  String get cardInUse => 'Card In Use';
+  @override
+  String get cardSecurity => 'Card Security';
+  @override
+  String get bankCardFrontSide => 'Card Front Side';
+  @override
+  String get bankCardMissing => 'Card Missing';
+  @override
+  String get creditControl => 'Credit Control';
+  @override
+  String get commodity => 'Commodity';
+
+  @override
   String get mon => 'Mon';
 
   @override

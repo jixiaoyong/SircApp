@@ -1,13 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sirc/utils/size_extension.dart';
 
-/*
-* @description: TODO
-*
-* @author: jixiaoyong
-* @email: jixiaoyong1995@gmail.com
-* @date: 22/04/21
-*/
 class CommonTextButton extends StatelessWidget {
   const CommonTextButton({
     super.key,
@@ -22,31 +14,17 @@ class CommonTextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: !isButtonEnabled ? null : onTap,
-      child: Container(
-        height: 50.dp,
-        margin: EdgeInsets.only(top: 30.dp, bottom: 50.dp),
-        decoration: !isButtonEnabled
-            ? BoxDecoration(
-                borderRadius: BorderRadius.circular(8.dp),
-                color: Colors.grey[200],
-                border: Border.all(color: Colors.grey, width: 1),
-              )
-            : BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.purple.shade400.withValues(alpha: 0.7),
-                    Colors.deepPurpleAccent.shade400.withValues(alpha: 0.7)
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(8.dp)),
-        child: Center(
-          child: Text(text,
-              style: TextStyle(
-                  color: !isButtonEnabled ? Colors.grey : Colors.white,
-                  fontSize: 16.dp,
-                  fontWeight: FontWeight.w500)),
+    return Padding(
+      padding: const EdgeInsets.only(top: 24, bottom: 24),
+      child: SizedBox(
+        width: double.infinity,
+        child: FilledButton(
+          style: FilledButton.styleFrom(
+            minimumSize: const Size(0, 50),
+            textStyle: const TextStyle(fontSize: 16),
+          ),
+          onPressed: isButtonEnabled ? onTap : null,
+          child: Text(text),
         ),
       ),
     );

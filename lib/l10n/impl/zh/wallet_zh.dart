@@ -52,7 +52,7 @@ class WalletZh implements WalletLang {
   String get cvv => 'CVV';
 
   @override
-  String get cardCredit => '信用卡';
+  String get cardCredit => '卡片';
 
   @override
   String get pleaseEnterBankCardNumber => '请输入银行卡号';
@@ -104,6 +104,15 @@ class WalletZh implements WalletLang {
 
   @override
   String get details => '明细';
+
+  @override
+  String get noTransactions => '暂无交易记录';
+
+  @override
+  String get outgoing => '转出';
+
+  @override
+  String get incoming => '转入';
 
   @override
   String cardCount(int count) => '共 $count 张卡片';

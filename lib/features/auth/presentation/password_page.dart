@@ -4,6 +4,8 @@ import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
+import 'package:sirc/widgets/password_text_field.dart';
+import 'package:sirc/widgets/constrained_content.dart';
 
 /*
 * @description: Password Page (Refactored to Riverpod & Clean Architecture)
@@ -13,7 +15,9 @@ import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 * @date: 22/04/19
 */
 class PasswordPage extends ConsumerWidget {
-  const PasswordPage({super.key});
+  const PasswordPage({super.key, this.onBack});
+
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,12 +42,16 @@ class PasswordPage extends ConsumerWidget {
 
       if (previous?.isSuccess != next.isSuccess && next.isSuccess != null) {
         if (next.isSuccess == true) {
-          Navigator.of(context).pop();
+          if (onBack != null) {
+            onBack!();
+          } else {
+            Navigator.of(context).pop();
+          }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(Languages.oldPasswordIncorrect),
-              backgroundColor: Colors.red,
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         }
@@ -53,121 +61,69 @@ class PasswordPage extends ConsumerWidget {
     final state = ref.watch(passwordControllerProvider);
     final notifier = ref.read(passwordControllerProvider.notifier);
     final isValidError = state.errorMessage;
-    final isButtonEnabled = isValidError == null;
-
+    final isButtonEnabled = !state.isLoading && isValidError == null;
     return Scaffold(
       appBar: OneTitleWithBackButtonAppBar(
         title: Languages.changePassword,
+        onBack: onBack,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.dp),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                hintText: Languages.oldPassword,
-                border: const OutlineInputBorder(),
-                suffix: GestureDetector(
-                  onLongPress: () {
-                    notifier.setOldPasswordVisible(true);
-                  },
-                  onLongPressEnd: (_) {
-                    notifier.setOldPasswordVisible(false);
-                  },
-                  child: const Icon(Icons.remove_red_eye_outlined),
-                ),
+      body: SingleChildScrollView(
+        child: ConstrainedContent(
+          maxWidth: 520,
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              PasswordTextField(
+                enabled: !state.isLoading,
+                label: Languages.oldPassword,
+                isVisible: state.isOldPasswordVisible,
+                onVisibilityChanged: notifier.setOldPasswordVisible,
+                onChanged: notifier.setOldPassword,
               ),
-              maxLines: 1,
-              keyboardType: TextInputType.visiblePassword,
-              obscureText: !state.isOldPasswordVisible,
-              onChanged: (value) {
-                notifier.setOldPassword(value);
-              },
-            ),
-            Container(
-              height: 20.dp,
-            ),
-            TextField(
-              decoration: InputDecoration(
-                hintText: Languages.newPassword,
-                border: const OutlineInputBorder(),
+              Container(height: 20.dp),
+              PasswordTextField(
+                enabled: !state.isLoading,
+                label: Languages.newPassword,
                 errorText: isValidError,
-                suffix: GestureDetector(
-                  onLongPress: () {
-                    notifier.setNewPasswordVisible(true);
-                  },
-                  onLongPressEnd: (_) {
-                    notifier.setNewPasswordVisible(false);
-                  },
-                  child: const Icon(Icons.remove_red_eye_outlined),
-                ),
+                isNewPassword: true,
+                isVisible: state.isNewPasswordVisible,
+                onVisibilityChanged: notifier.setNewPasswordVisible,
+                onChanged: notifier.setNewPassword,
               ),
-              maxLines: 1,
-              keyboardType: TextInputType.visiblePassword,
-              obscureText: !state.isNewPasswordVisible,
-              onChanged: (value) {
-                notifier.setNewPassword(value);
-              },
-            ),
-            Container(
-              height: 20.dp,
-            ),
-            TextField(
-              decoration: InputDecoration(
-                hintText: Languages.confirmPassword,
+              Container(height: 20.dp),
+              PasswordTextField(
+                enabled: !state.isLoading,
+                label: Languages.confirmPassword,
                 errorText: isValidError,
-                border: const OutlineInputBorder(),
-                suffix: GestureDetector(
-                  onLongPress: () {
-                    notifier.setConfirmPasswordVisible(true);
-                  },
-                  onLongPressEnd: (_) {
-                    notifier.setConfirmPasswordVisible(false);
-                  },
-                  child: const Icon(Icons.remove_red_eye_outlined),
-                ),
+                isNewPassword: true,
+                isVisible: state.isConfirmPasswordVisible,
+                onVisibilityChanged: notifier.setConfirmPasswordVisible,
+                onChanged: notifier.setConfirmPassword,
               ),
-              maxLines: 1,
-              keyboardType: TextInputType.visiblePassword,
-              obscureText: !state.isConfirmPasswordVisible,
-              onChanged: (value) {
-                notifier.setConfirmPassword(value);
-              },
-            ),
-            Container(
-              height: 50.dp,
-              width: double.infinity,
-              margin: EdgeInsets.only(top: 50.dp),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.dp),
-                border: !isButtonEnabled ? Border.all(color: Colors.grey) : null,
-                gradient: !isButtonEnabled
-                    ? null
-                    : LinearGradient(
-                        colors: [Colors.blue, Colors.purple.shade400],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+              Padding(
+                padding: const EdgeInsets.only(top: 24),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      minimumSize: Size(0, 50.dp),
+                      textStyle: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
                       ),
-              ),
-              child: GestureDetector(
-                onTap: !isButtonEnabled
-                    ? null
-                    : () {
-                        notifier.changePassword();
-                      },
-                child: Center(
-                  child: Text(
-                    Languages.changePassword,
-                    style: TextStyle(
-                      color: !isButtonEnabled ? Colors.grey : Colors.white,
-                      fontSize: 16.dp,
                     ),
+                    onPressed: !isButtonEnabled
+                        ? null
+                        : () {
+                            notifier.changePassword();
+                          },
+                    child: Text(Languages.changePassword),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

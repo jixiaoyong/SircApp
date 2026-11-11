@@ -1,11 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sirc/routes/app_routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:sirc/utils/size_extension.dart';
-import 'package:sirc/widgets/title_text.dart';
+import 'package:sirc/features/auth/presentation/sign_up_field.dart';
+import 'package:sirc/widgets/constrained_content.dart';
 
 /*
 * @description: Sign Up Page (Refactored to Riverpod & Clean Architecture)
@@ -43,19 +45,20 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
         Navigator.of(context, rootNavigator: true).pop();
       }
 
-      if (previous?.isRegisterSuccess != next.isRegisterSuccess && next.isRegisterSuccess != null) {
+      if (previous?.isRegisterSuccess != next.isRegisterSuccess &&
+          next.isRegisterSuccess != null) {
         if (next.isRegisterSuccess == true) {
-          // 成功回到 Sign In 页面
-          if (Navigator.of(context).canPop()) {
-            Navigator.of(context).pop();
-          }
+          context.go(AppRoutes.SIGN_IN);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(Languages.registerSucceed, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    Languages.registerSucceed,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   Text(Languages.pleaseSignIn),
                 ],
               ),
@@ -71,7 +74,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 child: Center(
                   child: Icon(
                     Icons.error_outline_outlined,
-                    color: Colors.red,
+                    color: Theme.of(context).colorScheme.error,
                     size: 80.dp,
                   ),
                 ),
@@ -85,261 +88,187 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     final state = ref.watch(signUpControllerProvider);
     final notifier = ref.read(signUpControllerProvider.notifier);
 
-    final screenHeight = MediaQuery.of(context).size.height;
     final isLoginInProgress = state.isLoading;
     final isButtonEnabled = !isLoginInProgress && state.isUserInputValid;
-    final marginBetweenFields = screenHeight * 0.05;
+    const marginBetweenFields = 20.0;
+
+    final colors = Theme.of(context).colorScheme;
+    final ink = colors.onSurface;
+    final background = Theme.of(context).scaffoldBackgroundColor;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          Languages.signUp,
-          style: const TextStyle(color: Colors.black),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      backgroundColor: Colors.white,
-      body: Container(
-        margin: EdgeInsets.fromLTRB(16.dp, 16.dp, 16.dp, 0),
-        padding: EdgeInsets.fromLTRB(20.dp, 20.dp, 20.dp, 0),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: 10.dp,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.dp),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      offset: Offset(0, 4),
-                      blurRadius: 8,
-                    )
-                  ],
-                  color: Colors.white,
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: Languages.username,
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Colors.black12, width: 0),
-                    ),
-                    labelText: Languages.username,
-                    errorText: state.userNameError,
-                    suffixIcon: const Icon(
-                      Icons.person_outline,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  onChanged: (value) {
-                    notifier.setUserName(value);
-                  },
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: marginBetweenFields),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.dp),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      offset: Offset(0, 4),
-                      blurRadius: 8,
-                    )
-                  ],
-                  color: Colors.white,
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: Languages.emailAddress,
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Colors.black12, width: 0),
-                    ),
-                    labelText: Languages.emailAddress,
-                    errorText: state.userEmailError,
-                    suffixIcon: const Icon(
-                      Icons.email_outlined,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  onChanged: (value) {
-                    notifier.setUserEmail(value);
-                  },
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: marginBetweenFields),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.dp),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      offset: Offset(0, 4),
-                      blurRadius: 8,
-                    )
-                  ],
-                  color: Colors.white,
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: Languages.password,
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Colors.black12, width: 0),
-                    ),
-                    labelText: Languages.password,
-                    errorText: state.userPwdError,
-                    suffixIcon: const Icon(
-                      Icons.lock_outlined,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  obscureText: true,
-                  keyboardType: TextInputType.visiblePassword,
-                  onChanged: (value) {
-                    notifier.setUserPwd(value);
-                  },
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: marginBetweenFields),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.dp),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      offset: Offset(0, 4),
-                      blurRadius: 8,
-                    )
-                  ],
-                  color: Colors.white,
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: Languages.confirmPassword,
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Colors.black12, width: 0),
-                    ),
-                    labelText: Languages.confirmPassword,
-                    errorText: state.userConfirmPwdError,
-                    suffixIcon: const Icon(
-                      Icons.lock_outlined,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  obscureText: true,
-                  keyboardType: TextInputType.visiblePassword,
-                  onChanged: (value) {
-                    notifier.setUserConfirmPwd(value);
-                  },
-                ),
-              ),
-              GestureDetector(
-                onTap: !isButtonEnabled ? null : () => notifier.register(),
-                child: Container(
-                  height: 50.dp,
-                  margin: EdgeInsets.only(top: 30.dp, bottom: 20.dp),
-                  decoration: !isButtonEnabled
-                      ? BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.dp),
-                          color: Colors.grey[200],
-                          border: Border.all(color: Colors.grey, width: 1),
-                        )
-                      : BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.purple.shade400.withValues(alpha: 0.7),
-                              Colors.deepPurpleAccent.shade400.withValues(alpha: 0.7)
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(8.dp),
-                        ),
-                  child: Center(
-                    child: Text(
-                      Languages.register,
-                      style: TextStyle(
-                        color: !isButtonEnabled ? Colors.grey : Colors.white,
-                        fontSize: 16.dp,
-                        fontWeight: FontWeight.w500,
+      backgroundColor: background,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Center(
+                child: ConstrainedContent(
+                  maxWidth: 520,
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SignUpField(
+                        label: Languages.username,
+                        errorText: state.userNameError,
+                        icon: 'user',
+                        enabled: !isLoginInProgress,
+                        onChanged: notifier.setUserName,
                       ),
-                    ),
-                  ),
-                ),
-              ),
-              TitleText(text: Languages.orSignUpWith),
-              SizedBox(
-                height: 50.dp,
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final item = state.socialList[index];
-                        return GestureDetector(
-                          onTap: () {
-                            notifier.logUpWith(item);
-                          },
-                          child: Container(
-                            height: 50.dp,
-                            width: 50.dp,
-                            margin: EdgeInsets.symmetric(horizontal: 10.dp),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.dp),
-                              border: Border.all(color: item.$2, width: 1),
-                            ),
-                            child: Center(
-                              child: Icon(
-                                item.$1,
-                                color: item.$2,
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: marginBetweenFields,
+                        ),
+                        child: SignUpField(
+                          label: Languages.emailAddress,
+                          errorText: state.userEmailError,
+                          keyboardType: TextInputType.emailAddress,
+                          enabled: !isLoginInProgress,
+                          onChanged: notifier.setUserEmail,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: marginBetweenFields,
+                        ),
+                        child: SignUpField(
+                          label: Languages.password,
+                          errorText: state.userPwdError,
+                          password: true,
+                          enabled: !isLoginInProgress,
+                          onChanged: notifier.setUserPwd,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: marginBetweenFields,
+                        ),
+                        child: SignUpField(
+                          label: Languages.confirmPassword,
+                          errorText: state.userConfirmPwdError,
+                          password: true,
+                          enabled: !isLoginInProgress,
+                          onChanged: notifier.setUserConfirmPwd,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(
+                              minimumSize: const Size(0, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              textStyle: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
+                            onPressed: isButtonEnabled
+                                ? notifier.register
+                                : null,
+                            child: Text(Languages.register),
                           ),
-                        );
-                      },
-                      itemCount: state.socialList.length,
-                      scrollDirection: Axis.horizontal,
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 20.dp, bottom: 50.dp),
-                child: RichText(
-                  text: TextSpan(
-                    text: Languages.haveAccount,
-                    style: TextStyle(color: Colors.black, fontSize: 12.dp),
-                    children: [
-                      TextSpan(
-                        text: " ${Languages.signIn}",
-                        style: TextStyle(
-                          color: Colors.purple,
-                          fontSize: 12.dp,
-                          fontWeight: FontWeight.w500,
                         ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () => Navigator.of(context).pop(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: Row(
+                          children: [
+                            const Expanded(child: Divider()),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 13,
+                              ),
+                              child: Text(
+                                Languages.orSignUpWith,
+                                style: TextStyle(
+                                  color: colors.onSurfaceVariant,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                            const Expanded(child: Divider()),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 50.dp,
+                        width: double.infinity,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                final item = state.socialList[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    notifier.logUpWith(item);
+                                  },
+                                  child: Container(
+                                    height: 50.dp,
+                                    width: 50.dp,
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: 10.dp,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(
+                                        color: colors.outline,
+                                        width: 1.25,
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        item.$1,
+                                        color: ink,
+                                        size: 20,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              itemCount: state.socialList.length,
+                              scrollDirection: Axis.horizontal,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: RichText(
+                          text: TextSpan(
+                            text: Languages.haveAccount,
+                            style: TextStyle(
+                              color: colors.onSurfaceVariant,
+                              fontSize: 12.dp,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: " ${Languages.signIn}",
+                                style: TextStyle(
+                                  color: ink,
+                                  fontSize: 12.dp,
+                                  fontWeight: FontWeight.w500,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () => context.go(AppRoutes.SIGN_IN),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),

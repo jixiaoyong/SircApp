@@ -3,14 +3,11 @@ import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/network/api_client.dart';
 import 'package:sirc/mock/mock_utils.dart';
+
 import '../domain/models/bank_card.dart';
 
 /// 交易记录类型过滤枚举
-enum TransactionFilter {
-  send,
-  receive,
-  total,
-}
+enum TransactionFilter { send, receive, total }
 
 /// 钱包与银行卡业务仓库接口
 abstract class WalletRepository {
@@ -19,6 +16,9 @@ abstract class WalletRepository {
 
   /// 添加一张新的银行卡
   Future<void> addBankCard(BankCard card);
+
+  /// 按稳定 ID 更新卡片，不影响交易。
+  Future<void> updateBankCard(BankCard card);
 
   /// 删除指定银行卡
   Future<void> deleteBankCard(String cardId);
@@ -33,7 +33,9 @@ abstract class WalletRepository {
   });
 
   /// 获取指定月份的收支波动图表数据 (Dart 3 原生元组)
-  Future<List<(String day, double percentage)>> getMonthlyChartData(String month);
+  Future<List<(String day, double percentage)>> getMonthlyChartData(
+    String month,
+  );
 }
 
 /// 钱包业务仓库默认实现（基于内存与 Mock 驱动，支持 ApiClient 网络扩展）
@@ -73,8 +75,9 @@ class WalletRepositoryImpl implements WalletRepository {
   ];
 
   // 初始交易记录列表
-  late final List<Transaction> _transactions =
-      List<Transaction>.from(MockUtils.moneyOperateList);
+  late final List<Transaction> _transactions = List<Transaction>.from(
+    MockUtils.moneyOperateList,
+  );
 
   final double _availableBalance = 35.269;
 
@@ -86,6 +89,13 @@ class WalletRepositoryImpl implements WalletRepository {
   @override
   Future<void> addBankCard(BankCard card) async {
     _cards.add(card);
+  }
+
+  @override
+  Future<void> updateBankCard(BankCard card) async {
+    final index = _cards.indexWhere((item) => item.id == card.id);
+    if (index < 0) throw StateError('Card not found');
+    _cards[index] = card;
   }
 
   @override

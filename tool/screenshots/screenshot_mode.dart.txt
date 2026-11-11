@@ -1,0 +1,3 @@
+// Exists only inside the temporary screenshot build copy.
+const screenshotMode = bool.fromEnvironment('SCREENSHOT_MODE');
+final screenshotDate = DateTime(2026, 11, 11, 12);

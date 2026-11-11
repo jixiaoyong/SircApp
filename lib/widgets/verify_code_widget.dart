@@ -20,12 +20,13 @@ class VerifyCodeWidget extends StatefulWidget {
   final IndexedWidgetBuilder? itemBuilder;
   final IndexedWidgetBuilder? separatorBuilder;
 
-  const VerifyCodeWidget(
-      {super.key,
-      this.verifyCodeCount = 6,
-      this.onChanged,
-      this.itemBuilder,
-      this.separatorBuilder});
+  const VerifyCodeWidget({
+    super.key,
+    this.verifyCodeCount = 6,
+    this.onChanged,
+    this.itemBuilder,
+    this.separatorBuilder,
+  });
 
   @override
   State<VerifyCodeWidget> createState() => _VerifyCodeWidgetState();
@@ -39,8 +40,10 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
   final _verifyFocusNode = FocusNode();
 
   @override
-  void initState() {
-    super.initState();
+  void dispose() {
+    _verifyCodeController.dispose();
+    _verifyFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -48,56 +51,65 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
     return Stack(
       children: [
         TextSelectionTheme(
-          data:
-              const TextSelectionThemeData(selectionColor: Colors.transparent),
+          data: const TextSelectionThemeData(
+            selectionColor: Colors.transparent,
+          ),
           child: TextField(
-              focusNode: _verifyFocusNode,
-              controller: _verifyCodeController,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-              ),
-              showCursor: false,
-              cursorHeight: 0,
-              cursorWidth: 0,
-              cursorColor: Colors.transparent,
-              keyboardType: TextInputType.number,
-              style: const TextStyle(color: Colors.transparent),
-              onChanged: (value) {
-                widget.onChanged?.call(value);
-                if (value.length >= widget.verifyCodeCount) {
-                  _verifyFocusNode.unfocus();
-                  setState(() {
-                    _currentVerifyIndex = -1;
-                  });
-                  if (value.length > widget.verifyCodeCount) {
-                    _verifyCodeController.text =
-                        value.substring(0, widget.verifyCodeCount);
-                    return;
-                  }
-                }
-                // the code length is growing
-                if (value.length > _verifyCode.length) {
-                  _currentVerifyIndex++;
-                  if (_currentVerifyIndex >= widget.verifyCodeCount) {
-                    _currentVerifyIndex = widget.verifyCodeCount;
-                  }
-                  _verifyCodeController.selection =
-                      TextSelection.collapsed(offset: _currentVerifyIndex);
-                } else if (value.length < _verifyCode.length) {
-                  _currentVerifyIndex--;
-                  if (_currentVerifyIndex < 0) {
-                    _currentVerifyIndex = 0;
-                  }
-                  if (value.isNotEmpty) {
-                    _verifyCodeController.selection = TextSelection(
-                        baseOffset: _currentVerifyIndex,
-                        extentOffset: _currentVerifyIndex + 1);
-                  }
-                }
+            focusNode: _verifyFocusNode,
+            controller: _verifyCodeController,
+            decoration: const InputDecoration(
+              filled: false,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+            ),
+            showCursor: false,
+            cursorHeight: 0,
+            cursorWidth: 0,
+            cursorColor: Colors.transparent,
+            keyboardType: TextInputType.number,
+            style: const TextStyle(color: Colors.transparent),
+            onChanged: (value) {
+              widget.onChanged?.call(value);
+              if (value.length >= widget.verifyCodeCount) {
+                _verifyFocusNode.unfocus();
                 setState(() {
-                  _verifyCode = value;
+                  _currentVerifyIndex = -1;
                 });
-              }),
+                if (value.length > widget.verifyCodeCount) {
+                  _verifyCodeController.text = value.substring(
+                    0,
+                    widget.verifyCodeCount,
+                  );
+                  return;
+                }
+              }
+              // the code length is growing
+              if (value.length > _verifyCode.length) {
+                _currentVerifyIndex++;
+                if (_currentVerifyIndex >= widget.verifyCodeCount) {
+                  _currentVerifyIndex = widget.verifyCodeCount;
+                }
+                _verifyCodeController.selection = TextSelection.collapsed(
+                  offset: _currentVerifyIndex,
+                );
+              } else if (value.length < _verifyCode.length) {
+                _currentVerifyIndex--;
+                if (_currentVerifyIndex < 0) {
+                  _currentVerifyIndex = 0;
+                }
+                if (value.isNotEmpty) {
+                  _verifyCodeController.selection = TextSelection(
+                    baseOffset: _currentVerifyIndex,
+                    extentOffset: _currentVerifyIndex + 1,
+                  );
+                }
+              }
+              setState(() {
+                _verifyCode = value;
+              });
+            },
+          ),
         ),
         SizedBox(
           height: 50.dp,
@@ -117,33 +129,40 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
                   });
                   if (index == _verifyCode.length) {
                     // insert a char to the end of the code list
-                    _verifyCodeController.selection =
-                        TextSelection.collapsed(offset: index);
+                    _verifyCodeController.selection = TextSelection.collapsed(
+                      offset: index,
+                    );
                   } else {
                     // replace the char in the code list
                     _verifyCodeController.selection = TextSelection(
-                        baseOffset: _currentVerifyIndex,
-                        extentOffset: _currentVerifyIndex + 1);
+                      baseOffset: _currentVerifyIndex,
+                      extentOffset: _currentVerifyIndex + 1,
+                    );
                   }
                 },
-                child: widget.itemBuilder?.call(context, index) ??
+                child:
+                    widget.itemBuilder?.call(context, index) ??
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 2.dp),
                       height: 50.dp,
                       width: 50.dp,
                       decoration: BoxDecoration(
-                          border: Border.all(
-                              color: _currentVerifyIndex == index
-                                  ? Colors.blue
-                                  : Colors.grey),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(10.dp))),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        border: Border.all(
+                          color: _currentVerifyIndex == index
+                              ? Theme.of(context).colorScheme.secondary
+                              : Theme.of(context).colorScheme.outline,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(14.dp)),
+                      ),
                       child: Center(
                         child: Text(
                           item,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Colors.blue,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 20.sp,
                             fontWeight: FontWeight.bold,
                           ),
@@ -158,7 +177,7 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
             separatorBuilder:
                 widget.separatorBuilder ?? (context, index) => Container(),
           ),
-        )
+        ),
       ],
     );
   }

@@ -312,8 +312,8 @@ class Languages {
   ///- [en_US] CVV
   static String get cvv => wallet.cvv;
 
-  ///- [zh_CN] 信用卡
-  ///- [en_US] Card Credit
+  ///- [zh_CN] 卡片
+  ///- [en_US] Cards
   static String get cardCredit => wallet.cardCredit;
 
   ///- [zh_CN] 请输入银行卡号
@@ -386,6 +386,18 @@ class Languages {
   ///- [en_US] Details
   static String get details => wallet.details;
 
+  ///- [zh_CN] 暂无交易记录
+  ///- [en_US] No transactions yet
+  static String get noTransactions => wallet.noTransactions;
+
+  ///- [zh_CN] 转出
+  ///- [en_US] Money Out
+  static String get outgoing => wallet.outgoing;
+
+  ///- [zh_CN] 转入
+  ///- [en_US] Money In
+  static String get incoming => wallet.incoming;
+
   // --- Home 模块 ---
   ///- [zh_CN] 首页
   ///- [en_US] Home
@@ -426,6 +438,110 @@ class Languages {
   ///- [zh_CN] 刚刚
   ///- [en_US] Just now
   static String get justNow => home.justNow;
+
+  ///- [zh_CN] 暂无卡片，请前往钱包添加
+  ///- [en_US] No cards yet. Add a card in Wallet.
+  static String get noCardsInWallet => home.noCardsInWallet;
+
+  ///- [zh_CN] 最近交易
+  ///- [en_US] Transactions
+  static String get recentTransactions => home.recentTransactions;
+
+  ///- [zh_CN] 交易摘要
+  ///- [en_US] Transaction summary
+  static String get transactionSummary => home.transactionSummary;
+
+  ///- [zh_CN] 本地示例
+  ///- [en_US] Local examples
+  static String get localExamples => home.localExamples;
+
+  ///- [zh_CN] 本周
+  ///- [en_US] This week
+  static String get chartWeek => home.chartWeek;
+
+  ///- [zh_CN] 本月
+  ///- [en_US] This month
+  static String get chartMonth => home.chartMonth;
+
+  ///- [zh_CN] 每日交易总额
+  ///- [en_US] Daily transaction volume
+  static String get chartVolume => home.chartVolume;
+
+  ///- [zh_CN] 收入与支出绝对值之和，非余额或净额
+  ///- [en_US] Absolute income + expense, not balance or net amount
+  static String get chartVolumeHint => home.chartVolumeHint;
+
+  ///- [zh_CN] 本周期暂无交易
+  ///- [en_US] No transactions in this period
+  static String get chartEmpty => home.chartEmpty;
+
+  ///- [zh_CN] 每日交易总额均为零
+  ///- [en_US] All daily transaction amounts are zero
+  static String get chartZero => home.chartZero;
+
+  ///- [zh_CN] 尚未到该日期
+  ///- [en_US] Future date
+  static String get chartFuture => home.chartFuture;
+
+  ///- [zh_CN] 日期不明确的记录未计入
+  ///- [en_US] Records with unknown dates excluded
+  static String get chartUndated => home.chartUndated;
+
+  ///- [zh_CN] 债券
+  ///- [en_US] Bonds
+  static String get bonds => home.bonds;
+
+  ///- [zh_CN] 账单
+  ///- [en_US] Billing
+  static String get billing => home.billing;
+
+  ///- [zh_CN] 现金
+  ///- [en_US] Cash
+  static String get cash => home.cash;
+
+  ///- [zh_CN] 钱袋
+  ///- [en_US] Money Bag
+  static String get moneyBag => home.moneyBag;
+
+  ///- [zh_CN] 退票
+  ///- [en_US] Bounced Check
+  static String get bouncedCheck => home.bouncedCheck;
+
+  ///- [zh_CN] 税务
+  ///- [en_US] Tax
+  static String get tax => home.tax;
+
+  ///- [zh_CN] 采购订单
+  ///- [en_US] Purchase Order
+  static String get purchaseOrder => home.purchaseOrder;
+
+  ///- [zh_CN] 付款记录
+  ///- [en_US] Payment History
+  static String get paymentHistory => home.paymentHistory;
+
+  ///- [zh_CN] 用卡
+  ///- [en_US] Card In Use
+  static String get cardInUse => home.cardInUse;
+
+  ///- [zh_CN] 卡片安全
+  ///- [en_US] Card Security
+  static String get cardSecurity => home.cardSecurity;
+
+  ///- [zh_CN] 卡片正面
+  ///- [en_US] Card Front Side
+  static String get bankCardFrontSide => home.bankCardFrontSide;
+
+  ///- [zh_CN] 卡片遗失
+  ///- [en_US] Card Missing
+  static String get bankCardMissing => home.bankCardMissing;
+
+  ///- [zh_CN] 信用管理
+  ///- [en_US] Credit Control
+  static String get creditControl => home.creditControl;
+
+  ///- [zh_CN] 商品
+  ///- [en_US] Commodity
+  static String get commodity => home.commodity;
 
   ///- [zh_CN] 周一
   ///- [en_US] Mon
@@ -524,6 +640,22 @@ class Languages {
   ///- [en_US] Language
   static String get language => settings.language;
 
+  ///- [zh_CN] 外观主题
+  ///- [en_US] Appearance
+  static String get appearance => settings.appearance;
+
+  ///- [zh_CN] 亮色
+  ///- [en_US] Light
+  static String get themeLight => settings.themeLight;
+
+  ///- [zh_CN] 暗色
+  ///- [en_US] Dark
+  static String get themeDark => settings.themeDark;
+
+  ///- [zh_CN] 跟随系统
+  ///- [en_US] Follow system
+  static String get themeSystem => settings.themeSystem;
+
   ///- [zh_CN] 翻译
   ///- [en_US] Translations
   static String get translations => settings.translations;
@@ -539,6 +671,10 @@ class Languages {
   ///- [zh_CN] 本地地址
   ///- [en_US] Local Address
   static String get localAddress => settings.localAddress;
+
+  ///- [zh_CN] 未设置
+  ///- [en_US] Not set
+  static String get notSet => settings.notSet;
 
   ///- [zh_CN] 个人
   ///- [en_US] Person
@@ -652,14 +788,11 @@ class Languages {
       "Forget Password": "Forget Password",
       "Forget passwords?": "Forget passwords?",
       "Forgot PIN": "Forgot PIN",
-      "Don't take too much tension about PiN\nJust make ono call to bank and change your pin.":
-          "Don't take too much tension about PiN\\nJust make ono call to bank and change your pin.",
+      "Don't take too much tension about PiN\nJust make ono call to bank and change your pin.": "Don't take too much tension about PiN\\nJust make ono call to bank and change your pin.",
       "Don't Share Password": "Don't Share Password",
-      "Use strong combinations of letters,numbers and special characters to make your password.":
-          "Use strong combinations of letters,numbers and special characters to make your password.",
+      "Use strong combinations of letters,numbers and special characters to make your password.": "Use strong combinations of letters,numbers and special characters to make your password.",
       "Manage Account": "Manage Account",
-      "Bank account make more secure keeping transaction active and changing password regularly.":
-          "Bank account make more secure keeping transaction active and changing password regularly.",
+      "Bank account make more secure keeping transaction active and changing password regularly.": "Bank account make more secure keeping transaction active and changing password regularly.",
       "Or Sign In With": "Or Sign In With",
       "Or Sign Up With": "Or Sign Up With",
       "I have already an account": "I have already an account",
@@ -691,7 +824,7 @@ class Languages {
       "Name On Card": "Name On Card",
       "Expire Date": "Expire Date",
       "CVV": "CVV",
-      "Card Credit": "Card Credit",
+      "Cards": "Cards",
       "Please enter bank card number": "Please enter bank card number",
       "Please enter an expiration date": "Please enter an expiration date",
       "Please type in your name": "Please type in your name",
@@ -709,6 +842,9 @@ class Languages {
       "Receive": "Receive",
       "History": "History",
       "Details": "Details",
+      "No transactions yet": "No transactions yet",
+      "Money Out": "Money Out",
+      "Money In": "Money In",
       "Home": "Home",
       "Home": "Home",
       "Dashboard": "Dashboard",
@@ -720,6 +856,36 @@ class Languages {
       "something like ads": "something like ads",
       "still working on it": "still working on it",
       "Just now": "Just now",
+      "No cards yet. Add a card in Wallet.":
+          "No cards yet. Add a card in Wallet.",
+      "Transactions": "Transactions",
+      "Transaction summary": "Transaction summary",
+      "Local examples": "Local examples",
+      "This week": "This week",
+      "This month": "This month",
+      "Daily transaction volume": "Daily transaction volume",
+      "Absolute income + expense, not balance or net amount":
+          "Absolute income + expense, not balance or net amount",
+      "No transactions in this period": "No transactions in this period",
+      "All daily transaction amounts are zero":
+          "All daily transaction amounts are zero",
+      "Future date": "Future date",
+      "Records with unknown dates excluded":
+          "Records with unknown dates excluded",
+      "Bonds": "Bonds",
+      "Billing": "Billing",
+      "Cash": "Cash",
+      "Money Bag": "Money Bag",
+      "Bounced Check": "Bounced Check",
+      "Tax": "Tax",
+      "Purchase Order": "Purchase Order",
+      "Payment History": "Payment History",
+      "Card In Use": "Card In Use",
+      "Card Security": "Card Security",
+      "Card Front Side": "Card Front Side",
+      "Card Missing": "Card Missing",
+      "Credit Control": "Credit Control",
+      "Commodity": "Commodity",
       "Mon": "Mon",
       "Tues": "Tues",
       "Wed": "Wed",
@@ -745,10 +911,15 @@ class Languages {
       "This is an open-source project hosted on ":
           "This is an open-source project hosted on ",
       "Language": "Language",
+      "Appearance": "Appearance",
+      "Light": "Light",
+      "Dark": "Dark",
+      "Follow system": "Follow system",
       "Translations": "Translations",
       "Notifications": "Notifications",
       "General Information": "General Information",
       "Local Address": "Local Address",
+      "Not set": "Not set",
       "Person": "Person",
       "Profile": "Profile",
       "Logout": "Logout",
@@ -835,7 +1006,7 @@ class Languages {
       "Name On Card": "卡片上的名字",
       "Expire Date": "到期日期",
       "CVV": "CVV",
-      "Card Credit": "信用卡",
+      "Cards": "卡片",
       "Please enter bank card number": "请输入银行卡号",
       "Please enter an expiration date": "请输入有效期",
       "Please type in your name": "请输入您的姓名",
@@ -853,6 +1024,9 @@ class Languages {
       "Receive": "接收",
       "History": "历史",
       "Details": "明细",
+      "No transactions yet": "暂无交易记录",
+      "Money Out": "转出",
+      "Money In": "转入",
       "Home": "首页",
       "Home": "首页",
       "Dashboard": "控制面板",
@@ -864,6 +1038,33 @@ class Languages {
       "something like ads": "假装这里有广告>>>",
       "still working on it": "仍在努力开发中",
       "Just now": "刚刚",
+      "No cards yet. Add a card in Wallet.": "暂无卡片，请前往钱包添加",
+      "Transactions": "最近交易",
+      "Transaction summary": "交易摘要",
+      "Local examples": "本地示例",
+      "This week": "本周",
+      "This month": "本月",
+      "Daily transaction volume": "每日交易总额",
+      "Absolute income + expense, not balance or net amount":
+          "收入与支出绝对值之和，非余额或净额",
+      "No transactions in this period": "本周期暂无交易",
+      "All daily transaction amounts are zero": "每日交易总额均为零",
+      "Future date": "尚未到该日期",
+      "Records with unknown dates excluded": "日期不明确的记录未计入",
+      "Bonds": "债券",
+      "Billing": "账单",
+      "Cash": "现金",
+      "Money Bag": "钱袋",
+      "Bounced Check": "退票",
+      "Tax": "税务",
+      "Purchase Order": "采购订单",
+      "Payment History": "付款记录",
+      "Card In Use": "用卡",
+      "Card Security": "卡片安全",
+      "Card Front Side": "卡片正面",
+      "Card Missing": "卡片遗失",
+      "Credit Control": "信用管理",
+      "Commodity": "商品",
       "Mon": "周一",
       "Tues": "周二",
       "Wed": "周三",
@@ -888,10 +1089,15 @@ class Languages {
       "About": "关于",
       "This is an open-source project hosted on ": "这是一个开源项目，托管于 ",
       "Language": "语言",
+      "Appearance": "外观主题",
+      "Light": "亮色",
+      "Dark": "暗色",
+      "Follow system": "跟随系统",
       "Translations": "翻译",
       "Notifications": "通知",
       "General Information": "通用信息",
       "Local Address": "本地地址",
+      "Not set": "未设置",
       "Person": "个人",
       "Profile": "个人资料",
       "Logout": "退出登录",

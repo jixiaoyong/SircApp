@@ -6,6 +6,8 @@ import 'package:sirc/data/common_keys.dart';
 import 'package:sirc/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/common_text_button.dart';
+import 'package:sirc/widgets/constrained_content.dart';
+import 'package:sirc/widgets/password_text_field.dart';
 
 /*
 * @description: Set Password Page (Refactored to Riverpod & Clean Architecture)
@@ -59,7 +61,8 @@ class _SetPwdPageState extends ConsumerState<SetPwdPage> {
             ),
           ),
         );
-      } else if (previous?.isWaitSetPwdResult == true && !next.isWaitSetPwdResult) {
+      } else if (previous?.isWaitSetPwdResult == true &&
+          !next.isWaitSetPwdResult) {
         Navigator.of(context, rootNavigator: true).pop();
       }
 
@@ -70,102 +73,57 @@ class _SetPwdPageState extends ConsumerState<SetPwdPage> {
 
     final state = ref.watch(setPwdControllerProvider);
     final notifier = ref.read(setPwdControllerProvider.notifier);
-    final marginBetweenFields = 30.dp;
+    const marginBetweenFields = 20.0;
+    final colors = Theme.of(context).colorScheme;
+    final dark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           Languages.addNewPassword,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: colors.onSurface),
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: colors.surface,
         elevation: 0,
         centerTitle: true,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        iconTheme: const IconThemeData(color: Colors.black),
+        systemOverlayStyle: dark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
+        iconTheme: IconThemeData(color: colors.onSurface),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(20.dp),
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: marginBetweenFields),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.dp),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    offset: Offset(0, 4),
-                    blurRadius: 8,
-                  )
-                ],
-                color: Colors.white,
+      body: SingleChildScrollView(
+        child: ConstrainedContent(
+          maxWidth: 520,
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              PasswordTextField(
+                label: Languages.password,
+                errorText: state.userPwdError,
+                isNewPassword: true,
+                enabled: !state.isWaitSetPwdResult,
+                onChanged: notifier.setUserPwd,
               ),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: Languages.password,
-                  hintStyle: const TextStyle(color: Colors.grey),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(color: Colors.black12, width: 0),
-                  ),
-                  labelText: Languages.password,
-                  errorText: state.userPwdError,
-                  suffixIcon: const Icon(
-                    Icons.lock_outlined,
-                    color: Colors.grey,
-                  ),
-                ),
-                obscureText: true,
-                keyboardType: TextInputType.visiblePassword,
-                onChanged: (value) {
-                  notifier.setUserPwd(value);
-                },
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: marginBetweenFields),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.dp),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    offset: Offset(0, 4),
-                    blurRadius: 8,
-                  )
-                ],
-                color: Colors.white,
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: Languages.confirmPassword,
-                  hintStyle: const TextStyle(color: Colors.grey),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(color: Colors.black12, width: 0),
-                  ),
-                  labelText: Languages.confirmPassword,
+              Padding(
+                padding: const EdgeInsets.only(top: marginBetweenFields),
+                child: PasswordTextField(
+                  label: Languages.confirmPassword,
                   errorText: state.userConfirmPwdError,
-                  suffixIcon: const Icon(
-                    Icons.lock_outlined,
-                    color: Colors.grey,
-                  ),
+                  isNewPassword: true,
+                  enabled: !state.isWaitSetPwdResult,
+                  onChanged: notifier.setUserConfirmPwd,
                 ),
-                obscureText: true,
-                keyboardType: TextInputType.visiblePassword,
-                onChanged: (value) {
-                  notifier.setUserConfirmPwd(value);
-                },
               ),
-            ),
-            CommonTextButton(
-              isButtonEnabled: state.isUserInputValid,
-              onTap: () {
-                notifier.resetPwd();
-              },
-              text: Languages.submit,
-            ),
-          ],
+              CommonTextButton(
+                isButtonEnabled:
+                    !state.isWaitSetPwdResult && state.isUserInputValid,
+                onTap: () {
+                  notifier.resetPwd();
+                },
+                text: Languages.submit,
+              ),
+            ],
+          ),
         ),
       ),
     );

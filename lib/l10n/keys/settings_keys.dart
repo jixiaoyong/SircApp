@@ -6,10 +6,15 @@ abstract class SettingsLang {
   String get aboutUsDescription;
   String get hostedOnGithub;
   String get language;
+  String get appearance;
+  String get themeLight;
+  String get themeDark;
+  String get themeSystem;
   String get translations;
   String get notifications;
   String get generalInformation;
   String get localAddress;
+  String get notSet;
   String get person;
   String get profile;
   String get logout;

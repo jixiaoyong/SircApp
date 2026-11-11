@@ -7,6 +7,8 @@ import 'package:sirc/features/auth/presentation/controllers/auth_controller.dart
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/common_text_button.dart';
+import 'package:sirc/widgets/common_text_filed.dart';
+import 'package:sirc/widgets/constrained_content.dart';
 import 'package:sirc/widgets/verify_code_widget.dart';
 
 /*
@@ -32,12 +34,15 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: ForgetPwdState.verifyCodeDurationSecond),
+      duration: const Duration(
+        seconds: ForgetPwdState.verifyCodeDurationSecond,
+      ),
     );
 
     _controller.addListener(() {
       final remain =
-          ((1 - _controller.value) * ForgetPwdState.verifyCodeDurationSecond).toInt();
+          ((1 - _controller.value) * ForgetPwdState.verifyCodeDurationSecond)
+              .toInt();
       ref.read(forgetPwdControllerProvider.notifier).updateCountdown(remain);
       if (_controller.value == 1) {
         _controller.reset();
@@ -55,7 +60,10 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
   @override
   Widget build(BuildContext context) {
     // 监听验证状态与跳转副作用
-    ref.listen<ForgetPwdState>(forgetPwdControllerProvider, (previous, next) async {
+    ref.listen<ForgetPwdState>(forgetPwdControllerProvider, (
+      previous,
+      next,
+    ) async {
       if (previous?.isVerifyingCode != true && next.isVerifyingCode) {
         showDialog(
           context: context,
@@ -73,7 +81,8 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
         Navigator.of(context, rootNavigator: true).pop();
       }
 
-      if (previous?.isVerifySuccess != next.isVerifySuccess && next.isVerifySuccess == true) {
+      if (previous?.isVerifySuccess != next.isVerifySuccess &&
+          next.isVerifySuccess == true) {
         final resetResult = await context.push<bool>(
           AppRoutes.SET_PWD,
           extra: next.userEmail,
@@ -87,129 +96,111 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
     final state = ref.watch(forgetPwdControllerProvider);
     final notifier = ref.read(forgetPwdControllerProvider.notifier);
 
-    final isVerifyButtonEnabled = notifier.isEmailAndVerifyCodeValid();
+    final colors = Theme.of(context).colorScheme;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final isVerifyButtonEnabled =
+        !state.isVerifyingCode && notifier.isEmailAndVerifyCodeValid();
     final isSendVerifyCodeBtnDisable = state.lastSendVerifyCodeTime > 0;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           Languages.forgetPassword,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: colors.onSurface),
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: colors.surface,
         elevation: 0,
         centerTitle: true,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        iconTheme: const IconThemeData(color: Colors.black),
+        systemOverlayStyle: dark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
+        iconTheme: IconThemeData(color: colors.onSurface),
       ),
-      backgroundColor: Colors.white,
-      body: Container(
-        padding: EdgeInsets.all(20.dp),
-        child: Column(
-          children: [
-            Text(
-              Languages.enterEmailToResetPassword,
-              style: const TextStyle(fontSize: 18, color: Colors.grey),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 50.dp),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.dp),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    offset: Offset(0, 4),
-                    blurRadius: 8,
-                  )
-                ],
-                color: Colors.white,
+      body: SingleChildScrollView(
+        child: ConstrainedContent(
+          maxWidth: 520,
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Text(
+                Languages.enterEmailToResetPassword,
+                style: TextStyle(fontSize: 13, color: colors.onSurfaceVariant),
               ),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: Languages.emailAddress,
-                  hintStyle: const TextStyle(color: Colors.grey),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(color: Colors.black12, width: 0),
-                  ),
-                  labelText: Languages.emailAddress,
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: CommonTextFiled(
+                  label: Languages.emailAddress,
+                  enabled: !state.isVerifyingCode,
+                  keyboardType: TextInputType.emailAddress,
                   errorText: state.userEmailError,
-                  suffixIcon: state.userEmail.isNotEmpty && state.userEmailError == null
+                  suffixIcon:
+                      state.userEmail.isNotEmpty && state.userEmailError == null
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            GestureDetector(
-                              onTap: isSendVerifyCodeBtnDisable
+                            TextButton(
+                              onPressed:
+                                  isSendVerifyCodeBtnDisable ||
+                                      state.isVerifyingCode
                                   ? null
                                   : () {
                                       notifier.verifyEmail();
                                       _controller.forward();
                                     },
-                              child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10.dp),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 20.dp,
-                                  vertical: 5.dp,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSendVerifyCodeBtnDisable
-                                      ? Colors.grey
-                                      : Colors.blue,
-                                  borderRadius: BorderRadius.circular(20.dp),
-                                ),
-                                child: Text(
-                                  Languages.verify +
-                                      (state.lastSendVerifyCodeTime > 0
-                                          ? ' (${state.lastSendVerifyCodeTime}s)'
-                                          : ''),
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12.sp,
-                                  ),
-                                ),
+                              style: TextButton.styleFrom(
+                                foregroundColor: colors.secondary,
+                                minimumSize: const Size(44, 44),
+                                textStyle: const TextStyle(fontSize: 12),
+                              ),
+                              child: Text(
+                                Languages.verify +
+                                    (state.lastSendVerifyCodeTime > 0
+                                        ? ' (${state.lastSendVerifyCodeTime}s)'
+                                        : ''),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ],
                         )
-                      : const Icon(
+                      : Icon(
                           Icons.email_outlined,
-                          color: Colors.grey,
+                          color: colors.onSurfaceVariant,
                         ),
+                  onChanged: notifier.setUserEmail,
                 ),
-                onChanged: (value) {
-                  notifier.setUserEmail(value);
+              ),
+              if (state.isWaitingForVerifyCode)
+                Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 50.dp),
+                      child: Text(
+                        Languages.pleaseEnterVerifyCode,
+                        style: TextStyle(
+                          color: colors.onSurfaceVariant,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 20.dp),
+                      child: VerifyCodeWidget(
+                        onChanged: (value) {
+                          notifier.setVerifyCode(value);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              CommonTextButton(
+                isButtonEnabled: isVerifyButtonEnabled,
+                onTap: () {
+                  notifier.verifyEmailAndResetPwd();
                 },
+                text: Languages.submit,
               ),
-            ),
-            if (state.isWaitingForVerifyCode)
-              Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 50.dp),
-                    child: Text(
-                      Languages.pleaseEnterVerifyCode,
-                      style: TextStyle(color: Colors.grey, fontSize: 16.sp),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 20.dp),
-                    child: VerifyCodeWidget(
-                      onChanged: (value) {
-                        notifier.setVerifyCode(value);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            CommonTextButton(
-              isButtonEnabled: isVerifyButtonEnabled,
-              onTap: () {
-                notifier.verifyEmailAndResetPwd();
-              },
-              text: Languages.submit,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
