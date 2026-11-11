@@ -26,6 +26,7 @@ import '../features/settings/presentation/notifications_page.dart';
 import '../features/wallet/presentation/add_card_page.dart';
 import '../features/wallet/presentation/card_management_page.dart';
 import '../features/wallet/presentation/transaction_detail_page.dart';
+import 'adaptive_detail_page.dart';
 import 'app_routes.dart';
 import '../features/home/presentation/article_detail_page.dart';
 
@@ -53,6 +54,9 @@ GoRouter createAppRouter(
 }) {
   // 详情使用push保留返回栈，同时让Web地址栏反映当前详情深链。
   GoRouter.optionURLReflectsImperativeAPIs = true;
+  // 同一来源子树在窄屏根 Route 与宽屏窗格间移动，保留滚动及页面状态。
+  final personKey = GlobalKey(debugLabel: 'adaptive-person');
+  Widget person() => KeyedSubtree(key: personKey, child: const PersonPage());
   late final GoRouter router;
   router = GoRouter(
     navigatorKey: rootNavigatorKey,
@@ -146,9 +150,10 @@ GoRouter createAppRouter(
                   key: state.pageKey,
                   child: AdaptiveDetailLayout(
                     hasDetail: state.uri.path != AppRoutes.PERSON,
-                    primary: const PersonPage(),
+                    primary: AppLayout.isWideWindow(context)
+                        ? person()
+                        : const SizedBox.shrink(),
                     primaryPaneKey: const ValueKey('person-pane'),
-                    keepPrimaryMounted: true,
                     detail: child,
                   ),
                 ),
@@ -157,7 +162,9 @@ GoRouter createAppRouter(
                     path: AppRoutes.PERSON,
                     pageBuilder: (context, state) => NoTransitionPage<void>(
                       key: state.pageKey,
-                      child: const SizedBox.shrink(),
+                      child: AppLayout.isWideWindow(context)
+                          ? const SizedBox.shrink()
+                          : person(),
                     ),
                     routes: [
                       for (final field in ['email', 'phone', 'address'])
@@ -279,7 +286,7 @@ StatefulShellBranch _sourceBranch(String source, Widget list) =>
                       final child = ArticleDetailPage(
                         id: state.pathParameters['id']!,
                       );
-                      return _adaptiveDetailPage(
+                      return createAdaptiveDetailPage(
                         context: context,
                         key: state.pageKey,
                         child: child,
@@ -329,7 +336,7 @@ List<GoRoute> _cardEditorRoutes(String source) => [
             onBack: back,
           ),
         );
-        return _adaptiveDetailPage(
+        return createAdaptiveDetailPage(
           context: context,
           key: routeState.pageKey,
           child: detail,
@@ -341,7 +348,7 @@ List<GoRoute> _cardEditorRoutes(String source) => [
 /// 注册详情路由，并为宽屏详情提供返回来源的回调。
 ///
 /// 宽屏优先弹出详情所在的内层 Navigator；无法弹出时跳转到 [source]。
-/// 窄屏传入 null，由详情页沿用默认返回逻辑；页面动画交给 [_adaptiveDetailPage]。
+/// 窄屏传入 null，由详情页沿用默认返回逻辑；页面动画交给 [createAdaptiveDetailPage]。
 GoRoute _adaptiveDetailRoute(
   String path,
   Widget Function(VoidCallback? onBack) buildDetail, {
@@ -365,7 +372,7 @@ GoRoute _adaptiveDetailRoute(
             : null,
       ),
     );
-    return _adaptiveDetailPage(
+    return createAdaptiveDetailPage(
       context: context,
       key: state.pageKey,
       child: detail,
@@ -373,107 +380,12 @@ GoRoute _adaptiveDetailRoute(
   },
 );
 
-/// 按窗口宽度选择详情 Page：宽屏无转场，窄屏使用 Material 路由转场。
-///
-/// 两种 Page 接收相同的 [key] 与 [child]；左右分栏由 AdaptiveDetailLayout 负责。
-Page<void> _adaptiveDetailPage({
-  required BuildContext context,
-  required LocalKey key,
-  required Widget child,
-}) => AppLayout.isWideWindow(context)
-    ? _AdaptiveDetailNoTransitionPage(key: key, child: child)
-    : _AdaptiveDetailMaterialPage(key: key, child: child);
-
-/// 窄屏详情的 Page 配置，与宽屏 Page 共用可更新的 Route。
-///
-/// 同 key 跨类型更新可复用 Route，配合布局的 GlobalKey 保留跨断点子树状态；
-/// 不保证页面被弹出、替换或 key 改变后仍保留状态。
-class _AdaptiveDetailMaterialPage extends MaterialPage<void> {
-  const _AdaptiveDetailMaterialPage({required super.key, required super.child});
-
-  /// 允许同 key 的两种自适应 Page 互相更新，避免仅因类型变化重建 Route。
-  @override
-  bool canUpdate(Page<dynamic> other) =>
-      (other is _AdaptiveDetailMaterialPage ||
-          other is _AdaptiveDetailNoTransitionPage) &&
-      key == other.key;
-
-  /// 创建共用 Route，使后续切换 Page 类型时仍可更新同一个路由实例。
-  @override
-  Route<void> createRoute(BuildContext context) =>
-      _adaptiveDetailPageRoute(this);
-}
-
-/// 宽屏详情的无转场 Page 配置，与窄屏 Page 共用 Route 更新机制。
-class _AdaptiveDetailNoTransitionPage extends NoTransitionPage<void> {
-  const _AdaptiveDetailNoTransitionPage({
-    required super.key,
-    required super.child,
-  });
-
-  /// 允许同 key 的两种自适应 Page 互相更新，支持从宽屏切回窄屏。
-  @override
-  bool canUpdate(Page<dynamic> other) =>
-      (other is _AdaptiveDetailMaterialPage ||
-          other is _AdaptiveDetailNoTransitionPage) &&
-      key == other.key;
-
-  /// 创建共用 Route，使后续切换 Page 类型时仍可更新同一个路由实例。
-  @override
-  Route<void> createRoute(BuildContext context) =>
-      _adaptiveDetailPageRoute(this);
-}
-
-/// 为两种详情 Page 创建统一 Route，并在构建时读取其最新 Page 配置。
-///
-/// Navigator 复用 Route 时会更新 settings；不能捕获初始 [page] 的 child，
-/// 否则跨断点更新后仍可能构建旧页面内容。
-Route<void> _adaptiveDetailPageRoute(Page<void> page) {
-  late final MaterialPageRoute<void> route;
-  route = _AdaptiveDetailPageRoute(
-    settings: page,
-    builder: (context) {
-      final settings = route.settings;
-      return settings is MaterialPage<void>
-          ? settings.child
-          : (settings as NoTransitionPage<void>).child;
-    },
-  );
-  return route;
-}
-
-/// 根据当前 settings 切换详情转场，不负责左右分栏或来源区域的挂载。
-class _AdaptiveDetailPageRoute extends MaterialPageRoute<void> {
-  _AdaptiveDetailPageRoute({required super.settings, required super.builder});
-
-  /// 宽屏入场时长为零；窄屏沿用 MaterialPageRoute 的默认时长。
-  @override
-  Duration get transitionDuration => settings is NoTransitionPage<void>
-      ? Duration.zero
-      : super.transitionDuration;
-
-  /// 退场采用与当前入场相同的时长策略。
-  @override
-  Duration get reverseTransitionDuration => transitionDuration;
-
-  /// 宽屏直接返回内容；窄屏委托 Material 的平台转场实现。
-  @override
-  Widget buildTransitions(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) => settings is NoTransitionPage<void>
-      ? child
-      : super.buildTransitions(context, animation, secondaryAnimation, child);
-}
-
 // 详情与来源列表共用分支 Navigator，Hero 不跨根/分支边界。
 GoRoute _transactionRoute() => GoRoute(
   path: AppRoutes.TRANSACTION_SEGMENT,
   pageBuilder: (context, state) {
     final child = TransactionDetailPage.fromExtra(extra: state.extra);
-    return _adaptiveDetailPage(
+    return createAdaptiveDetailPage(
       context: context,
       key: state.pageKey,
       child: child,

@@ -192,7 +192,16 @@ void main() {
       },
     );
   }
-  for (final width in [390.0, 815.0, 816.0, 839.0, 840.0, 1100.0]) {
+  for (final width in [
+    390.0,
+    815.0,
+    816.0,
+    823.0,
+    824.0,
+    839.0,
+    840.0,
+    1100.0,
+  ]) {
     for (final scale in [1.0, 2.0]) {
       for (final page in [
         const WalletPage(),
@@ -246,7 +255,18 @@ void main() {
             final cardPanelBounds = tester.getRect(
               find.byKey(const ValueKey('wallet-card-panel')),
             );
-            final contentWidth = width.clamp(0, 1017) - 56;
+            // PageGutter uses local parent width, with 16–32 per side;
+            // its 1017-wide outer frame includes both gutters.
+            final gutter = 16 + 16 * ((width - 320) / 240).clamp(0.0, 1.0);
+            final contentWidth = width.clamp(0.0, 1017.0) - gutter * 2;
+            final contentLeft = (width - contentWidth) / 2;
+            for (final bounds in [statsBounds, listBounds]) {
+              expect(bounds.width, closeTo(contentWidth, .01));
+              expect(bounds.left, closeTo(contentLeft, .01));
+              expect(bounds.right, closeTo(width - contentLeft, .01));
+            }
+            expect(balanceBounds.left, closeTo(contentLeft, .01));
+            expect(cardPanelBounds.right, closeTo(width - contentLeft, .01));
             if (contentWidth >= 760 && 14 * scale < 24) {
               expect(cardPanelBounds.top, closeTo(balanceBounds.top, .01));
               expect(
@@ -270,7 +290,7 @@ void main() {
             expect(statsBounds.top, greaterThan(cardPanelBounds.bottom));
             expect(listBounds.top, greaterThan(statsBounds.bottom));
             expect(listBounds.top, greaterThan(cardsBounds.bottom));
-            expect(listBounds.width, closeTo(width.clamp(0, 1017) - 56, 1));
+            expect(listBounds.top - statsBounds.bottom, closeTo(16, .01));
           }
           await tester.pumpWidget(const SizedBox());
         });

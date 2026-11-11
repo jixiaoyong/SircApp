@@ -17,7 +17,8 @@ GoRouter 提供 URL 匹配、嵌套路由、独立分支栈和自定义 Page 的
 
 相关文件（相对于仓库根目录）：
 
-- [`lib/routes/app_router.dart`](../lib/routes/app_router.dart)：`createAppRouter`、五个 `StatefulShellBranch`、分支内 `ShellRoute`、来源与详情路由、私有 `_adaptiveDetailPage` 及两种自适应 Page/统一 Route。**目前未拆出** `adaptive_detail_page.dart`**。**
+- [`lib/routes/app_router.dart`](../lib/routes/app_router.dart)：`createAppRouter`、五个 `StatefulShellBranch`、分支内 `ShellRoute`、业务详情注册与私有 `_adaptiveDetailRoute`；来源返回策略仍留在此处。
+- [`lib/routes/adaptive_detail_page.dart`](../lib/routes/adaptive_detail_page.dart)：单一公开入口 `createAdaptiveDetailPage`，封装两种私有 Page 与统一 Route；负责跨断点 Page 更新及平台转场，不负责 URL、业务返回或布局。
 - [`lib/core/layout/adaptive_detail_layout.dart`](../lib/core/layout/adaptive_detail_layout.dart)：`AdaptiveDetailLayout`，只管理来源/详情区域布局、挂载、语义与详情子树的 `GlobalKey`，不解析 URL 和交易参数。
 - [`lib/core/layout/app_layout.dart`](../lib/core/layout/app_layout.dart)：窗口断点 `wideWindowWidth = 840`，`isWideWindow` 使用 `MediaQuery.sizeOf(context).width`；局部布局另用 `containerQuery`。
 - [`lib/features/home/presentation/main_page.dart`](../lib/features/home/presentation/main_page.dart)：底部导航/Rail/抽屉入口，调用 `navigationShell.goBranch(index)`；直接承载 `StatefulNavigationShell`，不再另造五页 `IndexedStack`。
@@ -89,7 +90,7 @@ GoRouter 提供 URL 匹配、嵌套路由、独立分支栈和自定义 Page 的
 
 状态保留有前提：对应布局 State、Route 与 key 没被销毁或改变。页面被 pop、切换不同业务 Widget/key、登出移除分支、刷新/重启之后不承诺保留。`replace` 复用 Page key 也不意味着 Flutter 会跨不同 Widget 类型保留所有 State。
 
-对 iOS 而言，MaterialPageRoute 使用的是 Flutter 对应平台的转场实现，不等于原生 `UINavigationController`。本次没有验证 iOS 交互式侧滑返回、取消手势或原生恢复；不能从 Widget 返回测试推导这些手势全部通过。
+对 iOS 而言，MaterialPageRoute 使用的是 Flutter 对应平台的转场实现，不等于原生 `UINavigationController`。本轮新增 iOS 平台 Widget 拖动完成/取消测试，并已安装启动到 YPhone；未实际控制真机手势，也未验证原生恢复，不能从 Widget 测试推导真机全部通过。
 
 ## 5. 最小接入步骤
 
@@ -97,8 +98,8 @@ GoRouter 提供 URL 匹配、嵌套路由、独立分支栈和自定义 Page 的
 
 1. 在 [`app_routes.dart`](../lib/routes/app_routes.dart) 中按现有惯例定义路径；详情使用来源前缀，例如 `/wallet/<segment>`，不要无故挂到根 Navigator。
 2. 在 `app_router.dart` 对应来源根路由的 `routes` 中注册子 `GoRoute`。
-3. 无特殊参数的详情参考 `_adaptiveDetailRoute(path, buildDetail, source: ...)`；有 path/query/extra 参数的详情参考文章或交易路由，在 `pageBuilder` 内解析并调用当前私有 `_adaptiveDetailPage(context: context, key: state.pageKey, child: detail)`。
-4. 该 helper 只在 `app_router.dart` 所属 Dart library 内可用，不是可从任意文件 import 的公开 API。本项目尚未进行独立 Page 文件抽取；复制到其他项目时需明确迁移这一组相关 Page/Route 实现。
+3. 无特殊参数的详情参考 `_adaptiveDetailRoute(path, buildDetail, source: ...)`；有 path/query/extra 参数的详情参考文章或交易路由，在 `pageBuilder` 内解析并调用 `createAdaptiveDetailPage(context: context, key: state.pageKey, child: detail)`。
+4. 公开入口可通过 `import 'package:sirc/routes/adaptive_detail_page.dart';` 使用，两种 Page 与 Route 均为模块私有实现。来源返回仍由 `app_router.dart` 的私有 `_adaptiveDetailRoute` 或业务注册处理；来源内 push/replace 继续使用独立的 `source_detail_navigation.dart`。复制到其他项目时一起迁移 Page 模块及其窗口断点依赖，并保留配套布局的子树身份策略。
 5. 同级选择需要避免堆栈时，从适合的来源上下文调用 `openSourceDetail`；它假设 URL 首段就是来源，不适用于任意多级嵌套根路径。参数尽量让业务页面/仓储解释，不让通用布局依赖交易、卡片或 Riverpod Provider。
 6. 明确返回目标：普通来源根页、卡片管理页，还是上一个详情；不要仅因为“能 pop”就忽略业务要求。
 7. 添加实际点击、深链、缺参、同级替换、跨断点输入保留测试，不只是断言能找到详情 Widget。
@@ -129,6 +130,14 @@ GoRouter 提供 URL 匹配、嵌套路由、独立分支栈和自定义 Page 的
 因此复制交易 URL 或刷新后，只能保证路由可匹配；缺少 `extra` 时显示交易不可用的业务空态，而不是由路由伪造交易。没有稳定 ID、持久仓储/后端与必要的序列化机制，不能宣称完整恢复深链数据。官方提到复杂 extra 的浏览器序列化可能需要 codec，但 codec 本身也不等于业务持久化。
 
 文章使用 `/main/article/:id` 与本地静态示例，卡片编辑使用 `edit-card/:id`；它们也仍受当前演示数据及认证状态限制。当前认证 redirect 会将匿名业务 URL 导向登录，不能在未验证的情况下承诺登录后自动回原深链。
+
+### 这些边界是否需要现在修改？
+
+- **代码组织已拆分**：Page/Route 已集中到 `adaptive_detail_page.dart`，只暴露 `createAdaptiveDetailPage`；这是职责分离而非功能修复，未修改 key/canUpdate、动态 settings、动画时长或业务返回。Ticker 与隐藏来源的资源策略属于布局/页面，本轮不修改。
+- **现有业务设计**：菜单默认 `keepPrimaryMounted: false` 与四来源的 true 是不同挂载策略，不应仅为形式统一而改变生命周期。840 断点、等分比例和 URL 首段来源假设符合当前业务；发布通用 package 前再评估是否配置化，不为泛化提前扩充 API。
+- **需要独立数据需求**：交易刷新恢复依赖稳定 ID、存储/查询接口及路由数据设计；当前缺参空态合理，不能凭空生成 ID 或仅靠 codec 补齐恢复。本轮不改交易领域模型或导航行为。
+- **尚待平台验证**：正式 Web 的历史/刷新，以及 iOS 侧滑返回和中途取消属于验证缺口，不等于已经确认的缺陷。Widget 测试通过也不能替代这些人工回归。
+- **本轮已修复的测试回归**：钱包矩阵仍使用固定 28 的旧留白预期，与当前 `PageGutter` 契约不一致；具体复现与验证见第 9 节。
 
 ## 8. 官方与现成方案对比
 
@@ -183,18 +192,35 @@ GoRouter 提供 URL 匹配、嵌套路由、独立分支栈和自定义 Page 的
 - [`test/routes/source_detail_test.dart`](../test/routes/source_detail_test.dart)：四来源真实 Element 保留、连续交易替换、839/840/390/1200 跨断点、来源与 Rail 语义、文章以及卡片管理返回。
 - [`test/routes/app_router_test.dart`](../test/routes/app_router_test.dart)：菜单输入跨断点、分支栈、深链、认证、缺参空态、同级设置和业务返回等。
 - [`test/routes/tab_hero_test.dart`](../test/routes/tab_hero_test.dart)：分支切换与交易 Hero 身份。
+- [`test/routes/adaptive_detail_page_test.dart`](../test/routes/adaptive_detail_page_test.dart)：公开入口断点选择与双向 canUpdate、不同 key/普通 Page 隔离、统一 Route 复用和最新 child/转场时长，以及 `TargetPlatform.iOS` 下边缘拖动完成、取消后交互和连续返回；属于 Widget 测试，不是真机手势验证。
 - [`test/core/layout/app_layout_test.dart`](../test/core/layout/app_layout_test.dart) 与 [`test/app_window_layout_test.dart`](../test/app_window_layout_test.dart)：窗口/局部布局约束。
 
-后续修改应用代码时可从最小集合开始（本次仅文档，**未执行以下测试或构建**）：
+2026-11-11 本轮复现与修复：
+
+- “矩阵”指页面宽度 × 文字缩放 × 页面类型的测试组合。原钱包文件共 54 项，复现为 42 通过、12 失败；失败全部属于 `WalletPage` 的 6 种宽度 × 2 种文字缩放。
+- 根因是历史留白迁移后测试仍使用 `min(width, 1017) - 56`，即每侧固定 28。现有 `PageGutter` 契约是按局部父宽度在 320–560 区间从每侧 16 线性增加到 32，1017 的限宽包含两侧留白。390 宽时旧预期 334、实测 348.6667；815 宽时旧预期 759、实测 751；1100 宽且两倍文字时旧预期 961、实测 953。
+- 816 宽、正常文字时，旧测试还错误预期两个面板同排（卡片 top 为 96），实际卡片 top 为 290：当前内容宽 752，小于 760，应当纵排。新留白下实际同排临界窗口宽为 824，新增 823/824 两侧覆盖。
+- 本轮只修正测试预期，保留精确宽度、对称留白、面板间距、纵横排列、异常检查，并强化宽窗口内局部仅 400 宽的留白验证；未修改生产布局。钱包文件扩展后共 70 项通过；以下 9 个文件合计 **165 项通过**，不代表全仓库测试已全部执行。
+
+复现/回归命令（项目 `.fvmrc` 固定 Flutter 3.47.9）：
 
 ```sh
-fvm flutter test test/core/layout/adaptive_detail_layout_test.dart test/core/layout/app_layout_test.dart
-fvm flutter test test/routes/source_detail_test.dart test/routes/app_router_test.dart test/routes/tab_hero_test.dart
+fvm flutter test test/features/wallet/wallet_widget_test.dart
+fvm flutter test test/features/wallet/wallet_widget_test.dart test/features/wallet/wallet_statistics_layout_test.dart test/widgets/page_gutter_test.dart test/core/layout/adaptive_detail_layout_test.dart test/core/layout/app_layout_test.dart test/app_window_layout_test.dart test/routes/source_detail_test.dart test/routes/app_router_test.dart test/routes/tab_hero_test.dart
+fvm flutter analyze test/features/wallet/wallet_widget_test.dart test/features/wallet/wallet_statistics_layout_test.dart
 ```
 
-人工回归至少覆盖：窄屏进入并输入 → 拉宽 → 点同级 → 缩窄 → 页面/系统返回；另测独立 URL 打开、刷新缺参、浏览器后退/前进、分支来回切换、左窗格实际点击。iOS 额外测试侧滑返回及中途取消，不用 Android 系统返回结果替代。
+上述定向静态分析无问题，修改文件的 IDE lint 无错误。已连接并核对当前工作区启动的正式 macOS 应用（非仅 Widget Preview），热重载成功，随后未读到运行时错误；没有据此声称完成界面人工回归。
 
-验证边界：上述为已阅读的测试覆盖，不是本次执行报告。另有既知 `wallet12` 钱包尺寸断言失败记录，不能宣称整个套件已全绿；本次文档工作没有重现或定位该失败，也没有顺手修改业务布局。
+人工回归仍应覆盖：窄屏进入并输入 → 拉宽 → 点同级 → 缩窄 → 页面/系统返回；另测独立 URL 打开、刷新缺参、浏览器后退/前进、分支来回切换、左窗格实际点击。iOS 额外测试侧滑返回及中途取消，不用 Android 系统返回结果替代。上一轮钱包测试修复未执行平台构建；本轮模块抽取后的实际验证如下。
+
+2026-11-11 Page/Route 模块抽取验证：
+
+- 以下 8 个文件合计 **153 项通过**：`adaptive_detail_page_test`、`app_router_test`、`source_detail_test`、`tab_hero_test`、`card_management_test`、`add_card_page_test`、`wallet_widget_test`、`wallet_statistics_layout_test`；新增模块文件位于 `test/routes/`，卡片文件位于原有对应功能目录。定向 analyze（两个路由生产文件及新测试）、IDE lint 和 `git diff --check` 通过。首次新手势测试因未开启 GoRouter 命令式 URL 反映而断言失败，补齐与应用一致的测试配置后重跑通过，未修改生产导航行为。
+- 当前工作区正式 macOS App 已通过 DTD 热重载，未读到运行时错误；Widget Preview 不是此次部署验证对象。
+- `fvm flutter run -d 00008140-001268960A09801C --no-pub` 已在 **YPhone / iPhone 16 Pro / iOS 27.3** 完成 Xcode 构建、安装和启动，真机 DTD 未读到运行时错误，检查到 `MainPage` / `HomePage`。沿用原签名；构建提示项目同时保留 CocoaPods 集成及 Swift Packages，本轮未迁移配置。
+- iPhone 自动控制服务 GET status 返回 `unauthorized`，因此未继续使用该途径、未安装 runner，也未实际观察真机侧滑完成/取消。现有 devicectl 成功取得启动截图，但截图和 Widget 测试均不代表真机手势已通过；正式 Web 历史/刷新同样未验证。
+- 真机人工步骤：从首页点击文章或交易进入普通详情，从屏幕最左边缘向右拖过半屏后松手，应返回来源；再次进入，拖到约三分之一至半屏后向左收回再松手，应留在详情且仍可点击/滚动；重复进入/返回两次。再从钱包卡片管理进入编辑卡片，核对 `PopScope` 管理页返回约定；该受守卫页面不要误当作普通可侧滑页面。
 
 ## 10. 参考资料与文档位置
 
@@ -203,4 +229,4 @@ fvm flutter test test/routes/source_detail_test.dart test/routes/app_router_test
 - [GoRouter 14.8.1 replace API](https://pub.dev/documentation/go_router/14.8.1/go_router/GoRouter/replace.html)：同一 Page key 与 pushReplacement 的区别。
 - [GoRouter 导航文档](https://pub.dev/documentation/go_router/latest/topics/Navigation-topic.html)：go/push、浏览器历史、Router.neglect、extra 序列化边界。
 
-本仓库已有 `doc/localization_architecture_guide.md`，README 也链接 `doc/`；此次未发现承载文档的 `Docker/` 目录，因此按已有约定将本文放在 `doc/adaptive_detail_navigation_guide.md`，没有另建 Docker 目录或更改应用代码。
+本仓库已有 `doc/localization_architecture_guide.md`，README 也链接 `doc/`；此次未发现承载文档的 `Docker/` 目录，因此按已有约定将本文放在 `doc/adaptive_detail_navigation_guide.md`，没有另建 Docker 目录。本轮仅抽取 Page/Route 模块并更新对应调用，不改变导航业务行为。

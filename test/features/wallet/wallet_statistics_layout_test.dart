@@ -15,7 +15,7 @@ void expectVerticalStatistics(WidgetTester tester, double availableWidth) {
   );
   final cards = tester.getRect(find.byKey(const ValueKey('wallet-cards')));
   final frameWidth = availableWidth.clamp(0.0, 1017.0);
-  final gutter = 16 + 16 * ((frameWidth - 320) / 240).clamp(0.0, 1.0);
+  final gutter = 16 + 16 * ((availableWidth - 320) / 240).clamp(0.0, 1.0);
   expect(statistics.width, closeTo(frameWidth - gutter * 2, 1));
   expect(transactions.width, closeTo(statistics.width, .01));
   expect(transactions.left, closeTo(statistics.left, .01));
@@ -103,7 +103,7 @@ void main() {
                 return Row(
                   children: [
                     const Expanded(child: WalletPage()),
-                    if (showDetails) const SizedBox(width: 480),
+                    if (showDetails) const SizedBox(width: 700),
                   ],
                 );
               },
@@ -115,7 +115,9 @@ void main() {
     expectVerticalStatistics(tester, 1100);
     resize(() => showDetails = true);
     await tester.pump();
-    expectVerticalStatistics(tester, 620);
+    // The viewport stays 1100 wide while the source pane enters the
+    // interpolated gutter range: local 400 => 21⅓ per side, not 32.
+    expectVerticalStatistics(tester, 400);
     resize(() => showDetails = false);
     await tester.pump();
     expectVerticalStatistics(tester, 1100);

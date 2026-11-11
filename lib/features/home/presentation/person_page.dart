@@ -75,6 +75,36 @@ class PersonPage extends ConsumerStatefulWidget {
 
 class _PersonPageState extends ConsumerState<PersonPage> {
   late List<Transaction> _moneyOperateList;
+  final _scrollController = ScrollController();
+  bool? _wasWide;
+  final _scrollOffsets = <bool, double>{};
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final wide = AppLayout.isWideWindow(context);
+    if (_wasWide != null && _wasWide != wide) {
+      if (_scrollController.hasClients) {
+        _scrollOffsets[_wasWide!] = _scrollController.offset;
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !_scrollController.hasClients) return;
+        _scrollController.jumpTo(
+          (_scrollOffsets[wide] ?? 0).clamp(
+            0,
+            _scrollController.position.maxScrollExtent,
+          ),
+        );
+      });
+    }
+    _wasWide = wide;
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -113,6 +143,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
     ];
 
     return SingleChildScrollView(
+      controller: _scrollController,
       child: SafeArea(
         child: PageGutter(
           maxWidth: 1017,
