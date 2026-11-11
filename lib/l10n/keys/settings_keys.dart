@@ -4,7 +4,7 @@ abstract class SettingsLang {
   String get settings;
   String get about;
   String get aboutUsDescription;
-  String get hostedOnGithub;
+  String get aboutPageDescription;
   String get language;
   String get appearance;
   String get themeLight;

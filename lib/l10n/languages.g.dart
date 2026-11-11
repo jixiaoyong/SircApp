@@ -632,9 +632,9 @@ class Languages {
   ///- [en_US] About
   static String get about => settings.about;
 
-  ///- [zh_CN] 这是一个开源项目，托管于
-  ///- [en_US] This is an open-source project hosted on
-  static String get hostedOnGithub => settings.hostedOnGithub;
+  ///- [zh_CN] 这是一个开源项目，托管于 {github}，支持 Android、iOS 和 Web 平台。\n你可以体验在线版本：{online}。\n\n由 jixiaoyong 开发，设计灵感来自 {picture}。\n\n如有任何问题，欢迎联系我：
+  ///- [en_US] This is an open-source project hosted on {github}, supporting Android, iOS, and Web platforms.\nYou can try the online version: {online}.\n\nIt is developed by jixiaoyong. The design is based on {picture} found on the internet.\n\nIf you have any questions, please contact me:
+  static String get aboutPageDescription => settings.aboutPageDescription;
 
   ///- [zh_CN] 语言
   ///- [en_US] Language
@@ -908,8 +908,7 @@ class Languages {
       "Settings": "Settings",
       "Settings": "Settings",
       "About": "About",
-      "This is an open-source project hosted on ":
-          "This is an open-source project hosted on ",
+      "This is an open-source project hosted on {github}, supporting Android, iOS, and Web platforms.\nYou can try the online version: {online}.\n\nIt is developed by jixiaoyong. The design is based on {picture} found on the internet.\n\nIf you have any questions, please contact me:": "This is an open-source project hosted on {github}, supporting Android, iOS, and Web platforms.\\nYou can try the online version: {online}.\\n\\nIt is developed by jixiaoyong. The design is based on {picture} found on the internet.\\n\\nIf you have any questions, please contact me:",
       "Language": "Language",
       "Appearance": "Appearance",
       "Light": "Light",
@@ -1087,7 +1086,7 @@ class Languages {
       "Settings": "设置",
       "Settings": "设置",
       "About": "关于",
-      "This is an open-source project hosted on ": "这是一个开源项目，托管于 ",
+      "This is an open-source project hosted on {github}, supporting Android, iOS, and Web platforms.\nYou can try the online version: {online}.\n\nIt is developed by jixiaoyong. The design is based on {picture} found on the internet.\n\nIf you have any questions, please contact me:": "这是一个开源项目，托管于 {github}，支持 Android、iOS 和 Web 平台。\\n你可以体验在线版本：{online}。\\n\\n由 jixiaoyong 开发，设计灵感来自 {picture}。\\n\\n如有任何问题，欢迎联系我：",
       "Language": "语言",
       "Appearance": "外观主题",
       "Light": "亮色",

@@ -17,7 +17,8 @@ class SettingsEn implements SettingsLang {
       '''<p style="text-align: center;"><span style="font-size: 19px;"><strong>Sirc&nbsp;</strong></span><img src="https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg" alt="" data-href="https://github.com/jixiaoyong/SircApp/actions/workflows/main.yml/badge.svg" width='30%'  style=""></p><p style="text-align: center;"><br></p><p style="text-align: center;"><span style="color: rgb(41, 44, 50); font-size: 19px;">An open-source financial application developed using Flutter.</span></p><p style="text-align: center;"><span style="color: rgb(41, 44, 50); font-size: 19px;">Made&nbsp;With&nbsp;❤️&nbsp;by&nbsp;JI,XIAOYONG.</span></p><p><br></p>''';
 
   @override
-  String get hostedOnGithub => 'This is an open-source project hosted on ';
+  String get aboutPageDescription =>
+      'This is an open-source project hosted on {github}, supporting Android, iOS, and Web platforms.\nYou can try the online version: {online}.\n\nIt is developed by jixiaoyong. The design is based on {picture} found on the internet.\n\nIf you have any questions, please contact me:';
 
   @override
   String get language => 'Language';

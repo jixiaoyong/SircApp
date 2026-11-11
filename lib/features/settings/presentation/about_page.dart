@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,6 +10,8 @@ import '../../../widgets/one_title_with_back_button_appbar.dart';
 import '../../../widgets/settings_item_tile.dart';
 
 import 'package:embed_webview/embed_webview.dart';
+
+import 'about_description.dart';
 
 import '../../../widgets/webview/webview_page.dart';
 
@@ -66,64 +67,7 @@ class AboutPage extends ConsumerWidget {
             ),
             Padding(
               padding: EdgeInsets.only(bottom: 20),
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: Languages.hostedOnGithub,
-                      children: [
-                        TextSpan(
-                          text: "Github.com/jixiaoyong/SircApp",
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () => openUrl(
-                              context,
-                              "https://github.com/jixiaoyong/SircApp",
-                            ),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const TextSpan(
-                      text: ", supporting Android, iOS, and Web platforms.\nYou can try the online version: ",
-                    ),
-                    TextSpan(
-                      text: "jixiaoyong.github.io/SircApp",
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () => openUrl(
-                          context,
-                          "https://jixiaoyong.github.io/SircApp",
-                        ),
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                    const TextSpan(
-                      text: "\n\nIt is developed by jixiaoyong. The design is based on ",
-                    ),
-                    TextSpan(
-                      text: "a picture ",
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () => openUrl(
-                          context,
-                          "https://huaban.com/pins/4619822724",
-                        ),
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                    const TextSpan(text: 'found on the internet.'),
-                    const TextSpan(
-                      text: '\n\nIf you have any questions, please contact me:',
-                    ),
-                  ],
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
+              child: AboutDescription(onOpenUrl: openUrl),
             ),
             Material(
               color: Theme.of(context).colorScheme.surface,
