@@ -232,20 +232,26 @@ class _InitialPageState extends ConsumerState<InitialPage> {
                   const Spacer(),
                   Center(child: Image.asset(A.assets_ic_launcher)),
                   const Spacer(),
-                  Container(
-                    width: double.infinity,
+                  ConstrainedContent(
+                    maxWidth: 520,
                     padding: const EdgeInsets.all(10.0),
-                    margin: const EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    child: Center(
-                      child: Text(
-                        Languages.somethingLikeAds,
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.white.withValues(alpha: 0.8),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(10.0),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceContainer
+                            .withValues(alpha: 0.8),
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      child: Center(
+                        child: Text(
+                          Languages.somethingLikeAds,
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant,
+                          ),
                         ),
                       ),
                     ),

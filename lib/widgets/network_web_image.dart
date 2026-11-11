@@ -133,14 +133,17 @@ class NetworkWebImage extends StatelessWidget {
         return Container(
           width: _effectiveWidth,
           height: _effectiveHeight,
-          decoration: BoxDecoration(color: Colors.blue.withValues(alpha: 0.05)),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainer
+                .withValues(alpha: 0.8),
+          ),
           alignment: Alignment.center,
           child: SizedBox(
             width: indicatorSize,
             height: indicatorSize,
             child: CircularProgressIndicator(
               strokeWidth: strokeWidth,
-              color: Colors.blue.withValues(alpha: 0.6),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         );
@@ -171,24 +174,17 @@ class NetworkWebImage extends StatelessWidget {
             width: assetSize,
             height: assetSize,
             fit: BoxFit.contain,
-            errorBuilder: (_, __, ___) => _buildDefaultIcon(minDim),
+            errorBuilder: (_, __, ___) => _buildDefaultIcon(context, minDim),
           );
         } else {
-          innerChild = _buildDefaultIcon(minDim);
+          innerChild = _buildDefaultIcon(context, minDim);
         }
 
         return Container(
           width: _effectiveWidth,
           height: _effectiveHeight,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFFEEF2FF), // Indigo 50
-                Color(0xFFE0E7FE), // Indigo 100
-              ],
-            ),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainer,
           ),
           alignment: Alignment.center,
           child: innerChild,
@@ -197,14 +193,12 @@ class NetworkWebImage extends StatelessWidget {
     );
   }
 
-  Widget _buildDefaultIcon(double minDim) {
+  Widget _buildDefaultIcon(BuildContext context, double minDim) {
     final iconSize = (minDim * 0.52).clamp(14.0, 80.0);
     final iconData =
         fallbackIcon ??
         (isAvatar ? Icons.person_rounded : Icons.image_not_supported_outlined);
-    final iconColor = isAvatar
-        ? const Color(0xFF6366F1).withValues(alpha: 0.75) // Indigo accent
-        : const Color(0xFF94A3B8); // Slate 400
+    final iconColor = Theme.of(context).colorScheme.onSurfaceVariant;
 
     return Icon(iconData, size: iconSize, color: iconColor);
   }
