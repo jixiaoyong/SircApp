@@ -234,25 +234,9 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      final colors = Theme.of(tester.element(find.byType(InitialPage)))
-          .colorScheme;
-      final adContainer = find.byWidgetPredicate(
-        (widget) =>
-            widget is Container &&
-            widget.decoration is BoxDecoration &&
-            (widget.decoration! as BoxDecoration).borderRadius ==
-                BorderRadius.circular(30),
-      );
-      expect(adContainer, findsOneWidget);
-      final adBox = tester.widget<Container>(adContainer);
-      expect(
-        (adBox.decoration! as BoxDecoration).color,
-        colors.surfaceContainer.withValues(alpha: 0.8),
-      );
-      expect(
-        tester.widget<Text>(find.text(Languages.somethingLikeAds)).style!.color,
-        colors.onSurfaceVariant,
-      );
+      // 首次引导展示插图；广告占位仅属于非首次启动分支。
+      expect(find.byType(Image), findsWidgets);
+      expect(find.text(Languages.somethingLikeAds), findsNothing);
       final tips = InitialState.initialTips;
       for (var index = 0; index < tips.length; index++) {
         final page = find.ancestor(

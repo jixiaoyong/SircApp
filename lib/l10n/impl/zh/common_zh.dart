@@ -7,6 +7,9 @@ class CommonZh implements CommonLang {
   String get cancel => '取消';
 
   @override
+  String get all => '全部';
+
+  @override
   String get submit => '提交';
 
   @override

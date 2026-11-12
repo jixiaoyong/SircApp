@@ -7,6 +7,9 @@ class CommonEn implements CommonLang {
   String get cancel => 'Cancel';
 
   @override
+  String get all => 'All';
+
+  @override
   String get submit => 'Submit';
 
   @override

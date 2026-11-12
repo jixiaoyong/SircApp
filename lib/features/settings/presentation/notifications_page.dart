@@ -15,8 +15,7 @@ class NotificationsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final locale = ref.watch(localeProvider);
-    final zh = locale.languageCode == 'zh';
+    ref.watch(localeProvider);
     final state = ref.watch(notificationsControllerProvider);
     final notifier = ref.read(notificationsControllerProvider.notifier);
     final colors = Theme.of(context).colorScheme;
@@ -73,7 +72,7 @@ class NotificationsPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                zh ? '按类别和时间查阅已有交易。当前无独立通知服务；类别由交易名称识别，未识别的归入其他。' : 'Browse existing transactions by category and time. There is no separate notification service; categories use action labels, with unknown actions in Other.',
+                Languages.settings.notificationsDescription,
                 style: TextStyle(color: colors.onSurfaceVariant, height: 1.6),
               ),
               const SizedBox(height: 20),
@@ -100,9 +99,10 @@ class NotificationsPage extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: Text(
-                    zh
-                        ? '${state.undatedCount} 条记录缺少可解析日期（如“刚刚”），未纳入时间筛选。'
-                        : '${state.undatedCount} records have no parseable date (for example “Just now”) and are excluded from time filters.',
+                    Languages.settings.undatedNotifications.replaceAll(
+                      '{count}',
+                      '${state.undatedCount}',
+                    ),
                     key: const ValueKey('undated-notice'),
                     style: TextStyle(
                       color: colors.onSurfaceVariant,
@@ -114,9 +114,7 @@ class NotificationsPage extends ConsumerWidget {
                 const Center(child: CircularProgressIndicator())
               else if (state.error != null)
                 Text(
-                  zh
-                      ? '交易加载失败，请稍后重试。'
-                      : 'Unable to load transactions. Please try again later.',
+                  Languages.settings.transactionsLoadFailed,
                   style: TextStyle(color: colors.error),
                 )
               else if (state.visibleItems.isEmpty)
@@ -132,9 +130,7 @@ class NotificationsPage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Text(
-                    zh
-                        ? '当前筛选下暂无交易通知'
-                        : 'No transaction notifications for these filters',
+                    Languages.settings.noTransactionNotifications,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: colors.onSurfaceVariant),
                   ),

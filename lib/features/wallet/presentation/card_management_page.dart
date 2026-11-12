@@ -18,10 +18,10 @@ class CardManagementPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(localeProvider);
     final state = ref.watch(walletControllerProvider);
-    final zh = Localizations.localeOf(context).languageCode == 'zh';
+    final settings = Languages.settings;
     return Scaffold(
       appBar: AppBar(
-        title: Text(zh ? '卡片管理' : 'Manage cards'),
+        title: Text(settings.cardManagement),
         leading: BackButton(onPressed: onBack ?? () => context.go('/wallet')),
         actions: [
           TextButton(
@@ -33,16 +33,14 @@ class CardManagementPage extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          Text(
-            zh ? '仅管理本应用中的卡片，不会解绑真实银行账户。列表仅显示卡号尾号，不显示安全码。' : 'Manage cards in this app only, not your bank connections. Only the last four digits are shown; security codes are never displayed.',
-          ),
+          Text(settings.cardManagementNotice),
           const SizedBox(height: 16),
           if (state.isLoading) const LinearProgressIndicator(),
           if (!state.isLoading && state.cards.isEmpty)
             WalletPanel(
               child: Column(
                 children: [
-                  Text(zh ? '暂无卡片' : 'No cards yet'),
+                  Text(Languages.wallet.noCardsYet),
                   TextButton(
                     onPressed: () =>
                         openSourceDetail(context, 'add-card?from=cards'),
@@ -89,7 +87,7 @@ class CardManagementPage extends ConsumerWidget {
                               minWidth: 44,
                               minHeight: 44,
                             ),
-                            tooltip: zh ? '编辑' : 'Edit',
+                            tooltip: settings.edit,
                             icon: const Icon(Icons.edit_outlined, size: 20),
                             onPressed: () => openSourceDetail(
                               context,
@@ -102,26 +100,26 @@ class CardManagementPage extends ConsumerWidget {
                               minWidth: 44,
                               minHeight: 44,
                             ),
-                            tooltip: zh ? '删除' : 'Delete',
+                            tooltip: settings.delete,
                             icon: const Icon(Icons.delete_outline, size: 20),
                             onPressed: () async {
                               final confirmed = await showDialog<bool>(
                                 context: context,
                                 builder: (dialogContext) => AlertDialog(
-                                  title: Text(zh ? '删除卡片？' : 'Delete card?'),
+                                  title: Text(settings.deleteCardQuestion),
                                   content: Text(
-                                    '${card.bankName} · •••• ${_lastFour(card.cardNumber)}\n\n${zh ? '仅从本应用移除此卡片，不会删除交易历史，也不会解绑真实银行账户。' : 'This removes the card from this app only. Transaction history stays unchanged, and your bank account is not disconnected.'}',
+                                    '${card.bankName} · •••• ${_lastFour(card.cardNumber)}\n\n${settings.deleteCardNotice}',
                                   ),
                                   actions: [
                                     TextButton(
                                       onPressed: () =>
                                           Navigator.pop(dialogContext, false),
-                                      child: Text(zh ? '取消' : 'Cancel'),
+                                      child: Text(Languages.cancel),
                                     ),
                                     TextButton(
                                       onPressed: () =>
                                           Navigator.pop(dialogContext, true),
-                                      child: Text(zh ? '删除' : 'Delete'),
+                                      child: Text(settings.delete),
                                     ),
                                   ],
                                 ),
@@ -135,9 +133,7 @@ class CardManagementPage extends ConsumerWidget {
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(
-                                        zh ? '删除失败，请重试' : 'Could not delete card. Try again.',
-                                      ),
+                                      content: Text(settings.deleteFailed),
                                     ),
                                   );
                                 }

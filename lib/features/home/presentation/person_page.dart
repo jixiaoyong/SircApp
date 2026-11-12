@@ -4,11 +4,9 @@ import 'package:sirc/routes/source_detail_navigation.dart';
 import 'package:sirc/core/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/localization/transaction_localization.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
-import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/number_extension.dart';
 import 'package:sirc/widgets/network_web_image.dart';
@@ -16,6 +14,8 @@ import 'package:sirc/widgets/settings_item_tile.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
+import 'package:sirc/features/wallet/domain/models/transaction.dart';
+import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/features/wallet/presentation/card_management_page.dart';
 import 'package:sirc/widgets/page_gutter.dart';
 
@@ -74,8 +74,14 @@ class PersonPage extends ConsumerStatefulWidget {
 }
 
 class _PersonPageState extends ConsumerState<PersonPage> {
-  late List<Transaction> _moneyOperateList;
   final _scrollController = ScrollController();
+  late final List<Transaction> _moneyOperateList = MockUtils.moneyOperateList
+      .map<Transaction>(
+        (e) => e.copyWith(
+          userIcon: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80',
+        ),
+      )
+      .toList();
   bool? _wasWide;
   final _scrollOffsets = <bool, double>{};
 
@@ -107,22 +113,9 @@ class _PersonPageState extends ConsumerState<PersonPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _moneyOperateList = MockUtils.moneyOperateList
-        .map<Transaction>(
-          (e) => e.copyWith(
-            userIcon: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
-          ),
-        )
-        .toList();
-  }
-
-  @override
   Widget build(BuildContext context) {
     ref.watch(localeProvider);
     final navState = ref.watch(navigationControllerProvider);
-    final zh = Localizations.localeOf(context).languageCode == 'zh';
     final spending = ref
         .watch(walletControllerProvider)
         .allTransactions
@@ -154,7 +147,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   IconButton(
-                    tooltip: zh ? '打开导航菜单' : 'Open navigation menu',
+                    tooltip: Languages.settings.openNavigationMenu,
                     onPressed: () {
                       ref
                           .read(navigationControllerProvider.notifier)
@@ -171,7 +164,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                     context.push(AppRoutes.PERSON_EMAIL);
                   },
                   child: Tooltip(
-                    message: zh ? '查看只读个人资料' : 'View read-only profile',
+                    message: Languages.settings.viewReadOnlyProfile,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(50),
                       child: NetworkWebImage(
@@ -329,12 +322,10 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                             icon: item.$1,
                             title: item.$2,
                             subtitle: index == 0
-                                ? '${email.isEmpty ? Languages.settings.notSet : email} · ${zh ? '只读' : 'Read only'}'
+                                ? '${email.isEmpty ? Languages.settings.notSet : email} · ${Languages.settings.readOnly}'
                                 : index == 3
-                                ? (zh
-                                      ? '查看钱包中的现有银行卡'
-                                      : 'View existing wallet cards')
-                                : '${Languages.settings.notSet} · ${zh ? '只读' : 'Read only'}',
+                                ? (Languages.settings.viewExistingWalletCards)
+                                : '${Languages.settings.notSet} · ${Languages.settings.readOnly}',
                             onTap: () {
                               final router = GoRouter.of(context);
                               final current = router

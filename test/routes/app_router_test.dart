@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 import 'package:flutter/gestures.dart';
 import 'package:sirc/features/auth/presentation/sign_in_page.dart';
 import 'package:sirc/features/auth/presentation/sign_up_page.dart';
@@ -84,6 +85,14 @@ class _AboutWebView extends PlatformWebViewWidget {
 }
 
 void main() {
+  late MockDataRepository mock;
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    mock = MockDataRepository();
+    await mock.wallet;
+    await mock.articles;
+    await mock.user;
+  });
   TestWidgetsFlutterBinding.ensureInitialized();
   WebViewPlatform.instance = _AboutWebViewPlatform();
 
@@ -102,7 +111,10 @@ void main() {
     });
     final prefs = await SharedPreferences.getInstance();
     final container = ProviderContainer(
-      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        mockDataRepositoryProvider.overrideWithValue(mock),
+      ],
     );
     addTearDown(container.dispose);
     return container;
@@ -709,11 +721,11 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('manage-cards')));
       await finishTransition(tester);
       expect(router.routeInformationProvider.value.uri.path, '/wallet/cards');
-      await tester.tap(find.byKey(const ValueKey('edit-card-2')));
+      await tester.tap(find.byKey(const ValueKey('edit-card-card-test-002')));
       await finishTransition(tester);
       expect(
         router.routeInformationProvider.value.uri.path,
-        '/wallet/edit-card/2',
+        '/wallet/edit-card/card-test-002',
       );
       expect(find.byType(CardEditorPage), findsOneWidget);
       final fields = find.descendant(
@@ -722,7 +734,7 @@ void main() {
       );
       expect(
         tester.widget<EditableText>(fields.first).controller.text,
-        'Juan Perez',
+        'Alex Morgan',
       );
       await tester.tap(
         find.descendant(

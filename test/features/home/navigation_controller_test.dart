@@ -5,6 +5,7 @@ import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('NavigationController Tests', () {
     late ProviderContainer container;
 
@@ -148,6 +149,9 @@ void main() {
 
     test('Initial state should load correctly', () async {
       await container.read(walletControllerProvider.notifier).loadInitialData();
+      final subscription = container.listen(homeControllerProvider, (_, _) {});
+      addTearDown(subscription.close);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
       final state = container.read(homeControllerProvider);
 
       expect(state.currentBankIndex, 0);

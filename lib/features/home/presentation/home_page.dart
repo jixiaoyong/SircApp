@@ -13,7 +13,7 @@ import 'package:sirc/widgets/bank_card_widget.dart';
 import 'package:sirc/widgets/expandable_page_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
-import 'package:sirc/features/home/presentation/sample_articles.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/jingang_widget.dart';
@@ -87,24 +87,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
   final HomeState homeState;
   final String userAvatar;
 
-  String _quickActionLabel(String title) => switch (title) {
-    'Bonds' => Languages.home.bonds,
-    'Billing' => Languages.home.billing,
-    'Cash' => Languages.home.cash,
-    'Money Bag' => Languages.home.moneyBag,
-    'Wallet' => Languages.wallet.wallet,
-    'Bounced Check' => Languages.home.bouncedCheck,
-    'Tax' => Languages.home.tax,
-    'Purchase Order' => Languages.home.purchaseOrder,
-    'Payment History' => Languages.home.paymentHistory,
-    'Card In Use' => Languages.home.cardInUse,
-    'Card Security' => Languages.home.cardSecurity,
-    'Bank Card Front Side' => Languages.home.bankCardFrontSide,
-    'bank card missing' => Languages.home.bankCardMissing,
-    'Credit Control' => Languages.home.creditControl,
-    'Commodity' => Languages.home.commodity,
-    _ => title,
-  };
+  String _quickActionLabel(String title) => title;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -666,18 +649,34 @@ class HomeSummaryCards extends ConsumerWidget {
   }
 }
 
-class HomeArticlesPanel extends StatefulWidget {
+class HomeArticlesPanel extends ConsumerStatefulWidget {
   const HomeArticlesPanel({super.key});
   @override
-  State<HomeArticlesPanel> createState() => _HomeArticlesPanelState();
+  ConsumerState<HomeArticlesPanel> createState() => _HomeArticlesPanelState();
 }
 
-class _HomeArticlesPanelState extends State<HomeArticlesPanel> {
+class _HomeArticlesPanelState extends ConsumerState<HomeArticlesPanel> {
   int selected = 0;
+  List<List<Map<String, dynamic>>>? groups;
+  Locale? loadedLocale;
+  void _loadArticles(Locale locale) {
+    if (loadedLocale != locale) {
+      loadedLocale = locale;
+      ref
+          .read(mockDataRepositoryProvider)
+          .getArticleGroups(locale)
+          .then((value) {
+            if (mounted && loadedLocale == locale)
+              setState(() => groups = value);
+          })
+          .catchError((_) {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // 跟随 MaterialApp 的语言变化重建，文案仍统一由 Languages 读取。
-    Localizations.localeOf(context);
+    final locale = ref.watch(localeProvider);
+    _loadArticles(locale);
     return WalletPanel(
       key: const ValueKey('home-articles'),
       minimumHeight: 224,
@@ -709,11 +708,66 @@ class _HomeArticlesPanelState extends State<HomeArticlesPanel> {
             keyPrefix: 'article-segment',
           ),
           const SizedBox(height: 14),
-          for (var i = 0; i < sampleArticleGroups[selected].length; i++) ...[
+          for (
+            var i = 0;
+            i <
+                ((groups != null && selected < groups!.length)
+                    ? groups![selected].length
+                    : 0);
+            i++
+          ) ...[
             if (i > 0) Divider(height: 1, color: AppColors.line(context)),
-            HomeTabViewListItemWidget(tabTitle: '$selected', index: i),
+            _RepositoryArticleItem(
+              article: groups![selected][i],
+              group: selected,
+              index: i,
+            ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _RepositoryArticleItem extends StatelessWidget {
+  const _RepositoryArticleItem({
+    required this.article,
+    required this.group,
+    required this.index,
+  });
+  final Map<String, dynamic> article;
+  final int group;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final title = article['title'] as String? ?? '';
+    final summary = article['summary'] as String? ?? '';
+    return InkWell(
+      key: ValueKey('home-article-$group-$index'),
+      onTap: () => openSourceDetail(context, 'article/$group-$index'),
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                summary,
+                style: TextStyle(fontSize: 12, color: AppColors.muted(context)),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -731,33 +785,5 @@ class HomeTabViewListItemWidget extends StatelessWidget {
   final int index;
 
   @override
-  Widget build(BuildContext context) {
-    final zh = Localizations.localeOf(context).languageCode == 'zh';
-    final group = int.tryParse(tabTitle) ?? 0;
-    final article = sampleArticleForId('$group-$index');
-    if (article == null) return const SizedBox.shrink();
-    return InkWell(
-      key: ValueKey('home-article-$group-$index'),
-      onTap: () => openSourceDetail(context, 'article/$group-$index'),
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              article.title(zh),
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              article.summary(zh),
-              style: TextStyle(fontSize: 12, color: AppColors.muted(context)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => const SizedBox.shrink();
 }

@@ -15,6 +15,8 @@ abstract class HomeLang {
   String get recentTransactions;
   String get transactionSummary;
   String get localExamples;
+  String get articleNotFound;
+  String get articleDisclaimer;
 
   String get chartWeek;
   String get chartMonth;

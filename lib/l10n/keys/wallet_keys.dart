@@ -47,6 +47,27 @@ abstract class WalletLang {
   String get noTransactions;
   String get outgoing;
   String get incoming;
+  String get manageCards;
+  String get transactions;
+  String get incomeExpenseStats;
+  String get historyTotalAmount;
+  String get amountAbsoluteSummary;
+  String get recordsGroupedByWeekday;
+  String get filterByDate;
+  String get transactionsLabel;
+  String get searchTransactions;
+  String get searchIncomeExpense;
+  String get previousCard;
+  String get nextCard;
+  String get noCardsYet;
+  String get noMatchingTransactions;
+  String get noChartRecords;
+  String get thisWeekSpending;
+  String get thisWeekIncome;
+  String get thisWeekTotalVolume;
+  String get thisWeekdayLabel;
+  String get undatedRecordsTooltip;
+  String get undatedRecordsExcluded;
 
   /// 单复数支持示例：银行卡数量统计
   String cardCount(int count);

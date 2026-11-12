@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
+import 'package:sirc/l10n/languages.g.dart';
 import 'package:sirc/features/wallet/domain/models/bank_card.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
@@ -60,10 +61,7 @@ void main() {
         expect(tester.getSize(find.byKey(ValueKey('bar-$i-0.0'))).height, 0);
       }
       expect(find.byKey(const ValueKey('wallet-chart-empty')), findsOneWidget);
-      expect(
-        find.text('No records to summarize in the selected range'),
-        findsOneWidget,
-      );
+      expect(find.text(Languages.wallet.noChartRecords), findsOneWidget);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(body: WalletBars(values: [1, 2, 3, 4, 5, 6, 7])),
@@ -150,7 +148,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.byKey(const ValueKey('wallet-cards')), findsNothing);
-    expect(find.textContaining('No cards yet'), findsOneWidget);
+    expect(find.text(Languages.wallet.noCardsYet), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
   for (final dark in [false, true]) {

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sirc/features/wallet/data/wallet_repository.dart';
 import 'package:sirc/features/wallet/domain/models/bank_card.dart';
+import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/localization/app_locale.dart';
@@ -13,6 +14,15 @@ import 'package:sirc/widgets/verify_code_widget.dart';
 
 class _PendingCardsRepository extends WalletRepositoryImpl {
   final cards = Completer<List<BankCard>>();
+  @override
+  Future<double> getAvailableBalance() async => 0;
+  @override
+  Future<List<Transaction>> getTransactions({
+    TransactionFilter filter = TransactionFilter.total,
+    String? query,
+  }) async => [];
+  @override
+  Future<List<(String, double)>> getMonthlyChartData(String month) async => [];
   @override
   Future<List<BankCard>> getBankCards() => cards.future;
 }

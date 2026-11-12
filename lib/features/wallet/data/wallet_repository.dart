@@ -1,8 +1,9 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/core/network/api_client.dart';
-import 'package:sirc/mock/mock_utils.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 
 import '../domain/models/bank_card.dart';
 
@@ -41,58 +42,46 @@ abstract class WalletRepository {
 /// 钱包业务仓库默认实现（基于内存与 Mock 驱动，支持 ApiClient 网络扩展）
 class WalletRepositoryImpl implements WalletRepository {
   final ApiClient? _apiClient;
+  final MockDataRepository _mock;
+  final Locale _locale;
 
-  WalletRepositoryImpl([this._apiClient]);
+  WalletRepositoryImpl([
+    this._apiClient,
+    MockDataRepository? mock,
+    Locale locale = const Locale('zh'),
+  ]) : _mock = mock ?? MockDataRepository(),
+       _locale = locale;
 
   ApiClient? get apiClient => _apiClient;
 
-  // 初始银行卡列表（与首页默认卡片数据一致）
-  final List<BankCard> _cards = [
-    BankCard(
-      id: '1',
-      bankName: Languages.cnss,
-      cardNumber: '8932 6283 3243 3232',
-      ownerName: 'Juan Perez',
-      expirationDate: '02/20',
-      cardType: 'Visa',
-    ),
-    BankCard(
-      id: '2',
-      bankName: Languages.dxss,
-      cardNumber: '8932 3223 3243 3232',
-      ownerName: 'Juan Perez',
-      expirationDate: '12/29',
-      cardType: 'MasterCard',
-    ),
-    BankCard(
-      id: '3',
-      bankName: Languages.cid,
-      cardNumber: '8932 3283 3323 3232',
-      ownerName: 'Juan Perez',
-      expirationDate: '11/22',
-      cardType: 'Visa',
-    ),
-  ];
+  final List<BankCard> _cards = [];
+  final List<Transaction> _transactions = [];
+  double _availableBalance = 0;
+  Future<void>? _initializing;
 
-  // 初始交易记录列表
-  late final List<Transaction> _transactions = List<Transaction>.from(
-    MockUtils.moneyOperateList,
-  );
-
-  final double _availableBalance = 35.269;
+  Future<void> _ensureLoaded() => _initializing ??= _load();
+  Future<void> _load() async {
+    final data = await _mock.wallet;
+    _cards.addAll(await _mock.getBankCards(_locale));
+    _transactions.addAll(await _mock.getTransactions(_locale));
+    _availableBalance = ((data['balance'] ?? 0) as num).toDouble();
+  }
 
   @override
   Future<List<BankCard>> getBankCards() async {
+    await _ensureLoaded();
     return List.unmodifiable(_cards);
   }
 
   @override
   Future<void> addBankCard(BankCard card) async {
+    await _ensureLoaded();
     _cards.add(card);
   }
 
   @override
   Future<void> updateBankCard(BankCard card) async {
+    await _ensureLoaded();
     final index = _cards.indexWhere((item) => item.id == card.id);
     if (index < 0) throw StateError('Card not found');
     _cards[index] = card;
@@ -100,11 +89,13 @@ class WalletRepositoryImpl implements WalletRepository {
 
   @override
   Future<void> deleteBankCard(String cardId) async {
+    await _ensureLoaded();
     _cards.removeWhere((c) => c.id == cardId);
   }
 
   @override
   Future<double> getAvailableBalance() async {
+    await _ensureLoaded();
     return _availableBalance;
   }
 
@@ -113,6 +104,7 @@ class WalletRepositoryImpl implements WalletRepository {
     TransactionFilter filter = TransactionFilter.total,
     String? query,
   }) async {
+    await _ensureLoaded();
     var result = _transactions.where((item) {
       final amount = item.moneyAmount ?? 0.0;
       return switch (filter) {
@@ -136,21 +128,21 @@ class WalletRepositoryImpl implements WalletRepository {
 
   @override
   Future<List<(String, double)>> getMonthlyChartData(String month) async {
-    // 基础波动数据（Dart 3 原生元组）
-    return [
-      (Languages.mon, 0.3),
-      (Languages.tues, 0.5),
-      (Languages.wed, 0.1),
-      (Languages.thur, 0.6),
-      (Languages.fri, 0.9),
-      (Languages.satu, 0.2),
-      (Languages.sun, 0.8),
-    ];
+    await _ensureLoaded();
+    final raw = ((await _mock.wallet)['chart'] as List).cast<List>();
+    return raw
+        .map((row) => (row[0] as String, (row[1] as num).toDouble()))
+        .toList();
   }
 }
 
 /// 钱包业务仓库 Provider
 final walletRepositoryProvider = Provider<WalletRepository>((ref) {
   final apiClient = ref.watch(apiClientProvider);
-  return WalletRepositoryImpl(apiClient);
+  final locale = ref.watch(localeProvider);
+  return WalletRepositoryImpl(
+    apiClient,
+    ref.watch(mockDataRepositoryProvider),
+    locale,
+  );
 });

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,11 +12,21 @@ import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 
 void main() {
+  late MockDataRepository mock;
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    mock = MockDataRepository();
+    await mock.wallet;
+    await mock.articles;
+  });
   testWidgets('窄屏个人交易Hero真实往返，跨断点保留来源与详情状态', (tester) async {
     SharedPreferences.setMockInitialValues({CommonKeys.IS_LOGIN_SUCCESS: true});
     final prefs = await SharedPreferences.getInstance();
     final container = ProviderContainer(
-      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        mockDataRepositoryProvider.overrideWithValue(mock),
+      ],
     );
     addTearDown(container.dispose);
     final router = createAppRouter(
@@ -110,7 +121,10 @@ void main() {
     });
     final prefs = await SharedPreferences.getInstance();
     final container = ProviderContainer(
-      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        mockDataRepositoryProvider.overrideWithValue(mock),
+      ],
     );
     addTearDown(container.dispose);
     final router = createAppRouter(

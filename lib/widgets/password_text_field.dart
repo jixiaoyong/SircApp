@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/l10n/languages.g.dart';
 import 'package:sirc/widgets/form_input_decoration.dart';
 
 /// Shared password presentation without changing field validation or submission.
@@ -37,10 +38,9 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final visible = widget.isVisible ?? _isVisible;
-    final english = AppLocale.currentLocale.languageCode == 'en';
     final visibilityLabel = visible
-        ? (english ? 'Hide password' : '隐藏密码')
-        : (english ? 'Show password' : '显示密码');
+        ? Languages.settings.hidePassword
+        : Languages.settings.showPassword;
     return TextField(
       enabled: widget.enabled,
       controller: widget.controller,

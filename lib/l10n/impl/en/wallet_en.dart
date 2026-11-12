@@ -136,6 +136,50 @@ class WalletEn implements WalletLang {
   String get incoming => 'Money In';
 
   @override
+  String get manageCards => 'Manage';
+  @override
+  String get transactions => 'Transactions';
+  @override
+  String get incomeExpenseStats => 'Income and spending';
+  @override
+  String get historyTotalAmount => 'Total transaction amount';
+  @override
+  String get amountAbsoluteSummary => 'Sum of absolute transaction amounts';
+  @override
+  String get recordsGroupedByWeekday => 'Selected records · grouped by weekday';
+  @override
+  String get filterByDate => 'Filter by date';
+  @override
+  String get transactionsLabel => 'transactions';
+  @override
+  String get searchTransactions => 'Search transactions';
+  @override
+  String get searchIncomeExpense => 'Search income or spending';
+  @override
+  String get previousCard => 'Previous card';
+  @override
+  String get nextCard => 'Next card';
+  @override
+  String get noCardsYet => 'No cards yet. Choose Add card to get started.';
+  @override
+  String get noMatchingTransactions => 'No transactions match these filters';
+  @override
+  String get noChartRecords => 'No records to summarize in the selected range';
+  @override
+  String get thisWeekSpending => 'This week · spending';
+  @override
+  String get thisWeekIncome => 'This week · income';
+  @override
+  String get thisWeekTotalVolume => 'This week · total volume';
+  @override
+  String get thisWeekdayLabel => 'MTWTFSS';
+  @override
+  String get undatedRecordsTooltip =>
+      'Grouped using device date {date}; supports Today, Yesterday and ISO dates.';
+  @override
+  String get undatedRecordsExcluded => '{count} undated records excluded';
+
+  @override
   String cardCount(int count) =>
       count == 1 ? '1 card in total' : '$count cards in total';
 }

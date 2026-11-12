@@ -5,10 +5,18 @@ import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/controllers/home_controller.dart';
 import 'package:sirc/features/home/presentation/home_page.dart';
 import 'package:sirc/widgets/bank_card_widget.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 
 void main() {
-  setUpAll(() => AppLocale.setLocale(const Locale('zh', 'CN')));
+  late MockDataRepository mock;
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    AppLocale.setLocale(const Locale('zh', 'CN'));
+    mock = MockDataRepository();
+    await mock.wallet;
+    await mock.articles;
+  });
 
   void configureView(WidgetTester tester) {
     tester.view.physicalSize = const Size(1600, 900);
@@ -46,7 +54,9 @@ void main() {
 
   testWidgets('窄屏首卡与宽屏整组居中、多卡可见且高度按比例变化', (tester) async {
     configureView(tester);
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [mockDataRepositoryProvider.overrideWithValue(mock)],
+    );
     addTearDown(container.dispose);
     for (final width in [390.0, 525.0, 800.0, 1200.0]) {
       await tester.pumpWidget(harness(container, width));
@@ -124,7 +134,9 @@ void main() {
 
   testWidgets('移除短条且选择仅扫光一次，重建不重播并保留品牌和语义', (tester) async {
     configureView(tester);
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [mockDataRepositoryProvider.overrideWithValue(mock)],
+    );
     addTearDown(container.dispose);
     await tester.pumpWidget(harness(container, 1200));
     await tester.pumpAndSettle();
@@ -187,7 +199,9 @@ void main() {
 
   testWidgets('减少动画不扫光，途中开启立即停止且关闭后不补播', (tester) async {
     configureView(tester);
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [mockDataRepositoryProvider.overrideWithValue(mock)],
+    );
     addTearDown(container.dispose);
     await tester.pumpWidget(harness(container, 1200, disableAnimations: true));
     await tester.pumpAndSettle();
@@ -212,7 +226,9 @@ void main() {
 
   testWidgets('单卡在窄宽屏及大字下卡面双轴居中', (tester) async {
     configureView(tester);
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [mockDataRepositoryProvider.overrideWithValue(mock)],
+    );
     addTearDown(container.dispose);
     await tester.pumpWidget(harness(container, 390));
     await tester.pumpAndSettle();
@@ -239,7 +255,9 @@ void main() {
 
   testWidgets('点击最小滚动、拖动结束选择且resize保持合法选中', (tester) async {
     configureView(tester);
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [mockDataRepositoryProvider.overrideWithValue(mock)],
+    );
     addTearDown(container.dispose);
     await tester.pumpWidget(harness(container, 1200));
     await tester.pumpAndSettle();

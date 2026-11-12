@@ -54,6 +54,18 @@ class SettingsEn implements SettingsLang {
   String get profile => 'Profile';
 
   @override
+  String get readOnly => 'Read only';
+
+  @override
+  String get openNavigationMenu => 'Open navigation menu';
+
+  @override
+  String get viewReadOnlyProfile => 'View read-only profile';
+
+  @override
+  String get viewExistingWalletCards => 'View existing wallet cards';
+
+  @override
   String get logout => 'Logout';
 
   @override
@@ -61,4 +73,39 @@ class SettingsEn implements SettingsLang {
 
   @override
   String get sureToLogout => 'SureToLogout';
+
+  @override
+  String get cardManagement => 'Manage cards';
+  @override
+  String get cardManagementNotice =>
+      'Manage cards in this app only, not your bank connections. Only the last four digits are shown; security codes are never displayed.';
+  @override
+  String get deleteCardQuestion => 'Delete card?';
+  @override
+  String get deleteCardNotice =>
+      'This removes the card from this app only. Transaction history stays unchanged, and your bank account is not disconnected.';
+  @override
+  String get delete => 'Delete';
+  @override
+  String get edit => 'Edit';
+  @override
+  String get deleteFailed => 'Could not delete card. Try again.';
+  @override
+  String get notificationsDescription =>
+      'Browse existing transactions by category and time. There is no separate notification service; categories use action labels, with unknown actions in Other.';
+  @override
+  String get undatedNotifications =>
+      '{count} records have no parseable date (for example “Just now”) and are excluded from time filters.';
+  @override
+  String get transactionsLoadFailed =>
+      'Unable to load transactions. Please try again later.';
+  @override
+  String get noTransactionNotifications =>
+      'No transaction notifications for these filters';
+  @override
+  String get showPassword => 'Show password';
+  @override
+  String get hidePassword => 'Hide password';
+  @override
+  String get noCardsYetShort => 'No cards yet';
 }

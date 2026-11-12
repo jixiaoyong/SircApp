@@ -438,6 +438,90 @@ class Languages {
   ///- [en_US] Money In
   static String get incoming => wallet.incoming;
 
+  ///- [zh_CN] 管理
+  ///- [en_US] Manage
+  static String get manageCards => wallet.manageCards;
+
+  ///- [zh_CN] 交易记录
+  ///- [en_US] Transactions
+  static String get transactions => wallet.transactions;
+
+  ///- [zh_CN] 收支统计
+  ///- [en_US] Income and spending
+  static String get incomeExpenseStats => wallet.incomeExpenseStats;
+
+  ///- [zh_CN] 总交易额
+  ///- [en_US] Total transaction amount
+  static String get historyTotalAmount => wallet.historyTotalAmount;
+
+  ///- [zh_CN] 按交易绝对金额汇总
+  ///- [en_US] Sum of absolute transaction amounts
+  static String get amountAbsoluteSummary => wallet.amountAbsoluteSummary;
+
+  ///- [zh_CN] 所选记录 · 按星期汇总
+  ///- [en_US] Selected records · grouped by weekday
+  static String get recordsGroupedByWeekday => wallet.recordsGroupedByWeekday;
+
+  ///- [zh_CN] 按日期查阅
+  ///- [en_US] Filter by date
+  static String get filterByDate => wallet.filterByDate;
+
+  ///- [zh_CN] 笔交易
+  ///- [en_US] transactions
+  static String get transactionsLabel => wallet.transactionsLabel;
+
+  ///- [zh_CN] 搜索交易
+  ///- [en_US] Search transactions
+  static String get searchTransactions => wallet.searchTransactions;
+
+  ///- [zh_CN] 输入收支名称
+  ///- [en_US] Search income or spending
+  static String get searchIncomeExpense => wallet.searchIncomeExpense;
+
+  ///- [zh_CN] 上一张卡
+  ///- [en_US] Previous card
+  static String get previousCard => wallet.previousCard;
+
+  ///- [zh_CN] 下一张卡
+  ///- [en_US] Next card
+  static String get nextCard => wallet.nextCard;
+
+  ///- [zh_CN] 暂无银行卡，点击“添加银行卡”开始。
+  ///- [en_US] No cards yet. Choose Add card to get started.
+  static String get noCardsYet => wallet.noCardsYet;
+
+  ///- [zh_CN] 当前条件下没有交易记录
+  ///- [en_US] No transactions match these filters
+  static String get noMatchingTransactions => wallet.noMatchingTransactions;
+
+  ///- [zh_CN] 所选范围暂无可统计记录
+  ///- [en_US] No records to summarize in the selected range
+  static String get noChartRecords => wallet.noChartRecords;
+
+  ///- [zh_CN] 本周支出
+  ///- [en_US] This week · spending
+  static String get thisWeekSpending => wallet.thisWeekSpending;
+
+  ///- [zh_CN] 本周收入
+  ///- [en_US] This week · income
+  static String get thisWeekIncome => wallet.thisWeekIncome;
+
+  ///- [zh_CN] 本周交易总额
+  ///- [en_US] This week · total volume
+  static String get thisWeekTotalVolume => wallet.thisWeekTotalVolume;
+
+  ///- [zh_CN] 一二三四五六日
+  ///- [en_US] MTWTFSS
+  static String get thisWeekdayLabel => wallet.thisWeekdayLabel;
+
+  ///- [zh_CN] 按设备日期 {date} 统计，支持今天、昨天和 ISO 日期。
+  ///- [en_US] Grouped using device date {date}; supports Today, Yesterday and ISO dates.
+  static String get undatedRecordsTooltip => wallet.undatedRecordsTooltip;
+
+  ///- [zh_CN] {count} 笔日期未识别，未计入图表
+  ///- [en_US] {count} undated records excluded
+  static String get undatedRecordsExcluded => wallet.undatedRecordsExcluded;
+
   // --- Home 模块 ---
   ///- [zh_CN] 首页
   ///- [en_US] Home
@@ -494,6 +578,14 @@ class Languages {
   ///- [zh_CN] 本地示例
   ///- [en_US] Local examples
   static String get localExamples => home.localExamples;
+
+  ///- [zh_CN] 未找到文章
+  ///- [en_US] Article not found
+  static String get articleNotFound => home.articleNotFound;
+
+  ///- [zh_CN] 本地静态示例 · 未连接文章服务 · 非投资建议
+  ///- [en_US] Static example · Local content · No article service connected · Not investment advice
+  static String get articleDisclaimer => home.articleDisclaimer;
 
   ///- [zh_CN] 本周
   ///- [en_US] This week
@@ -724,6 +816,22 @@ class Languages {
   ///- [en_US] Profile
   static String get profile => settings.profile;
 
+  ///- [zh_CN] 只读
+  ///- [en_US] Read only
+  static String get readOnly => settings.readOnly;
+
+  ///- [zh_CN] 打开导航菜单
+  ///- [en_US] Open navigation menu
+  static String get openNavigationMenu => settings.openNavigationMenu;
+
+  ///- [zh_CN] 查看只读个人资料
+  ///- [en_US] View read-only profile
+  static String get viewReadOnlyProfile => settings.viewReadOnlyProfile;
+
+  ///- [zh_CN] 查看钱包中的现有银行卡
+  ///- [en_US] View existing wallet cards
+  static String get viewExistingWalletCards => settings.viewExistingWalletCards;
+
   ///- [zh_CN] 退出登录
   ///- [en_US] Logout
   static String get logout => settings.logout;
@@ -736,10 +844,72 @@ class Languages {
   ///- [en_US] SureToLogout
   static String get sureToLogout => settings.sureToLogout;
 
+  ///- [zh_CN] 卡片管理
+  ///- [en_US] Manage cards
+  static String get cardManagement => settings.cardManagement;
+
+  ///- [zh_CN] 仅管理本应用中的卡片，不会解绑真实银行账户。列表仅显示卡号尾号，不显示安全码。
+  ///- [en_US] Manage cards in this app only, not your bank connections. Only the last four digits are shown; security codes are never displayed.
+  static String get cardManagementNotice => settings.cardManagementNotice;
+
+  ///- [zh_CN] 删除卡片？
+  ///- [en_US] Delete card?
+  static String get deleteCardQuestion => settings.deleteCardQuestion;
+
+  ///- [zh_CN] 仅从本应用移除此卡片，不会删除交易历史，也不会解绑真实银行账户。
+  ///- [en_US] This removes the card from this app only. Transaction history stays unchanged, and your bank account is not disconnected.
+  static String get deleteCardNotice => settings.deleteCardNotice;
+
+  ///- [zh_CN] 删除
+  ///- [en_US] Delete
+  static String get delete => settings.delete;
+
+  ///- [zh_CN] 编辑
+  ///- [en_US] Edit
+  static String get edit => settings.edit;
+
+  ///- [zh_CN] 删除失败，请重试
+  ///- [en_US] Could not delete card. Try again.
+  static String get deleteFailed => settings.deleteFailed;
+
+  ///- [zh_CN] 按类别和时间查阅已有交易。当前无独立通知服务；类别由交易名称识别，未识别的归入其他。
+  ///- [en_US] Browse existing transactions by category and time. There is no separate notification service; categories use action labels, with unknown actions in Other.
+  static String get notificationsDescription =>
+      settings.notificationsDescription;
+
+  ///- [zh_CN] {count} 条记录缺少可解析日期（如“刚刚”），未纳入时间筛选。
+  ///- [en_US] {count} records have no parseable date (for example “Just now”) and are excluded from time filters.
+  static String get undatedNotifications => settings.undatedNotifications;
+
+  ///- [zh_CN] 交易加载失败，请稍后重试。
+  ///- [en_US] Unable to load transactions. Please try again later.
+  static String get transactionsLoadFailed => settings.transactionsLoadFailed;
+
+  ///- [zh_CN] 当前筛选下暂无交易通知
+  ///- [en_US] No transaction notifications for these filters
+  static String get noTransactionNotifications =>
+      settings.noTransactionNotifications;
+
+  ///- [zh_CN] 显示密码
+  ///- [en_US] Show password
+  static String get showPassword => settings.showPassword;
+
+  ///- [zh_CN] 隐藏密码
+  ///- [en_US] Hide password
+  static String get hidePassword => settings.hidePassword;
+
+  ///- [zh_CN] 暂无卡片
+  ///- [en_US] No cards yet
+  static String get noCardsYetShort => settings.noCardsYetShort;
+
   // --- Common 模块 ---
   ///- [zh_CN] 取消
   ///- [en_US] Cancel
   static String get cancel => common.cancel;
+
+  ///- [zh_CN] 全部
+  ///- [en_US] All
+  static String get all => common.all;
 
   ///- [zh_CN] 提交
   ///- [en_US] Submit
@@ -895,6 +1065,32 @@ class Languages {
       "No transactions yet": "No transactions yet",
       "Money Out": "Money Out",
       "Money In": "Money In",
+      "Manage": "Manage",
+      "Transactions": "Transactions",
+      "Income and spending": "Income and spending",
+      "Total transaction amount": "Total transaction amount",
+      "Sum of absolute transaction amounts":
+          "Sum of absolute transaction amounts",
+      "Selected records · grouped by weekday":
+          "Selected records · grouped by weekday",
+      "Filter by date": "Filter by date",
+      "transactions": "transactions",
+      "Search transactions": "Search transactions",
+      "Search income or spending": "Search income or spending",
+      "Previous card": "Previous card",
+      "Next card": "Next card",
+      "No cards yet. Choose Add card to get started.":
+          "No cards yet. Choose Add card to get started.",
+      "No transactions match these filters":
+          "No transactions match these filters",
+      "No records to summarize in the selected range":
+          "No records to summarize in the selected range",
+      "This week · spending": "This week · spending",
+      "This week · income": "This week · income",
+      "This week · total volume": "This week · total volume",
+      "MTWTFSS": "MTWTFSS",
+      "Grouped using device date {date}; supports Today, Yesterday and ISO dates.": "Grouped using device date {date}; supports Today, Yesterday and ISO dates.",
+      "{count} undated records excluded": "{count} undated records excluded",
       "Home": "Home",
       "Home": "Home",
       "Dashboard": "Dashboard",
@@ -911,6 +1107,8 @@ class Languages {
       "Transactions": "Transactions",
       "Transaction summary": "Transaction summary",
       "Local examples": "Local examples",
+      "Article not found": "Article not found",
+      "Static example · Local content · No article service connected · Not investment advice": "Static example · Local content · No article service connected · Not investment advice",
       "This week": "This week",
       "This month": "This month",
       "Daily transaction volume": "Daily transaction volume",
@@ -971,10 +1169,31 @@ class Languages {
       "Not set": "Not set",
       "Person": "Person",
       "Profile": "Profile",
+      "Read only": "Read only",
+      "Open navigation menu": "Open navigation menu",
+      "View read-only profile": "View read-only profile",
+      "View existing wallet cards": "View existing wallet cards",
       "Logout": "Logout",
       "Logout & Clean Data": "Logout & Clean Data",
       "SureToLogout": "SureToLogout",
+      "Manage cards": "Manage cards",
+      "Manage cards in this app only, not your bank connections. Only the last four digits are shown; security codes are never displayed.": "Manage cards in this app only, not your bank connections. Only the last four digits are shown; security codes are never displayed.",
+      "Delete card?": "Delete card?",
+      "This removes the card from this app only. Transaction history stays unchanged, and your bank account is not disconnected.": "This removes the card from this app only. Transaction history stays unchanged, and your bank account is not disconnected.",
+      "Delete": "Delete",
+      "Edit": "Edit",
+      "Could not delete card. Try again.": "Could not delete card. Try again.",
+      "Browse existing transactions by category and time. There is no separate notification service; categories use action labels, with unknown actions in Other.": "Browse existing transactions by category and time. There is no separate notification service; categories use action labels, with unknown actions in Other.",
+      "{count} records have no parseable date (for example “Just now”) and are excluded from time filters.": "{count} records have no parseable date (for example “Just now”) and are excluded from time filters.",
+      "Unable to load transactions. Please try again later.":
+          "Unable to load transactions. Please try again later.",
+      "No transaction notifications for these filters":
+          "No transaction notifications for these filters",
+      "Show password": "Show password",
+      "Hide password": "Hide password",
+      "No cards yet": "No cards yet",
       "Cancel": "Cancel",
+      "All": "All",
       "Submit": "Submit",
       "Loading...": "Loading...",
       "Search": "Search",
@@ -1086,6 +1305,28 @@ class Languages {
       "No transactions yet": "暂无交易记录",
       "Money Out": "转出",
       "Money In": "转入",
+      "Manage": "管理",
+      "Transactions": "交易记录",
+      "Income and spending": "收支统计",
+      "Total transaction amount": "总交易额",
+      "Sum of absolute transaction amounts": "按交易绝对金额汇总",
+      "Selected records · grouped by weekday": "所选记录 · 按星期汇总",
+      "Filter by date": "按日期查阅",
+      "transactions": "笔交易",
+      "Search transactions": "搜索交易",
+      "Search income or spending": "输入收支名称",
+      "Previous card": "上一张卡",
+      "Next card": "下一张卡",
+      "No cards yet. Choose Add card to get started.": "暂无银行卡，点击“添加银行卡”开始。",
+      "No transactions match these filters": "当前条件下没有交易记录",
+      "No records to summarize in the selected range": "所选范围暂无可统计记录",
+      "This week · spending": "本周支出",
+      "This week · income": "本周收入",
+      "This week · total volume": "本周交易总额",
+      "MTWTFSS": "一二三四五六日",
+      "Grouped using device date {date}; supports Today, Yesterday and ISO dates.":
+          "按设备日期 {date} 统计，支持今天、昨天和 ISO 日期。",
+      "{count} undated records excluded": "{count} 笔日期未识别，未计入图表",
       "Home": "首页",
       "Home": "首页",
       "Dashboard": "控制面板",
@@ -1101,6 +1342,9 @@ class Languages {
       "Transactions": "最近交易",
       "Transaction summary": "交易摘要",
       "Local examples": "本地示例",
+      "Article not found": "未找到文章",
+      "Static example · Local content · No article service connected · Not investment advice":
+          "本地静态示例 · 未连接文章服务 · 非投资建议",
       "This week": "本周",
       "This month": "本月",
       "Daily transaction volume": "每日交易总额",
@@ -1159,10 +1403,33 @@ class Languages {
       "Not set": "未设置",
       "Person": "个人",
       "Profile": "个人资料",
+      "Read only": "只读",
+      "Open navigation menu": "打开导航菜单",
+      "View read-only profile": "查看只读个人资料",
+      "View existing wallet cards": "查看钱包中的现有银行卡",
       "Logout": "退出登录",
       "Logout & Clean Data": "退出登录并清除数据",
       "SureToLogout": "您确定要退出吗？\\n这将清除所有数据！",
+      "Manage cards": "卡片管理",
+      "Manage cards in this app only, not your bank connections. Only the last four digits are shown; security codes are never displayed.":
+          "仅管理本应用中的卡片，不会解绑真实银行账户。列表仅显示卡号尾号，不显示安全码。",
+      "Delete card?": "删除卡片？",
+      "This removes the card from this app only. Transaction history stays unchanged, and your bank account is not disconnected.":
+          "仅从本应用移除此卡片，不会删除交易历史，也不会解绑真实银行账户。",
+      "Delete": "删除",
+      "Edit": "编辑",
+      "Could not delete card. Try again.": "删除失败，请重试",
+      "Browse existing transactions by category and time. There is no separate notification service; categories use action labels, with unknown actions in Other.":
+          "按类别和时间查阅已有交易。当前无独立通知服务；类别由交易名称识别，未识别的归入其他。",
+      "{count} records have no parseable date (for example “Just now”) and are excluded from time filters.":
+          "{count} 条记录缺少可解析日期（如“刚刚”），未纳入时间筛选。",
+      "Unable to load transactions. Please try again later.": "交易加载失败，请稍后重试。",
+      "No transaction notifications for these filters": "当前筛选下暂无交易通知",
+      "Show password": "显示密码",
+      "Hide password": "隐藏密码",
+      "No cards yet": "暂无卡片",
       "Cancel": "取消",
+      "All": "全部",
       "Submit": "提交",
       "Loading...": "加载中...",
       "Search": "搜索",

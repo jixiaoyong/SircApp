@@ -256,7 +256,7 @@ void main() {
     );
     expect(find.text('Not Found'), findsOneWidget);
     expect(find.text('Go to Home'), findsOneWidget);
-    expect(find.byIcon(Icons.details), findsOneWidget);
+    expect(find.byIcon(Icons.error), findsOneWidget);
   });
 
   testWidgets('引导首次页面保留轮播', (tester) async {

@@ -11,6 +11,7 @@ import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.
 
 void main() {
   setUpAll(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
     AppLocale.setLocale(const Locale('en', 'US'));
   });
 
@@ -135,7 +136,35 @@ void main() {
       () async {
         final cards = await repository.getBankCards();
         expect(cards.length, greaterThanOrEqualTo(3));
-        expect(cards.any((c) => c.bankName == 'CNSS'), isTrue);
+        expect(cards.any((c) => c.id == 'card-test-001'), isTrue);
+        expect(cards.any((c) => c.bankName == '北辰信用社'), isTrue);
+      },
+    );
+
+    test(
+      'JSON fixtures load and map business fields for explicit Locale',
+      () async {
+        final english = WalletRepositoryImpl(
+          null,
+          null,
+          const Locale('en', 'US'),
+        );
+        final chinese = WalletRepositoryImpl(
+          null,
+          null,
+          const Locale('zh', 'CN'),
+        );
+        expect(await english.getAvailableBalance(), 39615.16);
+        expect(
+          (await english.getBankCards()).first.bankName,
+          'Northstar Credit Union',
+        );
+        expect((await chinese.getBankCards()).first.bankName, '北辰信用社');
+        expect(
+          (await english.getTransactions()).first.moneyActionName,
+          'Cornerstone Coffee',
+        );
+        expect((await chinese.getTransactions()).first.moneyActionName, '基石咖啡');
       },
     );
 
@@ -233,12 +262,21 @@ void main() {
       },
     );
 
-    test('getMonthlyChartData returns Dart 3 records', () async {
-      final chartData = await repository.getMonthlyChartData('January');
-      expect(chartData.isNotEmpty, isTrue);
-      expect(chartData.first.$1, isNotEmpty);
-      expect(chartData.first.$2, inInclusiveRange(0.0, 1.0));
-    });
+    test(
+      'getMonthlyChartData returns real mock fixture labels and values',
+      () async {
+        final chartData = await repository.getMonthlyChartData('January');
+        expect(chartData, [
+          ('Mon', 0.32),
+          ('Tue', 0.48),
+          ('Wed', 0.21),
+          ('Thu', 0.66),
+          ('Fri', 0.73),
+          ('Sat', 0.39),
+          ('Sun', 0.55),
+        ]);
+      },
+    );
   });
 
   group('WalletController Tests', () {

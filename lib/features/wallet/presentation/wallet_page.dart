@@ -29,7 +29,6 @@ class WalletPage extends ConsumerWidget {
     final weeklyAmounts = state.weeklyAmounts(items);
     // Total means money moved (income + expense), not the available balance.
     final total = weeklyAmounts.fold<double>(0, (sum, value) => sum + value);
-    final zh = Localizations.localeOf(context).languageCode == 'zh';
     final balance = WalletPanel(
       key: const ValueKey('wallet-balance'),
       child: Column(
@@ -82,7 +81,7 @@ class WalletPage extends ConsumerWidget {
               TextButton(
                 key: const ValueKey('manage-cards'),
                 onPressed: () => openSourceDetail(context, 'cards'),
-                child: Text(zh ? '管理' : 'Manage'),
+                child: Text(Languages.manageCards),
               ),
             ],
           ),
@@ -102,7 +101,7 @@ class WalletPage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            zh ? '收支统计' : 'Transactions',
+            Languages.incomeExpenseStats,
             style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 12),
@@ -133,13 +132,7 @@ class WalletPage extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            zh
-                ? ['本周支出', '本周收入', '本周交易总额'][state.currentFilterIndex]
-                : [
-                    'This week · spending',
-                    'This week · income',
-                    'This week · total volume',
-                  ][state.currentFilterIndex],
+            [Languages.wallet.thisWeekSpending, Languages.wallet.thisWeekIncome, Languages.wallet.thisWeekTotalVolume][state.currentFilterIndex],
             style: TextStyle(fontSize: 11, color: AppColors.muted(context)),
           ),
           WalletBars(values: weeklyAmounts),
@@ -161,12 +154,12 @@ class WalletPage extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          zh ? '钱包' : 'Wallet',
+                          Languages.walletTitle,
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                       ),
                       IconButton(
-                        tooltip: zh ? '打开菜单' : 'Open menu',
+                        tooltip: Languages.menu,
                         onPressed:
                             onMenuTap ??
                             () => ref
@@ -207,7 +200,7 @@ class WalletPage extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          zh ? '交易记录' : 'Transactions',
+                          Languages.transactions,
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -286,15 +279,10 @@ class _WalletCardCarouselState extends State<WalletCardCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    final zh = Localizations.localeOf(context).languageCode == 'zh';
     if (widget.cards.isEmpty) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Text(
-          zh
-              ? '暂无银行卡，点击“添加银行卡”开始。'
-              : 'No cards yet. Choose Add card to get started.',
-        ),
+        child: Text(Languages.noCardsYet),
       );
     }
     final index = widget.selectedIndex.clamp(0, widget.cards.length - 1);
@@ -358,7 +346,7 @@ class _WalletCardCarouselState extends State<WalletCardCarousel> {
             children: [
               IconButton(
                 key: const ValueKey('wallet-card-previous'),
-                tooltip: zh ? '上一张卡' : 'Previous card',
+                tooltip: Languages.previousCard,
                 onPressed: index > 0 ? () => _select(index - 1) : null,
                 icon: const Icon(Icons.chevron_left),
               ),
@@ -370,7 +358,7 @@ class _WalletCardCarouselState extends State<WalletCardCarousel> {
               ),
               IconButton(
                 key: const ValueKey('wallet-card-next'),
-                tooltip: zh ? '下一张卡' : 'Next card',
+                tooltip: Languages.nextCard,
                 onPressed: index < widget.cards.length - 1
                     ? () => _select(index + 1)
                     : null,
@@ -475,7 +463,6 @@ class WalletBars extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final maximum = values.fold<double>(0, math.max);
-    final zh = Localizations.localeOf(context).languageCode == 'zh';
     return Padding(
       padding: const EdgeInsets.only(top: 12),
       child: LayoutBuilder(
@@ -514,17 +501,7 @@ class WalletBars extends StatelessWidget {
                             ),
                             const SizedBox(height: 9),
                             Text(
-                              zh
-                                  ? const [
-                                      '一',
-                                      '二',
-                                      '三',
-                                      '四',
-                                      '五',
-                                      '六',
-                                      '日',
-                                    ][i % 7]
-                                  : labels[i],
+                              Languages.wallet.thisWeekdayLabel[i % 7],
                               style: TextStyle(
                                 fontSize: 9,
                                 color: AppColors.muted(context),
@@ -540,9 +517,7 @@ class WalletBars extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 24),
                   child: Text(
-                    zh
-                        ? '所选范围暂无可统计记录'
-                        : 'No records to summarize in the selected range',
+                    Languages.noChartRecords,
                     key: const ValueKey('wallet-chart-empty'),
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -564,17 +539,18 @@ class WalletDataNotice extends StatelessWidget {
   final WalletState state;
   @override
   Widget build(BuildContext context) {
-    final zh = Localizations.localeOf(context).languageCode == 'zh';
     final now = state.referenceDate ?? DateTime.now();
     if (state.undatedCount == 0) return const SizedBox.shrink();
     return Tooltip(
-      message: zh
-          ? '按设备日期 ${now.year}-${now.month}-${now.day} 统计，支持今天、昨天和 ISO 日期。'
-          : 'Grouped using device date ${now.year}-${now.month}-${now.day}; supports Today, Yesterday and ISO dates.',
+      message: Languages.undatedRecordsTooltip.replaceAll(
+        '{date}',
+        '${now.year}-${now.month}-${now.day}',
+      ),
       child: Text(
-        zh
-            ? '${state.undatedCount} 笔日期未识别，未计入图表'
-            : '${state.undatedCount} undated records excluded',
+        Languages.undatedRecordsExcluded.replaceAll(
+          '{count}',
+          '${state.undatedCount}',
+        ),
         style: TextStyle(fontSize: 11, color: AppColors.muted(context)),
       ),
     );
@@ -709,11 +685,7 @@ class WalletTransactionList extends StatelessWidget {
     if (items.isEmpty) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 24),
-        child: Text(
-          Localizations.localeOf(context).languageCode == 'zh'
-              ? '当前条件下没有交易记录'
-              : 'No transactions match these filters',
-        ),
+        child: Text(Languages.noMatchingTransactions),
       );
     }
     if (designStyle) {

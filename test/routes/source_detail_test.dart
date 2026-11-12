@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,6 +23,14 @@ import 'package:sirc/routes/app_router.dart';
 import 'package:sirc/routes/source_detail_navigation.dart';
 
 void main() {
+  late MockDataRepository mock;
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    mock = MockDataRepository();
+    await mock.wallet;
+    await mock.articles;
+    await mock.user;
+  });
   test('交易业务入口兼容裸交易、Map及非法Hero标识', () {
     final transaction = Transaction(
       moneyActionName: 'Actual record',
@@ -54,7 +63,7 @@ void main() {
       '/person',
       '/person/card',
       '/person/add-card',
-      '/person/edit-card/1',
+      '/person/edit-card/card-test-001',
       '/wallet/cards',
     ]) {
       testWidgets('统一卡片管理 $initial 在 $width 保留来源与管理交互', (tester) async {
@@ -66,10 +75,11 @@ void main() {
           CommonKeys.LOCAL_LANGUAGE: 'en_US',
         });
         final prefs = await SharedPreferences.getInstance();
-        final repository = WalletRepositoryImpl();
+        final repository = WalletRepositoryImpl(null, mock, const Locale('en'));
         final container = ProviderContainer(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            mockDataRepositoryProvider.overrideWithValue(mock),
             walletRepositoryProvider.overrideWithValue(repository),
           ],
         );
@@ -118,15 +128,15 @@ void main() {
         expect(find.text('8932 6283 3243 3232'), findsNothing);
         expect(
           find.descendant(
-            of: find.byKey(const ValueKey('managed-card-1')),
-            matching: find.textContaining('•••• 3232'),
+            of: find.byKey(const ValueKey('managed-card-card-test-001')),
+            matching: find.textContaining('•••• 0042'),
           ),
           findsOneWidget,
         );
         for (final edit in [false, true]) {
           await tester.tap(
             edit
-                ? find.byKey(const ValueKey('edit-card-1'))
+                ? find.byKey(const ValueKey('edit-card-card-test-001'))
                 : find.descendant(
                     of: find.byType(CardManagementPage),
                     matching: find.text(Languages.addCard),
@@ -135,14 +145,14 @@ void main() {
           await frames(tester);
           expect(
             router.routeInformationProvider.value.uri.path,
-            edit ? '$source/edit-card/1' : '$source/add-card',
+            edit ? '$source/edit-card/card-test-001' : '$source/add-card',
           );
           expect(find.byType(CardEditorPage), findsOneWidget);
           expect(
             tester
                 .widget<CardEditorPage>(find.byType(CardEditorPage))
                 .editingId,
-            edit ? '1' : null,
+            edit ? 'card-test-001' : null,
           );
           // 系统返回和页面返回均应回到相同来源的管理页。
           if (edit) {
@@ -165,8 +175,17 @@ void main() {
           await wallet.deleteCard(card.id);
         }
         await frames(tester);
-        expect(find.text('No cards yet'), findsOneWidget);
-        expect(find.byKey(const ValueKey('edit-card-1')), findsNothing);
+        expect(
+          find.descendant(
+            of: find.byType(CardManagementPage),
+            matching: find.text(Languages.wallet.noCardsYet),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('edit-card-card-test-001')),
+          findsNothing,
+        );
         expect(
           find.descendant(
             of: find.byType(CardManagementPage),
@@ -204,7 +223,10 @@ void main() {
       });
       final prefs = await SharedPreferences.getInstance();
       final container = ProviderContainer(
-        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          mockDataRepositoryProvider.overrideWithValue(mock),
+        ],
       );
       addTearDown(container.dispose);
       final router = createAppRouter(
@@ -300,7 +322,10 @@ void main() {
     SharedPreferences.setMockInitialValues({CommonKeys.IS_LOGIN_SUCCESS: true});
     final prefs = await SharedPreferences.getInstance();
     final container = ProviderContainer(
-      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        mockDataRepositoryProvider.overrideWithValue(mock),
+      ],
     );
     addTearDown(container.dispose);
     final router = createAppRouter(

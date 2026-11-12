@@ -17,7 +17,25 @@ abstract class SettingsLang {
   String get notSet;
   String get person;
   String get profile;
+  String get readOnly;
+  String get openNavigationMenu;
+  String get viewReadOnlyProfile;
+  String get viewExistingWalletCards;
   String get logout;
   String get logoutAndCleanData;
   String get sureToLogout;
+  String get cardManagement;
+  String get cardManagementNotice;
+  String get deleteCardQuestion;
+  String get deleteCardNotice;
+  String get delete;
+  String get edit;
+  String get deleteFailed;
+  String get notificationsDescription;
+  String get undatedNotifications;
+  String get transactionsLoadFailed;
+  String get noTransactionNotifications;
+  String get showPassword;
+  String get hidePassword;
+  String get noCardsYetShort;
 }
