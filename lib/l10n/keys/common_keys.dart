@@ -11,4 +11,6 @@ abstract class CommonLang {
   String get something;
   String get notFound;
   String get goToHome;
+  String get retry;
+  String get loadFailed;
 }

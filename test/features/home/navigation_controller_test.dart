@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/features/home/controllers/home_controller.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
+import 'package:flutter/widgets.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +29,17 @@ void main() {
         'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
       );
       expect(state.isDrawerOpen, isFalse);
+    });
+
+    test('loads user fixture and maps localized names explicitly', () async {
+      final notifier = container.read(navigationControllerProvider.notifier);
+      final english = await notifier.loadUserProfile(const Locale('en', 'US'));
+      final chinese = await notifier.loadUserProfile(const Locale('zh', 'CN'));
+
+      expect(english.name, 'Alex Morgan');
+      expect(chinese.name, '亚历克斯·摩根');
+      expect(english.email, 'alex.morgan@example.test');
+      expect(chinese.phone, '+1 202 555 0142');
     });
 
     test('changeIndex should update currentIndex correctly', () {

@@ -1,6 +1,41 @@
+import 'dart:ui';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 
 part 'navigation_controller.g.dart';
+
+/// 由用户 fixture 映射后的资料字段。
+class UserProfile {
+  final String id;
+  final String name;
+  final String email;
+  final String phone;
+  final String address;
+  final String avatarUrl;
+
+  const UserProfile({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.phone,
+    required this.address,
+    required this.avatarUrl,
+  });
+
+  factory UserProfile.fromJson(Map<String, dynamic> json, Locale locale) {
+    final suffix = locale.languageCode == 'en' ? 'En' : 'Zh';
+    return UserProfile(
+      id: json['id'] as String? ?? '',
+      name: json['name$suffix'] as String? ?? json['name'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      phone: json['phone'] as String? ?? '',
+      address: json['address'] as String? ?? '',
+      avatarUrl: json['avatarUrl'] as String? ?? '',
+    );
+  }
+}
 
 /// 底部导航与主框架全局状态
 class NavigationState {
@@ -60,6 +95,11 @@ class NavigationController extends _$NavigationController {
   @override
   NavigationState build() {
     return const NavigationState();
+  }
+
+  Future<UserProfile> loadUserProfile(Locale locale) async {
+    final json = await ref.read(mockDataRepositoryProvider).user;
+    return UserProfile.fromJson(json, locale);
   }
 
   /// 切换底部导航栏 Tab 索引

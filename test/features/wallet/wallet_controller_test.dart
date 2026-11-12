@@ -9,6 +9,14 @@ import 'package:sirc/features/wallet/data/wallet_repository.dart';
 import 'package:sirc/features/wallet/domain/models/bank_card.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 
+class _RetryWalletRepository extends WalletRepositoryImpl {
+  _RetryWalletRepository({required this.onBalance});
+  final Future<double> Function() onBalance;
+
+  @override
+  Future<double> getAvailableBalance() => onBalance();
+}
+
 void main() {
   setUpAll(() {
     TestWidgetsFlutterBinding.ensureInitialized();
@@ -290,13 +298,59 @@ void main() {
       container.dispose();
     });
 
-    test('Initial wallet state defaults', () {
+    test('Initial wallet state has no placeholder balance and starts loading', () {
       final state = container.read(walletControllerProvider);
+      expect(state.availableBalance, 0);
+      expect(state.isLoading, isTrue);
       expect(state.currentFilterIndex, equals(0));
       expect(state.selectedMonth, equals('January'));
       expect(state.moneyTypes, contains('Last Send'));
       expect(state.moneyTypes, contains('Last Receive'));
       expect(state.moneyTypes, contains('Total'));
+    });
+
+    test('failed initial load can be retried and clears error state', () async {
+      var attempts = 0;
+      final failingThenSuccess = _RetryWalletRepository(onBalance: () async {
+        attempts++;
+        if (attempts == 1) throw StateError('temporary failure');
+        return 123.45;
+      });
+      final retryContainer = ProviderContainer(
+        overrides: [walletRepositoryProvider.overrideWithValue(failingThenSuccess)],
+      );
+      addTearDown(retryContainer.dispose);
+      final controller = retryContainer.read(walletControllerProvider.notifier);
+
+      await controller.loadInitialData();
+      expect(retryContainer.read(walletControllerProvider).errorMessage, isNotNull);
+      expect(retryContainer.read(walletControllerProvider).isLoading, isFalse);
+
+      await controller.retry();
+      final state = retryContainer.read(walletControllerProvider);
+      expect(attempts, greaterThanOrEqualTo(2));
+      expect(state.errorMessage, isNull);
+      expect(state.isLoading, isFalse);
+      expect(state.availableBalance, 123.45);
+      expect(state.cards, isNotEmpty);
+    });
+
+    test('repository locale remapping preserves wallet mutations', () async {
+      final repository = WalletRepositoryImpl(null, null, const Locale('zh', 'CN'));
+      final before = await repository.getBankCards();
+      expect(before, isNotEmpty);
+      const added = BankCard(
+        id: 'locale-mutation', bankName: 'Custom Bank', cardNumber: '1234',
+        ownerName: 'User', expirationDate: '01/30',
+      );
+      await repository.addBankCard(added);
+      await repository.deleteBankCard(before.last.id);
+      await repository.refreshLocale(const Locale('en', 'US'));
+      final after = await repository.getBankCards();
+      expect(after.first.bankName, 'Northstar Credit Union');
+      expect(after.any((card) => card.id == 'locale-mutation'), isTrue);
+      expect(after.any((card) => card.id == before.last.id), isFalse);
+      expect(await repository.getTransactions(), isNotEmpty);
     });
 
     test('loadInitialData populates cards and transactions', () async {

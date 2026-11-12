@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/presentation/home_page.dart';
+import 'package:sirc/features/home/presentation/person_page.dart';
+import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/features/home/controllers/home_controller.dart';
 import 'package:sirc/widgets/jingang_widget.dart';
 import 'package:sirc/widgets/expandable_page_view.dart';
@@ -43,6 +45,7 @@ void main() {
     repository = MockDataRepository();
     // 在真实异步区预加载 AssetBundle，避免 testWidgets 的 FakeAsync 等待文件 I/O。
     await repository.articles;
+    await repository.user;
   });
   setUp(() {
     originalLocale = AppLocale.currentLocale;
@@ -85,7 +88,8 @@ void main() {
         ),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
     const chinese = [
       '暂无卡片，请前往钱包添加',
       '最近交易',
@@ -108,7 +112,8 @@ void main() {
       expect(find.text(text), findsOneWidget);
     }
     container.read(localeProvider.notifier).setLocale(const Locale('en', 'US'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
     for (final text in english) {
       expect(find.text(text), findsOneWidget);
     }
@@ -117,12 +122,62 @@ void main() {
     }
     expect(find.text('Money Recharge'), findsNothing);
     container.read(localeProvider.notifier).setLocale(const Locale('zh', 'CN'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
     for (final text in chinese) {
       expect(find.text(text), findsOneWidget);
     }
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('个人页资料中英文映射且流水来自钱包同源交易', (tester) async {
+    final container = ProviderContainer(overrides: [
+      localeProvider.overrideWith(_TestLocaleNotifier.new),
+      walletControllerProvider.overrideWith(_EmptyWalletController.new),
+      navigationControllerProvider.overrideWithValue(const NavigationState()),
+      personProfileProvider(const Locale('zh', 'CN')).overrideWith(
+        (ref) async => const UserProfile(
+          id: 'user-test-001',
+          name: 'Alex Morgan',
+          email: 'alex.morgan@example.test',
+          phone: '+1 202 555 0142 (TEST)',
+          address: '100 Example Avenue, Sample City (TEST)',
+          avatarUrl: '',
+        ),
+      ),
+      personProfileProvider(const Locale('en', 'US')).overrideWith(
+        (ref) async => const UserProfile(
+          id: 'user-test-001',
+          name: 'Alex Morgan',
+          email: 'alex.morgan@example.test',
+          phone: '+1 202 555 0142 (TEST)',
+          address: '100 Example Avenue, Sample City (TEST)',
+          avatarUrl: '',
+        ),
+      ),
+    ]);
+    addTearDown(container.dispose);
+    await tester.pumpWidget(UncontrolledProviderScope(
+      container: container,
+      child: Consumer(builder: (context, ref, _) => MaterialApp(
+        locale: ref.watch(localeProvider),
+        supportedLocales: AppLocale.supportedLocales,
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        home: const PersonPage(),
+      )),
+    ));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.pump(const Duration(milliseconds: 50));
+    expect(find.text('Alex Morgan'), findsOneWidget);
+    expect(find.text(Languages.totalSpending), findsOneWidget);
+    container.read(localeProvider.notifier).setLocale(const Locale('en', 'US'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+    expect(find.text('Alex Morgan'), findsOneWidget);
+    expect(find.text(Languages.totalSpending), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('全部15个快捷入口含翻页随中英中切换且原始标题不变', (tester) async {
@@ -452,8 +507,9 @@ void main() {
     ]) {
       expect(ui, contains('Languages.$key'));
     }
-    expect(source, contains("article['title']"));
-    expect(source, contains("article['summary']"));
+    expect(source, contains('article.title'));
+    expect(source, contains('article.summary'));
+    expect(source, isNot(contains('MockDataRepository')));
     expect(source, isNot(contains('titleZh')));
     expect(source, isNot(contains('titleEn')));
   });

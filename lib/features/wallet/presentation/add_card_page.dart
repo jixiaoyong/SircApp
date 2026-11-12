@@ -36,10 +36,17 @@ class _CardEditorPageState extends ConsumerState<CardEditorPage> {
     _formInitialized = true;
     _owner.text = card?.ownerName ?? '';
     _number.text = card?.cardNumber ?? '';
-    Future.microtask(() {
+    Future.microtask(() async {
       if (!mounted) return;
-      ref.read(addCardControllerProvider.notifier).startEditing(card);
-      _owner.text = ref.read(addCardControllerProvider).ownerName;
+      final controller = ref.read(addCardControllerProvider.notifier);
+      if (card != null) {
+        controller.startEditing(card);
+        _owner.text = ref.read(addCardControllerProvider).ownerName;
+      } else {
+        await controller.startAdding();
+        if (!mounted) return;
+        _owner.text = ref.read(addCardControllerProvider).ownerName;
+      }
     });
   }
 

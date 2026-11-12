@@ -947,6 +947,14 @@ class Languages {
   ///- [en_US] Go to Home
   static String get goToHome => common.goToHome;
 
+  ///- [zh_CN] 重试
+  ///- [en_US] Retry
+  static String get retry => common.retry;
+
+  ///- [zh_CN] 内容加载失败，请重试。
+  ///- [en_US] Unable to load content. Please try again.
+  static String get loadFailed => common.loadFailed;
+
   // ==========================================
   // 三、 兼容字典映射 (供 AppLocale.translate 兜底查找)
   // ==========================================
@@ -1203,6 +1211,9 @@ class Languages {
       "Something": "Something",
       "Not Found": "Not Found",
       "Go to Home": "Go to Home",
+      "Retry": "Retry",
+      "Unable to load content. Please try again.":
+          "Unable to load content. Please try again.",
     },
     "zh_CN": {
       "Sign In": "登录",
@@ -1439,6 +1450,8 @@ class Languages {
       "Something": "某件事",
       "Not Found": "页面未找到",
       "Go to Home": "返回首页",
+      "Retry": "重试",
+      "Unable to load content. Please try again.": "内容加载失败，请重试。",
     },
   };
 }

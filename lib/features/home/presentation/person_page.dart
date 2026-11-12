@@ -14,12 +14,10 @@ import 'package:sirc/widgets/settings_item_tile.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
-import 'package:sirc/features/wallet/domain/models/transaction.dart';
-import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/features/wallet/presentation/card_management_page.dart';
 import 'package:sirc/widgets/page_gutter.dart';
 
-/// 只读个人资料；电话和地址尚无数据源，不虚构用户信息。
+/// 只读个人资料；数据由导航控制器读取并映射用户 fixture。
 class PersonInformationPage extends ConsumerWidget {
   const PersonInformationPage({super.key, required this.field, this.onBack});
 
@@ -28,20 +26,24 @@ class PersonInformationPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(localeProvider);
-    final user = ref.watch(navigationControllerProvider);
+    final locale = ref.watch(localeProvider);
+    final profile = ref.watch(personProfileProvider(locale));
     final savedEmail = ref.watch(storageServiceProvider).userEmail;
     final title = switch (field) {
       'email' => Languages.email,
       'phone' => Languages.phoneNumber,
       _ => Languages.localAddress,
     };
-    final email = savedEmail?.trim().isNotEmpty == true
-        ? savedEmail!
-        : user.userEmail;
-    final value = field == 'email' && email.trim().isNotEmpty
-        ? email
-        : Languages.settings.notSet;
+    final email = savedEmail?.trim().isNotEmpty == true ? savedEmail! : null;
+    final value = profile.when(
+      loading: () => Languages.loading,
+      error: (_, _) => Languages.loadFailed,
+      data: (data) => switch (field) {
+        'email' => email ?? data.email,
+        'phone' => data.phone.isNotEmpty ? data.phone : Languages.settings.notSet,
+        _ => data.address.isNotEmpty ? data.address : Languages.settings.notSet,
+      },
+    );
     return Scaffold(
       appBar: OneTitleWithBackButtonAppBar(title: title, onBack: onBack),
       body: Padding(
@@ -56,6 +58,12 @@ class PersonInformationPage extends ConsumerWidget {
 }
 
 /// 保留 person/card 的来源与返回语义，复用钱包的统一卡片管理。
+final personProfileProvider = FutureProvider.family<UserProfile, Locale>(
+  (ref, locale) => ref
+      .read(navigationControllerProvider.notifier)
+      .loadUserProfile(locale),
+);
+
 class PersonCardsPage extends StatelessWidget {
   const PersonCardsPage({super.key, this.onBack});
   final VoidCallback? onBack;
@@ -75,13 +83,6 @@ class PersonPage extends ConsumerStatefulWidget {
 
 class _PersonPageState extends ConsumerState<PersonPage> {
   final _scrollController = ScrollController();
-  late final List<Transaction> _moneyOperateList = MockUtils.moneyOperateList
-      .map<Transaction>(
-        (e) => e.copyWith(
-          userIcon: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80',
-        ),
-      )
-      .toList();
   bool? _wasWide;
   final _scrollOffsets = <bool, double>{};
 
@@ -114,15 +115,19 @@ class _PersonPageState extends ConsumerState<PersonPage> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(localeProvider);
+    final locale = ref.watch(localeProvider);
     final navState = ref.watch(navigationControllerProvider);
-    final spending = ref
-        .watch(walletControllerProvider)
-        .allTransactions
+    final profile = ref.watch(personProfileProvider(locale));
+    final profileValue = profile.asData?.value;
+    final wallet = ref.watch(walletControllerProvider);
+    final transactions = wallet.allTransactions;
+    final spending = transactions
         .where((e) => (e.moneyAmount ?? 0) < 0)
         .fold<double>(0, (sum, e) => sum + (e.moneyAmount ?? 0).abs());
-    final email =
-        ref.watch(storageServiceProvider).userEmail ?? navState.userEmail;
+    final email = ref.watch(storageServiceProvider).userEmail ?? navState.userEmail;
+    final profileData = profileValue;
+    final displayName = profileData?.name ?? navState.userName;
+    final displayAvatar = profileData?.avatarUrl ?? '';
 
     final generalInformationList = [
       (Icons.email_outlined, Languages.email, AppRoutes.PERSON_EMAIL),
@@ -168,7 +173,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(50),
                       child: NetworkWebImage(
-                        navState.userAvatar,
+                        displayAvatar,
                         size: Size(100, 100),
                         fit: BoxFit.fitHeight,
                       ),
@@ -179,7 +184,11 @@ class _PersonPageState extends ConsumerState<PersonPage> {
               Padding(
                 padding: EdgeInsets.fromLTRB(0, 10, 0, 8),
                 child: Text(
-                  navState.userName,
+                  profile.isLoading
+                      ? Languages.loading
+                      : profile.hasError
+                      ? Languages.loadFailed
+                      : displayName,
                   style: TextStyle(fontSize: 20, color: AppColors.ink(context)),
                 ),
               ),
@@ -189,28 +198,44 @@ class _PersonPageState extends ConsumerState<PersonPage> {
               ),
               Padding(
                 padding: EdgeInsets.only(top: 10, bottom: 30),
-                child: Text(
-                  '\$${spending.toStringAsFixed(2)}',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: AppColors.expense(context),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: wallet.isLoading
+                    ? const SizedBox(
+                        key: ValueKey('person-spending-loading'),
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : wallet.errorMessage != null
+                    ? Text(
+                        Languages.loadFailed,
+                        key: const ValueKey('person-spending-error'),
+                      )
+                    : Text(
+                        '\$${spending.toStringAsFixed(2)}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: AppColors.expense(context),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
               SizedBox(
                 height:
-                    240 +
+                    270 +
                     (MediaQuery.textScalerOf(context).scale(180) - 180).clamp(
                       0,
                       180,
                     ),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: _moneyOperateList.length,
+                  itemCount: wallet.isLoading || wallet.errorMessage != null
+                      ? 0
+                      : transactions.length,
                   itemBuilder: (context, index) {
                     final heroTag = "heroTag_$index";
-                    final data = _moneyOperateList[index].localizedPlaceholders;
+                    final data = transactions[index].localizedPlaceholders.copyWith(
+                      userIcon: displayAvatar,
+                    );
                     final textColor = AppColors.ink(context);
 
                     return GestureDetector(
@@ -223,7 +248,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                       },
                       child: Container(
                         height:
-                            240 +
+                            270 +
                             (MediaQuery.textScalerOf(context).scale(180) - 180)
                                 .clamp(0, 180),
                         width: 150,
@@ -245,7 +270,9 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(50),
                                 child: NetworkWebImage(
-                                  data.userIcon!,
+                                  data.userIcon?.isNotEmpty == true
+                            ? data.userIcon!
+                            : displayAvatar,
                                   size: Size.square(50),
                                   fit: BoxFit.cover,
                                 ),

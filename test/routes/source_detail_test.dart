@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/data/common_keys.dart';
+import 'package:sirc/features/home/data/article_repository.dart';
 import 'package:sirc/features/home/presentation/article_detail_page.dart';
 import 'package:sirc/features/home/presentation/home_page.dart';
 import 'package:sirc/features/home/presentation/person_page.dart';
@@ -315,6 +316,60 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+  testWidgets('文章详情区分loading、error、not-found与success并支持重试', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+    SharedPreferences.setMockInitialValues({CommonKeys.IS_LOGIN_SUCCESS: true});
+    final prefs = await SharedPreferences.getInstance();
+    var attempts = 0;
+    final container = ProviderContainer(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        articleDetailProvider.overrideWith((ref, key) async {
+          attempts++;
+          if (key.id == 'missing') return null;
+          if (attempts == 1) throw StateError('temporary failure');
+          return const Article(
+            id: '0-0',
+            title: 'Localized title',
+            summary: 'Localized summary',
+            body: 'Localized body',
+          );
+        }),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: ArticleDetailPage(id: '0-0'),
+        ),
+      ),
+    );
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(find.text(Languages.common.loadFailed), findsOneWidget);
+    await tester.tap(find.text(Languages.common.retry));
+    await tester.pumpAndSettle();
+    expect(find.text('Localized title'), findsNWidgets(2));
+    expect(find.text('Localized body'), findsOneWidget);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: ArticleDetailPage(id: 'missing'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text(Languages.home.articleNotFound), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('文章静态示例跨断点与返回', (tester) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(1200, 1100);

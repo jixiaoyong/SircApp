@@ -171,7 +171,16 @@ class WalletPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 20),
                   if (state.isLoading) const LinearProgressIndicator(),
-                  if (state.errorMessage != null) Text(state.errorMessage!),
+                  if (state.errorMessage != null)
+                    Row(
+                      children: [
+                        Expanded(child: Text(state.errorMessage!)),
+                        TextButton(
+                          onPressed: state.isLoading ? null : controller.retry,
+                          child: Text(Languages.retry),
+                        ),
+                      ],
+                    ),
                   Builder(
                     builder: (context) {
                       final beside =

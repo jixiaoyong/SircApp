@@ -423,7 +423,9 @@ void main() {
               value.data,
               detail.$2.endsWith('email')
                   ? 'current@example.test'
-                  : Languages.settings.notSet,
+                  : detail.$2.endsWith('phone')
+                  ? '+1 202 555 0142'
+                  : '100 Example Avenue, Sample City',
             );
             expect(find.byType(TextField), findsNothing);
           }

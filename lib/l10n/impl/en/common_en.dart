@@ -35,4 +35,10 @@ class CommonEn implements CommonLang {
 
   @override
   String get goToHome => 'Go to Home';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get loadFailed => 'Unable to load content. Please try again.';
 }

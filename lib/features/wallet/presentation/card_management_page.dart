@@ -36,7 +36,21 @@ class CardManagementPage extends ConsumerWidget {
           Text(settings.cardManagementNotice),
           const SizedBox(height: 16),
           if (state.isLoading) const LinearProgressIndicator(),
-          if (!state.isLoading && state.cards.isEmpty)
+          if (state.errorMessage != null)
+            WalletPanel(
+              child: Row(
+                children: [
+                  Expanded(child: Text(state.errorMessage!)),
+                  TextButton(
+                    onPressed: state.isLoading
+                        ? null
+                        : ref.read(walletControllerProvider.notifier).retry,
+                    child: Text(Languages.retry),
+                  ),
+                ],
+              ),
+            ),
+          if (!state.isLoading && state.errorMessage == null && state.cards.isEmpty)
             WalletPanel(
               child: Column(
                 children: [

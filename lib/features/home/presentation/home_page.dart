@@ -13,7 +13,7 @@ import 'package:sirc/widgets/bank_card_widget.dart';
 import 'package:sirc/widgets/expandable_page_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
-import 'package:sirc/mock/mock_data_repository.dart';
+import 'package:sirc/features/home/data/article_repository.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/jingang_widget.dart';
@@ -657,26 +657,11 @@ class HomeArticlesPanel extends ConsumerStatefulWidget {
 
 class _HomeArticlesPanelState extends ConsumerState<HomeArticlesPanel> {
   int selected = 0;
-  List<List<Map<String, dynamic>>>? groups;
-  Locale? loadedLocale;
-  void _loadArticles(Locale locale) {
-    if (loadedLocale != locale) {
-      loadedLocale = locale;
-      ref
-          .read(mockDataRepositoryProvider)
-          .getArticleGroups(locale)
-          .then((value) {
-            if (mounted && loadedLocale == locale)
-              setState(() => groups = value);
-          })
-          .catchError((_) {});
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     final locale = ref.watch(localeProvider);
-    _loadArticles(locale);
+    final articlesState = ref.watch(articleGroupsProvider(locale));
     return WalletPanel(
       key: const ValueKey('home-articles'),
       minimumHeight: 224,
@@ -708,21 +693,43 @@ class _HomeArticlesPanelState extends ConsumerState<HomeArticlesPanel> {
             keyPrefix: 'article-segment',
           ),
           const SizedBox(height: 14),
-          for (
-            var i = 0;
-            i <
-                ((groups != null && selected < groups!.length)
-                    ? groups![selected].length
-                    : 0);
-            i++
-          ) ...[
-            if (i > 0) Divider(height: 1, color: AppColors.line(context)),
-            _RepositoryArticleItem(
-              article: groups![selected][i],
-              group: selected,
-              index: i,
-            ),
-          ],
+          ...articlesState.when(
+            loading: () => [
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ],
+            error: (error, stack) => [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Column(
+                  children: [
+                    Text(Languages.common.loadFailed),
+                    TextButton(
+                      onPressed: () => ref.invalidate(articleGroupsProvider(locale)),
+                      child: Text(Languages.common.retry),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            data: (groups) => selected >= groups.length || groups[selected].isEmpty
+                ? [Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Text(Languages.common.notFound),
+                  )]
+                : [
+                    for (var i = 0; i < groups[selected].length; i++) ...[
+                      if (i > 0) Divider(height: 1, color: AppColors.line(context)),
+                      _RepositoryArticleItem(
+                        article: groups[selected][i],
+                        group: selected,
+                        index: i,
+                      ),
+                    ],
+                  ],
+          ),
         ],
       ),
     );
@@ -735,14 +742,14 @@ class _RepositoryArticleItem extends StatelessWidget {
     required this.group,
     required this.index,
   });
-  final Map<String, dynamic> article;
+  final Article article;
   final int group;
   final int index;
 
   @override
   Widget build(BuildContext context) {
-    final title = article['title'] as String? ?? '';
-    final summary = article['summary'] as String? ?? '';
+    final title = article.title;
+    final summary = article.summary;
     return InkWell(
       key: ValueKey('home-article-$group-$index'),
       onTap: () => openSourceDetail(context, 'article/$group-$index'),
