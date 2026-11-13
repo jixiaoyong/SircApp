@@ -1,0 +1,72 @@
+{
+  "currency": "USD",
+  "balance": 39615.16,
+  "cards": [
+    {
+      "id": "card-test-001",
+      "bankName": "Northstar Credit Union",
+      "cardNumber": "4929123400000042",
+      "ownerName": "Alex Morgan",
+      "expirationDate": "12/30",
+      "cardType": "Visa",
+      "isTest": true,
+      "displayNameZh": "北辰信用社",
+      "displayNameEn": "Northstar Credit Union"
+    },
+    {
+      "id": "card-test-002",
+      "bankName": "Harbor Community Bank",
+      "cardNumber": "5264881200000187",
+      "ownerName": "Alex Morgan",
+      "expirationDate": "08/29",
+      "cardType": "Mastercard",
+      "isTest": true,
+      "displayNameZh": "港湾社区银行",
+      "displayNameEn": "Harbor Community Bank"
+    },
+    {
+      "id": "card-test-003",
+      "bankName": "Cedar Digital Bank",
+      "cardNumber": "4532756100002305",
+      "ownerName": "Alex Morgan",
+      "expirationDate": "03/31",
+      "cardType": "Visa",
+      "isTest": true,
+      "displayNameZh": "雪松数字银行",
+      "displayNameEn": "Cedar Digital Bank"
+    }
+  ],
+  "transactions": [
+    {"id":"txn-2026-11-01-001","userIcon":"","moneyActionName":"Cornerstone Coffee","nameZh":"基石咖啡","nameEn":"Cornerstone Coffee","moneyAmount":-28.5,"time":"2026-11-01T08:42:00-08:00","category":"food","cardId":"card-test-001"},
+    {"id":"txn-2026-11-02-001","userIcon":"","moneyActionName":"Monthly salary","nameZh":"月薪入账","nameEn":"Monthly salary","moneyAmount":4200.0,"time":"2026-11-02T09:00:00-08:00","category":"income","cardId":"card-test-001"},
+    {"id":"txn-2026-11-03-001","userIcon":"","moneyActionName":"Fresh Fields Market","nameZh":"鲜田超市","nameEn":"Fresh Fields Market","moneyAmount":-64.27,"time":"2026-11-03T18:16:00-08:00","category":"groceries","cardId":"card-test-002"},
+    {"id":"txn-2026-11-04-001","userIcon":"","moneyActionName":"City electricity","nameZh":"城市电费","nameEn":"City electricity","moneyAmount":-53.18,"time":"2026-11-04T11:30:00-08:00","category":"bills","cardId":"card-test-001"},
+    {"id":"txn-2026-11-05-001","userIcon":"","moneyActionName":"Online order refund","nameZh":"网购退款","nameEn":"Online order refund","moneyAmount":24.99,"time":"2026-11-05T14:08:00-08:00","category":"refund","cardId":"card-test-002"},
+    {"id":"txn-2026-11-06-001","userIcon":"","moneyActionName":"Metro transit","nameZh":"地铁出行","nameEn":"Metro transit","moneyAmount":-24.75,"time":"2026-11-06T08:11:00-08:00","category":"transport","cardId":"card-test-001"},
+    {"id":"txn-2026-11-07-001","userIcon":"","moneyActionName":"Paper Trail Books","nameZh":"纸迹书店","nameEn":"Paper Trail Books","moneyAmount":-32.5,"time":"2026-11-07T15:45:00-08:00","category":"shopping","cardId":"card-test-003"},
+    {"id":"txn-2026-11-08-001","userIcon":"","moneyActionName":"Olive & Stone Bistro","nameZh":"橄榄与石餐厅","nameEn":"Olive & Stone Bistro","moneyAmount":-48.6,"time":"2026-11-08T19:20:00-08:00","category":"food","cardId":"card-test-002"},
+    {"id":"txn-2026-11-09-001","userIcon":"","moneyActionName":"Design project payment","nameZh":"设计项目收入","nameEn":"Design project payment","moneyAmount":650.0,"time":"2026-11-09T10:15:00-08:00","category":"income","cardId":"card-test-001"},
+    {"id":"txn-2026-11-10-001","userIcon":"","moneyActionName":"Neighborhood Pharmacy","nameZh":"邻里药房","nameEn":"Neighborhood Pharmacy","moneyAmount":-32.4,"time":"2026-11-10T17:02:00-08:00","category":"health","cardId":"card-test-003"},
+    {"id":"txn-2026-11-11-001","userIcon":"","moneyActionName":"Streamline monthly plan","nameZh":"Streamline 月度订阅","nameEn":"Streamline monthly plan","moneyAmount":-29.95,"time":"2026-11-11T06:00:00-08:00","category":"subscription","cardId":"card-test-002"},
+    {"id":"txn-2026-11-12-001","userIcon":"","moneyActionName":"Pine Street Fuel","nameZh":"松街加油站","nameEn":"Pine Street Fuel","moneyAmount":-52.3,"time":"2026-11-12T12:34:00-08:00","category":"transport","cardId":"card-test-001"},
+    {"id":"txn-2026-11-13-001","userIcon":"","moneyActionName":"Lunch at Green Bowl","nameZh":"绿碗轻食午餐","nameEn":"Lunch at Green Bowl","moneyAmount":-31.6,"time":"2026-11-13T12:18:00-08:00","category":"food","cardId":"card-test-002"},
+    {"id":"txn-2026-11-14-001","userIcon":"","moneyActionName":"Weekend farmers market","nameZh":"周末农夫市集","nameEn":"Weekend farmers market","moneyAmount":-36.84,"time":"2026-11-14T10:06:00-08:00","category":"groceries","cardId":"card-test-003"},
+    {"id":"txn-2026-11-15-001","userIcon":"","moneyActionName":"Water utility","nameZh":"自来水费","nameEn":"Water utility","moneyAmount":-28.4,"time":"2026-11-15T09:45:00-08:00","category":"bills","cardId":"card-test-001"},
+    {"id":"txn-2026-11-16-001","userIcon":"","moneyActionName":"Community workshop honorarium","nameZh":"社区工作坊酬金","nameEn":"Community workshop honorarium","moneyAmount":180.0,"time":"2026-11-16T16:00:00-08:00","category":"income","cardId":"card-test-003"},
+    {"id":"txn-2026-11-17-001","userIcon":"","moneyActionName":"Garden Supply Co.","nameZh":"花园用品店","nameEn":"Garden Supply Co.","moneyAmount":-41.65,"time":"2026-11-17T13:27:00-08:00","category":"home","cardId":"card-test-002"},
+    {"id":"txn-2026-11-18-001","userIcon":"","moneyActionName":"Returned headphones","nameZh":"耳机退货退款","nameEn":"Returned headphones","moneyAmount":59.9,"time":"2026-11-18T11:03:00-08:00","category":"refund","cardId":"card-test-003"},
+    {"id":"txn-2026-11-19-001","userIcon":"","moneyActionName":"Harbor taxi","nameZh":"港湾出租车","nameEn":"Harbor taxi","moneyAmount":-22.75,"time":"2026-11-19T21:16:00-08:00","category":"transport","cardId":"card-test-001"},
+    {"id":"txn-2026-11-20-001","userIcon":"","moneyActionName":"Museum entry","nameZh":"博物馆门票","nameEn":"Museum entry","moneyAmount":-34.25,"time":"2026-11-20T14:33:00-08:00","category":"entertainment","cardId":"card-test-002"},
+    {"id":"txn-2026-11-21-001","userIcon":"","moneyActionName":"Harvest Table dinner","nameZh":"丰收餐桌晚餐","nameEn":"Harvest Table dinner","moneyAmount":-67.3,"time":"2026-11-21T19:48:00-08:00","category":"food","cardId":"card-test-001"},
+    {"id":"txn-2026-11-22-001","userIcon":"","moneyActionName":"Monthly phone plan","nameZh":"手机月费","nameEn":"Monthly phone plan","moneyAmount":-45.0,"time":"2026-11-22T07:30:00-08:00","category":"bills","cardId":"card-test-002"},
+    {"id":"txn-2026-11-23-001","userIcon":"","moneyActionName":"Craft market print sale","nameZh":"手作市集版画收入","nameEn":"Craft market print sale","moneyAmount":95.0,"time":"2026-11-23T15:12:00-08:00","category":"income","cardId":"card-test-003"},
+    {"id":"txn-2026-11-24-001","userIcon":"","moneyActionName":"Maple Street Bakery","nameZh":"枫街面包房","nameEn":"Maple Street Bakery","moneyAmount":-27.8,"time":"2026-11-24T08:25:00-08:00","category":"food","cardId":"card-test-001"},
+    {"id":"txn-2026-11-25-001","userIcon":"","moneyActionName":"Book club membership","nameZh":"读书会会费","nameEn":"Book club membership","moneyAmount":-24.0,"time":"2026-11-25T17:40:00-08:00","category":"education","cardId":"card-test-002"},
+    {"id":"txn-2026-11-26-001","userIcon":"","moneyActionName":"Thanksgiving groceries","nameZh":"感恩节食材采购","nameEn":"Thanksgiving groceries","moneyAmount":-73.62,"time":"2026-11-26T10:20:00-08:00","category":"groceries","cardId":"card-test-003"},
+    {"id":"txn-2026-11-27-001","userIcon":"","moneyActionName":"Home internet","nameZh":"家庭宽带","nameEn":"Home internet","moneyAmount":-59.99,"time":"2026-11-27T08:05:00-08:00","category":"bills","cardId":"card-test-001"},
+    {"id":"txn-2026-11-28-001","userIcon":"","moneyActionName":"Bookstore return","nameZh":"书店退货退款","nameEn":"Bookstore return","moneyAmount":16.5,"time":"2026-11-28T13:52:00-08:00","category":"refund","cardId":"card-test-002"},
+    {"id":"txn-2026-11-29-001","userIcon":"","moneyActionName":"Lakeside Cinema","nameZh":"湖畔影院","nameEn":"Lakeside Cinema","moneyAmount":-29.0,"time":"2026-11-29T20:14:00-08:00","category":"entertainment","cardId":"card-test-003"},
+    {"id":"txn-2026-11-30-001","userIcon":"","moneyActionName":"Monthly savings interest","nameZh":"月度储蓄利息","nameEn":"Monthly savings interest","moneyAmount":8.42,"time":"2026-11-30T00:05:00-08:00","category":"interest","cardId":"card-test-001"}
+  ],
+  "chart": [["Mon",0.32],["Tue",0.48],["Wed",0.21],["Thu",0.66],["Fri",0.73],["Sat",0.39],["Sun",0.55]]
+}
