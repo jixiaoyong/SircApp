@@ -877,6 +877,14 @@ class Languages {
   static String get notificationsDescription =>
       settings.notificationsDescription;
 
+  ///- [zh_CN] 交易通知
+  ///- [en_US] Transaction notifications
+  static String get notificationTitle => settings.notificationTitle;
+
+  ///- [zh_CN] 当前筛选下暂无交易通知
+  ///- [en_US] No transaction notifications for these filters
+  static String get notificationEmptyState => settings.notificationEmptyState;
+
   ///- [zh_CN] {count} 条记录缺少可解析日期（如“刚刚”），未纳入时间筛选。
   ///- [en_US] {count} records have no parseable date (for example “Just now”) and are excluded from time filters.
   static String get undatedNotifications => settings.undatedNotifications;
@@ -1192,6 +1200,9 @@ class Languages {
       "Edit": "Edit",
       "Could not delete card. Try again.": "Could not delete card. Try again.",
       "Browse existing transactions by category and time. There is no separate notification service; categories use action labels, with unknown actions in Other.": "Browse existing transactions by category and time. There is no separate notification service; categories use action labels, with unknown actions in Other.",
+      "Transaction notifications": "Transaction notifications",
+      "No transaction notifications for these filters":
+          "No transaction notifications for these filters",
       "{count} records have no parseable date (for example “Just now”) and are excluded from time filters.": "{count} records have no parseable date (for example “Just now”) and are excluded from time filters.",
       "Unable to load transactions. Please try again later.":
           "Unable to load transactions. Please try again later.",
@@ -1432,6 +1443,8 @@ class Languages {
       "Could not delete card. Try again.": "删除失败，请重试",
       "Browse existing transactions by category and time. There is no separate notification service; categories use action labels, with unknown actions in Other.":
           "按类别和时间查阅已有交易。当前无独立通知服务；类别由交易名称识别，未识别的归入其他。",
+      "Transaction notifications": "交易通知",
+      "No transaction notifications for these filters": "当前筛选下暂无交易通知",
       "{count} records have no parseable date (for example “Just now”) and are excluded from time filters.":
           "{count} 条记录缺少可解析日期（如“刚刚”），未纳入时间筛选。",
       "Unable to load transactions. Please try again later.": "交易加载失败，请稍后重试。",

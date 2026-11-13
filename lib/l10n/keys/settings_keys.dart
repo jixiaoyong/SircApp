@@ -32,6 +32,8 @@ abstract class SettingsLang {
   String get edit;
   String get deleteFailed;
   String get notificationsDescription;
+  String get notificationTitle;
+  String get notificationEmptyState;
   String get undatedNotifications;
   String get transactionsLoadFailed;
   String get noTransactionNotifications;

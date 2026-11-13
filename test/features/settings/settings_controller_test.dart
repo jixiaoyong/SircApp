@@ -223,7 +223,10 @@ void main() {
                 .currentCategoryIndex,
             1,
           );
-          await tester.tap(find.byKey(const ValueKey('category-1')));
+          final category = find.byKey(const ValueKey('category-1'));
+          await tester.ensureVisible(category);
+          await tester.pumpAndSettle();
+          await tester.tap(category);
           await tester.pump();
           expect(find.text('Transfer today'), findsNothing);
           expect(find.text('Recharge today'), findsOneWidget);

@@ -94,6 +94,11 @@ class SettingsEn implements SettingsLang {
   String get notificationsDescription =>
       'Browse existing transactions by category and time. There is no separate notification service; categories use action labels, with unknown actions in Other.';
   @override
+  String get notificationTitle => 'Transaction notifications';
+  @override
+  String get notificationEmptyState =>
+      'No transaction notifications for these filters';
+  @override
   String get undatedNotifications =>
       '{count} records have no parseable date (for example “Just now”) and are excluded from time filters.';
   @override

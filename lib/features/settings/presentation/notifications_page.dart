@@ -72,6 +72,11 @@ class NotificationsPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
+                Languages.settings.notificationTitle,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              Text(
                 Languages.settings.notificationsDescription,
                 style: TextStyle(color: colors.onSurfaceVariant, height: 1.6),
               ),
@@ -130,7 +135,7 @@ class NotificationsPage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Text(
-                    Languages.settings.noTransactionNotifications,
+                    Languages.settings.notificationEmptyState,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: colors.onSurfaceVariant),
                   ),
