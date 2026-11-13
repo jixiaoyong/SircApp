@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:sirc/routes/app_routes.dart';
-import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/common_text_button.dart';
 import 'package:sirc/widgets/common_text_filed.dart';
 import 'package:sirc/widgets/constrained_content.dart';
@@ -71,8 +70,8 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
           builder: (context) => AlertDialog(
             title: Text(Languages.loading),
             content: SizedBox(
-              height: 50.dp,
-              width: 50.dp,
+              height: 50,
+              width: 50,
               child: const Center(child: CircularProgressIndicator()),
             ),
           ),
@@ -173,7 +172,7 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
                 Column(
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(top: 50.dp),
+                      padding: EdgeInsets.only(top: 50),
                       child: Text(
                         Languages.pleaseEnterVerifyCode,
                         style: TextStyle(
@@ -183,7 +182,7 @@ class _ForgetPwdPageState extends ConsumerState<ForgetPwdPage>
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 20.dp),
+                      padding: EdgeInsets.only(top: 20),
                       child: VerifyCodeWidget(
                         onChanged: (value) {
                           notifier.setVerifyCode(value);

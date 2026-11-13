@@ -34,7 +34,7 @@ class WalletState {
   final String? errorMessage;
 
   const WalletState({
-    this.availableBalance = 35.269,
+    this.availableBalance = 0,
     this.currentFilterIndex = 0,
     this.selectedCardIndex = 0,
     this.cards = const [],
@@ -187,10 +187,21 @@ class WalletState {
 class WalletController extends _$WalletController {
   WalletRepository get _repository => ref.read(walletRepositoryProvider);
 
+  bool _hasLoadedData = false;
+  bool _isLoadingInitialData = false;
+  Locale? _buildingLocale;
+  Locale? _loadedLocale;
+  Locale? _requestedLocale;
+  int _localeRefreshGeneration = 0;
+
   @override
   WalletState build() {
     // 监听全局语言变更，自动更新月份与分类等本地化文本
-    ref.watch(localeProvider);
+    final locale = ref.watch(localeProvider);
+    final repository = ref.watch(walletRepositoryProvider);
+    final localeChanged = _buildingLocale != null && _buildingLocale != locale;
+    _buildingLocale = locale;
+    if (_loadedLocale == null && _hasLoadedData) _loadedLocale = locale;
 
     final months = [
       Languages.home.january,
@@ -225,6 +236,11 @@ class WalletController extends _$WalletController {
           ? months[oldIndex]
           : months.first;
 
+      if ((_loadedLocale != locale || localeChanged) &&
+          _requestedLocale != locale) {
+        _requestedLocale = locale;
+        Future.microtask(() => _refreshLocalizedData(locale, repository));
+      }
       return previousState.copyWith(
         moneyTypes: initialMoneyTypes,
         selectedMonth: newSelectedMonth,
@@ -249,6 +265,10 @@ class WalletController extends _$WalletController {
 
   /// 初始化拉取卡片、交易列表与图表
   Future<void> loadInitialData() async {
+    if (_hasLoadedData || _isLoadingInitialData) return;
+    _isLoadingInitialData = true;
+    final loadLocale = ref.read(localeProvider);
+    state = state.copyWith(isLoading: true, errorMessage: () => null);
     try {
       final balance = await _repository.getAvailableBalance();
       if (!ref.mounted) return;
@@ -257,6 +277,13 @@ class WalletController extends _$WalletController {
       final transactions = await _repository.getTransactions();
       final chart = <(String, double)>[];
       if (!ref.mounted) return;
+      _hasLoadedData = true;
+      _loadedLocale = loadLocale;
+      _buildingLocale ??= _loadedLocale;
+      if (ref.read(localeProvider) != loadLocale) {
+        await _refreshLocalizedData(ref.read(localeProvider), _repository);
+        return;
+      }
 
       state = state.copyWith(
         availableBalance: balance,
@@ -274,30 +301,99 @@ class WalletController extends _$WalletController {
         chartData: chart,
         isLoading: false,
       );
-      if (state.searchQuery.isNotEmpty) {
-        state = state.copyWith(transactions: state.historyTransactions);
-      }
     } catch (e) {
       if (!ref.mounted) return;
       state = state.copyWith(
         isLoading: false,
         errorMessage: () => e.toString(),
       );
+    } finally {
+      _isLoadingInitialData = false;
     }
+  }
+
+  Future<void> _refreshLocalizedData(
+    Locale locale,
+    WalletRepository repository,
+  ) async {
+    final generation = ++_localeRefreshGeneration;
+    _requestedLocale = locale;
+    if (!ref.mounted) return;
+    try {
+      await repository.refreshLocale(locale);
+      if (!ref.mounted || generation != _localeRefreshGeneration) return;
+      if (ref.read(localeProvider) != locale) {
+        await _refreshLocalizedData(ref.read(localeProvider), repository);
+        return;
+      }
+      final cards = await repository.getBankCards();
+      final transactions = await repository.getTransactions();
+      if (!ref.mounted ||
+          generation != _localeRefreshGeneration ||
+          ref.read(localeProvider) != locale) {
+        return;
+      }
+      _loadedLocale = locale;
+      final selectedId = state.cards.isEmpty
+          ? null
+          : state.cards[state.selectedCardIndex].id;
+      final selected = cards.indexWhere((card) => card.id == selectedId);
+      state = state.copyWith(
+        cards: cards,
+        selectedCardIndex: selected < 0 ? 0 : selected,
+        allTransactions: transactions,
+        transactions: state.searchQuery.isNotEmpty
+            ? transactions
+                .where((item) =>
+                    '${item.moneyActionName ?? ''} ${item.time ?? ''}'
+                        .toLowerCase()
+                        .contains(state.searchQuery.trim().toLowerCase()))
+                .toList()
+            : transactions.where((item) {
+                final amount = item.moneyAmount ?? 0;
+                return state.currentFilterIndex == 0
+                    ? amount < 0
+                    : state.currentFilterIndex == 1
+                    ? amount >= 0
+                    : true;
+              }).toList(),
+      );
+    } catch (e) {
+      if (ref.mounted) {
+        state = state.copyWith(errorMessage: () => e.toString());
+      }
+    }
+  }
+
+  /// 重试初始化加载，清除旧错误并重新执行失败的请求。
+  Future<void> retry() async {
+    _hasLoadedData = false;
+    await loadInitialData();
   }
 
   /// 重新获取银行卡列表
   Future<void> loadCards() async {
-    final cards = await _repository.getBankCards();
-    if (!ref.mounted) return;
-    final selectedId = state.cards.isEmpty
-        ? null
-        : state.cards[state.selectedCardIndex].id;
-    final selected = cards.indexWhere((card) => card.id == selectedId);
-    state = state.copyWith(
-      cards: cards,
-      selectedCardIndex: selected < 0 ? state.selectedCardIndex : selected,
-    );
+    state = state.copyWith(isLoading: true, errorMessage: () => null);
+    try {
+      final cards = await _repository.getBankCards();
+      if (!ref.mounted) return;
+      final selectedId = state.cards.isEmpty
+          ? null
+          : state.cards[state.selectedCardIndex].id;
+      final selected = cards.indexWhere((card) => card.id == selectedId);
+      state = state.copyWith(
+        cards: cards,
+        selectedCardIndex: selected < 0 ? state.selectedCardIndex : selected,
+        isLoading: false,
+      );
+    } catch (e) {
+      if (!ref.mounted) return;
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: () => e.toString(),
+      );
+      rethrow;
+    }
   }
 
   Future<void> deleteCard(String id) async {
@@ -438,17 +534,25 @@ class AddCardController extends _$AddCardController {
 
   @override
   AddCardState build() {
-    final user = ref.watch(navigationControllerProvider);
-    return AddCardState(ownerName: user.userName);
+    return const AddCardState();
   }
 
   String? _editingId;
 
+  Future<void> startAdding() async {
+    _editingId = null;
+    final locale = ref.read(localeProvider);
+    final profile = await ref
+        .read(navigationControllerProvider.notifier)
+        .loadUserProfile(locale);
+    if (!ref.mounted) return;
+    state = AddCardState(ownerName: profile.name);
+  }
+
   void startEditing(BankCard? card) {
     _editingId = card?.id;
     state = AddCardState(
-      ownerName:
-          card?.ownerName ?? ref.read(navigationControllerProvider).userName,
+      ownerName: card?.ownerName ?? '',
       bankName: card?.bankName ?? 'Visa Classic',
       cardType: card?.cardType ?? 'Visa',
       cardNumber: card?.cardNumber ?? '',
@@ -541,6 +645,7 @@ class AddCardController extends _$AddCardController {
         ownerName: state.ownerName,
         expirationDate: state.expireDateString ?? '00/00',
         cardType: state.cardType,
+        cvv: null,
       );
 
       if (_editingId == null) {

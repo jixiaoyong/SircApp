@@ -19,12 +19,14 @@ class GradientProgressIndicator extends StatelessWidget {
 
   final Color backgroundColor;
 
-  const GradientProgressIndicator(
-      {super.key, this.height = 10.0,
-      this.width,
-      this.progress = 0.0,
-      this.foregroundColors = const [Colors.red, Colors.green],
-      this.backgroundColor = Colors.grey});
+  const GradientProgressIndicator({
+    super.key,
+    this.height = 10.0,
+    this.width,
+    this.progress = 0.0,
+    this.foregroundColors = const [Colors.red, Colors.green],
+    this.backgroundColor = Colors.grey,
+  });
 
   @override
   Widget build(BuildContext context) {

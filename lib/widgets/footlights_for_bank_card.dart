@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:sirc/utils/size_extension.dart';
 
 class FootlightsForBankCard extends StatefulWidget {
   final double? screenWidth;
@@ -64,7 +63,7 @@ class _FootlightsForBankCardState extends State<FootlightsForBankCard>
             widget.screenWidth ?? constraints.maxWidth,
             math.min(
               constraints.maxWidth,
-              math.max(0.0, constraints.maxHeight - 20.dp) * 2,
+              math.max(0.0, constraints.maxHeight - 20) * 2,
             ),
           );
           final smallBallSize = width * (0.15 + 0.1 * _percentage);
@@ -73,8 +72,8 @@ class _FootlightsForBankCardState extends State<FootlightsForBankCard>
           return Stack(
             children: [
               Positioned(
-                right: (90 * _percentage - 50).dp,
-                top: 20.dp,
+                right: (90 * _percentage - 50),
+                top: 20,
                 child: Container(
                   height: bigBallSize,
                   width: bigBallSize,
@@ -90,8 +89,8 @@ class _FootlightsForBankCardState extends State<FootlightsForBankCard>
                 ),
               ),
               Positioned(
-                left: (50 * _percentage - 30).dp,
-                bottom: (15 * _percentage + 5).dp,
+                left: (50 * _percentage - 30),
+                bottom: (15 * _percentage + 5),
                 child: Container(
                   height: smallBallSize,
                   width: smallBallSize,

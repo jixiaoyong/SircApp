@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/data/common_keys.dart';
+import 'package:sirc/features/home/data/article_repository.dart';
 import 'package:sirc/features/home/presentation/article_detail_page.dart';
 import 'package:sirc/features/home/presentation/home_page.dart';
 import 'package:sirc/features/home/presentation/person_page.dart';
@@ -15,13 +17,41 @@ import 'package:sirc/features/wallet/presentation/add_card_page.dart';
 import 'package:sirc/features/wallet/presentation/card_management_page.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/core/localization/app_locale.dart';
-import 'package:sirc/features/wallet/presentation/history_details_page.dart';
+import 'package:sirc/features/wallet/presentation/transaction_detail_page.dart';
 import 'package:sirc/features/wallet/presentation/history_page.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 import 'package:sirc/routes/app_router.dart';
 import 'package:sirc/routes/source_detail_navigation.dart';
 
 void main() {
+  late MockDataRepository mock;
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    mock = MockDataRepository();
+    await mock.wallet;
+    await mock.articles;
+    await mock.user;
+  });
+  test('交易业务入口兼容裸交易、Map及非法Hero标识', () {
+    final transaction = Transaction(
+      moneyActionName: 'Actual record',
+      moneyAmount: -12,
+    );
+    expect(
+      TransactionDetailPage.fromExtra(extra: transaction).data,
+      same(transaction),
+    );
+    final mapped = TransactionDetailPage.fromExtra(
+      extra: {'data': transaction, 'heroTag': 'source-hero'},
+    );
+    expect(mapped.data, same(transaction));
+    expect(mapped.heroTag, 'source-hero');
+    final invalidTag = TransactionDetailPage.fromExtra(
+      extra: {'data': transaction, 'heroTag': 123},
+    );
+    expect(invalidTag.data, same(transaction));
+    expect(invalidTag.heroTag, 'default');
+  });
   Future<void> frames(WidgetTester tester) async {
     await tester.pump();
     for (var i = 0; i < 4; i++) {
@@ -34,7 +64,7 @@ void main() {
       '/person',
       '/person/card',
       '/person/add-card',
-      '/person/edit-card/1',
+      '/person/edit-card/card-test-001',
       '/wallet/cards',
     ]) {
       testWidgets('统一卡片管理 $initial 在 $width 保留来源与管理交互', (tester) async {
@@ -46,10 +76,11 @@ void main() {
           CommonKeys.LOCAL_LANGUAGE: 'en_US',
         });
         final prefs = await SharedPreferences.getInstance();
-        final repository = WalletRepositoryImpl();
+        final repository = WalletRepositoryImpl(null, mock, const Locale('en'));
         final container = ProviderContainer(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            mockDataRepositoryProvider.overrideWithValue(mock),
             walletRepositoryProvider.overrideWithValue(repository),
           ],
         );
@@ -83,10 +114,10 @@ void main() {
           await frames(tester);
         } else if (initial.contains('add-card') ||
             initial.contains('edit-card')) {
-          expect(find.byType(AddCardPage), findsOneWidget);
+          expect(find.byType(CardEditorPage), findsOneWidget);
           await tester.tap(
             find.descendant(
-              of: find.byType(AddCardPage),
+              of: find.byType(CardEditorPage),
               matching: find.byType(BackButton),
             ),
           );
@@ -98,15 +129,15 @@ void main() {
         expect(find.text('8932 6283 3243 3232'), findsNothing);
         expect(
           find.descendant(
-            of: find.byKey(const ValueKey('managed-card-1')),
-            matching: find.textContaining('•••• 3232'),
+            of: find.byKey(const ValueKey('managed-card-card-test-001')),
+            matching: find.textContaining('•••• 0042'),
           ),
           findsOneWidget,
         );
         for (final edit in [false, true]) {
           await tester.tap(
             edit
-                ? find.byKey(const ValueKey('edit-card-1'))
+                ? find.byKey(const ValueKey('edit-card-card-test-001'))
                 : find.descendant(
                     of: find.byType(CardManagementPage),
                     matching: find.text(Languages.addCard),
@@ -115,12 +146,14 @@ void main() {
           await frames(tester);
           expect(
             router.routeInformationProvider.value.uri.path,
-            edit ? '$source/edit-card/1' : '$source/add-card',
+            edit ? '$source/edit-card/card-test-001' : '$source/add-card',
           );
-          expect(find.byType(AddCardPage), findsOneWidget);
+          expect(find.byType(CardEditorPage), findsOneWidget);
           expect(
-            tester.widget<AddCardPage>(find.byType(AddCardPage)).card?.id,
-            edit ? '1' : null,
+            tester
+                .widget<CardEditorPage>(find.byType(CardEditorPage))
+                .editingId,
+            edit ? 'card-test-001' : null,
           );
           // 系统返回和页面返回均应回到相同来源的管理页。
           if (edit) {
@@ -128,7 +161,7 @@ void main() {
           } else {
             await tester.tap(
               find.descendant(
-                of: find.byType(AddCardPage),
+                of: find.byType(CardEditorPage),
                 matching: find.byType(BackButton),
               ),
             );
@@ -143,8 +176,17 @@ void main() {
           await wallet.deleteCard(card.id);
         }
         await frames(tester);
-        expect(find.text('No cards yet'), findsOneWidget);
-        expect(find.byKey(const ValueKey('edit-card-1')), findsNothing);
+        expect(
+          find.descendant(
+            of: find.byType(CardManagementPage),
+            matching: find.text(Languages.wallet.noCardsYet),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('edit-card-card-test-001')),
+          findsNothing,
+        );
         expect(
           find.descendant(
             of: find.byType(CardManagementPage),
@@ -182,7 +224,10 @@ void main() {
       });
       final prefs = await SharedPreferences.getInstance();
       final container = ProviderContainer(
-        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          mockDataRepositoryProvider.overrideWithValue(mock),
+        ],
       );
       addTearDown(container.dispose);
       final router = createAppRouter(
@@ -229,8 +274,8 @@ void main() {
         );
         expect(
           tester
-              .widget<HistoryDetailsPage>(find.byType(HistoryDetailsPage))
-              .data
+              .widget<TransactionDetailPage>(find.byType(TransactionDetailPage))
+              .data!
               .moneyActionName,
           'record-$index',
         );
@@ -239,11 +284,14 @@ void main() {
           '${source.$1}/transaction',
         );
       }
-      final detail = tester.element(find.byType(HistoryDetailsPage));
+      final detail = tester.element(find.byType(TransactionDetailPage));
       for (final width in [839.0, 840.0, 390.0, 1200.0]) {
         tester.view.physicalSize = Size(width, 1100);
         await frames(tester);
-        expect(tester.element(find.byType(HistoryDetailsPage)), same(detail));
+        expect(
+          tester.element(find.byType(TransactionDetailPage)),
+          same(detail),
+        );
         expect(
           find.byType(source.$2),
           width >= 840 ? findsOneWidget : findsNothing,
@@ -256,7 +304,7 @@ void main() {
       }
       await tester.tap(
         find.descendant(
-          of: find.byType(HistoryDetailsPage),
+          of: find.byType(TransactionDetailPage),
           matching: find.byIcon(Icons.arrow_back),
         ),
       );
@@ -268,6 +316,60 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+  testWidgets('文章详情区分loading、error、not-found与success并支持重试', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+    SharedPreferences.setMockInitialValues({CommonKeys.IS_LOGIN_SUCCESS: true});
+    final prefs = await SharedPreferences.getInstance();
+    var attempts = 0;
+    final container = ProviderContainer(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        articleDetailProvider.overrideWith((ref, key) async {
+          attempts++;
+          if (key.id == 'missing') return null;
+          if (attempts == 1) throw StateError('temporary failure');
+          return const Article(
+            id: '0-0',
+            title: 'Localized title',
+            summary: 'Localized summary',
+            body: 'Localized body',
+          );
+        }),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: ArticleDetailPage(id: '0-0'),
+        ),
+      ),
+    );
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(find.text(Languages.common.loadFailed), findsOneWidget);
+    await tester.tap(find.text(Languages.common.retry));
+    await tester.pumpAndSettle();
+    expect(find.text('Localized title'), findsNWidgets(2));
+    expect(find.text('Localized body'), findsOneWidget);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: ArticleDetailPage(id: 'missing'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text(Languages.home.articleNotFound), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('文章静态示例跨断点与返回', (tester) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(1200, 1100);
@@ -275,7 +377,10 @@ void main() {
     SharedPreferences.setMockInitialValues({CommonKeys.IS_LOGIN_SUCCESS: true});
     final prefs = await SharedPreferences.getInstance();
     final container = ProviderContainer(
-      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        mockDataRepositoryProvider.overrideWithValue(mock),
+      ],
     );
     addTearDown(container.dispose);
     final router = createAppRouter(

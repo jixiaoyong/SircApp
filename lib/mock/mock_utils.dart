@@ -33,12 +33,14 @@ class MockUtils {
 
   static final List<Transaction> moneyOperateList = List.generate(20, (index) {
     return Transaction(
-        userIcon: mockAvatarList[index % mockAvatarList.length],
-        moneyAmount: MockUtils.random.nextDouble() *
-            100 *
-            (MockUtils.random.nextBool() ? 1 : -1),
-        time: Languages.justNow,
-        moneyActionName: Languages.something);
+      userIcon: mockAvatarList[index % mockAvatarList.length],
+      moneyAmount:
+          MockUtils.random.nextDouble() *
+          100 *
+          (MockUtils.random.nextBool() ? 1 : -1),
+      time: Languages.justNow,
+      moneyActionName: Languages.something,
+    );
   });
 
   static final List<(IconData, Color)> socialList = [

@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_locale.dart';
-import '../../../data/common_data.dart';
 import '../../../gen_a/A.dart';
-import '../../../utils/size_extension.dart';
 import '../../../widgets/constrained_content.dart';
 import '../../../widgets/title_text.dart';
 import '../controllers/settings_controller.dart';
 
 /*
-* @description: 启动引导与闪屏页面（Riverpod 现代架构）
+* @description: 启动引导与闪屏页面
 *
 * @author: jixiaoyong
 * @email: jixiaoyong1995@gmail.com
@@ -68,188 +66,192 @@ class _InitialPageState extends ConsumerState<InitialPage> {
     return Material(
       child: SafeArea(
         child: isFirst
-            ? SizedBox(
-                width: CommonData.realScreenWidth,
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: initialInfoLength,
-                  itemBuilder: (context, index) {
-                    final (imagePath, title, subtitle) = tips[index];
+            ? PageView.builder(
+                controller: _pageController,
+                itemCount: initialInfoLength,
+                itemBuilder: (context, index) {
+                  final (imagePath, title, subtitle) = tips[index];
 
-                    return Container(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      padding: EdgeInsets.only(right: 20.dp, left: 20.dp),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final viewportHeight = constraints.maxHeight;
-                          final imageHeight = (viewportHeight * 0.36)
-                              .clamp(0.0, 360.0)
-                              .toDouble();
+                  return Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    padding: const EdgeInsets.only(right: 20, left: 20),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final viewportHeight = constraints.maxHeight;
+                        final imageHeight = (viewportHeight * 0.36)
+                            .clamp(0.0, 360.0)
+                            .toDouble();
 
-                          return SingleChildScrollView(
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                minHeight: viewportHeight,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.asset(
-                                    imagePath,
-                                    height: imageHeight,
-                                    fit: BoxFit.contain,
-                                  ),
-                                  SizedBox(height: 32.dp),
-                                  SizedBox(
-                                    key: ValueKey('initial_indicators_$index'),
-                                    height: 10.dp,
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: initialInfoLength,
-                                      itemBuilder: (context, subIndex) {
-                                        return Container(
-                                          margin: EdgeInsets.symmetric(
-                                            horizontal: 5.dp,
+                        return SingleChildScrollView(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: viewportHeight,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                  imagePath,
+                                  height: imageHeight,
+                                  fit: BoxFit.contain,
+                                ),
+                                const SizedBox(height: 32),
+                                SizedBox(
+                                  key: ValueKey('initial_indicators_$index'),
+                                  height: 10,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: initialInfoLength,
+                                    itemBuilder: (context, subIndex) {
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 5,
+                                        ),
+                                        height: 10,
+                                        width: 10,
+                                        decoration: BoxDecoration(
+                                          color: subIndex == index
+                                              ? Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface
+                                              : Theme.of(context)
+                                                    .colorScheme
+                                                    .outlineVariant,
+                                          borderRadius: BorderRadius.circular(
+                                            10,
                                           ),
-                                          height: 10.dp,
-                                          width: 10.dp,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                TitleText(text: title),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                  ),
+                                  child: Text(
+                                    subtitle,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                      fontSize: 15,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                ),
+                                initialInfoLength - 1 != index
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          _pageController.nextPage(
+                                            duration: const Duration(
+                                              milliseconds: 300,
+                                            ),
+                                            curve: Curves.easeInOut,
+                                          );
+                                        },
+                                        child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          margin: const EdgeInsets.only(
+                                            top: 30,
+                                          ),
                                           decoration: BoxDecoration(
-                                            color: subIndex == index
-                                                ? Theme.of(context)
-                                                      .colorScheme
-                                                      .onSurface
-                                                : Theme.of(context)
-                                                      .colorScheme
-                                                      .outlineVariant,
                                             borderRadius: BorderRadius.circular(
-                                              10.dp,
+                                              14,
                                             ),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
                                           ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  TitleText(text: title),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 20.dp,
-                                    ),
-                                    child: Text(
-                                      subtitle,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurfaceVariant,
-                                        fontSize: 15.sp,
-                                        height: 1.5,
-                                      ),
-                                    ),
-                                  ),
-                                  initialInfoLength - 1 != index
-                                      ? GestureDetector(
-                                          onTap: () {
-                                            _pageController.nextPage(
-                                              duration: const Duration(
-                                                milliseconds: 300,
+                                          child: Icon(
+                                            Icons.arrow_forward_rounded,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary,
+                                          ),
+                                        ),
+                                      )
+                                    : GestureDetector(
+                                        onTap: () {
+                                          ref
+                                              .read(
+                                                initialControllerProvider
+                                                    .notifier,
+                                              )
+                                              .goMainPage(context);
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                            30,
+                                            30,
+                                            30,
+                                            0,
+                                          ),
+                                          child: ConstrainedContent(
+                                            maxWidth: 360,
+                                            child: Container(
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(14),
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
                                               ),
-                                              curve: Curves.easeInOut,
-                                            );
-                                          },
-                                          child: Container(
-                                            height: 50.dp,
-                                            width: 50.dp,
-                                            margin: EdgeInsets.only(top: 30.dp),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(14.dp),
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
-                                            ),
-                                            child: Icon(
-                                              Icons.arrow_forward_rounded,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onPrimary,
-                                            ),
-                                          ),
-                                        )
-                                      : GestureDetector(
-                                          onTap: () {
-                                            ref
-                                                .read(
-                                                  initialControllerProvider
-                                                      .notifier,
-                                                )
-                                                .goMainPage(context);
-                                          },
-                                          child: Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                              30.dp,
-                                              30.dp,
-                                              30.dp,
-                                              0,
-                                            ),
-                                            child: ConstrainedContent(
-                                              maxWidth: 360,
-                                              child: Container(
-                                                height: 50.dp,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                        14.dp,
-                                                      ),
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    Languages.getStart,
-                                                    style: TextStyle(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onPrimary,
-                                                      fontSize: 20.sp,
-                                                    ),
+                                              child: Center(
+                                                child: Text(
+                                                  Languages.getStart,
+                                                  style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onPrimary,
+                                                    fontSize: 20,
                                                   ),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                ],
-                              ),
+                                      ),
+                              ],
                             ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
               )
             : Column(
                 children: [
                   const Spacer(),
                   Center(child: Image.asset(A.assets_ic_launcher)),
                   const Spacer(),
-                  Container(
-                    width: double.infinity,
+                  ConstrainedContent(
+                    maxWidth: 520,
                     padding: const EdgeInsets.all(10.0),
-                    margin: const EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    child: Center(
-                      child: Text(
-                        Languages.somethingLikeAds,
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          color: Colors.white.withValues(alpha: 0.8),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(10.0),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceContainer
+                            .withValues(alpha: 0.8),
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      child: Center(
+                        child: Text(
+                          Languages.somethingLikeAds,
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant,
+                          ),
                         ),
                       ),
                     ),

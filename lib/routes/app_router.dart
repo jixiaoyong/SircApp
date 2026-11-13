@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sirc/core/layout/adaptive_detail_layout.dart';
 
+import '../core/layout/app_layout.dart';
 import '../core/storage/storage_service.dart';
 import '../core/router/nav_keys.dart';
 import '../features/auth/presentation/forget_pwd_page.dart';
@@ -21,11 +23,10 @@ import '../features/settings/presentation/language_page.dart';
 import '../features/settings/presentation/appearance_page.dart';
 import '../features/settings/presentation/not_found_page.dart';
 import '../features/settings/presentation/notifications_page.dart';
-import '../features/wallet/domain/models/transaction.dart';
 import '../features/wallet/presentation/add_card_page.dart';
 import '../features/wallet/presentation/card_management_page.dart';
-import '../features/wallet/presentation/controllers/wallet_controller.dart';
-import '../features/wallet/presentation/history_details_page.dart';
+import '../features/wallet/presentation/transaction_detail_page.dart';
+import 'adaptive_detail_page.dart';
 import 'app_routes.dart';
 import '../features/home/presentation/article_detail_page.dart';
 
@@ -53,16 +54,10 @@ GoRouter createAppRouter(
 }) {
   // 详情使用push保留返回栈，同时让Web地址栏反映当前详情深链。
   GoRouter.optionURLReflectsImperativeAPIs = true;
+  // 同一来源子树在窄屏根 Route 与宽屏窗格间移动，保留滚动及页面状态。
+  final personKey = GlobalKey(debugLabel: 'adaptive-person');
+  Widget person() => KeyedSubtree(key: personKey, child: const PersonPage());
   late final GoRouter router;
-  // go_router 14 的重定向不会传递 imperative push 的 extra。
-  // 仅桥接旧交易快捷路由的数据，实际页面仍在来源分支 Navigator 中。
-  Object? legacyTransactionExtra;
-  Object? takeTransactionExtra() {
-    final extra = legacyTransactionExtra;
-    legacyTransactionExtra = null;
-    return extra;
-  }
-
   router = GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: initialLocation,
@@ -90,7 +85,7 @@ GoRouter createAppRouter(
         '[redacted]',
       );
       debugPrint('Router 404: uri=${state.uri.path}, error=$error');
-      return const NotFoundPage();
+      return NotFoundPage(path: state.uri.path);
     },
     routes: [
       GoRoute(
@@ -145,28 +140,21 @@ GoRouter createAppRouter(
           }.contains(state.uri.path),
         ),
         branches: [
-          _sourceBranch(AppRoutes.MAIN, const HomePage(), takeTransactionExtra),
-          _sourceBranch(
-            AppRoutes.WALLET,
-            const WalletPage(),
-            takeTransactionExtra,
-          ),
-          _sourceBranch(
-            AppRoutes.HISTORY,
-            const HistoryPage(),
-            takeTransactionExtra,
-          ),
+          _sourceBranch(AppRoutes.MAIN, const HomePage()),
+          _sourceBranch(AppRoutes.WALLET, const WalletPage()),
+          _sourceBranch(AppRoutes.HISTORY, const HistoryPage()),
           StatefulShellBranch(
             routes: [
               ShellRoute(
                 pageBuilder: (context, state, child) => NoTransitionPage<void>(
                   key: state.pageKey,
-                  child: MenuDetailLayout(
+                  child: AdaptiveDetailLayout(
                     hasDetail: state.uri.path != AppRoutes.PERSON,
-                    list: const PersonPage(),
-                    paneKey: const ValueKey('person-pane'),
-                    keepListMounted: true,
-                    child: child,
+                    primary: AppLayout.isWideWindow(context)
+                        ? person()
+                        : const SizedBox.shrink(),
+                    primaryPaneKey: const ValueKey('person-pane'),
+                    detail: child,
                   ),
                 ),
                 routes: [
@@ -174,11 +162,13 @@ GoRouter createAppRouter(
                     path: AppRoutes.PERSON,
                     pageBuilder: (context, state) => NoTransitionPage<void>(
                       key: state.pageKey,
-                      child: const SizedBox.shrink(),
+                      child: AppLayout.isWideWindow(context)
+                          ? const SizedBox.shrink()
+                          : person(),
                     ),
                     routes: [
                       for (final field in ['email', 'phone', 'address'])
-                        _menuDetailRoute(
+                        _adaptiveDetailRoute(
                           field,
                           (onBack) => PersonInformationPage(
                             field: field,
@@ -186,13 +176,13 @@ GoRouter createAppRouter(
                           ),
                           source: AppRoutes.PERSON,
                         ),
-                      _menuDetailRoute(
+                      _adaptiveDetailRoute(
                         'card',
                         (onBack) => PersonCardsPage(onBack: onBack),
                         source: AppRoutes.PERSON,
                       ),
                       ..._cardEditorRoutes(AppRoutes.PERSON),
-                      _transactionRoute(takeTransactionExtra),
+                      _transactionRoute(),
                     ],
                   ),
                 ],
@@ -204,9 +194,11 @@ GoRouter createAppRouter(
               ShellRoute(
                 pageBuilder: (context, state, child) => NoTransitionPage<void>(
                   key: state.pageKey,
-                  child: MenuDetailLayout(
+                  child: AdaptiveDetailLayout(
                     hasDetail: state.uri.path != AppRoutes.MENU,
-                    child: child,
+                    primary: const MenuPage(listOnly: true),
+                    primaryPaneKey: const ValueKey('menu-pane'),
+                    detail: child,
                   ),
                 ),
                 routes: [
@@ -214,24 +206,24 @@ GoRouter createAppRouter(
                     path: AppRoutes.MENU,
                     pageBuilder: (context, state) => NoTransitionPage<void>(
                       key: state.pageKey,
-                      child: MediaQuery.sizeOf(context).width >= 840
+                      child: AppLayout.isWideWindow(context)
                           ? const SizedBox.shrink()
                           : const MenuPage(),
                     ),
                     routes: [
-                      _menuDetailRoute(
+                      _adaptiveDetailRoute(
                         AppRoutes.LANGUAGES_SEGMENT,
                         (onBack) => LanguagePage(onBack: onBack),
                       ),
-                      _menuDetailRoute(
+                      _adaptiveDetailRoute(
                         AppRoutes.APPEARANCE_SEGMENT,
                         (onBack) => AppearancePage(onBack: onBack),
                       ),
-                      _menuDetailRoute(
+                      _adaptiveDetailRoute(
                         AppRoutes.NOTIFICATIONS_SEGMENT,
                         (onBack) => NotificationsPage(onBack: onBack),
                       ),
-                      _menuDetailRoute(
+                      _adaptiveDetailRoute(
                         AppRoutes.PASSWORD_SEGMENT,
                         (onBack) => PasswordPage(onBack: onBack),
                       ),
@@ -251,78 +243,62 @@ GoRouter createAppRouter(
         path: AppRoutes.ABOUT,
         builder: (context, state) => const AboutPage(),
       ),
-      GoRoute(
-        path: AppRoutes.HISTORY_DETAILS,
-        redirect: (context, state) {
-          legacyTransactionExtra = state.extra;
-          final current = router.routerDelegate.currentConfiguration.uri.path;
-          final branch = current.startsWith(AppRoutes.WALLET)
-              ? AppRoutes.WALLET
-              : current.startsWith(AppRoutes.PERSON)
-              ? AppRoutes.PERSON
-              : current.startsWith(AppRoutes.MAIN)
-              ? AppRoutes.MAIN
-              : AppRoutes.HISTORY;
-          return '$branch/${AppRoutes.TRANSACTION_SEGMENT}';
-        },
-      ),
     ],
   );
   return router;
 }
 
-StatefulShellBranch _sourceBranch(
-  String source,
-  Widget list,
-  Object? Function() takeExtra,
-) => StatefulShellBranch(
-  routes: [
-    ShellRoute(
-      pageBuilder: (context, state, child) => NoTransitionPage<void>(
-        key: state.pageKey,
-        child: MenuDetailLayout(
-          hasDetail: state.uri.path != source,
-          list: list,
-          paneKey: ValueKey('$source-pane'),
-          keepListMounted: true,
-          child: child,
-        ),
-      ),
+StatefulShellBranch _sourceBranch(String source, Widget list) =>
+    StatefulShellBranch(
       routes: [
-        GoRoute(
-          path: source,
-          pageBuilder: (context, state) => NoTransitionPage<void>(
+        ShellRoute(
+          pageBuilder: (context, state, child) => NoTransitionPage<void>(
             key: state.pageKey,
-            child: const SizedBox.shrink(),
+            child: AdaptiveDetailLayout(
+              hasDetail: state.uri.path != source,
+              primary: list,
+              primaryPaneKey: ValueKey('$source-pane'),
+              keepPrimaryMounted: true,
+              detail: child,
+            ),
           ),
           routes: [
-            if (source == AppRoutes.WALLET) ...[
-              _menuDetailRoute(
-                'cards',
-                (onBack) => CardManagementPage(onBack: onBack),
-                source: source,
+            GoRoute(
+              path: source,
+              pageBuilder: (context, state) => NoTransitionPage<void>(
+                key: state.pageKey,
+                child: const SizedBox.shrink(),
               ),
-              ..._cardEditorRoutes(source),
-            ],
-            _transactionRoute(takeExtra),
-            if (source == AppRoutes.MAIN)
-              GoRoute(
-                path: 'article/:id',
-                pageBuilder: (context, state) {
-                  final child = ArticleDetailPage(
-                    id: state.pathParameters['id']!,
-                  );
-                  return MediaQuery.sizeOf(context).width >= 840
-                      ? _MenuNoTransitionPage(key: state.pageKey, child: child)
-                      : _MenuMaterialPage(key: state.pageKey, child: child);
-                },
-              ),
+              routes: [
+                if (source == AppRoutes.WALLET) ...[
+                  _adaptiveDetailRoute(
+                    'cards',
+                    (onBack) => CardManagementPage(onBack: onBack),
+                    source: source,
+                  ),
+                  ..._cardEditorRoutes(source),
+                ],
+                _transactionRoute(),
+                if (source == AppRoutes.MAIN)
+                  GoRoute(
+                    path: 'article/:id',
+                    pageBuilder: (context, state) {
+                      final child = ArticleDetailPage(
+                        id: state.pathParameters['id']!,
+                      );
+                      return createAdaptiveDetailPage(
+                        context: context,
+                        key: state.pageKey,
+                        child: child,
+                      );
+                    },
+                  ),
+              ],
+            ),
           ],
         ),
       ],
-    ),
-  ],
-);
+    );
 
 // 管理和编辑保持在来源分支内；直接深链也能返回该来源的管理页。
 List<GoRoute> _cardEditorRoutes(String source) => [
@@ -339,64 +315,49 @@ List<GoRoute> _cardEditorRoutes(String source) => [
             editingId != null ||
             routeState.uri.queryParameters['from'] == 'cards';
         final backTo = returnsToManagement ? managementPath : source;
-        final detail = Consumer(
-          builder: (context, ref, _) {
-            final state = ref.watch(walletControllerProvider);
-            final card = state.cards
-                .where((card) => card.id == editingId)
-                .firstOrNull;
-            void back() {
-              if (returnsToManagement) {
-                context.replace(backTo);
-              } else if (context.canPop()) {
-                context.pop();
-              } else {
-                context.go(backTo);
-              }
-            }
+        void back() {
+          if (returnsToManagement) {
+            context.replace(backTo);
+          } else if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go(backTo);
+          }
+        }
 
-            if (editingId != null && card == null) {
-              return Scaffold(
-                appBar: AppBar(leading: BackButton(onPressed: back)),
-                body: Center(
-                  child: Text(
-                    state.isLoading
-                        ? '…'
-                        : (Localizations.localeOf(context).languageCode == 'zh'
-                              ? '卡片不存在'
-                              : 'Card not found'),
-                  ),
-                ),
-              );
-            }
-            return PopScope(
-              canPop: !returnsToManagement,
-              onPopInvokedWithResult: (didPop, result) {
-                if (!didPop) back();
-              },
-              child: AddCardPage(
-                key: ValueKey(editingId ?? 'new-card'),
-                card: card,
-                onBack: back,
-              ),
-            );
+        final detail = PopScope(
+          canPop: !returnsToManagement,
+          onPopInvokedWithResult: (didPop, result) {
+            if (!didPop) back();
           },
+          child: CardEditorPage(
+            key: ValueKey(editingId ?? 'new-card'),
+            editingId: editingId,
+            onBack: back,
+          ),
         );
-        return MediaQuery.sizeOf(context).width >= 840
-            ? _MenuNoTransitionPage(key: routeState.pageKey, child: detail)
-            : _MenuMaterialPage(key: routeState.pageKey, child: detail);
+        return createAdaptiveDetailPage(
+          context: context,
+          key: routeState.pageKey,
+          child: detail,
+        );
       },
     ),
 ];
 
-GoRoute _menuDetailRoute(
+/// 注册详情路由，并为宽屏详情提供返回来源的回调。
+///
+/// 宽屏优先弹出详情所在的内层 Navigator；无法弹出时跳转到 [source]。
+/// 窄屏传入 null，由详情页沿用默认返回逻辑；页面动画交给 [createAdaptiveDetailPage]。
+GoRoute _adaptiveDetailRoute(
   String path,
   Widget Function(VoidCallback? onBack) buildDetail, {
   String source = AppRoutes.MENU,
 }) => GoRoute(
   path: path,
   pageBuilder: (context, state) {
-    final isWide = MediaQuery.sizeOf(context).width >= 840;
+    final isWide = AppLayout.isWideWindow(context);
+    // 等详情挂入路由后再取 context，确保找到内层 Navigator，而非外层 Shell。
     final detail = Builder(
       builder: (detailContext) => buildDetail(
         isWide
@@ -411,116 +372,23 @@ GoRoute _menuDetailRoute(
             : null,
       ),
     );
-    return isWide
-        ? _MenuNoTransitionPage(key: state.pageKey, child: detail)
-        : _MenuMaterialPage(key: state.pageKey, child: detail);
+    return createAdaptiveDetailPage(
+      context: context,
+      key: state.pageKey,
+      child: detail,
+    );
   },
 );
-
-// 两种页面共享可更新的 Route，跨断点只切换展示方式，不销毁输入状态。
-class _MenuMaterialPage extends MaterialPage<void> {
-  const _MenuMaterialPage({required super.key, required super.child});
-
-  @override
-  bool canUpdate(Page<dynamic> other) =>
-      (other is _MenuMaterialPage || other is _MenuNoTransitionPage) &&
-      key == other.key;
-
-  @override
-  Route<void> createRoute(BuildContext context) => _menuPageRoute(this);
-}
-
-class _MenuNoTransitionPage extends NoTransitionPage<void> {
-  const _MenuNoTransitionPage({required super.key, required super.child});
-
-  @override
-  bool canUpdate(Page<dynamic> other) =>
-      (other is _MenuMaterialPage || other is _MenuNoTransitionPage) &&
-      key == other.key;
-
-  @override
-  Route<void> createRoute(BuildContext context) => _menuPageRoute(this);
-}
-
-Route<void> _menuPageRoute(Page<void> page) {
-  late final MaterialPageRoute<void> route;
-  route = _MenuDetailPageRoute(
-    settings: page,
-    builder: (context) {
-      final settings = route.settings;
-      return settings is MaterialPage<void>
-          ? settings.child
-          : (settings as NoTransitionPage<void>).child;
-    },
-  );
-  return route;
-}
-
-class _MenuDetailPageRoute extends MaterialPageRoute<void> {
-  _MenuDetailPageRoute({required super.settings, required super.builder});
-
-  @override
-  Duration get transitionDuration => settings is NoTransitionPage<void>
-      ? Duration.zero
-      : super.transitionDuration;
-
-  @override
-  Duration get reverseTransitionDuration => transitionDuration;
-
-  @override
-  Widget buildTransitions(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) => settings is NoTransitionPage<void>
-      ? child
-      : super.buildTransitions(context, animation, secondaryAnimation, child);
-}
 
 // 详情与来源列表共用分支 Navigator，Hero 不跨根/分支边界。
-GoRoute _transactionRoute(Object? Function() takeLegacyExtra) => GoRoute(
+GoRoute _transactionRoute() => GoRoute(
   path: AppRoutes.TRANSACTION_SEGMENT,
   pageBuilder: (context, state) {
-    final extra = state.extra ?? takeLegacyExtra();
-    final child = _TransactionDetail(extra: extra);
-    return MediaQuery.sizeOf(context).width >= 840
-        ? _MenuNoTransitionPage(key: state.pageKey, child: child)
-        : _MenuMaterialPage(key: state.pageKey, child: child);
+    final child = TransactionDetailPage.fromExtra(extra: state.extra);
+    return createAdaptiveDetailPage(
+      context: context,
+      key: state.pageKey,
+      child: child,
+    );
   },
 );
-
-class _TransactionDetail extends StatefulWidget {
-  const _TransactionDetail({required this.extra});
-  final Object? extra;
-
-  @override
-  State<_TransactionDetail> createState() => _TransactionDetailState();
-}
-
-class _TransactionDetailState extends State<_TransactionDetail> {
-  Object? get extra => widget.extra;
-
-  @override
-  Widget build(BuildContext context) {
-    Transaction? data;
-    String heroTag = 'default';
-
-    final routeExtra = extra;
-    if (routeExtra is Map<String, dynamic>) {
-      final map = routeExtra;
-      data = map['data'] as Transaction?;
-      heroTag = map['heroTag'] as String? ?? 'default';
-    } else if (routeExtra is Transaction) {
-      data = routeExtra;
-    }
-
-    data ??= Transaction(
-      moneyActionName: "Payment Details",
-      moneyAmount: -98.48,
-      userIcon: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
-    );
-
-    return HistoryDetailsPage(data: data, heroTag: heroTag);
-  }
-}

@@ -44,8 +44,6 @@ void main() {
             child: child!,
           ),
           home: SlideMenuPage(
-            // A stale external width must not override actual parent constraints.
-            screenWidth: 2000,
             onBranchSelected: onSelected ?? (_) {},
             child: child ?? const SizedBox.expand(),
           ),

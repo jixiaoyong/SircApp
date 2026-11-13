@@ -1,0 +1,14 @@
+{
+  "id": "user-test-001",
+  "name": "Alex Morgan",
+  "nameZh": "亚历克斯·摩根",
+  "nameEn": "Alex Morgan",
+  "email": "alex.morgan@example.test",
+  "phone": "+1 202 555 0142",
+  "address": "100 Example Avenue, Sample City",
+  "avatarUrl": "",
+  "locale": "en-US",
+  "isTest": true,
+  "profileNoteZh": "仅用于界面演示的虚构资料，不对应真实个人。",
+  "profileNoteEn": "Fictional profile for UI demonstration; it does not represent a real person."
+}

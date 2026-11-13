@@ -26,45 +26,75 @@ class LanguagePage extends ConsumerWidget {
         ? '${currentLocale.languageCode}_${currentLocale.countryCode}'
         : currentLocale.languageCode;
 
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: OneTitleWithBackButtonAppBar(
         title: Languages.language,
         onBack: onBack,
       ),
-      body: ListView.separated(
+      body: ListView(
         padding: const EdgeInsets.all(24),
-        itemCount: supportedLanguages.length,
-        itemBuilder: (context, index) {
-          final item = supportedLanguages[index];
-          final isSelected = currentTag == item.$2;
-
-          return ListTile(
+        children: [
+          Material(
+            key: const ValueKey('language-options-group'),
+            color: colors.surface,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
+              side: BorderSide(color: colors.outlineVariant),
             ),
-            tileColor: Theme.of(context).colorScheme.surface,
-            selected: isSelected,
-            selectedColor: Theme.of(context).colorScheme.onSurface,
-            title: Text(item.$1),
-            trailing: isSelected
-                ? Icon(
-                    Icons.check_circle_outline,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  )
-                : null,
-            onTap: () {
-              switchAppLanguage(ref, item.$2);
-              if (onBack != null) {
-                onBack!();
-              } else {
-                Navigator.of(context).maybePop();
-              }
-            },
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const Divider();
-        },
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              children: [
+                for (final (index, item) in supportedLanguages.indexed) ...[
+                  if (index > 0)
+                    Divider(
+                      height: 1,
+                      thickness: 1,
+                      indent: 16,
+                      endIndent: 16,
+                      color:
+                          currentTag == supportedLanguages[index - 1].$2 ||
+                              currentTag == item.$2
+                          ? Colors.transparent
+                          : colors.onSurfaceVariant.withValues(alpha: 0.2),
+                    ),
+                  ListTile(
+                    minTileHeight: 48,
+                    selected: currentTag == item.$2,
+                    selectedTileColor: Color.alphaBlend(
+                      colors.primary.withValues(alpha: 0.10),
+                      colors.surface,
+                    ),
+                    selectedColor: colors.onSurface,
+                    title: Text(
+                      item.$1,
+                      style: TextStyle(
+                        fontWeight: currentTag == item.$2
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                      ),
+                    ),
+                    trailing: currentTag == item.$2
+                        ? Icon(
+                            Icons.check_circle_outline,
+                            color: colors.primary,
+                          )
+                        : null,
+                    onTap: () {
+                      switchAppLanguage(ref, item.$2);
+                      if (onBack != null) {
+                        onBack!();
+                      } else {
+                        Navigator.of(context).maybePop();
+                      }
+                    },
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

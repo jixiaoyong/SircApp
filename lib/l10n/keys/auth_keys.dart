@@ -51,4 +51,3 @@ abstract class AuthLang {
   String get fingerprintLogin;
   String get phoneNumber;
 }
-

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 import 'package:sirc/widgets/password_text_field.dart';
 import 'package:sirc/widgets/constrained_content.dart';
@@ -30,8 +29,8 @@ class PasswordPage extends ConsumerWidget {
           builder: (context) => AlertDialog(
             title: Text(Languages.loading),
             content: SizedBox(
-              height: 50.dp,
-              width: 50.dp,
+              height: 50,
+              width: 50,
               child: const Center(child: CircularProgressIndicator()),
             ),
           ),
@@ -81,7 +80,7 @@ class PasswordPage extends ConsumerWidget {
                 onVisibilityChanged: notifier.setOldPasswordVisible,
                 onChanged: notifier.setOldPassword,
               ),
-              Container(height: 20.dp),
+              Container(height: 20),
               PasswordTextField(
                 enabled: !state.isLoading,
                 label: Languages.newPassword,
@@ -91,7 +90,7 @@ class PasswordPage extends ConsumerWidget {
                 onVisibilityChanged: notifier.setNewPasswordVisible,
                 onChanged: notifier.setNewPassword,
               ),
-              Container(height: 20.dp),
+              Container(height: 20),
               PasswordTextField(
                 enabled: !state.isLoading,
                 label: Languages.confirmPassword,
@@ -107,7 +106,7 @@ class PasswordPage extends ConsumerWidget {
                   width: double.infinity,
                   child: FilledButton(
                     style: FilledButton.styleFrom(
-                      minimumSize: Size(0, 50.dp),
+                      minimumSize: Size(0, 50),
                       textStyle: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,

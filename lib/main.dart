@@ -11,12 +11,8 @@ import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/routes/app_router.dart';
 import 'package:sirc/features/settings/controllers/settings_controller.dart';
-import 'package:sirc/utils/size_extension.dart' as size_ext;
-
-import 'data/common_data.dart';
 
 /// a finance $ banking app
-/// UI copy from https://hbimg.huabanimg.com/71e943643aac8a17dedaee0445a0e27aec8023d212e8d8-5fkAOb
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) {
@@ -58,17 +54,12 @@ class MyApp extends ConsumerWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: ref.watch(themeModeProvider),
       builder: (context, child) {
-        final mediaQuery = MediaQuery.of(context);
         final overlay = Theme.of(context).brightness == Brightness.dark
             ? SystemUiOverlayStyle.light
             : SystemUiOverlayStyle.dark;
         SystemChrome.setSystemUIOverlayStyle(
           overlay.copyWith(statusBarColor: Colors.transparent),
         );
-        // 页面使用完整窗口宽度，控件尺寸不随窗口宽度缩放。
-        CommonData.realScreenWidth = mediaQuery.size.width;
-        size_ext.SizeExtension.dpScale = 1;
-
         return child ?? const SizedBox();
       },
     );

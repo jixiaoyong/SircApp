@@ -7,6 +7,9 @@ class CommonEn implements CommonLang {
   String get cancel => 'Cancel';
 
   @override
+  String get all => 'All';
+
+  @override
   String get submit => 'Submit';
 
   @override
@@ -32,5 +35,10 @@ class CommonEn implements CommonLang {
 
   @override
   String get goToHome => 'Go to Home';
-}
 
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get loadFailed => 'Unable to load content. Please try again.';
+}

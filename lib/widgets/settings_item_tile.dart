@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sirc/utils/size_extension.dart';
 
 /// 资料与设置共用的行内容；由外层 Material 提供卡片和裁剪。
 class SettingsItemTile extends StatelessWidget {
@@ -26,12 +25,12 @@ class SettingsItemTile extends StatelessWidget {
       visualDensity: VisualDensity.standard,
       minTileHeight: 64,
       minVerticalPadding: 14,
-      contentPadding: EdgeInsets.symmetric(horizontal: 16.dp),
-      horizontalTitleGap: 16.dp,
-      minLeadingWidth: 36.dp,
+      contentPadding: EdgeInsets.symmetric(horizontal: 16),
+      horizontalTitleGap: 16,
+      minLeadingWidth: 36,
       leading: Container(
-        width: 36.dp,
-        height: 36.dp,
+        width: 36,
+        height: 36,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(10),
@@ -39,7 +38,7 @@ class SettingsItemTile extends StatelessWidget {
         child: Center(
           child: Icon(
             icon,
-            size: 20.dp,
+            size: 20,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),

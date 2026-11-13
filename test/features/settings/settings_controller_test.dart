@@ -223,7 +223,10 @@ void main() {
                 .currentCategoryIndex,
             1,
           );
-          await tester.tap(find.byKey(const ValueKey('category-1')));
+          final category = find.byKey(const ValueKey('category-1'));
+          await tester.ensureVisible(category);
+          await tester.pumpAndSettle();
+          await tester.tap(category);
           await tester.pump();
           expect(find.text('Transfer today'), findsNothing);
           expect(find.text('Recharge today'), findsOneWidget);
@@ -256,7 +259,7 @@ void main() {
     );
     expect(find.text('Not Found'), findsOneWidget);
     expect(find.text('Go to Home'), findsOneWidget);
-    expect(find.byIcon(Icons.details), findsOneWidget);
+    expect(find.byIcon(Icons.error), findsOneWidget);
   });
 
   testWidgets('引导首次页面保留轮播', (tester) async {

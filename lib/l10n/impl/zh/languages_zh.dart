@@ -24,4 +24,3 @@ class LanguagesZhCN implements LangKeys {
   @override
   CommonLang get common => const CommonZh();
 }
-

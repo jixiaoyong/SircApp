@@ -1,5 +1,7 @@
 import 'dart:ui';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../l10n/impl/en/languages_en.dart';
 import '../../l10n/impl/zh/languages_zh.dart';
 import '../../l10n/lang_keys.dart';
@@ -44,11 +46,13 @@ class AppLocale {
   static String translate(String key) {
     final languageCode = _currentLocale.languageCode;
     final countryCode = _currentLocale.countryCode ?? '';
-    final fullCode =
-        countryCode.isNotEmpty ? '${languageCode}_$countryCode' : languageCode;
+    final fullCode = countryCode.isNotEmpty
+        ? '${languageCode}_$countryCode'
+        : languageCode;
 
     // 优先匹配全量 tag (如 zh_CN, en_US)
-    final map = _translations[fullCode] ??
+    final map =
+        _translations[fullCode] ??
         _translations[languageCode] ??
         _translations['en_US'] ??
         {};
@@ -97,5 +101,6 @@ class LocaleNotifier extends Notifier<Locale> {
   }
 }
 
-final localeProvider =
-    NotifierProvider<LocaleNotifier, Locale>(LocaleNotifier.new);
+final localeProvider = NotifierProvider<LocaleNotifier, Locale>(
+  LocaleNotifier.new,
+);

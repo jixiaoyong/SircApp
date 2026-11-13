@@ -6,10 +6,17 @@ import 'package:sirc/features/wallet/domain/models/bank_card.dart';
 import 'package:sirc/features/wallet/presentation/card_management_page.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/features/home/controllers/home_controller.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 
 void main() {
+  late MockDataRepository mock;
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    mock = MockDataRepository();
+    await mock.wallet;
+  });
   test('edit/delete use stable ID, preserve selection and transactions, never store CVV', () async {
-    final repository = WalletRepositoryImpl();
+    final repository = WalletRepositoryImpl(null, mock);
     final container = ProviderContainer(
       overrides: [walletRepositoryProvider.overrideWithValue(repository)],
     );
@@ -18,13 +25,13 @@ void main() {
     await wallet.loadInitialData();
     final history = container.read(walletControllerProvider).allTransactions;
     wallet.selectCard(1);
-    await wallet.deleteCard('1');
+    await wallet.deleteCard('card-test-001');
     expect(
       container
           .read(walletControllerProvider)
           .cards[container.read(walletControllerProvider).selectedCardIndex]
           .id,
-      '2',
+      'card-test-002',
     );
     final editor = container.read(addCardControllerProvider.notifier);
     final subscription = container.listen(addCardControllerProvider, (_, _) {});
@@ -61,10 +68,10 @@ void main() {
     tester.view.physicalSize = const Size(320, 1800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final repository = WalletRepositoryImpl();
+    final repository = WalletRepositoryImpl(null, mock);
     await repository.updateBankCard(
       const BankCard(
-        id: '1',
+        id: 'card-test-001',
         bankName: 'A very long international bank name that wraps naturally',
         cardNumber: '8932 6283 3243 3232',
         ownerName: 'A long card owner name for accessibility testing',
@@ -92,7 +99,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('8932 6283 3243 3232'), findsNothing);
     for (final action in ['edit', 'delete']) {
-      final size = tester.getSize(find.byKey(ValueKey('$action-card-1')));
+      final size = tester.getSize(
+        find.byKey(ValueKey('$action-card-card-test-001')),
+      );
       expect(size.width, greaterThanOrEqualTo(44));
       expect(size.height, greaterThanOrEqualTo(44));
     }
@@ -107,7 +116,7 @@ void main() {
       tester.view.physicalSize = Size(width, 1000);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
-      final repository = WalletRepositoryImpl();
+      final repository = WalletRepositoryImpl(null, mock);
       final container = ProviderContainer(
         overrides: [walletRepositoryProvider.overrideWithValue(repository)],
       );
@@ -120,13 +129,13 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('8932 6283 3243 3232'), findsNothing);
-      await tester.tap(find.byKey(const ValueKey('delete-card-1')));
+      await tester.tap(find.byKey(const ValueKey('delete-card-card-test-001')));
       await tester.pumpAndSettle();
       expect(find.byType(AlertDialog), findsOneWidget);
       await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
       expect((await repository.getBankCards()).length, 3);
-      await tester.tap(find.byKey(const ValueKey('delete-card-1')));
+      await tester.tap(find.byKey(const ValueKey('delete-card-card-test-001')));
       await tester.pumpAndSettle();
       await tester.tap(
         find.descendant(
@@ -136,8 +145,8 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect((await repository.getBankCards()).map((card) => card.id), [
-        '2',
-        '3',
+        'card-test-002',
+        'card-test-003',
       ]);
       expect(tester.takeException(), isNull);
     });

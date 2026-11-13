@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
+import 'package:sirc/core/theme/app_theme.dart';
 
 /*
 * @description: common app bar with one title and back button
@@ -35,4 +37,22 @@ class OneTitleWithBackButtonAppBar extends StatelessWidget
 
   @override
   Size get preferredSize => AppBar().preferredSize;
+}
+
+@Preview(name: 'One Title With Back Button AppBar - Light')
+Widget oneTitleWithBackButtonAppBarLightPreview() {
+  return MaterialApp(
+    theme: AppTheme.lightTheme,
+    themeMode: ThemeMode.light,
+    home: const Scaffold(body: OneTitleWithBackButtonAppBar(title: 'Test')),
+  );
+}
+
+@Preview(name: 'One Title With Back Button AppBar - Dark')
+Widget oneTitleWithBackButtonAppBarDarkPreview() {
+  return MaterialApp(
+    theme: AppTheme.darkTheme,
+    themeMode: ThemeMode.dark,
+    home: const Scaffold(body: OneTitleWithBackButtonAppBar(title: 'Test')),
+  );
 }

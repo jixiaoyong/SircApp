@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sirc/core/layout/app_layout.dart';
 import 'package:sirc/core/localization/app_locale.dart';
-import 'package:sirc/data/common_data.dart';
 import 'package:sirc/features/home/presentation/slide_menu_page.dart';
 import 'package:sirc/utils/toast.dart';
 
@@ -22,7 +22,7 @@ class MainPage extends ConsumerWidget {
     Toast.init(context);
     ref.watch(localeProvider);
     final currentIndex = navigationShell.currentIndex;
-    final isWideLayout = MediaQuery.sizeOf(context).width >= 840;
+    final isWideLayout = AppLayout.isWideWindow(context);
     final navigationItems = [
       (Icons.home_outlined, Languages.home.title),
       (Icons.account_balance_wallet_outlined, Languages.wallet.title),
@@ -34,7 +34,6 @@ class MainPage extends ConsumerWidget {
     void selectTab(int index) => navigationShell.goBranch(index);
 
     return SlideMenuPage(
-      screenWidth: CommonData.realScreenWidth,
       onBranchSelected: selectTab,
       child: Scaffold(
         body: Row(

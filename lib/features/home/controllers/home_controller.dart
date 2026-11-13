@@ -1,6 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:sirc/widgets/jingang_widget.dart';
+import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
+import 'package:sirc/widgets/jingang_widget.dart';
 
 part 'home_controller.g.dart';
 
@@ -26,8 +28,10 @@ class HomeState {
   final int currentBankIndex;
   final List<BankCardItem> banks;
   final List<ImgText> quickActions;
+  final List<List<Map<String, dynamic>>> articleGroups;
 
   const HomeState({
+    this.articleGroups = const [],
     this.currentBankIndex = 0,
     required this.banks,
     required this.quickActions,
@@ -37,11 +41,13 @@ class HomeState {
     int? currentBankIndex,
     List<BankCardItem>? banks,
     List<ImgText>? quickActions,
+    List<List<Map<String, dynamic>>>? articleGroups,
   }) {
     return HomeState(
       currentBankIndex: currentBankIndex ?? this.currentBankIndex,
       banks: banks ?? this.banks,
       quickActions: quickActions ?? this.quickActions,
+      articleGroups: articleGroups ?? this.articleGroups,
     );
   }
 }
@@ -52,6 +58,28 @@ class HomeController extends _$HomeController {
   @override
   HomeState build() {
     final wallet = ref.watch(walletControllerProvider);
+    final mock = ref.watch(mockDataRepositoryProvider);
+    final locale = ref.watch(localeProvider);
+    Future.microtask(() async {
+      try {
+        final groups = await mock.getArticleGroups(locale);
+        final actions = await mock.getQuickActions(locale);
+        if (!ref.mounted) return;
+        state = state.copyWith(
+          articleGroups: groups,
+          quickActions: actions
+              .map(
+                (item) => ImgText(
+                  item['imageUrl'] as String? ?? '',
+                  item['title'] as String? ?? '',
+                ),
+              )
+              .toList(),
+        );
+      } catch (_) {
+        // Keep the UI usable when optional static home content is unavailable.
+      }
+    });
     return HomeState(
       currentBankIndex: wallet.selectedCardIndex,
       banks: wallet.cards
@@ -65,56 +93,7 @@ class HomeController extends _$HomeController {
             ),
           )
           .toList(),
-      quickActions: [
-        ImgText("https://img.icons8.com/office/80/000000/bonds.png", "Bonds"),
-        ImgText(
-          "https://img.icons8.com/office/80/000000/billing.png",
-          "Billing",
-        ),
-        ImgText("https://img.icons8.com/office/80/000000/cash.png", "Cash"),
-        ImgText(
-          "https://img.icons8.com/office/80/000000/money-bag.png",
-          "Money Bag",
-        ),
-        ImgText("https://img.icons8.com/office/80/000000/wallet.png", "Wallet"),
-        ImgText(
-          "https://img.icons8.com/office/80/000000/bounced-check.png",
-          "Bounced Check",
-        ),
-        ImgText("https://img.icons8.com/office/80/000000/tax.png", "Tax"),
-        ImgText(
-          "https://img.icons8.com/office/80/000000/purchase-order.png",
-          "Purchase Order",
-        ),
-        ImgText(
-          "https://img.icons8.com/office/80/000000/payment-history.png",
-          "Payment History",
-        ),
-        ImgText(
-          "https://img.icons8.com/office/80/000000/card-in-use.png",
-          "Card In Use",
-        ),
-        ImgText(
-          "https://img.icons8.com/office/80/000000/card-security.png",
-          "Card Security",
-        ),
-        ImgText(
-          "https://img.icons8.com/office/80/000000/bank-card-front-side--v1.png",
-          "Bank Card Front Side",
-        ),
-        ImgText(
-          "https://img.icons8.com/office/80/000000/bank-card-missing.png",
-          "bank card missing",
-        ),
-        ImgText(
-          "https://img.icons8.com/office/80/000000/credit-control.png",
-          "Credit Control",
-        ),
-        ImgText(
-          "https://img.icons8.com/office/80/000000/commodity.png",
-          "Commodity",
-        ),
-      ],
+      quickActions: const [],
     );
   }
 

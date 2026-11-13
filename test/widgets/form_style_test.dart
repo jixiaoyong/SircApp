@@ -118,7 +118,7 @@ void main() {
       const SignUpPage(),
       const ForgetPwdPage(),
       const SetPwdPage(),
-      const AddCardPage(),
+      const CardEditorPage(),
     ]) {
       testWidgets('${page.runtimeType} 宽度 $width 局部限宽、对齐且键盘下可滚动', (
         tester,

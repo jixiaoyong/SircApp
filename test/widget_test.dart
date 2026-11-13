@@ -6,8 +6,9 @@ import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/main.dart';
 
 void main() {
-  testWidgets('App smoke test - initializes without error',
-      (WidgetTester tester) async {
+  testWidgets('App smoke test - initializes without error', (
+    WidgetTester tester,
+  ) async {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
 
@@ -18,9 +19,7 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
         child: const MyApp(),
       ),
     );

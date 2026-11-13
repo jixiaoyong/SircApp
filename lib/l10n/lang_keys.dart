@@ -22,4 +22,3 @@ abstract class LangKeys {
   SettingsLang get settings;
   CommonLang get common;
 }
-

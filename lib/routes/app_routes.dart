@@ -34,12 +34,12 @@ abstract class AppRoutes {
   static const MENU_LANGUAGES = "$MENU/$LANGUAGES_SEGMENT";
   static const MENU_NOTIFICATIONS = "$MENU/$NOTIFICATIONS_SEGMENT";
   static const MENU_PASSWORD = "$MENU/$PASSWORD_SEGMENT";
-  static const FINGERPRINT = "/fingerprint";
   static const ADD_CARD = "$MENU/$ADD_CARD_SEGMENT";
-  static const LOGOUT = "/logout";
-  static const NOT_FOUND = "/not_found";
   static const ABOUT = "/about";
-  static const HISTORY_DETAILS = "/history_details";
   static const WALLET_TRANSACTION = "$WALLET/$TRANSACTION_SEGMENT";
-  static const WEBVIEW = "/webview";
+}
+
+/// 原生 Navigator 的页面标识，不是 GoRouter URL。
+abstract class AppRouteNames {
+  static const webView = '/webview';
 }

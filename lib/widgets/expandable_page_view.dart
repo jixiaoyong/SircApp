@@ -82,8 +82,9 @@ class _ExpandablePageViewState extends State<ExpandablePageView> {
               pageIndexPercent - pageIndexPercent.floor();
           final nextPageHeight =
               _viewPageHeightList[pageIndexPercent.floor() + 1] ??
-                  currentPageHeight;
-          _currentPageHeight = currentPageHeight +
+              currentPageHeight;
+          _currentPageHeight =
+              currentPageHeight +
               currentPageScrollPercentage *
                   (nextPageHeight - currentPageHeight);
         } else {
@@ -95,8 +96,9 @@ class _ExpandablePageViewState extends State<ExpandablePageView> {
               pageIndexPercent.ceil() - pageIndexPercent;
           final previousPageHeight =
               _viewPageHeightList[pageIndexPercent.ceil() - 1] ??
-                  currentPageHeight;
-          _currentPageHeight = currentPageHeight +
+              currentPageHeight;
+          _currentPageHeight =
+              currentPageHeight +
               currentPageScrollPercentage *
                   (previousPageHeight - currentPageHeight);
         }
@@ -119,69 +121,71 @@ class _ExpandablePageViewState extends State<ExpandablePageView> {
         widget.indicatorBuilder != null && widget.pageCount > 1;
     final pageViewPaddingBottom =
         widget.indicatorOffset.dy < 0 && isIndicatorVisible
-            ? -widget.indicatorOffset.dy
-            : 0.0;
+        ? -widget.indicatorOffset.dy
+        : 0.0;
     final indicatorPaddingBottom =
         widget.indicatorOffset.dy > 0 && isIndicatorVisible
-            ? widget.indicatorOffset.dy
-            : 0.0;
+        ? widget.indicatorOffset.dy
+        : 0.0;
 
-    return LayoutBuilder(builder: (context, constraints) {
-      final indicatorBuilder = widget.indicatorBuilder;
-      return SizedBox(
-        height: _currentPageHeight == 0
-            ? constraints.minHeight
-            : _currentPageHeight + pageViewPaddingBottom,
-        child: Stack(
-          fit: StackFit.passthrough,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(bottom: pageViewPaddingBottom),
-              child: PageView.builder(
-                physics: const ClampingScrollPhysics(),
-                controller: _pageViewController,
-                itemBuilder: (context, index) {
-                  return OverflowBox(
-                    minHeight: 0,
-                    maxHeight: double.infinity,
-                    alignment: Alignment.topCenter,
-                    child: SizeReportableContainer(
-                      onSizeChange: (size) {
-                        if (size != null) {
-                          _viewPageHeightList[index] = size.height;
-                          if (index == currentPage) {
-                            _currentPageHeight = size.height;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final indicatorBuilder = widget.indicatorBuilder;
+        return SizedBox(
+          height: _currentPageHeight == 0
+              ? constraints.minHeight
+              : _currentPageHeight + pageViewPaddingBottom,
+          child: Stack(
+            fit: StackFit.passthrough,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(bottom: pageViewPaddingBottom),
+                child: PageView.builder(
+                  physics: const ClampingScrollPhysics(),
+                  controller: _pageViewController,
+                  itemBuilder: (context, index) {
+                    return OverflowBox(
+                      minHeight: 0,
+                      maxHeight: double.infinity,
+                      alignment: Alignment.topCenter,
+                      child: SizeReportableContainer(
+                        onSizeChange: (size) {
+                          if (size != null) {
+                            _viewPageHeightList[index] = size.height;
+                            if (index == currentPage) {
+                              _currentPageHeight = size.height;
+                            }
+                            setState(() {});
                           }
-                          setState(() {});
-                        }
-                      },
-                      child: widget.pageBuilder(context, index),
-                    ),
-                  );
-                },
-                itemCount: widget.pageCount,
-              ),
-            ),
-            if (isIndicatorVisible)
-              Positioned(
-                bottom: indicatorPaddingBottom,
-                left: widget.indicatorOffset.dx,
-                right: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    indicatorBuilder!(context, (index) {
-                      _pageViewController.jumpToPage(index);
-                    }, _pageScrollPercentage)
-                  ],
+                        },
+                        child: widget.pageBuilder(context, index),
+                      ),
+                    );
+                  },
+                  itemCount: widget.pageCount,
                 ),
               ),
-          ],
-        ),
-      );
-    });
+              if (isIndicatorVisible)
+                Positioned(
+                  bottom: indicatorPaddingBottom,
+                  left: widget.indicatorOffset.dx,
+                  right: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      indicatorBuilder!(context, (index) {
+                        _pageViewController.jumpToPage(index);
+                      }, _pageScrollPercentage),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -194,19 +198,23 @@ class ScrollableIndicator extends StatelessWidget {
   final Color indicatorColor;
   final Color indicatorBackgroundColor;
 
-  const ScrollableIndicator(
-      {super.key,
-      required this.onPageSelected,
-      required this.scrollPercentage,
-      this.indicatorSize = const Size(50, 10),
-      this.indicatorBackgroundSize = const Size(100, 10),
-      this.indicatorColor = Colors.black,
-      this.indicatorBackgroundColor = Colors.white});
+  const ScrollableIndicator({
+    super.key,
+    required this.onPageSelected,
+    required this.scrollPercentage,
+    this.indicatorSize = const Size(50, 10),
+    this.indicatorBackgroundSize = const Size(100, 10),
+    this.indicatorColor = Colors.black,
+    this.indicatorBackgroundColor = Colors.white,
+  });
 
   @override
   Widget build(BuildContext context) {
-    widget(BuildContext context, ValueChanged<int> onPageSelected,
-        double scrollPercentage) {
+    widget(
+      BuildContext context,
+      ValueChanged<int> onPageSelected,
+      double scrollPercentage,
+    ) {
       return Container(
         margin: const EdgeInsets.all(10),
         width: indicatorBackgroundSize.width,
@@ -214,30 +222,32 @@ class ScrollableIndicator extends StatelessWidget {
         decoration: BoxDecoration(
           color: indicatorBackgroundColor,
           borderRadius: BorderRadius.all(
-              Radius.circular(indicatorBackgroundSize.height / 2)),
+            Radius.circular(indicatorBackgroundSize.height / 2),
+          ),
         ),
         child: Row(
           children: [
             Container(
               margin: EdgeInsets.only(
-                  left: scrollPercentage *
-                      (indicatorBackgroundSize.width - indicatorSize.width)),
+                left:
+                    scrollPercentage *
+                    (indicatorBackgroundSize.width - indicatorSize.width),
+              ),
               width: indicatorSize.width,
               height: indicatorSize.height,
               decoration: BoxDecoration(
                 color: indicatorColor,
-                borderRadius:
-                    BorderRadius.all(Radius.circular(indicatorSize.height / 2)),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(indicatorSize.height / 2),
+                ),
               ),
-            )
+            ),
           ],
         ),
       );
     }
 
-    return Container(
-      child: widget(context, onPageSelected, scrollPercentage),
-    );
+    return Container(child: widget(context, onPageSelected, scrollPercentage));
   }
 }
 
@@ -246,5 +256,8 @@ class ScrollableIndicator extends StatelessWidget {
 /// [onPageSelected] the callback when the page is selected
 /// [scrollPercentage] the percentage of the page view scroll:
 /// scrollPercentage = offset / the sum of  all page width, 0.0 is the start, 1.0 is the end
-typedef IndicatorBuilder = Widget Function(BuildContext context,
-    ValueChanged<int> onPageSelected, double scrollPercentage);
+typedef IndicatorBuilder = Widget Function(
+  BuildContext context,
+  ValueChanged<int> onPageSelected,
+  double scrollPercentage,
+);

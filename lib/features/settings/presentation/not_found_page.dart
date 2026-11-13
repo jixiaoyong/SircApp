@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/theme/app_theme.dart';
+import '../../../l10n/languages.g.dart';
 import '../../../routes/app_routes.dart';
 
 /*
@@ -12,7 +15,9 @@ import '../../../routes/app_routes.dart';
 * @date: 22/04/19 (Refactored to Riverpod 2.x)
 */
 class NotFoundPage extends ConsumerWidget {
-  const NotFoundPage({super.key});
+  const NotFoundPage({super.key, this.path});
+
+  final String? path;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,15 +28,28 @@ class NotFoundPage extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.details,
+              Icons.error,
               size: 64,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 20),
-            Text('Not Found', style: Theme.of(context).textTheme.headlineSmall),
+            Text(
+              Languages.common.notFound,
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            if (path != null) ...[
+              const SizedBox(height: 8),
+              SelectableText(
+                path!,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
             const SizedBox(height: 20),
             OutlinedButton(
-              child: const Text('Go to Home'),
+              child: Text(Languages.common.goToHome),
               onPressed: () {
                 context.go(AppRoutes.MAIN);
               },
@@ -41,4 +59,13 @@ class NotFoundPage extends ConsumerWidget {
       ),
     );
   }
+}
+
+@Preview(name: '404 Page')
+Widget notFoundPagePreview() {
+  return MaterialApp(
+    theme: AppTheme.lightTheme,
+    darkTheme: AppTheme.darkTheme,
+    home: const Scaffold(body: NotFoundPage(path: "/404",)),
+  );
 }

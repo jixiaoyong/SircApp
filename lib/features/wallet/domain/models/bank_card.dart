@@ -7,6 +7,15 @@ class BankCard {
   final String? cardType;
   final String? cvv;
 
+  factory BankCard.fromJson(Map<String, dynamic> json) => BankCard(
+    id: json['id'] as String,
+    bankName: json['bankName'] as String,
+    cardNumber: json['cardNumber'] as String,
+    ownerName: json['ownerName'] as String,
+    expirationDate: json['expirationDate'] as String,
+    cardType: json['cardType'] as String?,
+  );
+
   const BankCard({
     required this.id,
     required this.bankName,

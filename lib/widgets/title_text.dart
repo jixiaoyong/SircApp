@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sirc/utils/size_extension.dart';
 
 /*
 * @description: TODO
@@ -16,13 +15,13 @@ class TitleText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 10.dp),
+      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
       child: Text(
         text,
         style: TextStyle(
           color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.bold,
-          fontSize: 20.sp,
+          fontSize: 20,
         ),
       ),
     );

@@ -88,14 +88,10 @@ void main() {
             );
             final material = tester.widget<Material>(materials.first);
             expect(material.clipBehavior, Clip.antiAlias);
-            if (page is MenuPage) {
-              expect(material.shape, isA<Border>());
-            } else {
-              final radius =
-                  material.borderRadius ??
-                  (material.shape as RoundedRectangleBorder).borderRadius;
-              expect(radius, BorderRadius.circular(14));
-            }
+            final radius =
+                material.borderRadius ??
+                (material.shape as RoundedRectangleBorder).borderRadius;
+            expect(radius, BorderRadius.circular(14));
           }
           if (page is PersonPage) {
             expect(find.byType(Divider), findsNWidgets(3));

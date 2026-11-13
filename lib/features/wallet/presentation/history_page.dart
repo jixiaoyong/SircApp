@@ -5,6 +5,7 @@ import 'package:sirc/core/theme/app_colors.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
+import 'package:sirc/widgets/page_gutter.dart';
 
 class HistoryPage extends ConsumerWidget {
   const HistoryPage({super.key, this.onMenuTap});
@@ -16,11 +17,13 @@ class HistoryPage extends ConsumerWidget {
     final state = ref.watch(walletControllerProvider);
     final controller = ref.read(walletControllerProvider.notifier);
     final items = state.historyTransactions;
-    final zh = Localizations.localeOf(context).languageCode == 'zh';
     final theme = Theme.of(context);
-    final periods = zh
-        ? ['全部', '本周', '本月']
-        : ['All', 'This week', 'This month'];
+    final wallet = Languages.wallet;
+    final periods = [
+      Languages.common.search,
+      Languages.thisWeek,
+      Languages.thisMonth,
+    ];
     final total = items.fold<double>(
       0,
       (sum, item) => sum + (item.moneyAmount ?? 0).abs(),
@@ -38,7 +41,7 @@ class HistoryPage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            zh ? '总交易额' : 'Total transaction amount',
+            wallet.historyTotalAmount,
             style: theme.textTheme.bodySmall?.copyWith(
               color: AppColors.muted(context),
             ),
@@ -55,19 +58,17 @@ class HistoryPage extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            zh ? '按交易绝对金额汇总' : 'Sum of absolute transaction amounts',
+            wallet.amountAbsoluteSummary,
             style: theme.textTheme.bodySmall?.copyWith(
               color: AppColors.muted(context),
             ),
           ),
           WalletBars(
             values: buckets,
-            labels: zh
-                ? const ['一', '二', '三', '四', '五', '六', '日']
-                : const ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+            labels: const ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
           ),
           Text(
-            zh ? '所选记录 · 按星期汇总' : 'Selected records · grouped by weekday',
+            wallet.recordsGroupedByWeekday,
             style: theme.textTheme.bodySmall?.copyWith(
               color: AppColors.muted(context),
             ),
@@ -79,10 +80,7 @@ class HistoryPage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            zh ? '按日期查阅' : 'Filter by date',
-            style: theme.textTheme.titleSmall,
-          ),
+          Text(wallet.filterByDate, style: theme.textTheme.titleSmall),
           const SizedBox(height: 16),
           DecoratedBox(
             key: const ValueKey('history-segments'),
@@ -137,7 +135,7 @@ class HistoryPage extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            '${periods[state.historyPeriod]} · ${items.length} ${zh ? '笔交易' : 'transactions'}',
+            '${periods[state.historyPeriod]} · ${items.length} ${wallet.transactionsLabel}',
             style: theme.textTheme.bodySmall,
           ),
           const SizedBox(height: 12),
@@ -148,97 +146,93 @@ class HistoryPage extends ConsumerWidget {
     return SingleChildScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      Languages.history,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -.5,
+        child: PageGutter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        Languages.history,
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -.5,
+                        ),
                       ),
                     ),
+                    IconButton(
+                      tooltip: Languages.settings.openNavigationMenu,
+                      onPressed:
+                          onMenuTap ??
+                          () => ref
+                              .read(navigationControllerProvider.notifier)
+                              .openDrawer(),
+                      icon: const Icon(Icons.menu),
+                    ),
+                  ],
+                ),
+                Text(
+                  wallet.history,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppColors.muted(context),
                   ),
-                  IconButton(
-                    tooltip: zh ? '打开菜单' : 'Open menu',
-                    onPressed:
-                        onMenuTap ??
-                        () => ref
-                            .read(navigationControllerProvider.notifier)
-                            .openDrawer(),
-                    icon: const Icon(Icons.menu),
+                ),
+                const SizedBox(height: 22),
+                summary,
+                const SizedBox(height: 22),
+                filters,
+                const SizedBox(height: 22),
+                Text(
+                  wallet.searchTransactions,
+                  style: theme.textTheme.labelMedium,
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  key: const ValueKey('history-search'),
+                  initialValue: state.searchQuery,
+                  onChanged: controller.setSearchQuery,
+                  textInputAction: TextInputAction.search,
+                  decoration: InputDecoration(
+                    hintText: wallet.searchIncomeExpense,
+                    prefixIcon: const Icon(Icons.search, size: 20),
                   ),
-                ],
-              ),
-              Text(
-                zh
-                    ? '查阅收支，了解每一笔交易'
-                    : 'Review your income, spending and transactions',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: AppColors.muted(context),
                 ),
-              ),
-              const SizedBox(height: 22),
-              summary,
-              const SizedBox(height: 22),
-              filters,
-              const SizedBox(height: 22),
-              Text(
-                zh ? '搜索交易' : 'Search transactions',
-                style: theme.textTheme.labelMedium,
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                key: const ValueKey('history-search'),
-                initialValue: state.searchQuery,
-                onChanged: controller.setSearchQuery,
-                textInputAction: TextInputAction.search,
-                decoration: InputDecoration(
-                  hintText: zh ? '输入收支名称' : 'Search income or spending',
-                  prefixIcon: const Icon(Icons.search, size: 20),
+                const SizedBox(height: 17),
+                if (state.isLoading) const LinearProgressIndicator(),
+                if (state.errorMessage != null) Text(state.errorMessage!),
+                Material(
+                  key: const ValueKey('history-transaction-container'),
+                  color: theme.colorScheme.surface,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    side: BorderSide(color: AppColors.line(context)),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: items.isEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Text(wallet.noMatchingTransactions),
+                        )
+                      : ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: items.length,
+                          separatorBuilder: (context, index) => Divider(
+                            height: 1,
+                            thickness: 1,
+                            color: AppColors.line(context),
+                          ),
+                          itemBuilder: (context, index) => WalletTransactionRow(
+                            transaction: items[index],
+                            heroTag: 'hero_history_${items[index].hashCode}',
+                          ),
+                        ),
                 ),
-              ),
-              const SizedBox(height: 17),
-              if (state.isLoading) const LinearProgressIndicator(),
-              if (state.errorMessage != null) Text(state.errorMessage!),
-              Material(
-                key: const ValueKey('history-transaction-container'),
-                color: theme.colorScheme.surface,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  side: BorderSide(color: AppColors.line(context)),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: items.isEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Text(
-                          zh
-                              ? '当前条件下没有交易记录'
-                              : 'No transactions match these filters',
-                        ),
-                      )
-                    : ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: items.length,
-                        separatorBuilder: (context, index) => Divider(
-                          height: 1,
-                          thickness: 1,
-                          color: AppColors.line(context),
-                        ),
-                        itemBuilder: (context, index) => WalletTransactionRow(
-                          transaction: items[index],
-                          heroTag: 'hero_history_${items[index].hashCode}',
-                        ),
-                      ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

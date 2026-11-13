@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -34,6 +36,17 @@ class _HomeWalletController extends WalletController {
 }
 
 void main() {
+  late MockDataRepository mock;
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    mock = MockDataRepository();
+    await mock.articles;
+  });
+  setUp(() => AppLocale.setLocale(const Locale('en', 'US')));
+  Widget withRepository(Widget child) => ProviderScope(
+    overrides: [mockDataRepositoryProvider.overrideWithValue(mock)],
+    child: child,
+  );
   test('18篇文章拥有独立标题、摘要、正文与有效ID', () {
     final articles = sampleArticleGroups.expand((group) => group).toList();
     expect(articles, hasLength(18));
@@ -70,23 +83,26 @@ void main() {
       );
       addTearDown(router.dispose);
       await tester.pumpWidget(
-        MaterialApp.router(
-          routerConfig: router,
-          builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context)
-                .copyWith(textScaler: const TextScaler.linear(2)),
-            child: child!,
+        withRepository(
+          MaterialApp.router(
+            routerConfig: router,
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(2)),
+              child: child!,
+            ),
           ),
         ),
       );
       await tester.pumpAndSettle();
-      for (var group = 0; group < 3; group++) {
+      final articleGroups = await mock.getArticleGroups(const Locale('en'));
+      for (var group = 0; group < articleGroups.length; group++) {
         await tester.ensureVisible(
           find.byKey(ValueKey('article-segment-$group')),
         );
         await tester.tap(find.byKey(ValueKey('article-segment-$group')));
         await tester.pumpAndSettle();
-        for (var index = 0; index < 6; index++) {
+        for (var index = 0; index < articleGroups[group].length; index++) {
           final item = find.byKey(ValueKey('home-article-$group-$index'));
           final rect = tester.getRect(item);
           if (index > 0) {
@@ -99,8 +115,11 @@ void main() {
           await tester.ensureVisible(item);
           await tester.tap(item);
           await tester.pumpAndSettle();
-          final article = sampleArticleForId('$group-$index')!;
-          expect(find.text(article.bodyEn), findsOneWidget);
+          final article = await mock.getArticleById(
+            '$group-$index',
+            const Locale('en'),
+          );
+          expect(find.text(article!['body'] as String), findsOneWidget);
           expect(find.textContaining('Static example'), findsOneWidget);
           expect(tester.takeException(), isNull);
           router.pop();
@@ -145,14 +164,16 @@ void main() {
           find.byKey(const ValueKey('home-articles')),
         );
         final cards = tester.getRect(find.byType(HomeBankCardCarousel));
-        expect(cards.width, width - 40);
+        final gutter = 16 + 16 * ((width - 320) / 240).clamp(0.0, 1.0);
+        final expectedContentWidth = width - gutter * 2;
+        expect(cards.width, closeTo(expectedContentWidth, 1));
         if (width == 1200 && scale == 1) {
           expect(summary.top, graph.top);
           expect(summary.left, greaterThan(graph.right));
         } else {
           expect(summary.top, greaterThanOrEqualTo(graph.bottom));
         }
-        expect(transactions.width, width - 40);
+        expect(transactions.width, closeTo(expectedContentWidth, 1));
         expect(articles.width, transactions.width);
         expect(articles.top, greaterThanOrEqualTo(transactions.bottom));
         expect(find.byKey(const ValueKey('home-avatar')), findsOneWidget);
@@ -272,15 +293,19 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
-      MaterialApp(
-        theme: AppTheme.lightTheme,
-        home: const Scaffold(
-          body: HomeTabViewListItemWidget(tabTitle: 'Follow', index: 0),
+      withRepository(
+        MaterialApp(
+          theme: AppTheme.lightTheme,
+          home: const Scaffold(
+            body: SingleChildScrollView(child: HomeArticlesPanel()),
+          ),
         ),
       ),
     );
-    expect(find.text('Bonds'), findsOneWidget);
-    expect(find.text('Understand assets and risk'), findsOneWidget);
+    await tester.pumpAndSettle();
+    final article = await mock.getArticleById('0-0', const Locale('en'));
+    expect(find.text(article!['title'] as String), findsOneWidget);
+    expect(find.text(article['summary'] as String), findsOneWidget);
     expect(find.text('Article content coming soon'), findsNothing);
     expect(tester.takeException(), isNull);
   });

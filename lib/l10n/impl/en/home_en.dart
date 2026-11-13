@@ -49,6 +49,13 @@ class HomeEn implements HomeLang {
   String get localExamples => 'Local examples';
 
   @override
+  String get articleNotFound => 'Article not found';
+
+  @override
+  String get articleDisclaimer =>
+      'Static example · Local content · No article service connected · Not investment advice';
+
+  @override
   String get chartWeek => 'This week';
   @override
   String get chartMonth => 'This month';

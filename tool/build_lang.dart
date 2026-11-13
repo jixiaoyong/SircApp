@@ -24,7 +24,8 @@ void main(List<String> args) {
     l10nDir.watch(recursive: true).listen((event) {
       // 忽略 README.md、生成的门面文件等变动，仅监听 keys 和 impl
       if (!event.path.endsWith('.dart') ||
-          event.path.endsWith('languages.g.dart')) return;
+          event.path.endsWith('languages.g.dart'))
+        return;
 
       debounceTimer?.cancel();
       debounceTimer = Timer(const Duration(milliseconds: 300), () {
@@ -196,6 +197,18 @@ class Languages {
 
   Process.runSync('dart', ['format', targetFile.path]);
   print('✅ 自动生成完成！lib/l10n/languages.g.dart 已更新。');
+
+  // 审计在生成成功后运行；无引用仅作提示，审计故障不影响生成结果。
+  try {
+    final result = Process.runSync('dart', [
+      'run',
+      'tool/audit_lang_usage.dart',
+    ]);
+    if (result.stdout.toString().isNotEmpty) stdout.write(result.stdout);
+    if (result.stderr.toString().isNotEmpty) stderr.write(result.stderr);
+  } catch (error) {
+    stderr.writeln('语言 key 审计跳过（不影响生成）：$error');
+  }
 }
 
 class _Entry {

@@ -49,6 +49,12 @@ class HomeZh implements HomeLang {
   String get localExamples => '本地示例';
 
   @override
+  String get articleNotFound => '未找到文章';
+
+  @override
+  String get articleDisclaimer => '本地静态示例 · 未连接文章服务 · 非投资建议';
+
+  @override
   String get chartWeek => '本周';
   @override
   String get chartMonth => '本月';

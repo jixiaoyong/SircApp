@@ -14,11 +14,12 @@ class EndlessRotatingIndicator extends StatefulWidget {
   final Widget child;
   final Duration duration;
 
-  const EndlessRotatingIndicator(
-      {super.key,
-      required this.child,
-      this.size = const Size(50, 50),
-      this.duration = const Duration(seconds: 1)});
+  const EndlessRotatingIndicator({
+    super.key,
+    required this.child,
+    this.size = const Size(50, 50),
+    this.duration = const Duration(seconds: 1),
+  });
 
   @override
   State<EndlessRotatingIndicator> createState() =>
@@ -32,10 +33,7 @@ class _EndlessRotatingIndicatorState extends State<EndlessRotatingIndicator>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
     _controller.repeat();
   }
 

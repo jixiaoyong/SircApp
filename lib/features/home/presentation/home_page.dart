@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart'
+    hide SizeExtension;
 import 'package:flutter/services.dart';
 import 'package:sirc/routes/source_detail_navigation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,18 +8,18 @@ import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/controllers/home_controller.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/core/theme/app_colors.dart';
-import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/utils/toast.dart';
 import 'package:sirc/widgets/bank_card_widget.dart';
 import 'package:sirc/widgets/expandable_page_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
-import 'package:sirc/features/home/presentation/sample_articles.dart';
+import 'package:sirc/features/home/data/article_repository.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/jingang_widget.dart';
 import 'package:sirc/features/home/presentation/home_transaction_chart.dart';
 import 'package:sirc/widgets/network_web_image.dart';
+import 'package:sirc/widgets/page_gutter.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -85,24 +87,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
   final HomeState homeState;
   final String userAvatar;
 
-  String _quickActionLabel(String title) => switch (title) {
-    'Bonds' => Languages.home.bonds,
-    'Billing' => Languages.home.billing,
-    'Cash' => Languages.home.cash,
-    'Money Bag' => Languages.home.moneyBag,
-    'Wallet' => Languages.wallet.wallet,
-    'Bounced Check' => Languages.home.bouncedCheck,
-    'Tax' => Languages.home.tax,
-    'Purchase Order' => Languages.home.purchaseOrder,
-    'Payment History' => Languages.home.paymentHistory,
-    'Card In Use' => Languages.home.cardInUse,
-    'Card Security' => Languages.home.cardSecurity,
-    'Bank Card Front Side' => Languages.home.bankCardFrontSide,
-    'bank card missing' => Languages.home.bankCardMissing,
-    'Credit Control' => Languages.home.creditControl,
-    'Commodity' => Languages.home.commodity,
-    _ => title,
-  };
+  String _quickActionLabel(String title) => title;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -113,7 +98,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
       children: [
         const HomeBankCardCarousel(),
         Padding(
-          padding: EdgeInsets.only(top: 10.dp),
+          padding: EdgeInsets.only(top: 10),
           child: JingangWidget(
             // 行高由图标和两行文字决定，不随每列宽度增长。
             mainAxisExtent: 80,
@@ -121,7 +106,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
             data: homeState.quickActions,
             // 分页滑条高 10px、上下 margin 各 10px，完整预留空间，
             // 不挤占最后一排文字，也不改变图标、文字及网格行高。
-            indicatorOffset: Offset(0, -30.dp),
+            indicatorOffset: Offset(0, -30),
             itemBuilder:
                 (BuildContext context, int index, int pageIndex, data) {
                   return GestureDetector(
@@ -132,7 +117,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox.square(
-                          dimension: 40.dp,
+                          dimension: 40,
                           child: NetworkWebImage(
                             data.imageUrl,
                             fit: BoxFit.contain,
@@ -140,7 +125,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(top: 2.dp),
+                          padding: EdgeInsets.only(top: 2),
                           child: Text(
                             _quickActionLabel(data.title),
                             overflow: TextOverflow.clip,
@@ -148,7 +133,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               height: 1,
-                              fontSize: 11.sp,
+                              fontSize: 11,
                               color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w500,
                             ),
@@ -174,7 +159,7 @@ class HomeTopBodyWidget extends ConsumerWidget {
     );
     final graph = Container(
       key: const ValueKey('home-weekly-graph'),
-      padding: EdgeInsets.symmetric(horizontal: 16.dp),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: const HomeTransactionChart(),
     );
     final dark = Theme.of(context).brightness == Brightness.dark;
@@ -185,39 +170,43 @@ class HomeTopBodyWidget extends ConsumerWidget {
         statusBarBrightness: dark ? Brightness.dark : Brightness.light,
       ),
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final beside =
-                  constraints.maxWidth >= 760 &&
-                  MediaQuery.textScalerOf(context).scale(14) < 24;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  headerAndCards,
-                  const SizedBox(height: 18),
-                  if (beside)
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: graph),
-                        const SizedBox(width: 22),
-                        const Expanded(child: HomeSummaryCards()),
+        child: PageGutter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: LayoutScope(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final beside =
+                      ResponsiveQuery.of(context).width >= 760 &&
+                      MediaQuery.textScalerOf(context).scale(14) < 24;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      headerAndCards,
+                      const SizedBox(height: 18),
+                      if (beside)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: graph),
+                            const SizedBox(width: 22),
+                            const Expanded(child: HomeSummaryCards()),
+                          ],
+                        )
+                      else ...[
+                        graph,
+                        const SizedBox(height: 18),
+                        const HomeSummaryCards(),
                       ],
-                    )
-                  else ...[
-                    graph,
-                    const SizedBox(height: 18),
-                    const HomeSummaryCards(),
-                  ],
-                  const SizedBox(height: 18),
-                  const HomeTransactionsPanel(),
-                  const SizedBox(height: 18),
-                  const HomeArticlesPanel(),
-                ],
-              );
-            },
+                      const SizedBox(height: 18),
+                      const HomeTransactionsPanel(),
+                      const SizedBox(height: 18),
+                      const HomeArticlesPanel(),
+                    ],
+                  );
+                },
+              ),
+            ),
           ),
         ),
       ),
@@ -282,6 +271,7 @@ class _HomeBankCardPagesState extends State<_HomeBankCardPages>
       _selectionHighlight.reset();
     }
   }
+
   bool _dragging = false;
   bool _selecting = false;
   static const _gap = 18.0;
@@ -449,12 +439,15 @@ class _HomeBankCardPagesState extends State<_HomeBankCardPages>
                                   ownerName: card.ownerName,
                                   expirationDate: card.expirationDate,
                                   cardType: card.cardType,
-                                  isSelected: homeState.currentBankIndex == index,
+                                  isSelected:
+                                      homeState.currentBankIndex == index,
                                   selectionHighlightProgress:
                                       homeState.currentBankIndex == index &&
                                           _selectionHighlight.isAnimating &&
                                           _selectionHighlight.value < 1 &&
-                                          !MediaQuery.disableAnimationsOf(context)
+                                          !MediaQuery.disableAnimationsOf(
+                                            context,
+                                          )
                                       ? _selectionHighlight.value
                                       : null,
                                 ),
@@ -656,18 +649,19 @@ class HomeSummaryCards extends ConsumerWidget {
   }
 }
 
-class HomeArticlesPanel extends StatefulWidget {
+class HomeArticlesPanel extends ConsumerStatefulWidget {
   const HomeArticlesPanel({super.key});
   @override
-  State<HomeArticlesPanel> createState() => _HomeArticlesPanelState();
+  ConsumerState<HomeArticlesPanel> createState() => _HomeArticlesPanelState();
 }
 
-class _HomeArticlesPanelState extends State<HomeArticlesPanel> {
+class _HomeArticlesPanelState extends ConsumerState<HomeArticlesPanel> {
   int selected = 0;
+
   @override
   Widget build(BuildContext context) {
-    // 跟随 MaterialApp 的语言变化重建，文案仍统一由 Languages 读取。
-    Localizations.localeOf(context);
+    final locale = ref.watch(localeProvider);
+    final articlesState = ref.watch(articleGroupsProvider(locale));
     return WalletPanel(
       key: const ValueKey('home-articles'),
       minimumHeight: 224,
@@ -699,11 +693,88 @@ class _HomeArticlesPanelState extends State<HomeArticlesPanel> {
             keyPrefix: 'article-segment',
           ),
           const SizedBox(height: 14),
-          for (var i = 0; i < sampleArticleGroups[selected].length; i++) ...[
-            if (i > 0) Divider(height: 1, color: AppColors.line(context)),
-            HomeTabViewListItemWidget(tabTitle: '$selected', index: i),
-          ],
+          ...articlesState.when(
+            loading: () => [
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ],
+            error: (error, stack) => [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Column(
+                  children: [
+                    Text(Languages.common.loadFailed),
+                    TextButton(
+                      onPressed: () => ref.invalidate(articleGroupsProvider(locale)),
+                      child: Text(Languages.common.retry),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            data: (groups) => selected >= groups.length || groups[selected].isEmpty
+                ? [Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Text(Languages.common.notFound),
+                  )]
+                : [
+                    for (var i = 0; i < groups[selected].length; i++) ...[
+                      if (i > 0) Divider(height: 1, color: AppColors.line(context)),
+                      _RepositoryArticleItem(
+                        article: groups[selected][i],
+                        group: selected,
+                        index: i,
+                      ),
+                    ],
+                  ],
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class _RepositoryArticleItem extends StatelessWidget {
+  const _RepositoryArticleItem({
+    required this.article,
+    required this.group,
+    required this.index,
+  });
+  final Article article;
+  final int group;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final title = article.title;
+    final summary = article.summary;
+    return InkWell(
+      key: ValueKey('home-article-$group-$index'),
+      onTap: () => openSourceDetail(context, 'article/$group-$index'),
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                summary,
+                style: TextStyle(fontSize: 12, color: AppColors.muted(context)),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -721,33 +792,5 @@ class HomeTabViewListItemWidget extends StatelessWidget {
   final int index;
 
   @override
-  Widget build(BuildContext context) {
-    final zh = Localizations.localeOf(context).languageCode == 'zh';
-    final group = int.tryParse(tabTitle) ?? 0;
-    final article = sampleArticleForId('$group-$index');
-    if (article == null) return const SizedBox.shrink();
-    return InkWell(
-      key: ValueKey('home-article-$group-$index'),
-      onTap: () => openSourceDetail(context, 'article/$group-$index'),
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              article.title(zh),
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              article.summary(zh),
-              style: TextStyle(fontSize: 12, color: AppColors.muted(context)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => const SizedBox.shrink();
 }

@@ -89,3 +89,4 @@ flutter:
   assets:
     - assets/
     - assets/imgs/
+    - assets/mock/

@@ -7,6 +7,9 @@ class CommonZh implements CommonLang {
   String get cancel => '取消';
 
   @override
+  String get all => '全部';
+
+  @override
   String get submit => '提交';
 
   @override
@@ -32,5 +35,10 @@ class CommonZh implements CommonLang {
 
   @override
   String get goToHome => '返回首页';
-}
 
+  @override
+  String get retry => '重试';
+
+  @override
+  String get loadFailed => '内容加载失败，请重试。';
+}

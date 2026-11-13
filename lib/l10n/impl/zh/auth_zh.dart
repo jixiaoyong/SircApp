@@ -153,4 +153,3 @@ class AuthZh implements AuthLang {
   @override
   String get phoneNumber => '电话号码';
 }
-

@@ -15,15 +15,15 @@ final signInControllerProvider = SignInControllerProvider._();
 final class SignInControllerProvider
     extends $NotifierProvider<SignInController, SignInState> {
   SignInControllerProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'signInControllerProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'signInControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$signInControllerHash();
@@ -49,8 +49,14 @@ abstract class _$SignInController extends $Notifier<SignInState> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<SignInState, SignInState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<SignInState, SignInState>, SignInState, Object?, Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<SignInState, SignInState>,
+              SignInState,
+              Object?,
+              Object?
+            >;
     element.handleCreate(ref, build);
   }
 }
@@ -61,15 +67,15 @@ final signUpControllerProvider = SignUpControllerProvider._();
 final class SignUpControllerProvider
     extends $NotifierProvider<SignUpController, SignUpState> {
   SignUpControllerProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'signUpControllerProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'signUpControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$signUpControllerHash();
@@ -95,8 +101,14 @@ abstract class _$SignUpController extends $Notifier<SignUpState> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<SignUpState, SignUpState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<SignUpState, SignUpState>, SignUpState, Object?, Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<SignUpState, SignUpState>,
+              SignUpState,
+              Object?,
+              Object?
+            >;
     element.handleCreate(ref, build);
   }
 }
@@ -107,15 +119,15 @@ final forgetPwdControllerProvider = ForgetPwdControllerProvider._();
 final class ForgetPwdControllerProvider
     extends $NotifierProvider<ForgetPwdController, ForgetPwdState> {
   ForgetPwdControllerProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'forgetPwdControllerProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'forgetPwdControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$forgetPwdControllerHash();
@@ -142,11 +154,14 @@ abstract class _$ForgetPwdController extends $Notifier<ForgetPwdState> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<ForgetPwdState, ForgetPwdState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<ForgetPwdState, ForgetPwdState>,
-        ForgetPwdState,
-        Object?,
-        Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ForgetPwdState, ForgetPwdState>,
+              ForgetPwdState,
+              Object?,
+              Object?
+            >;
     element.handleCreate(ref, build);
   }
 }
@@ -157,15 +172,15 @@ final setPwdControllerProvider = SetPwdControllerProvider._();
 final class SetPwdControllerProvider
     extends $NotifierProvider<SetPwdController, SetPwdState> {
   SetPwdControllerProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'setPwdControllerProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'setPwdControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$setPwdControllerHash();
@@ -191,8 +206,14 @@ abstract class _$SetPwdController extends $Notifier<SetPwdState> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<SetPwdState, SetPwdState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<SetPwdState, SetPwdState>, SetPwdState, Object?, Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<SetPwdState, SetPwdState>,
+              SetPwdState,
+              Object?,
+              Object?
+            >;
     element.handleCreate(ref, build);
   }
 }
@@ -203,15 +224,15 @@ final passwordControllerProvider = PasswordControllerProvider._();
 final class PasswordControllerProvider
     extends $NotifierProvider<PasswordController, PasswordState> {
   PasswordControllerProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'passwordControllerProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'passwordControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$passwordControllerHash();
@@ -238,11 +259,14 @@ abstract class _$PasswordController extends $Notifier<PasswordState> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<PasswordState, PasswordState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<PasswordState, PasswordState>,
-        PasswordState,
-        Object?,
-        Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<PasswordState, PasswordState>,
+              PasswordState,
+              Object?,
+              Object?
+            >;
     element.handleCreate(ref, build);
   }
 }

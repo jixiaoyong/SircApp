@@ -1,8 +1,9 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/core/network/api_client.dart';
-import 'package:sirc/mock/mock_utils.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 
 import '../domain/models/bank_card.dart';
 
@@ -11,6 +12,8 @@ enum TransactionFilter { send, receive, total }
 
 /// 钱包与银行卡业务仓库接口
 abstract class WalletRepository {
+  Future<void> refreshLocale(Locale locale) async {}
+
   /// 获取银行卡列表
   Future<List<BankCard>> getBankCards();
 
@@ -41,70 +44,142 @@ abstract class WalletRepository {
 /// 钱包业务仓库默认实现（基于内存与 Mock 驱动，支持 ApiClient 网络扩展）
 class WalletRepositoryImpl implements WalletRepository {
   final ApiClient? _apiClient;
+  final MockDataRepository _mock;
+  Locale _locale;
+  final Map<String, Object> _memory;
 
-  WalletRepositoryImpl([this._apiClient]);
+  WalletRepositoryImpl([
+    this._apiClient,
+    MockDataRepository? mock,
+    Locale locale = const Locale('zh'),
+    Map<String, Object>? memory,
+  ]) : _mock = mock ?? MockDataRepository(),
+       _locale = locale,
+       _memory = memory ?? _newWalletMemory();
 
   ApiClient? get apiClient => _apiClient;
 
-  // 初始银行卡列表（与首页默认卡片数据一致）
-  final List<BankCard> _cards = [
-    BankCard(
-      id: '1',
-      bankName: Languages.cnss,
-      cardNumber: '8932 6283 3243 3232',
-      ownerName: 'Juan Perez',
-      expirationDate: '02/20',
-      cardType: 'Visa',
-    ),
-    BankCard(
-      id: '2',
-      bankName: Languages.dxss,
-      cardNumber: '8932 3223 3243 3232',
-      ownerName: 'Juan Perez',
-      expirationDate: '12/29',
-      cardType: 'MasterCard',
-    ),
-    BankCard(
-      id: '3',
-      bankName: Languages.cid,
-      cardNumber: '8932 3283 3323 3232',
-      ownerName: 'Juan Perez',
-      expirationDate: '11/22',
-      cardType: 'Visa',
-    ),
+  Future<void>? _initializing;
+
+  bool get _isInitialized => _memory['isInitialized'] as bool;
+  List<BankCard> get _baseCards => _memory['baseCards'] as List<BankCard>;
+  set _baseCards(List<BankCard> value) => _memory['baseCards'] = value;
+  List<Transaction> get _baseTransactions =>
+      _memory['baseTransactions'] as List<Transaction>;
+  set _baseTransactions(List<Transaction> value) =>
+      _memory['baseTransactions'] = value;
+  Map<String, BankCard> get _cardOverrides =>
+      _memory['cardOverrides'] as Map<String, BankCard>;
+  Set<String> get _deletedCardIds => _memory['deletedCardIds'] as Set<String>;
+  List<BankCard> get _addedCards => _memory['addedCards'] as List<BankCard>;
+  double get _availableBalance => _memory['availableBalance'] as double;
+  set _availableBalance(double value) => _memory['availableBalance'] = value;
+
+  Future<void> _ensureLoaded() async {
+    if (_isInitialized) return;
+    try {
+      await (_initializing ??= _load());
+    } catch (_) {
+      _initializing = null;
+      rethrow;
+    }
+  }
+
+  Future<void> _load() async {
+    final data = await _mock.wallet;
+    var locale = _locale;
+    var cards = await _mock.getBankCards(locale);
+    var transactions = await _mock.getTransactions(locale);
+    // Locale can change during fixture loading; remap before publishing data.
+    while (_locale != locale) {
+      locale = _locale;
+      cards = await _mock.getBankCards(locale);
+      transactions = await _mock.getTransactions(locale);
+    }
+    _baseCards = [for (final card in cards) _localizedCard(card)];
+    _baseTransactions = transactions;
+    _availableBalance = ((data['balance'] ?? 0) as num).toDouble();
+    _memory['isInitialized'] = true;
+  }
+
+  @override
+  Future<void> refreshLocale(Locale locale) async {
+    _locale = locale;
+    if (!_isInitialized) {
+      await _ensureLoaded();
+      if (_locale != locale) return;
+    }
+    final localizedCards = await _mock.getBankCards(locale);
+    final localizedTransactions = await _mock.getTransactions(locale);
+    if (_locale != locale) return;
+    _baseCards = [for (final card in localizedCards) _localizedCard(card)];
+    _baseTransactions = localizedTransactions;
+  }
+
+  BankCard _localizedCard(BankCard localized) {
+    final override = _cardOverrides[localized.id];
+    if (override == null) return localized;
+    return override.copyWith(
+      bankName: localized.bankName,
+      cardNumber: override.cardNumber,
+      ownerName: override.ownerName,
+      expirationDate: override.expirationDate,
+      cardType: override.cardType,
+      cvv: override.cvv,
+    );
+  }
+
+  List<BankCard> get _cards => [
+    for (final base in _baseCards)
+      if (!_deletedCardIds.contains(base.id)) base,
+    ..._addedCards,
   ];
 
-  // 初始交易记录列表
-  late final List<Transaction> _transactions = List<Transaction>.from(
-    MockUtils.moneyOperateList,
-  );
-
-  final double _availableBalance = 35.269;
+  List<Transaction> get _transactions => _baseTransactions;
 
   @override
   Future<List<BankCard>> getBankCards() async {
+    await _ensureLoaded();
     return List.unmodifiable(_cards);
   }
 
   @override
   Future<void> addBankCard(BankCard card) async {
-    _cards.add(card);
+    await _ensureLoaded();
+    _addedCards.add(card);
   }
 
   @override
   Future<void> updateBankCard(BankCard card) async {
-    final index = _cards.indexWhere((item) => item.id == card.id);
-    if (index < 0) throw StateError('Card not found');
-    _cards[index] = card;
+    await _ensureLoaded();
+    if (!_cards.any((item) => item.id == card.id)) {
+      throw StateError('Card not found');
+    }
+    final addedIndex = _addedCards.indexWhere((item) => item.id == card.id);
+    if (addedIndex >= 0) {
+      _addedCards[addedIndex] = card;
+    } else {
+      _cardOverrides[card.id] = card;
+      final baseIndex = _baseCards.indexWhere((item) => item.id == card.id);
+      if (baseIndex >= 0) {
+        _baseCards[baseIndex] = _localizedCard(_baseCards[baseIndex]);
+      }
+    }
   }
 
   @override
   Future<void> deleteBankCard(String cardId) async {
-    _cards.removeWhere((c) => c.id == cardId);
+    await _ensureLoaded();
+    _addedCards.removeWhere((card) => card.id == cardId);
+    if (_baseCards.any((card) => card.id == cardId)) {
+      _deletedCardIds.add(cardId);
+    }
+    _cardOverrides.remove(cardId);
   }
 
   @override
   Future<double> getAvailableBalance() async {
+    await _ensureLoaded();
     return _availableBalance;
   }
 
@@ -113,6 +188,7 @@ class WalletRepositoryImpl implements WalletRepository {
     TransactionFilter filter = TransactionFilter.total,
     String? query,
   }) async {
+    await _ensureLoaded();
     var result = _transactions.where((item) {
       final amount = item.moneyAmount ?? 0.0;
       return switch (filter) {
@@ -136,21 +212,36 @@ class WalletRepositoryImpl implements WalletRepository {
 
   @override
   Future<List<(String, double)>> getMonthlyChartData(String month) async {
-    // 基础波动数据（Dart 3 原生元组）
-    return [
-      (Languages.mon, 0.3),
-      (Languages.tues, 0.5),
-      (Languages.wed, 0.1),
-      (Languages.thur, 0.6),
-      (Languages.fri, 0.9),
-      (Languages.satu, 0.2),
-      (Languages.sun, 0.8),
-    ];
+    await _ensureLoaded();
+    final raw = ((await _mock.wallet)['chart'] as List).cast<List>();
+    return raw
+        .map((row) => (row[0] as String, (row[1] as num).toDouble()))
+        .toList();
   }
 }
+
+Map<String, Object> _newWalletMemory() => {
+  'isInitialized': false,
+  'baseCards': <BankCard>[],
+  'baseTransactions': <Transaction>[],
+  'cardOverrides': <String, BankCard>{},
+  'deletedCardIds': <String>{},
+  'addedCards': <BankCard>[],
+  'availableBalance': 0.0,
+};
 
 /// 钱包业务仓库 Provider
 final walletRepositoryProvider = Provider<WalletRepository>((ref) {
   final apiClient = ref.watch(apiClientProvider);
-  return WalletRepositoryImpl(apiClient);
+  final memory = ref.watch(_walletMemoryProvider);
+  return WalletRepositoryImpl(
+    apiClient,
+    ref.watch(mockDataRepositoryProvider),
+    ref.read(localeProvider),
+    memory,
+  );
 });
+
+final _walletMemoryProvider = Provider<Map<String, Object>>(
+  (ref) => _newWalletMemory(),
+);

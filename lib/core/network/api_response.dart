@@ -21,7 +21,11 @@ class ApiResponse<T> {
     );
   }
 
-  factory ApiResponse.failure({required int statusCode, required String message, T? data}) {
+  factory ApiResponse.failure({
+    required int statusCode,
+    required String message,
+    T? data,
+  }) {
     return ApiResponse(
       statusCode: statusCode,
       data: data,

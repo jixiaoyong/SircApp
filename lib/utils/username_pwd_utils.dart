@@ -32,7 +32,8 @@ class UsernamePwdUtils {
   static String? checkUserEmail(String value) {
     final String email = value.trim();
     final emailRegex = RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+    );
     return switch (email.length) {
       < 5 => Languages.emailLengthMin,
       > 30 => Languages.emailLengthMax,

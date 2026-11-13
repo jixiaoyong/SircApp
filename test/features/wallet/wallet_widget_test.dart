@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
+import 'package:sirc/l10n/languages.g.dart';
 import 'package:sirc/features/wallet/domain/models/bank_card.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 import 'package:sirc/features/wallet/presentation/history_page.dart';
-import 'package:sirc/features/wallet/presentation/history_details_page.dart';
+import 'package:sirc/features/wallet/presentation/transaction_detail_page.dart';
 import 'package:sirc/features/home/presentation/person_page.dart';
 
 class TestWalletController extends WalletController {
@@ -60,10 +61,7 @@ void main() {
         expect(tester.getSize(find.byKey(ValueKey('bar-$i-0.0'))).height, 0);
       }
       expect(find.byKey(const ValueKey('wallet-chart-empty')), findsOneWidget);
-      expect(
-        find.text('No records to summarize in the selected range'),
-        findsOneWidget,
-      );
+      expect(find.text(Languages.wallet.noChartRecords), findsOneWidget);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(body: WalletBars(values: [1, 2, 3, 4, 5, 6, 7])),
@@ -150,7 +148,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.byKey(const ValueKey('wallet-cards')), findsNothing);
-    expect(find.textContaining('No cards yet'), findsOneWidget);
+    expect(find.text(Languages.wallet.noCardsYet), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
   for (final dark in [false, true]) {
@@ -192,13 +190,22 @@ void main() {
       },
     );
   }
-  for (final width in [390.0, 815.0, 816.0, 839.0, 840.0, 1100.0]) {
+  for (final width in [
+    390.0,
+    815.0,
+    816.0,
+    823.0,
+    824.0,
+    839.0,
+    840.0,
+    1100.0,
+  ]) {
     for (final scale in [1.0, 2.0]) {
       for (final page in [
         const WalletPage(),
         const HistoryPage(),
         const PersonPage(),
-        HistoryDetailsPage(
+        TransactionDetailPage(
           data: Transaction(
             moneyAmount: -20,
             moneyActionName: 'Coffee',
@@ -246,7 +253,18 @@ void main() {
             final cardPanelBounds = tester.getRect(
               find.byKey(const ValueKey('wallet-card-panel')),
             );
-            final contentWidth = width.clamp(0, 1017) - 56;
+            // PageGutter uses local parent width, with 16–32 per side;
+            // its 1017-wide outer frame includes both gutters.
+            final gutter = 16 + 16 * ((width - 320) / 240).clamp(0.0, 1.0);
+            final contentWidth = width.clamp(0.0, 1017.0) - gutter * 2;
+            final contentLeft = (width - contentWidth) / 2;
+            for (final bounds in [statsBounds, listBounds]) {
+              expect(bounds.width, closeTo(contentWidth, .01));
+              expect(bounds.left, closeTo(contentLeft, .01));
+              expect(bounds.right, closeTo(width - contentLeft, .01));
+            }
+            expect(balanceBounds.left, closeTo(contentLeft, .01));
+            expect(cardPanelBounds.right, closeTo(width - contentLeft, .01));
             if (contentWidth >= 760 && 14 * scale < 24) {
               expect(cardPanelBounds.top, closeTo(balanceBounds.top, .01));
               expect(
@@ -270,7 +288,7 @@ void main() {
             expect(statsBounds.top, greaterThan(cardPanelBounds.bottom));
             expect(listBounds.top, greaterThan(statsBounds.bottom));
             expect(listBounds.top, greaterThan(cardsBounds.bottom));
-            expect(listBounds.width, closeTo(width.clamp(0, 1017) - 56, 1));
+            expect(listBounds.top - statsBounds.bottom, closeTo(16, .01));
           }
           await tester.pumpWidget(const SizedBox());
         });

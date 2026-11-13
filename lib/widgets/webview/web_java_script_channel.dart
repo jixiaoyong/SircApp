@@ -15,11 +15,15 @@ class WebJavaScriptChannelWrapper {
   WebJavascriptMessageHandlerWrapper onMessageReceived;
   WebViewController? webViewController;
 
-  WebJavaScriptChannelWrapper(
-      {required this.name, required this.onMessageReceived});
+  WebJavaScriptChannelWrapper({
+    required this.name,
+    required this.onMessageReceived,
+  });
 
   void registerToController(
-      WebViewController controller, BuildContext Function() contextGetter) {
+    WebViewController controller,
+    BuildContext Function() contextGetter,
+  ) {
     webViewController = controller;
     controller.addJavaScriptChannel(
       name,
@@ -30,5 +34,8 @@ class WebJavaScriptChannelWrapper {
   }
 }
 
-typedef WebJavascriptMessageHandlerWrapper = void Function(JavaScriptMessage message,
-    WebViewController? webViewController, BuildContext context);
+typedef WebJavascriptMessageHandlerWrapper = void Function(
+  JavaScriptMessage message,
+  WebViewController? webViewController,
+  BuildContext context,
+);

@@ -3,23 +3,21 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sirc/core/layout/app_layout.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/routes/app_routes.dart';
-import 'package:sirc/utils/size_extension.dart';
 import 'package:sirc/utils/toast.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 
 /// 侧滑抽屉 Widget，支持平移缩放视觉与抽屉动画
 class SlideMenuPage extends ConsumerStatefulWidget {
   final Widget child;
-  final double? screenWidth;
   final ValueChanged<int> onBranchSelected;
 
   const SlideMenuPage({
     super.key,
     required this.child,
-    this.screenWidth,
     required this.onBranchSelected,
   });
 
@@ -155,7 +153,7 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
           menuWidth + 16,
           math.max(0.0, screenWidth - 72),
         );
-        final endScale = screenWidth >= 840 ? 0.96 : 0.92;
+        final endScale = AppLayout.isWideWidth(screenWidth) ? 0.96 : 0.92;
         final scale = 1 - (1 - endScale) * _percentage;
         final shadowScale = scale - 0.02 * _percentage;
 
@@ -182,34 +180,31 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
                             right: math.min(16, menuWidth / 4),
                           ),
                           child: SingleChildScrollView(
-                            padding: EdgeInsets.symmetric(vertical: 32.dp),
+                            padding: EdgeInsets.symmetric(vertical: 32),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(top: 20.dp),
+                                  padding: EdgeInsets.only(top: 20),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(50.dp),
+                                    borderRadius: BorderRadius.circular(50),
                                     child: NetworkWebImage(
                                       navigationState.userAvatar,
-                                      size: Size.square(70.dp),
+                                      size: Size.square(70),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(
-                                    top: 10.dp,
-                                    bottom: 12.dp,
-                                  ),
+                                  padding: EdgeInsets.only(top: 10, bottom: 12),
                                   child: Text(
                                     navigationState.userName.isNotEmpty
                                         ? navigationState.userName
                                         : "User",
                                     style: TextStyle(
                                       color: colors.onSurface,
-                                      fontSize: 16.sp,
+                                      fontSize: 16,
                                     ),
                                   ),
                                 ),
@@ -219,17 +214,17 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
                                       : "user@sirc.com",
                                   style: TextStyle(
                                     color: colors.onSurface,
-                                    fontSize: 12.sp,
+                                    fontSize: 12,
                                   ),
                                 ),
-                                Padding(padding: EdgeInsets.all(20.dp)),
+                                Padding(padding: EdgeInsets.all(20)),
                                 ...slideMenuList.map((item) {
                                   return GestureDetector(
                                     onTap: () =>
                                         _handleMenuItemClick(item, context),
                                     child: Container(
                                       margin: EdgeInsets.symmetric(
-                                        vertical: 10.dp,
+                                        vertical: 10,
                                       ),
                                       child: Row(
                                         children: [
@@ -251,9 +246,7 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
                                   );
                                 }),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 20.dp,
-                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 20),
                                 ),
                                 GestureDetector(
                                   onTap: () {
@@ -264,13 +257,11 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
                                         .closeDrawer();
                                   },
                                   child: Container(
-                                    width: 50.dp,
-                                    height: 50.dp,
+                                    width: 50,
+                                    height: 50,
                                     decoration: BoxDecoration(
                                       color: colors.onSurface,
-                                      borderRadius: BorderRadius.circular(
-                                        50.dp,
-                                      ),
+                                      borderRadius: BorderRadius.circular(50),
                                     ),
                                     child: Icon(
                                       Icons.exit_to_app_outlined,
@@ -302,7 +293,7 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
                   child: Container(
                     decoration: BoxDecoration(
                       color: colors.onSurface.withValues(alpha: 0.5),
-                      borderRadius: BorderRadius.circular(_percentage * 20.dp),
+                      borderRadius: BorderRadius.circular(_percentage * 20),
                     ),
                   ),
                 ),
@@ -326,14 +317,14 @@ class _SlideMenuPageState extends ConsumerState<SlideMenuPage>
                       boxShadow: [
                         BoxShadow(
                           color: colors.outlineVariant.withValues(alpha: 0.3),
-                          blurRadius: 15.dp,
-                          offset: Offset(-5.dp, 5.dp),
-                          spreadRadius: 5.dp,
+                          blurRadius: 15,
+                          offset: Offset(-5, 5),
+                          spreadRadius: 5,
                         ),
                       ],
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(_percentage * 20.dp),
+                      borderRadius: BorderRadius.circular(_percentage * 20),
                       child: Stack(
                         children: [
                           widget.child,

@@ -4,7 +4,7 @@ abstract class SettingsLang {
   String get settings;
   String get about;
   String get aboutUsDescription;
-  String get hostedOnGithub;
+  String get aboutPageDescription;
   String get language;
   String get appearance;
   String get themeLight;
@@ -17,7 +17,27 @@ abstract class SettingsLang {
   String get notSet;
   String get person;
   String get profile;
+  String get readOnly;
+  String get openNavigationMenu;
+  String get viewReadOnlyProfile;
+  String get viewExistingWalletCards;
   String get logout;
   String get logoutAndCleanData;
   String get sureToLogout;
+  String get cardManagement;
+  String get cardManagementNotice;
+  String get deleteCardQuestion;
+  String get deleteCardNotice;
+  String get delete;
+  String get edit;
+  String get deleteFailed;
+  String get notificationsDescription;
+  String get notificationTitle;
+  String get notificationEmptyState;
+  String get undatedNotifications;
+  String get transactionsLoadFailed;
+  String get noTransactionNotifications;
+  String get showPassword;
+  String get hidePassword;
+  String get noCardsYetShort;
 }

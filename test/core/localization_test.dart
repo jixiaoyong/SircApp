@@ -14,9 +14,15 @@ void main() {
       expect(zh.auth.signIn, '登录');
       expect(en.auth.signIn, 'Sign In');
       expect(zh.auth.oldPasswordIncorrect, '原密码不正确或修改失败');
-      expect(en.auth.oldPasswordIncorrect, 'Original password incorrect or update failed');
+      expect(
+        en.auth.oldPasswordIncorrect,
+        'Original password incorrect or update failed',
+      );
       expect(zh.auth.passwordInconsistent, '两次输入的密码不一致');
-      expect(en.auth.passwordInconsistent, 'The passwords entered twice do not match');
+      expect(
+        en.auth.passwordInconsistent,
+        'The passwords entered twice do not match',
+      );
 
       // Wallet 钱包模块
       expect(zh.wallet.title, '钱包');
@@ -82,7 +88,10 @@ void main() {
     test('4. 动态切换系统 Locale 验证实时生效', () {
       // 切换至英文
       AppLocale.setLocale(const Locale('en', 'US'));
-      expect(Languages.auth.oldPasswordIncorrect, 'Original password incorrect or update failed');
+      expect(
+        Languages.auth.oldPasswordIncorrect,
+        'Original password incorrect or update failed',
+      );
       expect(Languages.wallet.availableBalance, 'Available Balance');
       expect(Languages.cancel, 'Cancel');
       expect(Languages.home.title, 'Home');
@@ -96,4 +105,3 @@ void main() {
     });
   });
 }
-
