@@ -1,5 +1,5 @@
 {
-  "dart.flutterSdkPath": ".fvm/versions/stable",
+  "dart.flutterSdkPath": ".fvm/versions/3.50.0",
   "dart.hotReloadOnSave": "manual",
   "javascript.updateImportsOnFileMove.enabled": "always",
   "commentTranslate.source": "Baidu",

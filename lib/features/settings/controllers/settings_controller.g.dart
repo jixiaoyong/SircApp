@@ -42,13 +42,13 @@ final class NotificationsControllerProvider
 }
 
 String _$notificationsControllerHash() =>
-    r'a6b62c3b299777e46f59535b09935382a6132e2f';
+    r'6d8a78e4df9f392cf6964fe37ebacbf0cad407a0';
 
 abstract class _$NotificationsController extends $Notifier<NotificationsState> {
   NotificationsState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<NotificationsState, NotificationsState>;
     final element =
         ref.element
@@ -58,7 +58,7 @@ abstract class _$NotificationsController extends $Notifier<NotificationsState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -94,13 +94,13 @@ final class InitialControllerProvider
   }
 }
 
-String _$initialControllerHash() => r'c33b5dd2f42b965362446eb68c676c09220ef19e';
+String _$initialControllerHash() => r'd07043ef5dd3332455398e0f7860951b47b4c7a0';
 
 abstract class _$InitialController extends $Notifier<InitialState> {
   InitialState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<InitialState, InitialState>;
     final element =
         ref.element
@@ -110,6 +110,6 @@ abstract class _$InitialController extends $Notifier<InitialState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

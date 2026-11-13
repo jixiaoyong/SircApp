@@ -47,7 +47,7 @@ abstract class _$SignInController extends $Notifier<SignInState> {
   SignInState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<SignInState, SignInState>;
     final element =
         ref.element
@@ -57,7 +57,7 @@ abstract class _$SignInController extends $Notifier<SignInState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -99,7 +99,7 @@ abstract class _$SignUpController extends $Notifier<SignUpState> {
   SignUpState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<SignUpState, SignUpState>;
     final element =
         ref.element
@@ -109,7 +109,7 @@ abstract class _$SignUpController extends $Notifier<SignUpState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -152,7 +152,7 @@ abstract class _$ForgetPwdController extends $Notifier<ForgetPwdState> {
   ForgetPwdState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<ForgetPwdState, ForgetPwdState>;
     final element =
         ref.element
@@ -162,7 +162,7 @@ abstract class _$ForgetPwdController extends $Notifier<ForgetPwdState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -204,7 +204,7 @@ abstract class _$SetPwdController extends $Notifier<SetPwdState> {
   SetPwdState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<SetPwdState, SetPwdState>;
     final element =
         ref.element
@@ -214,7 +214,7 @@ abstract class _$SetPwdController extends $Notifier<SetPwdState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -257,7 +257,7 @@ abstract class _$PasswordController extends $Notifier<PasswordState> {
   PasswordState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<PasswordState, PasswordState>;
     final element =
         ref.element
@@ -267,6 +267,6 @@ abstract class _$PasswordController extends $Notifier<PasswordState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

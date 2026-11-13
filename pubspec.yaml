@@ -60,6 +60,7 @@ dependencies:
   logger: ^2.4.0
   flutter_native_splash: ^2.4.1
   flutter_svg: ^2.3.2
+  material_ui: ^1.11.0
 
 dev_dependencies:
   # ==========================================
@@ -72,14 +73,15 @@ dev_dependencies:
   # 2. 自动化代码生成工具链
   # ==========================================
   build_runner: ^2.4.15
-  riverpod_generator: ^4.0.0+1
+  riverpod_generator: ^4.0.10
 
   # ==========================================
   # 3. 静态代码分析与代码规范
   # ==========================================
   flutter_lints: ^4.0.0
-  riverpod_lint: ^3.1.0
-  custom_lint: ^0.8.1
+  # riverpod_lint 3.x 使用 analysis_server_plugin 机制，通过 analysis_options.yaml
+  # 顶层的 plugins: 声明启用，不再需要 custom_lint 依赖
+  riverpod_lint: ^3.2.0
 
 flutter:
   # 启用 Material Design 图标与组件规范

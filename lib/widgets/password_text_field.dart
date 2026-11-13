@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/l10n/languages.g.dart';
 import 'package:sirc/widgets/form_input_decoration.dart';

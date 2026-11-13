@@ -3,6 +3,7 @@
 ## Flutter/Dart 命令
 
 - 本项目使用 FVM 管理 Flutter SDK。执行任何 Flutter 或 Dart 命令前必须通过 FVM（例如 `fvm flutter ...`、`fvm dart ...`），不要直接调用全局 `flutter` 或 `dart`。
+- 静态分析统一使用 `fvm flutter analyze --no-fatal-infos`：Flutter 3.50 起 `--fatal-infos` 默认开启，会把历史 info 级提示当成失败；info 暂不纳入门禁，仅 error / warning 阻断。
 
 ## 国际化与 Mock 数据
 

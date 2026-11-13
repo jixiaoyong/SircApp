@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import 'expandable_page_view.dart';
@@ -8,42 +8,6 @@ class ImgText {
   final String title;
 
   ImgText(this.imageUrl, this.title);
-}
-
-main() {
-  final list = List.generate(28, (index) {
-    var data = ImgText(
-      "https://www.bing.com/th/id/ABT4B60F8D67F10805ACFA316E3A1A576953BF17EBFF560304B89FB2B7190DFB925?qlt=90&pid=InlineBlock",
-      "title$index",
-    );
-    return data;
-  });
-  runApp(
-    MaterialApp(
-      home: Scaffold(
-        body: JingangWidget<ImgText>(
-          data: list,
-          itemBuilder: (BuildContext context, int index, int pageIndex, data) {
-            return Container(
-              margin: const EdgeInsets.all(5),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.network(
-                    data.imageUrl,
-                    height: 40,
-                    width: 40,
-                    fit: BoxFit.fitHeight,
-                  ),
-                  Text(data.title, overflow: TextOverflow.clip),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    ),
-  );
 }
 
 /*

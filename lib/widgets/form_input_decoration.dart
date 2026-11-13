@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Local form styling shared by account and card fields, not the global theme.
 InputDecoration formInputDecoration(
