@@ -94,7 +94,7 @@ final class InitialControllerProvider
   }
 }
 
-String _$initialControllerHash() => r'd07043ef5dd3332455398e0f7860951b47b4c7a0';
+String _$initialControllerHash() => r'86baf4763a0397042168954abfd1b49308123fcb';
 
 abstract class _$InitialController extends $Notifier<InitialState> {
   InitialState build();
