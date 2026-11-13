@@ -152,10 +152,10 @@ void main() {
     await finishTransition(tester);
     expect(find.byType(InitialPage), findsOneWidget);
     expect(find.byType(AppBar), findsNothing);
-    final initialContext = tester.element(find.byType(InitialPage));
-    await container
+    final destination = container
         .read(initialControllerProvider.notifier)
-        .goMainPage(initialContext);
+        .completeInitialFlow();
+    GoRouter.of(tester.element(find.byType(InitialPage))).go(destination!);
     await finishTransition(tester);
     expect(find.byType(SignInPage), findsOneWidget);
     expect(router.canPop(), isFalse);

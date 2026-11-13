@@ -29,7 +29,7 @@ dependencies:
   # ==========================================
   # 3. 声明式路由导航
   # ==========================================
-  go_router: ^14.8.1
+  go_router: ^18.1.4
 
   # ==========================================
   # 4. 网络通信、加密与持久化
@@ -44,8 +44,8 @@ dependencies:
   flutter_screenutil_plus:
     hosted: https://pub.dev
     version: 2.0.0
-  extended_image: ^8.2.0
-  month_picker_dialog: ^6.7.3
+  extended_image: ^10.1.0
+  month_picker_dialog: ^7.0.0
   webview_flutter: ^4.8.0
   # 自适应高度内嵌 WebView 组件（基于现代 ResizeObserver 标准）
   embed_webview:
@@ -78,7 +78,7 @@ dev_dependencies:
   # ==========================================
   # 3. 静态代码分析与代码规范
   # ==========================================
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
   # riverpod_lint 3.x 使用 analysis_server_plugin 机制，通过 analysis_options.yaml
   # 顶层的 plugins: 声明启用，不再需要 custom_lint 依赖
   riverpod_lint: ^3.2.0

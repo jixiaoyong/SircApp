@@ -7,8 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/core/theme/app_colors.dart';
+import 'package:sirc/features/home/data/article_repository.dart';
 import 'package:sirc/features/home/presentation/home_page.dart';
-import 'package:sirc/features/home/presentation/sample_articles.dart';
 import 'package:sirc/features/home/presentation/article_detail_page.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
@@ -47,16 +47,32 @@ void main() {
     overrides: [mockDataRepositoryProvider.overrideWithValue(mock)],
     child: child,
   );
-  test('18篇文章拥有独立标题、摘要、正文与有效ID', () {
-    final articles = sampleArticleGroups.expand((group) => group).toList();
-    expect(articles, hasLength(18));
-    for (final zh in [false, true]) {
-      expect(articles.map((e) => e.title(zh)).toSet(), hasLength(18));
-      expect(articles.map((e) => e.summary(zh)).toSet(), hasLength(18));
-      expect(articles.map((e) => e.body(zh)).toSet(), hasLength(18));
-    }
-    expect(sampleArticleForId('0-6'), isNull);
-    expect(sampleArticleForId('bad'), isNull);
+  test('Repository 返回唯一文章集合，并按Locale映射且详情ID稳定', () async {
+    final zhGroups = await mock.getArticleGroups(const Locale('zh'));
+    final enGroups = await mock.getArticleGroups(const Locale('en'));
+    final chinese = await ArticleRepository(mock).getGroups(const Locale('zh'));
+    final english = await ArticleRepository(mock).getGroups(const Locale('en'));
+    final zhArticles = chinese.expand((group) => group).toList();
+    final enArticles = english.expand((group) => group).toList();
+
+    expect(zhArticles, hasLength(18));
+    expect(enArticles, hasLength(18));
+    expect(zhArticles.first.title, zhGroups.first.first['title']);
+    expect(enArticles.first.title, enGroups.first.first['title']);
+    expect(zhArticles.first.title, '认识债券');
+    expect(enArticles.first.title, 'Bonds');
+    expect(
+      (await ArticleRepository(mock).getById('0-0', const Locale('en')))?.body,
+      contains('A bond usually specifies'),
+    );
+    expect(
+      await ArticleRepository(mock).getById('99-99', const Locale('zh')),
+      isNull,
+    );
+    expect(
+      await ArticleRepository(mock).getById('bad', const Locale('zh')),
+      isNull,
+    );
   });
   for (final width in [390.0, 1100.0]) {
     testWidgets('文章纵向列表与18篇独立详情 width $width 大字', (tester) async {
@@ -120,7 +136,7 @@ void main() {
             const Locale('en'),
           );
           expect(find.text(article!['body'] as String), findsOneWidget);
-          expect(find.textContaining('Static example'), findsOneWidget);
+          expect(find.text(Languages.home.articleDisclaimer), findsOneWidget);
           expect(tester.takeException(), isNull);
           router.pop();
           await tester.pumpAndSettle();
