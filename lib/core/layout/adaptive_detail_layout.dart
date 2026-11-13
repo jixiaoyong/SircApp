@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sirc/core/layout/app_layout.dart';
 
 /// 根据窗口宽度切换来源区域 [primary] 与详情区域 [detail] 的通用布局。

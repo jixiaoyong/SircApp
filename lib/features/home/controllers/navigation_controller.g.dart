@@ -45,7 +45,7 @@ final class NavigationControllerProvider
 }
 
 String _$navigationControllerHash() =>
-    r'3b86e35f57ba5fb0a8e289c063bb9976db5c6b7c';
+    r'ed9c813110f2dad8adc39df0bc6538b8d9056c36';
 
 /// 底部导航与抽屉控制器
 
@@ -53,7 +53,7 @@ abstract class _$NavigationController extends $Notifier<NavigationState> {
   NavigationState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<NavigationState, NavigationState>;
     final element =
         ref.element
@@ -63,6 +63,6 @@ abstract class _$NavigationController extends $Notifier<NavigationState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

@@ -41,13 +41,13 @@ final class WalletControllerProvider
   }
 }
 
-String _$walletControllerHash() => r'55421f589d1fd263b2eafd819d66ba391b2a7430';
+String _$walletControllerHash() => r'367f570c107e8bcb06765501f5fdcd444f32a799';
 
 abstract class _$WalletController extends $Notifier<WalletState> {
   WalletState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<WalletState, WalletState>;
     final element =
         ref.element
@@ -57,7 +57,7 @@ abstract class _$WalletController extends $Notifier<WalletState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -93,13 +93,13 @@ final class AddCardControllerProvider
   }
 }
 
-String _$addCardControllerHash() => r'3787d6781c93870f82503485890deca0ef6ab6fd';
+String _$addCardControllerHash() => r'a3254020334f4b2f6cad651647b78694997bf7cd';
 
 abstract class _$AddCardController extends $Notifier<AddCardState> {
   AddCardState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<AddCardState, AddCardState>;
     final element =
         ref.element
@@ -109,6 +109,6 @@ abstract class _$AddCardController extends $Notifier<AddCardState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:extended_image/extended_image.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /*
 * @description: try to solve the image load error when network image is used in web

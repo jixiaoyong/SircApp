@@ -1,7 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
@@ -290,13 +289,13 @@ class InitialController extends _$InitialController {
     state = state.copyWith(hasCalledGoMainPage: called);
   }
 
-  /// 执行页面跳转逻辑
-  Future<void> goMainPage(BuildContext context) async {
-    if (state.hasCalledGoMainPage) return;
+  /// 完成引导并返回下一页面的路由；实际导航由 UI 层执行。
+  String? completeInitialFlow() {
+    if (state.hasCalledGoMainPage) return null;
     setHasCalledGoMainPage(true);
 
     // 引导结束后直接切换入口，避免把登录页压在引导页上。
     markAsNotFirstInitial();
-    context.go(getDestinationRoute());
+    return getDestinationRoute();
   }
 }

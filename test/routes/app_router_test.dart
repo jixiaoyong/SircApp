@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sirc/mock/mock_data_repository.dart';
 import 'package:flutter/gestures.dart';
 import 'package:sirc/features/auth/presentation/sign_in_page.dart';
@@ -152,10 +152,10 @@ void main() {
     await finishTransition(tester);
     expect(find.byType(InitialPage), findsOneWidget);
     expect(find.byType(AppBar), findsNothing);
-    final initialContext = tester.element(find.byType(InitialPage));
-    await container
+    final destination = container
         .read(initialControllerProvider.notifier)
-        .goMainPage(initialContext);
+        .completeInitialFlow();
+    GoRouter.of(tester.element(find.byType(InitialPage))).go(destination!);
     await finishTransition(tester);
     expect(find.byType(SignInPage), findsOneWidget);
     expect(router.canPop(), isFalse);

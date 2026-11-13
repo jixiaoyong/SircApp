@@ -44,7 +44,7 @@ final class HomeControllerProvider
   }
 }
 
-String _$homeControllerHash() => r'036c9a9286c5a7e7a39c2f9a646ef6392edbd5a4';
+String _$homeControllerHash() => r'e56b136fe5103943c2e6edc1d0d6b1c67a79a3a7';
 
 /// 首页控制器（纯业务逻辑，不与多语言直接耦合）
 
@@ -52,7 +52,7 @@ abstract class _$HomeController extends $Notifier<HomeState> {
   HomeState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<HomeState, HomeState>;
     final element =
         ref.element
@@ -62,6 +62,6 @@ abstract class _$HomeController extends $Notifier<HomeState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
