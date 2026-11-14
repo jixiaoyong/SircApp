@@ -139,4 +139,18 @@ class SettingsZh implements SettingsLang {
   String get accountSecurity => '账户安全等级：极佳';
   @override
   String get devModeActivated => '已激活开发者调试控制台';
+  @override
+  String get imageCacheMemory => '内存缓存 (L1)';
+  @override
+  String get imageCacheDisk => '磁盘持久化 (L2)';
+  @override
+  String get clearMemoryCache => '清内存';
+  @override
+  String get clearDiskCache => '清磁盘';
+  @override
+  String get clearAllCache => '清理全部图片缓存';
+  @override
+  String get cacheClearedToast => '图片缓存已成功清理';
+  @override
+  String get diskCacheWebNotice => 'Web 端由浏览器 HTTP 强缓存接管';
 }

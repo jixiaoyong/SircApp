@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:extended_image/extended_image.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../core/image/app_image_cache_service.dart';
+
 /*
 * @description: try to solve the image load error when network image is used in web
 * which detail is in the following link: https://docs.flutter.dev/development/platform-integration/web-images#cross-origin-resource-sharing-cors
@@ -70,12 +72,25 @@ class NetworkWebImage extends StatelessWidget {
         child: fallbackWidget ?? _buildFallback(context),
       );
     } else {
+      final pixelRatio = MediaQuery.maybeDevicePixelRatioOf(context) ?? 2.0;
+      final targetCacheWidth = AppImageCacheService.computeCacheDimension(
+        logicalSize: _effectiveWidth,
+        devicePixelRatio: pixelRatio,
+      );
+      final targetCacheHeight = AppImageCacheService.computeCacheDimension(
+        logicalSize: _effectiveHeight,
+        devicePixelRatio: pixelRatio,
+      );
+
       content = ExtendedImage.network(
         url!.trim(),
         width: _effectiveWidth,
         height: _effectiveHeight,
         fit: _effectiveFit,
         cache: true,
+        cacheMaxAge: const Duration(days: 30),
+        cacheWidth: targetCacheWidth,
+        cacheHeight: targetCacheHeight,
         loadStateChanged: (ExtendedImageState state) {
           switch (state.extendedImageLoadState) {
             case LoadState.loading:

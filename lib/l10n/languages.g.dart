@@ -974,6 +974,34 @@ class Languages {
   ///- [en_US] Developer Console Activated
   static String get devModeActivated => settings.devModeActivated;
 
+  ///- [zh_CN] 内存缓存 (L1)
+  ///- [en_US] Memory Cache (L1)
+  static String get imageCacheMemory => settings.imageCacheMemory;
+
+  ///- [zh_CN] 磁盘持久化 (L2)
+  ///- [en_US] Disk Persistent (L2)
+  static String get imageCacheDisk => settings.imageCacheDisk;
+
+  ///- [zh_CN] 清内存
+  ///- [en_US] Clear Memory
+  static String get clearMemoryCache => settings.clearMemoryCache;
+
+  ///- [zh_CN] 清磁盘
+  ///- [en_US] Clear Disk
+  static String get clearDiskCache => settings.clearDiskCache;
+
+  ///- [zh_CN] 清理全部图片缓存
+  ///- [en_US] Clear All Image Caches
+  static String get clearAllCache => settings.clearAllCache;
+
+  ///- [zh_CN] 图片缓存已成功清理
+  ///- [en_US] Image cache cleared successfully
+  static String get cacheClearedToast => settings.cacheClearedToast;
+
+  ///- [zh_CN] Web 端由浏览器 HTTP 强缓存接管
+  ///- [en_US] Web delegates caching to browser HTTP cache
+  static String get diskCacheWebNotice => settings.diskCacheWebNotice;
+
   // --- Common 模块 ---
   ///- [zh_CN] 取消
   ///- [en_US] Cancel
@@ -1292,6 +1320,14 @@ class Languages {
       "Security Score: Excellent (98/100)":
           "Security Score: Excellent (98/100)",
       "Developer Console Activated": "Developer Console Activated",
+      "Memory Cache (L1)": "Memory Cache (L1)",
+      "Disk Persistent (L2)": "Disk Persistent (L2)",
+      "Clear Memory": "Clear Memory",
+      "Clear Disk": "Clear Disk",
+      "Clear All Image Caches": "Clear All Image Caches",
+      "Image cache cleared successfully": "Image cache cleared successfully",
+      "Web delegates caching to browser HTTP cache":
+          "Web delegates caching to browser HTTP cache",
       "Cancel": "Cancel",
       "All": "All",
       "Submit": "Submit",
@@ -1550,6 +1586,13 @@ class Languages {
       "Profile & Account Security": "个人资料与账户安全",
       "Security Score: Excellent (98/100)": "账户安全等级：极佳",
       "Developer Console Activated": "已激活开发者调试控制台",
+      "Memory Cache (L1)": "内存缓存 (L1)",
+      "Disk Persistent (L2)": "磁盘持久化 (L2)",
+      "Clear Memory": "清内存",
+      "Clear Disk": "清磁盘",
+      "Clear All Image Caches": "清理全部图片缓存",
+      "Image cache cleared successfully": "图片缓存已成功清理",
+      "Web delegates caching to browser HTTP cache": "Web 端由浏览器 HTTP 强缓存接管",
       "Cancel": "取消",
       "All": "全部",
       "Submit": "提交",

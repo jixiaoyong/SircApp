@@ -56,4 +56,11 @@ abstract class SettingsLang {
   String get userProfileTitle;
   String get accountSecurity;
   String get devModeActivated;
+  String get imageCacheMemory;
+  String get imageCacheDisk;
+  String get clearMemoryCache;
+  String get clearDiskCache;
+  String get clearAllCache;
+  String get cacheClearedToast;
+  String get diskCacheWebNotice;
 }

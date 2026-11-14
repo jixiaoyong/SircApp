@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/core/image/app_image_cache_service.dart';
 import 'package:sirc/utils/toast.dart';
 
 enum AppLogLevel { debug, info, warning, error }
@@ -94,6 +95,13 @@ class AppLogService extends ChangeNotifier {
         stackTrace: stack,
       );
 
+  void debug(String tag, String message) => d(tag, message);
+  void info(String tag, String message) => i(tag, message);
+  void warning(String tag, String message, [Object? error, StackTrace? stack]) =>
+      w(tag, message, error, stack);
+  void error(String tag, String message, [Object? error, StackTrace? stack]) =>
+      e(tag, message, error, stack);
+
   void clear() {
     _logs.clear();
     notifyListeners();
@@ -175,6 +183,25 @@ class _AppLogConsoleModalState extends ConsumerState<AppLogConsoleModal> {
   AppLogLevel? _filterLevel;
   String _searchQuery = '';
   final _searchController = TextEditingController();
+  int _diskCacheBytes = 0;
+  bool _isLoadingDiskCache = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshDiskCache();
+  }
+
+  Future<void> _refreshDiskCache() async {
+    setState(() => _isLoadingDiskCache = true);
+    final bytes = await AppImageCacheService.instance.getDiskCachedBytes();
+    if (mounted) {
+      setState(() {
+        _diskCacheBytes = bytes;
+        _isLoadingDiskCache = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -205,7 +232,6 @@ class _AppLogConsoleModalState extends ConsumerState<AppLogConsoleModal> {
         }).toList();
 
         final cacheBytes = PaintingBinding.instance.imageCache.currentSizeBytes;
-        final cacheKb = (cacheBytes / 1024).toStringAsFixed(1);
         final cacheCount = PaintingBinding.instance.imageCache.currentSize;
 
         return DraggableScrollableSheet(
@@ -281,28 +307,101 @@ class _AppLogConsoleModalState extends ConsumerState<AppLogConsoleModal> {
                     ],
                   ),
                 ),
-                // Diagnostics Info Strip
+                // Diagnostics & Image Cache Management Strip
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: colors.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: colors.outlineVariant.withValues(alpha: 0.5),
+                    ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  child: Column(
                     children: [
-                      _diagItem(
-                        label: 'Image Cache',
-                        value: '$cacheCount ($cacheKb KB)',
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _diagItem(
+                              label: Languages.settings.imageCacheMemory,
+                              value: '$cacheCount (${AppImageCacheService.formatBytes(cacheBytes)})',
+                            ),
+                          ),
+                          OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              visualDensity: VisualDensity.compact,
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                              minimumSize: const Size(0, 28),
+                            ),
+                            onPressed: () {
+                              AppImageCacheService.instance.clearMemory();
+                              AppLogService.instance.info('ImageCache', 'L1 Memory cache cleared');
+                              HapticFeedback.lightImpact();
+                              Toast.show(Languages.settings.cacheClearedToast);
+                            },
+                            child: Text(
+                              Languages.settings.clearMemoryCache,
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                          ),
+                        ],
                       ),
-                      _diagItem(
-                        label: 'Log Count',
-                        value: '${allLogs.length}/500',
-                      ),
-                      _diagItem(
-                        label: 'Memory Status',
-                        value: 'Normal',
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _diagItem(
+                              label: Languages.settings.imageCacheDisk,
+                              value: kIsWeb
+                                  ? 'Web (Browser Cache)'
+                                  : _isLoadingDiskCache
+                                      ? '...'
+                                      : AppImageCacheService.formatBytes(_diskCacheBytes),
+                            ),
+                          ),
+                          OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              visualDensity: VisualDensity.compact,
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                              minimumSize: const Size(0, 28),
+                            ),
+                            onPressed: () async {
+                              if (kIsWeb) {
+                                Toast.show(Languages.settings.diskCacheWebNotice);
+                                return;
+                              }
+                              await AppImageCacheService.instance.clearDiskCache();
+                              await _refreshDiskCache();
+                              AppLogService.instance.info('ImageCache', 'L2 Disk cache cleared');
+                              HapticFeedback.lightImpact();
+                              Toast.show(Languages.settings.cacheClearedToast);
+                            },
+                            child: Text(
+                              Languages.settings.clearDiskCache,
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          FilledButton.tonal(
+                            style: FilledButton.styleFrom(
+                              visualDensity: VisualDensity.compact,
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                              minimumSize: const Size(0, 28),
+                            ),
+                            onPressed: () async {
+                              await AppImageCacheService.instance.clearAll();
+                              await _refreshDiskCache();
+                              AppLogService.instance.info('ImageCache', 'L1+L2 All image caches cleared');
+                              HapticFeedback.heavyImpact();
+                              Toast.show(Languages.settings.cacheClearedToast);
+                            },
+                            child: Text(
+                              Languages.settings.clearAllCache,
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
