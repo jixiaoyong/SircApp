@@ -246,3 +246,6 @@ doc/api/
 
 # Cursor / Flutter Widget Preview generated project
 .widget_preview/
+
+# Custom lint log
+custom_lint.log

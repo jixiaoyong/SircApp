@@ -9,6 +9,7 @@ import 'package:sirc/features/home/controllers/navigation_controller.dart';
 
 import '../../data/wallet_repository.dart';
 import '../../domain/models/bank_card.dart';
+import '../../domain/services/transaction_service.dart';
 
 part 'wallet_controller.g.dart';
 
@@ -53,35 +54,7 @@ class WalletState {
 
   /// Relative labels have day-level precision only; never invent a time of day.
   static DateTime? transactionDate(Transaction transaction, {DateTime? now}) {
-    final text = transaction.time?.trim() ?? '';
-    final reference = now ?? DateTime.now();
-    final today = DateTime(reference.year, reference.month, reference.day);
-    switch (text.toLowerCase()) {
-      case 'just now':
-      case 'today':
-      case '刚刚':
-      case '今天':
-        return today;
-      case 'yesterday':
-      case '昨天':
-        return DateTime(today.year, today.month, today.day - 1);
-    }
-    // Full ISO/slash dates remain compatible. Month/day and time-only strings
-    // have no reliable year/day and intentionally remain undated.
-    final normalized = text.replaceAll(RegExp(r'\s*/\s*'), '-');
-    if (!RegExp(r'^\d{4}-\d{2}-\d{2}(?:$|[T ])').hasMatch(normalized)) {
-      return null;
-    }
-    final parsed = DateTime.tryParse(normalized);
-    if (parsed == null) return null;
-    final parts = normalized
-        .substring(0, 10)
-        .split('-')
-        .map(int.parse)
-        .toList();
-    final date = DateTime(parts[0], parts[1], parts[2]);
-    if (date.month != parts[1] || date.day != parts[2]) return null;
-    return parsed.isUtc ? parsed.toLocal() : parsed;
+    return TransactionDateParser.parse(transaction, now: now);
   }
 
   List<Transaction> get walletTransactions => allTransactions.where((item) {
@@ -120,21 +93,14 @@ class WalletState {
       .where((item) => transactionDate(item, now: referenceDate) == null)
       .length;
 
-  List<double> weeklyAmounts(List<Transaction> items) {
-    final now = referenceDate ?? DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final start = today.subtract(Duration(days: today.weekday - 1));
-    final result = List<double>.filled(7, 0);
-    for (final item in items) {
-      final date = transactionDate(item, now: referenceDate);
-      if (date == null ||
-          date.isBefore(start) ||
-          !date.isBefore(start.add(const Duration(days: 7)))) {
-        continue;
-      }
-      result[date.weekday - 1] += (item.moneyAmount ?? 0).abs();
-    }
-    return result;
+  List<double> weeklyAmounts(
+    List<Transaction> items, {
+    DateTime? referenceDate,
+  }) {
+    return TransactionStatistics.weeklyAmounts(
+      items,
+      referenceDate: referenceDate ?? this.referenceDate,
+    );
   }
 
   WalletState copyWith({
