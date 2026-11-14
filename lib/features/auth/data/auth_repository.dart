@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sirc/core/config/app_author.dart';
 import 'package:sirc/core/network/api_client.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/features/auth/domain/user.dart';
@@ -18,8 +19,8 @@ class AuthRepository {
 
   /// 预置默认测试账号（在 Debug/Web 演示或首次无账号时使用）
   Future<void> initDefaultUserIfNeeded({
-    String defaultUsername = "jixiaoyong",
-    String defaultPassword = "123456",
+    String defaultUsername = AppAuthor.username,
+    String defaultPassword = AppAuthor.defaultPassword,
   }) async {
     final localUserName = _storageService.userName;
     if (localUserName == null || localUserName.isEmpty) {

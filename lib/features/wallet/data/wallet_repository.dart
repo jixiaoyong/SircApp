@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/core/network/api_client.dart';
 import 'package:sirc/mock/mock_data_repository.dart';
@@ -47,12 +49,14 @@ class WalletRepositoryImpl implements WalletRepository {
   final MockDataRepository _mock;
   Locale _locale;
   final Map<String, Object> _memory;
+  final StorageService? _storage;
 
   WalletRepositoryImpl([
     this._apiClient,
     MockDataRepository? mock,
     Locale locale = const Locale('zh'),
     Map<String, Object>? memory,
+    this._storage,
   ]) : _mock = mock ?? MockDataRepository(),
        _locale = locale,
        _memory = memory ?? _newWalletMemory();
@@ -96,6 +100,34 @@ class WalletRepositoryImpl implements WalletRepository {
       cards = await _mock.getBankCards(locale);
       transactions = await _mock.getTransactions(locale);
     }
+    final storage = _storage;
+    if (storage != null) {
+      final addedJson = storage.addedBankCardsJson;
+      if (addedJson != null && addedJson.isNotEmpty) {
+        _addedCards.clear();
+        for (final item in addedJson) {
+          try {
+            final map = jsonDecode(item) as Map<String, dynamic>;
+            _addedCards.add(BankCard.fromJson(map));
+          } catch (_) {}
+        }
+      }
+      final deletedIds = storage.deletedBankCardIds;
+      if (deletedIds != null && deletedIds.isNotEmpty) {
+        _deletedCardIds.addAll(deletedIds);
+      }
+      final overridesJson = storage.cardOverridesJson;
+      if (overridesJson != null && overridesJson.isNotEmpty) {
+        for (final item in overridesJson) {
+          try {
+            final map = jsonDecode(item) as Map<String, dynamic>;
+            final card = BankCard.fromJson(map);
+            _cardOverrides[card.id] = card;
+          } catch (_) {}
+        }
+      }
+    }
+
     _baseCards = [for (final card in cards) _localizedCard(card)];
     _baseTransactions = transactions;
     _availableBalance = ((data['balance'] ?? 0) as num).toDouble();
@@ -143,10 +175,23 @@ class WalletRepositoryImpl implements WalletRepository {
     return List.unmodifiable(_cards);
   }
 
+  Future<void> _savePersistedCards() async {
+    final storage = _storage;
+    if (storage == null) return;
+    await storage.setAddedBankCardsJson(
+      _addedCards.map((c) => jsonEncode(c.toJson())).toList(),
+    );
+    await storage.setDeletedBankCardIds(_deletedCardIds.toList());
+    await storage.setCardOverridesJson(
+      _cardOverrides.values.map((c) => jsonEncode(c.toJson())).toList(),
+    );
+  }
+
   @override
   Future<void> addBankCard(BankCard card) async {
     await _ensureLoaded();
     _addedCards.add(card);
+    await _savePersistedCards();
   }
 
   @override
@@ -165,6 +210,7 @@ class WalletRepositoryImpl implements WalletRepository {
         _baseCards[baseIndex] = _localizedCard(_baseCards[baseIndex]);
       }
     }
+    await _savePersistedCards();
   }
 
   @override
@@ -175,6 +221,7 @@ class WalletRepositoryImpl implements WalletRepository {
       _deletedCardIds.add(cardId);
     }
     _cardOverrides.remove(cardId);
+    await _savePersistedCards();
   }
 
   @override
@@ -234,11 +281,13 @@ Map<String, Object> _newWalletMemory() => {
 final walletRepositoryProvider = Provider<WalletRepository>((ref) {
   final apiClient = ref.watch(apiClientProvider);
   final memory = ref.watch(_walletMemoryProvider);
+  final storage = ref.watch(storageServiceProvider);
   return WalletRepositoryImpl(
     apiClient,
     ref.watch(mockDataRepositoryProvider),
     ref.read(localeProvider),
     memory,
+    storage,
   );
 });
 

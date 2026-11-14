@@ -17,7 +17,8 @@ import '../features/home/presentation/menu_page.dart';
 import '../features/home/presentation/person_page.dart';
 import '../features/wallet/presentation/wallet_page.dart';
 import '../features/wallet/presentation/history_page.dart';
-import '../features/settings/presentation/about_page.dart';
+import '../features/settings/presentation/about_page.dart' deferred as about_page;
+import '../widgets/deferred_widget.dart';
 import '../features/settings/presentation/initial_page.dart';
 import '../features/settings/presentation/language_page.dart';
 import '../features/settings/presentation/appearance_page.dart';
@@ -241,7 +242,10 @@ GoRouter createAppRouter(
       ),
       GoRoute(
         path: AppRoutes.ABOUT,
-        builder: (context, state) => const AboutPage(),
+        builder: (context, state) => DeferredWidget(
+          load: about_page.loadLibrary,
+          builder: () => about_page.AboutPage(),
+        ),
       ),
     ],
   );

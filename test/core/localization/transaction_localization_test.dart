@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/localization/transaction_localization.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
-import 'package:sirc/mock/mock_utils.dart';
 
 void main() {
   late Locale originalLocale;
@@ -71,11 +70,18 @@ void main() {
     });
   }
 
-  test(
-    'cached mock list follows both language switches at presentation time',
-    () {
-      AppLocale.setLocale(const Locale('en', 'US'));
-      final cached = MockUtils.moneyOperateList;
+    test(
+      'cached mock list follows both language switches at presentation time',
+      () {
+        AppLocale.setLocale(const Locale('en', 'US'));
+        final cached = List.generate(
+          10,
+          (index) => Transaction(
+            moneyAmount: index * 10.0,
+            time: Languages.justNow,
+            moneyActionName: Languages.something,
+          ),
+        );
       final amounts = cached
           .map((transaction) => transaction.moneyAmount)
           .toList();

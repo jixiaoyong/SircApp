@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sirc/core/config/app_author.dart';
 import 'package:sirc/features/auth/data/auth_repository.dart';
 import 'package:sirc/mock/mock_utils.dart';
 import 'package:sirc/utils/username_pwd_utils.dart';
@@ -66,8 +67,8 @@ class SignInController extends _$SignInController {
     final repo = ref.read(authRepositoryProvider);
     await repo.initDefaultUserIfNeeded();
 
-    final savedUserName = repo.getSavedUserName() ?? "jixiaoyong";
-    const defaultPwd = "123456";
+    final savedUserName = repo.getSavedUserName() ?? AppAuthor.username;
+    const defaultPwd = AppAuthor.defaultPassword;
 
     setUserName(savedUserName);
     setUserPwd(defaultPwd);

@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:sirc/core/layout/app_layout.dart';
 
 import 'adaptive_navigation_adapter.dart';
 import 'adaptive_pane_scope.dart';
@@ -10,18 +11,23 @@ import 'adaptive_pane_scope.dart';
 /// 2. 任意 Primary：主区域支持普通列表、表单，也支持完整的复合型页面（如 HomePage 仪表盘）；
 /// 3. 动态无损拉伸：桌面窗口拖拽拉宽/拉窄时，通过持久 GlobalKey 保留详情子树输入框内容、焦点与滚动位置；
 /// 4. 路由可插拔：通过 [AdaptiveNavigationAdapter] 自由对接原生 Navigator、GoRouter、GetX 等；
-/// 5. 双维度语义：通过 [AdaptivePaneScope] 向子树同时暴露物理尺寸 [isWide] 与视觉分栏状态 [isDuo]。
+/// 5. 双维度语义：通过 [AdaptivePaneScope] 向子树同时暴露物理尺寸 [isWide] 与视觉分栏状态 [isDuo]；
+/// 6. 统一架构：完整支持独立组件模式与全局路由器（如 GoRouter ShellRoute）双模式驱动。
 class AdaptiveTwoPane extends StatefulWidget {
   const AdaptiveTwoPane({
     super.key,
     required this.primary,
     this.detail,
+    this.hasDetail,
     this.breakpoint = 840.0,
     this.primaryFraction = 0.5,
     this.minPrimaryWidth = 320.0,
     this.maxPrimaryWidth,
     this.divider = const VerticalDivider(width: 1, thickness: 1),
     this.placeholder,
+    this.primaryPaneKey = const ValueKey('duo-pane'),
+    this.keepPrimaryMounted = true,
+    this.useWindowBreakpoint = false,
     this.navigationAdapter = const DefaultNativeNavigationAdapter(),
     this.onDismissDetail,
   });
@@ -31,6 +37,9 @@ class AdaptiveTwoPane extends StatefulWidget {
 
   /// 详情区域（右侧从视图；为空时在宽屏显示 [placeholder]，在窄屏只显示 [primary]）
   final Widget? detail;
+
+  /// 外部显式指定的详情存在状态（若提供则优先于 `detail != null`，常用于路由统一调度）
+  final bool? hasDetail;
 
   /// 自适应断点逻辑像素宽度，默认 840
   final double breakpoint;
@@ -47,8 +56,17 @@ class AdaptiveTwoPane extends StatefulWidget {
   /// 宽屏左右两栏之间的分割组件
   final Widget? divider;
 
-  /// 宽屏下 [detail] 为空时的占位视图
+  /// 宽屏下无详情时的占位视图
   final Widget? placeholder;
+
+  /// 来源窗格 SizedBox 标识，供语义与测试定位
+  final Key primaryPaneKey;
+
+  /// 窄屏时是否在 DOM 中保留挂载来源窗格（Offstage 隐藏而不销毁）
+  final bool keepPrimaryMounted;
+
+  /// 是否以顶层窗口宽度作为断点依据（适配特定全屏测试与全局上下文）
+  final bool useWindowBreakpoint;
 
   /// 窄屏全屏模式下的路由适配器（默认基于原生 Navigator）
   final AdaptiveNavigationAdapter navigationAdapter;
@@ -70,10 +88,24 @@ class _AdaptiveTwoPaneState extends State<AdaptiveTwoPane> {
 
   @override
   Widget build(BuildContext context) {
+    final hasDetail = widget.hasDetail ?? (widget.detail != null);
+
+    if (widget.useWindowBreakpoint &&
+        !AppLayout.isWideWindow(context) &&
+        !widget.keepPrimaryMounted) {
+      return AdaptivePaneScope(
+        isWide: false,
+        isDuo: false,
+        mode: AdaptiveDisplayMode.singlePane,
+        child: _buildDetailSubtree(),
+      );
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isWide = constraints.maxWidth >= widget.breakpoint;
-        final hasDetail = widget.detail != null;
+        final isWide = widget.useWindowBreakpoint
+            ? AppLayout.isWideWindow(context)
+            : (constraints.maxWidth >= widget.breakpoint);
         final isDuo = isWide && hasDetail;
 
         final mode = isWide
@@ -82,13 +114,17 @@ class _AdaptiveTwoPaneState extends State<AdaptiveTwoPane> {
                 : AdaptiveDisplayMode.dualPaneEmpty)
             : AdaptiveDisplayMode.singlePane;
 
-        _scheduleBreakpointTransition(isWide, hasDetail);
+        if (widget.hasDetail == null) {
+          _scheduleBreakpointTransition(isWide, hasDetail);
+        }
 
         return AdaptivePaneScope(
           isWide: isWide,
           isDuo: isDuo,
           mode: mode,
-          child: isWide ? _buildWideLayout(constraints) : _buildNarrowLayout(),
+          child: isWide
+              ? _buildWideLayout(constraints, isWide, hasDetail)
+              : _buildNarrowLayout(constraints, isWide, hasDetail),
         );
       },
     );
@@ -136,29 +172,47 @@ class _AdaptiveTwoPaneState extends State<AdaptiveTwoPane> {
     );
   }
 
-  Widget _buildWideLayout(BoxConstraints constraints) {
-    final availableWidth = constraints.maxWidth;
-    double primaryWidth = availableWidth * widget.primaryFraction;
+  Widget _buildWideLayout(
+    BoxConstraints constraints,
+    bool isWide,
+    bool hasDetail,
+  ) {
+    final showPrimary = isWide || !hasDetail;
+    final showSplit = hasDetail || widget.placeholder != null;
 
-    if (primaryWidth < widget.minPrimaryWidth) {
-      primaryWidth = widget.minPrimaryWidth;
+    final double primaryWidth;
+    if (showSplit) {
+      final dividerWidth = widget.divider != null ? 1.0 : 0.0;
+      double w = (constraints.maxWidth - dividerWidth) * widget.primaryFraction;
+      if (widget.minPrimaryWidth > 0 && constraints.maxWidth >= widget.minPrimaryWidth * 2) {
+        if (w < widget.minPrimaryWidth) w = widget.minPrimaryWidth;
+      }
+      if (widget.maxPrimaryWidth != null && w > widget.maxPrimaryWidth!) {
+        w = widget.maxPrimaryWidth!;
+      }
+      primaryWidth = w;
+    } else {
+      primaryWidth = constraints.maxWidth;
     }
-    if (widget.maxPrimaryWidth != null && primaryWidth > widget.maxPrimaryWidth!) {
-      primaryWidth = widget.maxPrimaryWidth!;
-    }
-    final detailWidth = availableWidth - primaryWidth;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(
-          width: primaryWidth,
-          child: widget.primary,
-        ),
-        if (widget.divider != null) widget.divider!,
-        Expanded(
+        Offstage(
+          offstage: !showPrimary,
           child: SizedBox(
-            width: detailWidth > 0 ? detailWidth : 0,
+            key: widget.primaryPaneKey,
+            width: showPrimary ? primaryWidth : constraints.maxWidth,
+            child: HeroMode(enabled: !hasDetail, child: widget.primary),
+          ),
+        ),
+        SizedBox(
+          width: showSplit && widget.divider != null ? 1 : 0,
+          child: widget.divider ?? const VerticalDivider(width: 1),
+        ),
+        Expanded(
+          child: Offstage(
+            offstage: !hasDetail && widget.placeholder == null,
             child: widget.detail != null
                 ? _buildDetailSubtree()
                 : (widget.placeholder ?? const SizedBox.shrink()),
@@ -168,15 +222,49 @@ class _AdaptiveTwoPaneState extends State<AdaptiveTwoPane> {
     );
   }
 
-  Widget _buildNarrowLayout() {
-    // 窄屏仅展示主页面；当详情被外部触发打开时，通过 pushDetail 打开全屏 Route
+  Widget _buildNarrowLayout(
+    BoxConstraints constraints,
+    bool isWide,
+    bool hasDetail,
+  ) {
+    if (widget.hasDetail != null) {
+      if (!widget.keepPrimaryMounted) {
+        return _buildDetailSubtree();
+      }
+      final showPrimary = !hasDetail;
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Offstage(
+            offstage: !showPrimary,
+            child: SizedBox(
+              key: widget.primaryPaneKey,
+              width: constraints.maxWidth,
+              child: HeroMode(enabled: !hasDetail, child: widget.primary),
+            ),
+          ),
+          Expanded(
+            child: Offstage(
+              offstage: !hasDetail,
+              child: _buildDetailSubtree(),
+            ),
+          ),
+        ],
+      );
+    }
+
+    // 默认独立组件模式：窄屏展示 primary，详情由路由推入
     return widget.primary;
   }
 
   Widget _buildDetailSubtree() {
-    return KeyedSubtree(
-      key: _detailKey,
-      child: widget.detail ?? const SizedBox.shrink(),
+    return Semantics(
+      container: true,
+      explicitChildNodes: true,
+      child: KeyedSubtree(
+        key: _detailKey,
+        child: widget.detail ?? const SizedBox.shrink(),
+      ),
     );
   }
 }

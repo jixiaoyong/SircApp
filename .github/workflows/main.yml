@@ -36,8 +36,8 @@ jobs:
       - name: Run Unit Tests
         run: flutter test
 
-      - name: Build Web Application
-        run: flutter build web --release
+      - name: Build Web Application (Wasm + JS Dual Engine)
+        run: flutter build web --release --wasm
 
       - name: Upload Web Build Artifact
         # 仅在合入 master 时上传产物，供后续部署任务消费

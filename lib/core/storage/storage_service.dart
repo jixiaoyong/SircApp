@@ -56,6 +56,30 @@ class StorageService extends ChangeNotifier {
   Future<bool> setThemeMode(String value) async =>
       await _prefs?.setString(CommonKeys.THEME_MODE, value) ?? true;
 
+  List<String>? get addedBankCardsJson =>
+      _prefs?.getStringList(CommonKeys.ADDED_BANK_CARDS);
+  Future<bool> setAddedBankCardsJson(List<String> value) async {
+    final result =
+        await _prefs?.setStringList(CommonKeys.ADDED_BANK_CARDS, value);
+    return result ?? true;
+  }
+
+  List<String>? get deletedBankCardIds =>
+      _prefs?.getStringList(CommonKeys.DELETED_BANK_CARD_IDS);
+  Future<bool> setDeletedBankCardIds(List<String> value) async {
+    final result =
+        await _prefs?.setStringList(CommonKeys.DELETED_BANK_CARD_IDS, value);
+    return result ?? true;
+  }
+
+  List<String>? get cardOverridesJson =>
+      _prefs?.getStringList(CommonKeys.CARD_OVERRIDES);
+  Future<bool> setCardOverridesJson(List<String> value) async {
+    final result =
+        await _prefs?.setStringList(CommonKeys.CARD_OVERRIDES, value);
+    return result ?? true;
+  }
+
   /// Match the menu's existing full cleanup, retaining device appearance only.
   Future<void> clearUserData() async {
     for (final key in _prefs?.getKeys() ?? <String>{}) {

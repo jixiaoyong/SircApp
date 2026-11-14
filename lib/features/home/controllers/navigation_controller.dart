@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sirc/core/config/app_author.dart';
 import 'package:sirc/mock/mock_data_repository.dart';
 
 part 'navigation_controller.g.dart';
@@ -46,9 +47,9 @@ class NavigationState {
 
   const NavigationState({
     this.currentIndex = 0,
-    this.userName = 'JI,XIAOYONG',
-    this.userEmail = 'jixiaoyong1995@gmail.com',
-    this.userAvatar = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
+    this.userName = AppAuthor.name,
+    this.userEmail = AppAuthor.email,
+    this.userAvatar = AppAuthor.avatarUrl,
     this.isDrawerOpen = false,
   });
 

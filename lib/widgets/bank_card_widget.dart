@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:sirc/features/wallet/domain/models/bank_card.dart';
 import 'package:sirc/features/wallet/presentation/card_brand_label.dart';
 import 'package:sirc/gen_a/A.dart';
 
@@ -32,6 +33,27 @@ class BankCardWidget extends StatelessWidget {
     this.isSelected = false,
     this.selectionHighlightProgress,
   }) : cardNumber = _formatCardNumber(cardNumber);
+
+  /// 直接根据 [BankCard] 实体模型构造卡片视图
+  BankCardWidget.fromCard(
+    BankCard card, {
+    Key? key,
+    double? height,
+    double? width,
+    bool isSelected = false,
+    double? selectionHighlightProgress,
+  }) : this(
+         key: key,
+         bankName: card.bankName,
+         cardNumber: card.cardNumber,
+         ownerName: card.ownerName,
+         expirationDate: card.expirationDate,
+         cardType: card.cardType,
+         height: height,
+         width: width,
+         isSelected: isSelected,
+         selectionHighlightProgress: selectionHighlightProgress,
+       );
 
   static String _formatCardNumber(String raw) {
     final clean = raw.replaceAll(' ', '').trim();

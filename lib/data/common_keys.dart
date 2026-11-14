@@ -19,4 +19,9 @@ class CommonKeys {
   // the md5 of user password
   static const String USER_PWD = 'user_pwd';
   static const String USER_EMAIL = 'user_email';
+
+  // Persisted bank cards diffs (user added / deleted / updated)
+  static const String ADDED_BANK_CARDS = 'added_bank_cards';
+  static const String DELETED_BANK_CARD_IDS = 'deleted_bank_card_ids';
+  static const String CARD_OVERRIDES = 'card_overrides';
 }
