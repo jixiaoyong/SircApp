@@ -51,9 +51,14 @@ class ArticleRepository {
     if (parts.length != 2) return null;
     final group = int.tryParse(parts[0]);
     final index = int.tryParse(parts[1]);
-    if (group == null || index == null ||
-        group < 0 || group >= groups.length ||
-        index < 0 || index >= groups[group].length) return null;
+    if (group == null ||
+        index == null ||
+        group < 0 ||
+        group >= groups.length ||
+        index < 0 ||
+        index >= groups[group].length) {
+      return null;
+    }
     return groups[group][index];
   }
 }

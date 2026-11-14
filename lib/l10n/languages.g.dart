@@ -910,6 +910,70 @@ class Languages {
   ///- [en_US] No cards yet
   static String get noCardsYetShort => settings.noCardsYetShort;
 
+  ///- [zh_CN] 开发者日志与诊断控制台
+  ///- [en_US] Developer Console & Logs
+  static String get developerConsole => settings.developerConsole;
+
+  ///- [zh_CN] 复制日志
+  ///- [en_US] Copy Logs
+  static String get copyLogs => settings.copyLogs;
+
+  ///- [zh_CN] 日志已复制到剪贴板
+  ///- [en_US] Logs copied to clipboard
+  static String get logsCopied => settings.logsCopied;
+
+  ///- [zh_CN] 清空日志
+  ///- [en_US] Clear Logs
+  static String get clearLogs => settings.clearLogs;
+
+  ///- [zh_CN] 全部
+  ///- [en_US] All
+  static String get logLevelAll => settings.logLevelAll;
+
+  ///- [zh_CN] 信息
+  ///- [en_US] Info
+  static String get logLevelInfo => settings.logLevelInfo;
+
+  ///- [zh_CN] 警告
+  ///- [en_US] Warn
+  static String get logLevelWarn => settings.logLevelWarn;
+
+  ///- [zh_CN] 错误
+  ///- [en_US] Error
+  static String get logLevelError => settings.logLevelError;
+
+  ///- [zh_CN] 安全认证凭据
+  ///- [en_US] Security Credential
+  static String get securityCredential => settings.securityCredential;
+
+  ///- [zh_CN] 已完成实名与安全验证
+  ///- [en_US] Verified Security Credential
+  static String get credentialVerified => settings.credentialVerified;
+
+  ///- [zh_CN] 此凭据用于双重验证、交易风控通知及重要密码找回。受端到端加密保护。
+  ///- [en_US] Used for dual-factor authentication, transaction security alerts, and recovery. Protected with end-to-end encryption.
+  static String get securityProtection => settings.securityProtection;
+
+  ///- [zh_CN] 申请换绑
+  ///- [en_US] Rebind / Update
+  static String get rebind => settings.rebind;
+
+  ///- [zh_CN] 已复制到剪贴板
+  ///- [en_US] Copied to clipboard
+  static String get copiedToClipboard => settings.copiedToClipboard;
+
+  ///- [zh_CN] 个人资料与账户安全
+  ///- [en_US] Profile & Account Security
+  static String get userProfileTitle => settings.userProfileTitle;
+
+  ///- [zh_CN] 账户安全等级：极佳
+  ///- [en_US] Security Score: Excellent (98/100)
+  static String get accountSecurity => settings.accountSecurity;
+
+  ///- [zh_CN] 已激活开发者调试控制台
+  ///- [en_US] Developer Console Activated
+  static String get devModeActivated => settings.devModeActivated;
+
   // --- Common 模块 ---
   ///- [zh_CN] 取消
   ///- [en_US] Cancel
@@ -1211,6 +1275,23 @@ class Languages {
       "Show password": "Show password",
       "Hide password": "Hide password",
       "No cards yet": "No cards yet",
+      "Developer Console & Logs": "Developer Console & Logs",
+      "Copy Logs": "Copy Logs",
+      "Logs copied to clipboard": "Logs copied to clipboard",
+      "Clear Logs": "Clear Logs",
+      "All": "All",
+      "Info": "Info",
+      "Warn": "Warn",
+      "Error": "Error",
+      "Security Credential": "Security Credential",
+      "Verified Security Credential": "Verified Security Credential",
+      "Used for dual-factor authentication, transaction security alerts, and recovery. Protected with end-to-end encryption.": "Used for dual-factor authentication, transaction security alerts, and recovery. Protected with end-to-end encryption.",
+      "Rebind / Update": "Rebind / Update",
+      "Copied to clipboard": "Copied to clipboard",
+      "Profile & Account Security": "Profile & Account Security",
+      "Security Score: Excellent (98/100)":
+          "Security Score: Excellent (98/100)",
+      "Developer Console Activated": "Developer Console Activated",
       "Cancel": "Cancel",
       "All": "All",
       "Submit": "Submit",
@@ -1452,6 +1533,23 @@ class Languages {
       "Show password": "显示密码",
       "Hide password": "隐藏密码",
       "No cards yet": "暂无卡片",
+      "Developer Console & Logs": "开发者日志与诊断控制台",
+      "Copy Logs": "复制日志",
+      "Logs copied to clipboard": "日志已复制到剪贴板",
+      "Clear Logs": "清空日志",
+      "All": "全部",
+      "Info": "信息",
+      "Warn": "警告",
+      "Error": "错误",
+      "Security Credential": "安全认证凭据",
+      "Verified Security Credential": "已完成实名与安全验证",
+      "Used for dual-factor authentication, transaction security alerts, and recovery. Protected with end-to-end encryption.":
+          "此凭据用于双重验证、交易风控通知及重要密码找回。受端到端加密保护。",
+      "Rebind / Update": "申请换绑",
+      "Copied to clipboard": "已复制到剪贴板",
+      "Profile & Account Security": "个人资料与账户安全",
+      "Security Score: Excellent (98/100)": "账户安全等级：极佳",
+      "Developer Console Activated": "已激活开发者调试控制台",
       "Cancel": "取消",
       "All": "全部",
       "Submit": "提交",

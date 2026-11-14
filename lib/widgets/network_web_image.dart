@@ -174,7 +174,7 @@ class NetworkWebImage extends StatelessWidget {
             width: assetSize,
             height: assetSize,
             fit: BoxFit.contain,
-            errorBuilder: (_, __, ___) => _buildDefaultIcon(context, minDim),
+            errorBuilder: (_, _, _) => _buildDefaultIcon(context, minDim),
           );
         } else {
           innerChild = _buildDefaultIcon(context, minDim);

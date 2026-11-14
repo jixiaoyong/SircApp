@@ -113,4 +113,36 @@ class SettingsEn implements SettingsLang {
   String get hidePassword => 'Hide password';
   @override
   String get noCardsYetShort => 'No cards yet';
+  @override
+  String get developerConsole => 'Developer Console & Logs';
+  @override
+  String get copyLogs => 'Copy Logs';
+  @override
+  String get logsCopied => 'Logs copied to clipboard';
+  @override
+  String get clearLogs => 'Clear Logs';
+  @override
+  String get logLevelAll => 'All';
+  @override
+  String get logLevelInfo => 'Info';
+  @override
+  String get logLevelWarn => 'Warn';
+  @override
+  String get logLevelError => 'Error';
+  @override
+  String get securityCredential => 'Security Credential';
+  @override
+  String get credentialVerified => 'Verified Security Credential';
+  @override
+  String get securityProtection => 'Used for dual-factor authentication, transaction security alerts, and recovery. Protected with end-to-end encryption.';
+  @override
+  String get rebind => 'Rebind / Update';
+  @override
+  String get copiedToClipboard => 'Copied to clipboard';
+  @override
+  String get userProfileTitle => 'Profile & Account Security';
+  @override
+  String get accountSecurity => 'Security Score: Excellent (98/100)';
+  @override
+  String get devModeActivated => 'Developer Console Activated';
 }

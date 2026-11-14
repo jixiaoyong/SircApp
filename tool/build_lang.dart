@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, curly_braces_in_flow_control_structures
+
 import 'dart:async';
 import 'dart:io';
 

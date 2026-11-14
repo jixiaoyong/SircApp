@@ -51,6 +51,8 @@ class SettingsItemTile extends StatelessWidget {
           ? null
           : Text(
               subtitle!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 11,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,

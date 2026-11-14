@@ -107,4 +107,36 @@ class SettingsZh implements SettingsLang {
   String get hidePassword => '隐藏密码';
   @override
   String get noCardsYetShort => '暂无卡片';
+  @override
+  String get developerConsole => '开发者日志与诊断控制台';
+  @override
+  String get copyLogs => '复制日志';
+  @override
+  String get logsCopied => '日志已复制到剪贴板';
+  @override
+  String get clearLogs => '清空日志';
+  @override
+  String get logLevelAll => '全部';
+  @override
+  String get logLevelInfo => '信息';
+  @override
+  String get logLevelWarn => '警告';
+  @override
+  String get logLevelError => '错误';
+  @override
+  String get securityCredential => '安全认证凭据';
+  @override
+  String get credentialVerified => '已完成实名与安全验证';
+  @override
+  String get securityProtection => '此凭据用于双重验证、交易风控通知及重要密码找回。受端到端加密保护。';
+  @override
+  String get rebind => '申请换绑';
+  @override
+  String get copiedToClipboard => '已复制到剪贴板';
+  @override
+  String get userProfileTitle => '个人资料与账户安全';
+  @override
+  String get accountSecurity => '账户安全等级：极佳';
+  @override
+  String get devModeActivated => '已激活开发者调试控制台';
 }
