@@ -104,4 +104,3 @@ class ForgetPwdController extends _$ForgetPwdController {
   }
 }
 
-typedef ForgetPwdNotifier = ForgetPwdController;

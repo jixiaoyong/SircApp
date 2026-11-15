@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/data/article_repository.dart';
+import 'package:sirc/features/home/presentation/widgets/home_articles_panel.dart';
 import 'package:sirc/features/home/presentation/home_page.dart';
 import 'package:sirc/widgets/neutral_segments.dart';
 

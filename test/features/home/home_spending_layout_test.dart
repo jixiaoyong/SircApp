@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/features/home/presentation/widgets/home_articles_panel.dart';
 import 'package:sirc/mock/mock_data_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/features/home/presentation/widgets/home_articles_panel.dart';
 import 'package:sirc/features/home/presentation/home_page.dart';
 import 'package:sirc/features/home/presentation/person_page.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
@@ -135,41 +136,47 @@ void main() {
   });
 
   testWidgets('个人页资料中英文映射且流水来自钱包同源交易', (tester) async {
-    final container = ProviderContainer(overrides: [
-      localeProvider.overrideWith(_TestLocaleNotifier.new),
-      walletControllerProvider.overrideWith(_EmptyWalletController.new),
-      navigationControllerProvider.overrideWithValue(const NavigationState()),
-      personProfileProvider(const Locale('zh', 'CN')).overrideWith(
-        (ref) async => const UserProfile(
-          id: 'user-test-001',
-          name: 'Alex Morgan',
-          email: 'alex.morgan@example.test',
-          phone: '+1 202 555 0142 (TEST)',
-          address: '100 Example Avenue, Sample City (TEST)',
-          avatarUrl: '',
+    final container = ProviderContainer(
+      overrides: [
+        localeProvider.overrideWith(_TestLocaleNotifier.new),
+        walletControllerProvider.overrideWith(_EmptyWalletController.new),
+        navigationControllerProvider.overrideWithValue(const NavigationState()),
+        personProfileProvider(const Locale('zh', 'CN')).overrideWith(
+          (ref) async => const UserProfile(
+            id: 'user-test-001',
+            name: 'Alex Morgan',
+            email: 'alex.morgan@example.test',
+            phone: '+1 202 555 0142 (TEST)',
+            address: '100 Example Avenue, Sample City (TEST)',
+            avatarUrl: '',
+          ),
         ),
-      ),
-      personProfileProvider(const Locale('en', 'US')).overrideWith(
-        (ref) async => const UserProfile(
-          id: 'user-test-001',
-          name: 'Alex Morgan',
-          email: 'alex.morgan@example.test',
-          phone: '+1 202 555 0142 (TEST)',
-          address: '100 Example Avenue, Sample City (TEST)',
-          avatarUrl: '',
+        personProfileProvider(const Locale('en', 'US')).overrideWith(
+          (ref) async => const UserProfile(
+            id: 'user-test-001',
+            name: 'Alex Morgan',
+            email: 'alex.morgan@example.test',
+            phone: '+1 202 555 0142 (TEST)',
+            address: '100 Example Avenue, Sample City (TEST)',
+            avatarUrl: '',
+          ),
         ),
-      ),
-    ]);
+      ],
+    );
     addTearDown(container.dispose);
-    await tester.pumpWidget(UncontrolledProviderScope(
-      container: container,
-      child: Consumer(builder: (context, ref, _) => MaterialApp(
-        locale: ref.watch(localeProvider),
-        supportedLocales: AppLocale.supportedLocales,
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        home: const PersonPage(),
-      )),
-    ));
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: Consumer(
+          builder: (context, ref, _) => MaterialApp(
+            locale: ref.watch(localeProvider),
+            supportedLocales: AppLocale.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            home: const PersonPage(),
+          ),
+        ),
+      ),
+    );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));
     await tester.pump(const Duration(milliseconds: 50));
@@ -214,24 +221,24 @@ void main() {
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
             home: Scaffold(
               body: HomeTopBodyWidget(
-                  homeState: container
-                      .read(homeControllerProvider)
-                      .copyWith(
-                        quickActions: [
-                          for (final item in actualActions)
-                            ImgText(
-                              item['imageUrl'] as String? ?? '',
-                              item['title'] as String? ?? '',
-                            ),
-                        ],
-                      ),
-                  userAvatar: '',
-                ),
+                homeState: container
+                    .read(homeControllerProvider)
+                    .copyWith(
+                      quickActions: [
+                        for (final item in actualActions)
+                          ImgText(
+                            item['imageUrl'] as String? ?? '',
+                            item['title'] as String? ?? '',
+                          ),
+                      ],
+                    ),
+                userAvatar: '',
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     final grid = find.byWidgetPredicate((widget) => widget is JingangWidget);
@@ -480,7 +487,7 @@ void main() {
   test('首页UI文案使用分域词条且不包含硬编码字符串', () {
     final source = File('lib/features/home/presentation/home_page.dart')
         .readAsStringSync();
-    final ui = source.split('class HomeTabViewListItemWidget').first;
+    final ui = source;
     expect(ui, isNot(contains("languageCode == 'zh'")));
     expect(
       ui,

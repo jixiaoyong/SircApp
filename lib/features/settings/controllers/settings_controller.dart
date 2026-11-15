@@ -87,14 +87,14 @@ class NotificationsState {
     (Icons.more_horiz_outlined, Languages.others, _itemsFor(3)),
   ];
 
-  // The existing transaction model has no category or timestamp schema. Only
-  // explicit action labels are classified; unknown actions remain Other.
+  // 分类仅依据交易模型中的显式 category；未知类别归入 Other。
   int _categoryOf(Transaction item) {
-    final name = (item.moneyActionName ?? '').toLowerCase();
-    if (RegExp(r'transfer|money send|转账|轉帳').hasMatch(name)) return 0;
-    if (RegExp(r'recharge|top.?up|充值').hasMatch(name)) return 1;
-    if (RegExp(r'bill|账单|帳單').hasMatch(name)) return 2;
-    return 3;
+    return switch ((item.category ?? '').trim().toLowerCase()) {
+      'transfer' => 0,
+      'recharge' => 1,
+      'bill' || 'bills' => 2,
+      _ => 3,
+    };
   }
 
   DateTime? _dateOf(Transaction item) {

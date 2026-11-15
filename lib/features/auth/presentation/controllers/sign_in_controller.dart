@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sirc/core/config/app_author.dart';
 import 'package:sirc/features/auth/data/auth_repository.dart';
 import 'package:sirc/mock/mock_utils.dart';
+import 'package:sirc/utils/toast.dart';
 import 'package:sirc/utils/username_pwd_utils.dart';
 
 part 'sign_in_controller.g.dart';
@@ -130,6 +131,7 @@ class SignInController extends _$SignInController {
 
   void loginWith((IconData, Color) item) {
     // 社交登录扩展预留
+    Toast.show("点击了社交登录，待实现");
   }
 }
 

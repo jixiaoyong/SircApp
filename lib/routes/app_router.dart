@@ -17,7 +17,8 @@ import '../features/home/presentation/menu_page.dart';
 import '../features/home/presentation/person_page.dart';
 import '../features/wallet/presentation/wallet_page.dart';
 import '../features/wallet/presentation/history_page.dart';
-import '../features/settings/presentation/about_page.dart' deferred as about_page;
+import '../features/settings/presentation/about_page.dart'
+    deferred as about_page;
 import '../widgets/deferred_widget.dart';
 import '../features/settings/presentation/initial_page.dart';
 import '../features/settings/presentation/language_page.dart';
@@ -149,100 +150,78 @@ GoRouter createAppRouter(
           }.contains(state.uri.path),
         ),
         branches: [
-          _sourceBranch(AppRoutes.MAIN, mainPage),
-          _sourceBranch(AppRoutes.WALLET, walletPage),
-          _sourceBranch(AppRoutes.HISTORY, historyPage),
-          StatefulShellBranch(
+          _adaptiveBranch(
+            AppRoutes.MAIN,
+            (_) => mainPage(),
+            routes: [_transactionRoute(), _articleDetailRoute()],
+          ),
+          _adaptiveBranch(
+            AppRoutes.WALLET,
+            (_) => walletPage(),
             routes: [
-              ShellRoute(
-                pageBuilder: (context, state, child) => NoTransitionPage<void>(
-                  key: state.pageKey,
-                  child: AdaptiveDetailLayout(
-                    hasDetail: state.uri.path != AppRoutes.PERSON,
-                    primary: AppLayout.isWideWindow(context)
-                        ? person()
-                        : const SizedBox.shrink(),
-                    primaryPaneKey: const ValueKey('person-pane'),
-                    detail: child,
-                  ),
-                ),
-                routes: [
-                  GoRoute(
-                    path: AppRoutes.PERSON,
-                    pageBuilder: (context, state) => NoTransitionPage<void>(
-                      key: state.pageKey,
-                      child: AppLayout.isWideWindow(context)
-                          ? const SizedBox.shrink()
-                          : person(),
-                    ),
-                    routes: [
-                      for (final field in ['email', 'phone', 'address'])
-                        _adaptiveDetailRoute(
-                          field,
-                          (onBack) => PersonInformationPage(
-                            field: field,
-                            onBack: onBack,
-                          ),
-                          source: AppRoutes.PERSON,
-                        ),
-                      _adaptiveDetailRoute(
-                        'card',
-                        (onBack) => PersonCardsPage(onBack: onBack),
-                        source: AppRoutes.PERSON,
-                      ),
-                      ..._cardEditorRoutes(AppRoutes.PERSON),
-                      _transactionRoute(),
-                    ],
-                  ),
-                ],
+              _adaptiveDetailRoute(
+                'cards',
+                (onBack) => CardManagementPage(onBack: onBack),
+                source: AppRoutes.WALLET,
               ),
+              ..._cardEditorRoutes(AppRoutes.WALLET),
+              _transactionRoute(),
             ],
           ),
-          StatefulShellBranch(
+          _adaptiveBranch(
+            AppRoutes.HISTORY,
+            (_) => historyPage(),
+            routes: [_transactionRoute()],
+          ),
+          _adaptiveBranch(
+            AppRoutes.PERSON,
+            (_) => person(),
             routes: [
-              ShellRoute(
-                pageBuilder: (context, state, child) => NoTransitionPage<void>(
-                  key: state.pageKey,
-                  child: AdaptiveDetailLayout(
-                    hasDetail: state.uri.path != AppRoutes.MENU,
-                    primary: const MenuPage(listOnly: true),
-                    primaryPaneKey: const ValueKey('menu-pane'),
-                    detail: child,
-                  ),
+              for (final field in ['email', 'phone', 'address'])
+                _adaptiveDetailRoute(
+                  field,
+                  (onBack) =>
+                      PersonInformationPage(field: field, onBack: onBack),
+                  source: AppRoutes.PERSON,
                 ),
-                routes: [
-                  GoRoute(
-                    path: AppRoutes.MENU,
-                    pageBuilder: (context, state) => NoTransitionPage<void>(
-                      key: state.pageKey,
-                      child: AppLayout.isWideWindow(context)
-                          ? const SizedBox.shrink()
-                          : const MenuPage(),
-                    ),
-                    routes: [
-                      _adaptiveDetailRoute(
-                        AppRoutes.LANGUAGES_SEGMENT,
-                        (onBack) => LanguagePage(onBack: onBack),
-                      ),
-                      _adaptiveDetailRoute(
-                        AppRoutes.APPEARANCE_SEGMENT,
-                        (onBack) => AppearancePage(onBack: onBack),
-                      ),
-                      _adaptiveDetailRoute(
-                        AppRoutes.NOTIFICATIONS_SEGMENT,
-                        (onBack) => NotificationsPage(onBack: onBack),
-                      ),
-                      _adaptiveDetailRoute(
-                        AppRoutes.PASSWORD_SEGMENT,
-                        (onBack) => PasswordPage(onBack: onBack),
-                      ),
-                      GoRoute(
-                        path: AppRoutes.ADD_CARD_SEGMENT,
-                        redirect: (context, state) => '/wallet/add-card',
-                      ),
-                    ],
-                  ),
-                ],
+              _adaptiveDetailRoute(
+                'card',
+                (onBack) => PersonCardsPage(onBack: onBack),
+                source: AppRoutes.PERSON,
+              ),
+              ..._cardEditorRoutes(AppRoutes.PERSON),
+              _transactionRoute(),
+            ],
+          ),
+          _adaptiveBranch(
+            AppRoutes.MENU,
+            (context) => AppLayout.isWideWindow(context)
+                ? const MenuPage(listOnly: true)
+                : const MenuPage(),
+            routes: [
+              _adaptiveDetailRoute(
+                AppRoutes.LANGUAGES_SEGMENT,
+                (onBack) => LanguagePage(onBack: onBack),
+                source: AppRoutes.MENU,
+              ),
+              _adaptiveDetailRoute(
+                AppRoutes.APPEARANCE_SEGMENT,
+                (onBack) => AppearancePage(onBack: onBack),
+                source: AppRoutes.MENU,
+              ),
+              _adaptiveDetailRoute(
+                AppRoutes.NOTIFICATIONS_SEGMENT,
+                (onBack) => NotificationsPage(onBack: onBack),
+                source: AppRoutes.MENU,
+              ),
+              _adaptiveDetailRoute(
+                AppRoutes.PASSWORD_SEGMENT,
+                (onBack) => PasswordPage(onBack: onBack),
+                source: AppRoutes.MENU,
+              ),
+              GoRoute(
+                path: AppRoutes.ADD_CARD_SEGMENT,
+                redirect: (context, state) => '/wallet/add-card',
               ),
             ],
           ),
@@ -260,63 +239,64 @@ GoRouter createAppRouter(
   return router;
 }
 
-StatefulShellBranch _sourceBranch(
+/// 构建支持宽窄屏双栏主从布局的分支路由。
+///
+/// [source] 分支主路径（如 `/main`, `/wallet`, `/history`, `/person`, `/menu`）。
+/// [buildPrimary] 主列表页面构建回调，在窄屏主路径或宽屏主窗格中展示。
+/// [routes] 挂载在主路径下的自适应子路由列表（如详情、编辑器等）。
+/// [primaryPaneKey] 宽屏主窗格的语义 Key；若未指定则默认根据 [source] 生成。
+StatefulShellBranch _adaptiveBranch(
   String source,
-  Widget Function() buildPrimary,
-) =>
-    StatefulShellBranch(
-      routes: [
-        ShellRoute(
-          pageBuilder: (context, state, child) => NoTransitionPage<void>(
-            key: state.pageKey,
-            child: AdaptiveDetailLayout(
-              hasDetail: state.uri.path != source,
-              primary: AppLayout.isWideWindow(context)
-                  ? buildPrimary()
-                  : const SizedBox.shrink(),
-              primaryPaneKey: ValueKey('$source-pane'),
-              detail: child,
-            ),
+  Widget Function(BuildContext context) buildPrimary, {
+  List<RouteBase> routes = const [],
+  Key? primaryPaneKey,
+}) {
+  final defaultPaneKey = ValueKey(
+    source.startsWith('/') ? '${source.substring(1)}-pane' : '$source-pane',
+  );
+  return StatefulShellBranch(
+    routes: [
+      ShellRoute(
+        pageBuilder: (context, state, child) => NoTransitionPage<void>(
+          key: state.pageKey,
+          child: AdaptiveDetailLayout(
+            hasDetail: state.uri.path != source,
+            primary: AppLayout.isWideWindow(context)
+                ? buildPrimary(context)
+                : const SizedBox.shrink(),
+            primaryPaneKey: primaryPaneKey ?? defaultPaneKey,
+            detail: child,
           ),
-          routes: [
-            GoRoute(
-              path: source,
-              pageBuilder: (context, state) => NoTransitionPage<void>(
-                key: state.pageKey,
-                child: AppLayout.isWideWindow(context)
-                    ? const SizedBox.shrink()
-                    : buildPrimary(),
-              ),
-              routes: [
-                if (source == AppRoutes.WALLET) ...[
-                  _adaptiveDetailRoute(
-                    'cards',
-                    (onBack) => CardManagementPage(onBack: onBack),
-                    source: source,
-                  ),
-                  ..._cardEditorRoutes(source),
-                ],
-                _transactionRoute(),
-                if (source == AppRoutes.MAIN)
-                  GoRoute(
-                    path: 'article/:id',
-                    pageBuilder: (context, state) {
-                      final child = ArticleDetailPage(
-                        id: state.pathParameters['id']!,
-                      );
-                      return createAdaptiveDetailPage(
-                        context: context,
-                        key: state.pageKey,
-                        child: child,
-                      );
-                    },
-                  ),
-              ],
-            ),
-          ],
         ),
-      ],
+        routes: [
+          GoRoute(
+            path: source,
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              key: state.pageKey,
+              child: AppLayout.isWideWindow(context)
+                  ? const SizedBox.shrink()
+                  : buildPrimary(context),
+            ),
+            routes: routes,
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
+/// 首页文章详情自适应路由。
+GoRoute _articleDetailRoute() => GoRoute(
+  path: 'article/:id',
+  pageBuilder: (context, state) {
+    final child = ArticleDetailPage(id: state.pathParameters['id']!);
+    return createAdaptiveDetailPage(
+      context: context,
+      key: state.pageKey,
+      child: child,
     );
+  },
+);
 
 // 管理和编辑保持在来源分支内；直接深链也能返回该来源的管理页。
 List<GoRoute> _cardEditorRoutes(String source) => [
@@ -365,12 +345,16 @@ List<GoRoute> _cardEditorRoutes(String source) => [
 
 /// 注册详情路由，并为宽屏详情提供返回来源的回调。
 ///
+/// [path] 详情子路由路径段。
+/// [buildDetail] 详情组件构建回调，宽屏时提供返回回调，窄屏为 null。
+/// [source] 来源分支主路径，用于宽屏无法弹出时回退跳转。
+///
 /// 宽屏优先弹出详情所在的内层 Navigator；无法弹出时跳转到 [source]。
 /// 窄屏传入 null，由详情页沿用默认返回逻辑；页面动画交给 [createAdaptiveDetailPage]。
 GoRoute _adaptiveDetailRoute(
   String path,
   Widget Function(VoidCallback? onBack) buildDetail, {
-  String source = AppRoutes.MENU,
+  required String source,
 }) => GoRoute(
   path: path,
   pageBuilder: (context, state) {

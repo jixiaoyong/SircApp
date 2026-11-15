@@ -53,6 +53,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     // 监听加载与登录结果副作用
     ref.listen<SignInState>(signInControllerProvider, (previous, next) {
       if (previous?.isLoading != true && next.isLoading) {
+        // 登录中，显示加载对话框防止重复点击
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -66,11 +67,13 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           ),
         );
       } else if (previous?.isLoading == true && !next.isLoading) {
+        // 登录完成，隐藏加载对话框
         Navigator.of(context, rootNavigator: true).pop();
       }
 
       if (previous?.isLoginSuccess != next.isLoginSuccess &&
           next.isLoginSuccess != null) {
+        // 有登录结果，根据结果跳转
         if (next.isLoginSuccess == true) {
           if (context.canPop()) {
             context.pop(true);
@@ -222,47 +225,11 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                             ],
                           ),
                         ),
-                        SizedBox(
-                          height: 50.toDouble(),
-                          width: double.infinity,
-                          child: Center(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                final item = state.socialList[index];
-                                return GestureDetector(
-                                  onTap: () {
-                                    notifier.loginWith(item);
-                                  },
-                                  child: Container(
-                                    height: 50.toDouble(),
-                                    width: 50.toDouble(),
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: 10.toDouble(),
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                        14.toDouble(),
-                                      ),
-                                      border: Border.all(
-                                        color: colors.outline,
-                                        width: 1.25,
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: Icon(
-                                        item.$1,
-                                        color: colors.onSurface,
-                                        size: iconSize,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                              itemCount: state.socialList.length,
-                              scrollDirection: Axis.horizontal,
-                            ),
-                          ),
+                        SocialLoginButtons(
+                          state: state,
+                          notifier: notifier,
+                          colors: colors,
+                          iconSize: iconSize,
                         ),
                         const SizedBox(height: 24),
                         RichText(
@@ -294,6 +261,56 @@ class _SignInPageState extends ConsumerState<SignInPage> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class SocialLoginButtons extends StatelessWidget {
+  const SocialLoginButtons({
+    super.key,
+    required this.state,
+    required this.notifier,
+    required this.colors,
+    required this.iconSize,
+  });
+
+  final SignInState state;
+  final SignInController notifier;
+  final ColorScheme colors;
+  final double iconSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50.toDouble(),
+      width: double.infinity,
+      child: Center(
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            final item = state.socialList[index];
+            return GestureDetector(
+              onTap: () {
+                notifier.loginWith(item);
+              },
+              child: Container(
+                height: 50.toDouble(),
+                width: 50.toDouble(),
+                margin: EdgeInsets.symmetric(horizontal: 10.toDouble()),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14.toDouble()),
+                  border: Border.all(color: colors.outline, width: 1.25),
+                ),
+                child: Center(
+                  child: Icon(item.$1, color: colors.onSurface, size: iconSize),
+                ),
+              ),
+            );
+          },
+          itemCount: state.socialList.length,
+          scrollDirection: Axis.horizontal,
         ),
       ),
     );
