@@ -100,7 +100,7 @@ class SettingsEn implements SettingsLang {
       'No transaction notifications for these filters';
   @override
   String get undatedNotifications =>
-      '{count} records have no parseable date (for example “Just now”) and are excluded from time filters.';
+      '{count} records lack a valid ISO date or zoned time and are excluded from time filters.';
   @override
   String get transactionsLoadFailed =>
       'Unable to load transactions. Please try again later.';

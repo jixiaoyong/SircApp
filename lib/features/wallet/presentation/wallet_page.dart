@@ -9,12 +9,14 @@ import 'package:sirc/core/localization/transaction_localization.dart';
 import 'package:sirc/core/theme/app_colors.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
+import 'package:sirc/features/wallet/domain/utils/compact_amount_formatter.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/bank_card_widget.dart';
 import 'package:sirc/features/wallet/domain/models/bank_card.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/page_gutter.dart';
+import 'package:sirc/utils/date_time_formatter.dart';
 
 class WalletPage extends ConsumerWidget {
   const WalletPage({super.key, this.onMenuTap});
@@ -132,7 +134,11 @@ class WalletPage extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            [Languages.wallet.thisWeekSpending, Languages.wallet.thisWeekIncome, Languages.wallet.thisWeekTotalVolume][state.currentFilterIndex],
+            [
+              Languages.wallet.thisWeekSpending,
+              Languages.wallet.thisWeekIncome,
+              Languages.wallet.thisWeekTotalVolume,
+            ][state.currentFilterIndex],
             style: TextStyle(fontSize: 11, color: AppColors.muted(context)),
           ),
           WalletBars(values: weeklyAmounts),
@@ -381,26 +387,46 @@ class _WalletCardCarouselState extends State<WalletCardCarousel> {
   }
 }
 
-/// HTML .seg: a soft-grey group with a raised neutral selected surface.
+/// 中性分段切换器
+///
+/// 用于在多个分类或时间范围（如关注/热门/探索、周/月）之间切换。
+/// [labels] 为各选项文本列表；[selected] 为当前选中索引；
+/// [onSelected] 为切换回调；[keyPrefix] 为语义与测试键前缀；
+/// [borderRadius] 为外部圆角，吸顶满幅时可传 [BorderRadius.zero]。
 class NeutralSegments extends StatelessWidget {
+  /// 创建中性分段切换器
   const NeutralSegments({
     super.key,
     required this.labels,
     required this.selected,
     required this.onSelected,
     required this.keyPrefix,
+    this.borderRadius,
   });
+
+  /// 选项文本列表
   final List<String> labels;
+
+  /// 当前选中索引
   final int selected;
+
+  /// 选中回调
   final ValueChanged<int> onSelected;
+
+  /// 键前缀
   final String keyPrefix;
 
+  /// 外部圆角，默认为 11 像素
+  final BorderRadius? borderRadius;
+
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => AnimatedContainer(
+    duration: const Duration(milliseconds: 200),
+    curve: Curves.easeInOut,
     padding: const EdgeInsets.all(4),
     decoration: BoxDecoration(
       color: AppColors.field(context),
-      borderRadius: BorderRadius.circular(11),
+      borderRadius: borderRadius ?? BorderRadius.circular(11),
     ),
     child: Row(
       children: [
@@ -553,7 +579,11 @@ class WalletDataNotice extends StatelessWidget {
     return Tooltip(
       message: Languages.undatedRecordsTooltip.replaceAll(
         '{date}',
-        '${now.year}-${now.month}-${now.day}',
+        AppDateTimeFormatter.date(
+          now,
+          locale: Localizations.localeOf(context),
+          languages: AppLocale.current,
+        ),
       ),
       child: Text(
         Languages.undatedRecordsExcluded.replaceAll(
@@ -566,7 +596,7 @@ class WalletDataNotice extends StatelessWidget {
   }
 }
 
-class WalletTransactionRow extends StatelessWidget {
+class WalletTransactionRow extends ConsumerWidget {
   const WalletTransactionRow({
     super.key,
     required this.transaction,
@@ -576,15 +606,20 @@ class WalletTransactionRow extends StatelessWidget {
   final String heroTag;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final data = transaction.localizedPlaceholders;
     final expense = (data.moneyAmount ?? 0) < 0;
+    final locale = ref.watch(localeProvider);
+    final units = AppLocale.current.wallet.compactAmountUnits;
     final amount =
-        '${expense ? '−' : '+'} \$ ${(data.moneyAmount ?? 0).abs().toStringAsFixed(2)}';
+        '${expense ? '−' : '+'} \$ ${CompactAmountFormatter.format(data.moneyAmount ?? 0, units: units)}';
     final tag = heroTag;
     final trailing = Text(
       amount,
+      maxLines: 1,
+      softWrap: false,
       style: TextStyle(
+        fontSize: 12,
         fontWeight: FontWeight.w600,
         color: expense ? AppColors.expense(context) : AppColors.income(context),
       ),
@@ -651,7 +686,11 @@ class WalletTransactionRow extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          data.time ?? '',
+                          AppDateTimeFormatter.display(
+                            data.time,
+                            locale: locale,
+                            languages: AppLocale.current,
+                          ),
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(color: AppColors.muted(context)),
                         ),

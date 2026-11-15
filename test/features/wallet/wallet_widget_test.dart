@@ -1,14 +1,26 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
-import 'package:sirc/l10n/languages.g.dart';
 import 'package:sirc/features/wallet/domain/models/bank_card.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 import 'package:sirc/features/wallet/presentation/history_page.dart';
 import 'package:sirc/features/wallet/presentation/transaction_detail_page.dart';
+import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/presentation/person_page.dart';
+
+class _TestLocaleNotifier extends LocaleNotifier {
+  _TestLocaleNotifier(this.locale);
+  final Locale locale;
+
+  @override
+  Locale build() {
+    AppLocale.setLocale(locale);
+    return locale;
+  }
+}
 
 class TestWalletController extends WalletController {
   @override
@@ -48,6 +60,7 @@ class TestWalletController extends WalletController {
 }
 
 void main() {
+  setUpAll(() => initializeDateFormatting());
   testWidgets(
     'chart has narrow proportional bars, no tracks and honest zeros',
     (tester) async {
@@ -151,42 +164,57 @@ void main() {
     expect(find.text(Languages.wallet.noCardsYet), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
-  for (final dark in [false, true]) {
+  for (final locale in [const Locale('zh'), const Locale('en')]) {
     testWidgets(
-      'wallet transaction long content and amount at 320, scale 2, dark $dark',
+      'wallet transaction long content and amount at 320, scale 2, locale ${locale.languageCode}',
       (tester) async {
         tester.view.physicalSize = const Size(320, 1200);
         tester.view.devicePixelRatio = 1;
         addTearDown(tester.view.reset);
         await tester.pumpWidget(
-          MaterialApp(
-            theme: ThemeData(
-              brightness: dark ? Brightness.dark : Brightness.light,
-            ),
-            builder: (context, child) => MediaQuery(
-              data: MediaQuery.of(context)
-                  .copyWith(textScaler: const TextScaler.linear(2)),
-              child: child!,
-            ),
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: WalletTransactionList(
-                  heroPrefix: 'test-',
-                  designStyle: true,
-                  items: [
-                    Transaction(
-                      moneyActionName: 'A very long merchant name with a detailed payment description',
-                      time: '2026-11-10T12:30:00',
-                      moneyAmount: -123456789.99,
-                    ),
-                  ],
+          ProviderScope(
+            overrides: [
+              localeProvider.overrideWith(() => _TestLocaleNotifier(locale)),
+            ],
+            child: MaterialApp(
+              theme: ThemeData(brightness: Brightness.light),
+              locale: locale,
+              builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: const TextScaler.linear(2)),
+                child: child!,
+              ),
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: WalletTransactionList(
+                    heroPrefix: 'test-',
+                    designStyle: true,
+                    items: [
+                      Transaction(
+                        moneyActionName: 'A very long merchant name with a detailed payment description',
+                        time: DateTime(
+                          2026,
+                          11,
+                          10,
+                          12,
+                          30,
+                        ).toUtc().toIso8601String(),
+                        moneyAmount: -123456789.99,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         );
         expect(tester.takeException(), isNull);
-        expect(find.text('− \$ 123456789.99'), findsOneWidget);
+        expect(
+          find.text(
+            locale.languageCode == 'zh' ? '− \$ 1.23亿' : '− \$ 123.46M',
+          ),
+          findsOneWidget,
+        );
       },
     );
   }
@@ -315,8 +343,8 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('history-period-1')));
     await tester.pump();
     expect(find.text('Salary'), findsNothing);
-    expect(find.text('Undated'), findsOneWidget);
-    expect(find.text('\$ 30.00'), findsOneWidget);
+    expect(find.text('Undated'), findsNothing);
+    expect(find.text('\$ 20.00'), findsOneWidget);
     expect(find.byKey(const ValueKey('bar-0-20.0')), findsOneWidget);
     await tester.enterText(find.byType(TextFormField), 'Salary');
     await tester.pump();
@@ -358,11 +386,11 @@ void main() {
     expect(find.text('Salary'), findsOneWidget);
     expect(
       tester.widget<Text>(find.byKey(const ValueKey('wallet-total'))).data,
-      '+ \$ 10.00',
+      '+ \$ 0.00',
     );
     await tester.tap(find.byKey(const ValueKey('wallet-filter-2')));
     await tester.pump();
-    expect(find.text('\$ 30.00'), findsOneWidget);
+    expect(find.text('\$ 20.00'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

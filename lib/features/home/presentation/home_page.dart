@@ -1,3 +1,4 @@
+import 'dart:ui' show lerpDouble;
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart'
     hide SizeExtension;
@@ -15,17 +16,35 @@ import 'package:go_router/go_router.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/features/home/data/article_repository.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
+import 'package:sirc/features/wallet/domain/utils/compact_amount_formatter.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/jingang_widget.dart';
 import 'package:sirc/features/home/presentation/home_transaction_chart.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/page_gutter.dart';
 
-class HomePage extends ConsumerWidget {
+/// 应用主页
+///
+/// 展示用户信息、快捷操作、收支图表、交易概览及文章列表。
+class HomePage extends ConsumerStatefulWidget {
+  /// 创建应用主页
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  final ValueNotifier<double> _scrollOffset = ValueNotifier<double>(0.0);
+
+  @override
+  void dispose() {
+    _scrollOffset.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     ref.watch(localeProvider);
     final homeState = ref.watch(homeControllerProvider);
     final userAvatar = ref.watch(
@@ -42,28 +61,52 @@ class HomePage extends ConsumerWidget {
         children: [
           SafeArea(
             bottom: false,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 30, 0),
-                child: GestureDetector(
-                  key: const ValueKey('home-avatar'),
-                  onTap: () => ref
-                      .read(navigationControllerProvider.notifier)
-                      .openDrawer(),
-                  child: ClipOval(
-                    child: NetworkWebImage(
-                      userAvatar,
-                      size: const Size(50, 50),
-                      fit: BoxFit.cover,
+            child: ValueListenableBuilder<double>(
+              valueListenable: _scrollOffset,
+              builder: (context, offset, child) {
+                // 向上滚动时平滑缩小头像并收起下边距，为下方内容释放纵向空间
+                final progress = (offset / 50.0).clamp(0.0, 1.0);
+                final curveProgress = Curves.easeInOut.transform(progress);
+                final avatarSize = lerpDouble(50.0, 34.0, curveProgress)!;
+                final topPadding = lerpDouble(12.0, 6.0, curveProgress)!;
+                final bottomPadding = lerpDouble(35.0, 10.0, curveProgress)!;
+                final rightPadding = lerpDouble(30.0, 24.0, curveProgress)!;
+
+                return Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      20,
+                      topPadding,
+                      rightPadding,
+                      bottomPadding,
+                    ),
+                    child: GestureDetector(
+                      key: const ValueKey('home-avatar'),
+                      onTap: () => ref
+                          .read(navigationControllerProvider.notifier)
+                          .openDrawer(),
+                      child: ClipOval(
+                        child: NetworkWebImage(
+                          userAvatar,
+                          size: Size(avatarSize, avatarSize),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (notification.depth == 0) {
+                  _scrollOffset.value = notification.metrics.pixels;
+                }
+                return false;
+              },
               child: HomeTopBodyWidget(
                 homeState: homeState,
                 userAvatar: userAvatar,
@@ -76,15 +119,22 @@ class HomePage extends ConsumerWidget {
   }
 }
 
-/// 首页顶部可滚动内容区
+/// 首页可滚动内容区
 class HomeTopBodyWidget extends ConsumerWidget {
+  /// 创建首页内容区
+  ///
+  /// [homeState] 为首页全局状态。
+  /// [userAvatar] 为用户头像资源路径或链接。
   const HomeTopBodyWidget({
     super.key,
     required this.homeState,
     required this.userAvatar,
   });
 
+  /// 首页全局状态
   final HomeState homeState;
+
+  /// 用户头像
   final String userAvatar;
 
   String _quickActionLabel(String title) => title;
@@ -170,42 +220,52 @@ class HomeTopBodyWidget extends ConsumerWidget {
         statusBarBrightness: dark ? Brightness.dark : Brightness.light,
       ),
       child: SafeArea(
+        top: false,
+        bottom: false,
         child: PageGutter(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: LayoutScope(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final beside =
-                      ResponsiveQuery.of(context).width >= 760 &&
-                      MediaQuery.textScalerOf(context).scale(14) < 24;
+          child: LayoutScope(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final beside =
+                    ResponsiveQuery.of(context).width >= 760 &&
+                    MediaQuery.textScalerOf(context).scale(14) < 24;
+                final content = Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    headerAndCards,
+                    const SizedBox(height: 18),
+                    if (beside)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: graph),
+                          const SizedBox(width: 22),
+                          const Expanded(child: HomeSummaryCards()),
+                        ],
+                      )
+                    else ...[
+                      graph,
+                      const SizedBox(height: 18),
+                      const HomeSummaryCards(),
+                    ],
+                    const SizedBox(height: 18),
+                    const HomeTransactionsPanel(),
+                    const SizedBox(height: 18),
+                  ],
+                );
+                if (Scrollable.maybeOf(context) != null) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      headerAndCards,
-                      const SizedBox(height: 18),
-                      if (beside)
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(child: graph),
-                            const SizedBox(width: 22),
-                            const Expanded(child: HomeSummaryCards()),
-                          ],
-                        )
-                      else ...[
-                        graph,
-                        const SizedBox(height: 18),
-                        const HomeSummaryCards(),
-                      ],
-                      const SizedBox(height: 18),
-                      const HomeTransactionsPanel(),
-                      const SizedBox(height: 18),
-                      const HomeArticlesPanel(),
-                    ],
+                    children: [content, const HomeArticlesPanel()],
                   );
-                },
-              ),
+                }
+                return CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(child: content),
+                    HomeArticlesPanel.sliver(),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -558,6 +618,7 @@ class HomeSummaryCards extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(localeProvider);
     final transactions = ref.watch(walletControllerProvider).allTransactions;
+    final compactUnits = AppLocale.current.wallet.compactAmountUnits;
     final amounts = [
       transactions
           .where((e) => (e.moneyAmount ?? 0) < 0)
@@ -599,14 +660,21 @@ class HomeSummaryCards extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                '${i == 0 ? '−' : '+'} \$${amounts[i].toStringAsFixed(2)}',
-                style: TextStyle(
-                  fontSize: 23,
-                  fontWeight: FontWeight.w600,
-                  color: i == 0
-                      ? AppColors.expense(context)
-                      : AppColors.income(context),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '${i == 0 ? '−' : '+'} \$${CompactAmountFormatter.format(amounts[i], units: compactUnits)}',
+                  key: ValueKey('home-summary-amount-$i'),
+                  maxLines: 1,
+                  softWrap: false,
+                  style: TextStyle(
+                    fontSize: 23,
+                    fontWeight: FontWeight.w600,
+                    color: i == 0
+                        ? AppColors.expense(context)
+                        : AppColors.income(context),
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
@@ -649,8 +717,22 @@ class HomeSummaryCards extends ConsumerWidget {
   }
 }
 
+/// 展示本地文章面板
+///
+/// 默认构造函数创建普通盒模型 Widget，适用于非 Sliver 环境（如普通列表或单元测试）；
+/// [HomeArticlesPanel.sliver] 构造函数返回 [SliverMainAxisGroup]，在 [CustomScrollView] 中提供分类栏局域吸顶体验。
 class HomeArticlesPanel extends ConsumerStatefulWidget {
-  const HomeArticlesPanel({super.key});
+  /// 创建普通盒模型文章面板
+  ///
+  /// [enableSticky] 是否启用吸顶。普通盒模型下默认为 false。
+  const HomeArticlesPanel({super.key, this.enableSticky = false});
+
+  /// 作为 [SliverMainAxisGroup] 提供局域吸顶（Scoped Sticky Header）的分类文章列表。
+  const HomeArticlesPanel.sliver({super.key}) : enableSticky = true;
+
+  /// 是否启用吸顶
+  final bool enableSticky;
+
   @override
   ConsumerState<HomeArticlesPanel> createState() => _HomeArticlesPanelState();
 }
@@ -658,82 +740,218 @@ class HomeArticlesPanel extends ConsumerStatefulWidget {
 class _HomeArticlesPanelState extends ConsumerState<HomeArticlesPanel> {
   int selected = 0;
 
+  Widget _buildHeading() {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            Languages.articles,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
+        ),
+        Text(
+          Languages.home.localExamples,
+          style: TextStyle(fontSize: 10, color: AppColors.muted(context)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSegments({
+    Key? key,
+    required String keyPrefix,
+    bool isPinned = false,
+  }) {
+    return NeutralSegments(
+      key: key,
+      labels: [Languages.follow, Languages.hot, Languages.explore],
+      selected: selected,
+      onSelected: (i) => setState(() => selected = i),
+      keyPrefix: keyPrefix,
+      borderRadius: isPinned ? BorderRadius.zero : BorderRadius.circular(11),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final locale = ref.watch(localeProvider);
     final articlesState = ref.watch(articleGroupsProvider(locale));
-    return WalletPanel(
-      key: const ValueKey('home-articles'),
-      minimumHeight: 224,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+
+    final articleItems = articlesState.when(
+      loading: () => [
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      ],
+      error: (error, stack) => [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
             children: [
-              Expanded(
-                child: Text(
-                  Languages.articles,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Text(
-                Languages.home.localExamples,
-                style: TextStyle(fontSize: 10, color: AppColors.muted(context)),
+              Text(Languages.common.loadFailed),
+              TextButton(
+                onPressed: () => ref.invalidate(articleGroupsProvider(locale)),
+                child: Text(Languages.common.retry),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          NeutralSegments(
-            labels: [Languages.follow, Languages.hot, Languages.explore],
-            selected: selected,
-            onSelected: (i) => setState(() => selected = i),
-            keyPrefix: 'article-segment',
-          ),
-          const SizedBox(height: 14),
-          ...articlesState.when(
-            loading: () => [
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            ],
-            error: (error, stack) => [
+        ),
+      ],
+      data: (groups) => selected >= groups.length || groups[selected].isEmpty
+          ? [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Column(
-                  children: [
-                    Text(Languages.common.loadFailed),
-                    TextButton(
-                      onPressed: () => ref.invalidate(articleGroupsProvider(locale)),
-                      child: Text(Languages.common.retry),
-                    ),
-                  ],
-                ),
+                child: Text(Languages.common.notFound),
               ),
+            ]
+          : [
+              for (var i = 0; i < groups[selected].length; i++) ...[
+                if (i > 0) Divider(height: 1, color: AppColors.line(context)),
+                _RepositoryArticleItem(
+                  article: groups[selected][i],
+                  group: selected,
+                  index: i,
+                ),
+              ],
             ],
-            data: (groups) => selected >= groups.length || groups[selected].isEmpty
-                ? [Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Text(Languages.common.notFound),
-                  )]
-                : [
-                    for (var i = 0; i < groups[selected].length; i++) ...[
-                      if (i > 0) Divider(height: 1, color: AppColors.line(context)),
-                      _RepositoryArticleItem(
-                        article: groups[selected][i],
-                        group: selected,
-                        index: i,
-                      ),
-                    ],
-                  ],
+    );
+
+    if (!widget.enableSticky) {
+      return WalletPanel(
+        key: const ValueKey('home-articles'),
+        minimumHeight: 224,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeading(),
+            const SizedBox(height: 12),
+            _buildSegments(keyPrefix: 'article-segment'),
+            const SizedBox(height: 14),
+            ...articleItems,
+          ],
+        ),
+      );
+    }
+
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+    final borderColor = AppColors.line(context);
+
+    final sectionStart = SliverToBoxAdapter(
+      child: Container(
+        key: const ValueKey('home-articles'),
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+          border: Border(
+            top: BorderSide(color: borderColor),
+            left: BorderSide(color: borderColor),
+            right: BorderSide(color: borderColor),
           ),
-        ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+        child: _buildHeading(),
       ),
     );
+
+    final stickySegments = SliverPersistentHeader(
+      pinned: true,
+      delegate: _ArticleSegmentsHeaderDelegate(
+        builder: (context, isPinned) => _buildSegments(
+          keyPrefix: 'article-segment',
+          isPinned: isPinned,
+        ),
+      ),
+    );
+
+    final sectionEnd = SliverToBoxAdapter(
+      child: Container(
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(14)),
+          border: Border(
+            left: BorderSide(color: borderColor),
+            right: BorderSide(color: borderColor),
+            bottom: BorderSide(color: borderColor),
+          ),
+        ),
+        clipBehavior: Clip.antiAlias,
+        padding: const EdgeInsets.only(top: 14, bottom: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: articleItems,
+        ),
+      ),
+    );
+
+    return SliverMainAxisGroup(
+      slivers: [
+        sectionStart,
+        stickySegments,
+        sectionEnd,
+      ],
+    );
   }
+}
+
+/// 文章分类吸顶栏 Delegate
+///
+/// 固定 44 像素高度，在吸顶时展示横向满幅扩展动画、平滑阴影与边框贴合。
+class _ArticleSegmentsHeaderDelegate extends SliverPersistentHeaderDelegate {
+  /// 创建文章分类吸顶栏 Delegate
+  ///
+  /// [builder] 根据是否吸顶构建子组件。
+  const _ArticleSegmentsHeaderDelegate({required this.builder});
+
+  /// 吸顶栏子组件构建函数
+  final Widget Function(BuildContext context, bool isPinned) builder;
+
+  @override
+  double get minExtent => 44.0;
+
+  @override
+  double get maxExtent => 44.0;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    final isPinned = shrinkOffset > 0 || overlapsContent;
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+    final borderColor = AppColors.line(context);
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+      height: 44.0,
+      alignment: Alignment.topCenter,
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        border: Border(
+          left: BorderSide(color: borderColor),
+          right: BorderSide(color: borderColor),
+        ),
+        boxShadow: isPinned
+            ? [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: isPinned ? 0 : 16),
+      child: builder(context, isPinned),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _ArticleSegmentsHeaderDelegate oldDelegate) =>
+      true;
 }
 
 class _RepositoryArticleItem extends StatelessWidget {

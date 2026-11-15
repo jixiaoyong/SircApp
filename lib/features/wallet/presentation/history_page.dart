@@ -31,7 +31,7 @@ class HistoryPage extends ConsumerWidget {
     // All/month views group the visible dated records by weekday, not a fake week.
     final buckets = List<double>.filled(7, 0);
     for (final item in items) {
-      final date = WalletState.transactionDate(item, now: state.referenceDate);
+      final date = WalletState.transactionDate(item);
       if (date != null) {
         buckets[date.weekday - 1] += (item.moneyAmount ?? 0).abs();
       }

@@ -52,9 +52,9 @@ class WalletState {
     this.errorMessage,
   });
 
-  /// Relative labels have day-level precision only; never invent a time of day.
-  static DateTime? transactionDate(Transaction transaction, {DateTime? now}) {
-    return TransactionDateParser.parse(transaction, now: now);
+  /// 解析 [transaction] 的 ISO 时间或独立日期；非法值保持未知。
+  static DateTime? transactionDate(Transaction transaction) {
+    return TransactionDateParser.parse(transaction);
   }
 
   List<Transaction> get walletTransactions => allTransactions.where((item) {
@@ -76,7 +76,7 @@ class WalletState {
       return false;
     }
     if (historyPeriod == 0) return true;
-    final date = transactionDate(item, now: referenceDate);
+    final date = transactionDate(item);
     if (date == null) return false;
     final now = referenceDate ?? DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -89,9 +89,8 @@ class WalletState {
     return !date.isBefore(start) && date.isBefore(end);
   }).toList();
 
-  int get undatedCount => allTransactions
-      .where((item) => transactionDate(item, now: referenceDate) == null)
-      .length;
+  int get undatedCount =>
+      allTransactions.where((item) => transactionDate(item) == null).length;
 
   List<double> weeklyAmounts(
     List<Transaction> items, {

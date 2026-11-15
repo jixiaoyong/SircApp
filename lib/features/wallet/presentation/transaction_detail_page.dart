@@ -6,6 +6,7 @@ import 'package:sirc/core/theme/app_colors.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 import 'package:sirc/utils/number_extension.dart';
+import 'package:sirc/utils/date_time_formatter.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 
@@ -32,7 +33,7 @@ class TransactionDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(localeProvider);
+    final locale = ref.watch(localeProvider);
     final transaction = data;
     final appBar = OneTitleWithBackButtonAppBar(
       title: Languages.wallet.transactionDetails,
@@ -87,7 +88,11 @@ class TransactionDetailPage extends ConsumerWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      transaction.time ?? '',
+                      AppDateTimeFormatter.display(
+                        transaction.time,
+                        locale: locale,
+                        languages: AppLocale.current,
+                      ),
                       style: TextStyle(color: AppColors.muted(context)),
                     ),
                     const SizedBox(height: 32),
@@ -117,7 +122,13 @@ class TransactionDetailPage extends ConsumerWidget {
                             style: TextStyle(color: AppColors.muted(context)),
                           ),
                           const SizedBox(height: 8),
-                          Text(transaction.time ?? ''),
+                          Text(
+                            AppDateTimeFormatter.display(
+                              transaction.time,
+                              locale: locale,
+                              languages: AppLocale.current,
+                            ),
+                          ),
                         ],
                       ),
                     ),

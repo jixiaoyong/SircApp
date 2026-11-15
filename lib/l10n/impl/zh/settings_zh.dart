@@ -96,7 +96,7 @@ class SettingsZh implements SettingsLang {
   @override
   String get notificationEmptyState => '当前筛选下暂无交易通知';
   @override
-  String get undatedNotifications => '{count} 条记录缺少可解析日期（如“刚刚”），未纳入时间筛选。';
+  String get undatedNotifications => '{count} 条记录缺少有效 ISO 日期或含时区的时间，未纳入时间筛选。';
   @override
   String get transactionsLoadFailed => '交易加载失败，请稍后重试。';
   @override

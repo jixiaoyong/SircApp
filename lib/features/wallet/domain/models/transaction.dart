@@ -27,6 +27,9 @@ class Transaction {
   String? userIcon;
   String? moneyActionName;
   double? moneyAmount;
+
+  /// ISO 8601 时间（必须含 Z 或 offset），或独立日历日期 YYYY-MM-DD。
+  /// 不存储本地化文案或缺少时区的完整时间。
   String? time;
   String? id;
   String? nameZh;

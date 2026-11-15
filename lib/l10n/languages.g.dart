@@ -514,8 +514,8 @@ class Languages {
   ///- [en_US] MTWTFSS
   static String get thisWeekdayLabel => wallet.thisWeekdayLabel;
 
-  ///- [zh_CN] 按设备日期 {date} 统计，支持今天、昨天和 ISO 日期。
-  ///- [en_US] Grouped using device date {date}; supports Today, Yesterday and ISO dates.
+  ///- [zh_CN] 按设备日期 {date} 统计，支持含时区的 ISO 时间及独立日期。
+  ///- [en_US] Grouped using device date {date}; supports zoned ISO times and date-only values.
   static String get undatedRecordsTooltip => wallet.undatedRecordsTooltip;
 
   ///- [zh_CN] {count} 笔日期未识别，未计入图表
@@ -885,8 +885,8 @@ class Languages {
   ///- [en_US] No transaction notifications for these filters
   static String get notificationEmptyState => settings.notificationEmptyState;
 
-  ///- [zh_CN] {count} 条记录缺少可解析日期（如“刚刚”），未纳入时间筛选。
-  ///- [en_US] {count} records have no parseable date (for example “Just now”) and are excluded from time filters.
+  ///- [zh_CN] {count} 条记录缺少有效 ISO 日期或含时区的时间，未纳入时间筛选。
+  ///- [en_US] {count} records lack a valid ISO date or zoned time and are excluded from time filters.
   static String get undatedNotifications => settings.undatedNotifications;
 
   ///- [zh_CN] 交易加载失败，请稍后重试。
@@ -1055,6 +1055,22 @@ class Languages {
   ///- [en_US] Unable to load content. Please try again.
   static String get loadFailed => common.loadFailed;
 
+  ///- [zh_CN] yyyy年M月d日 HH:mm:ss
+  ///- [en_US] yyyy-MM-dd HH:mm:ss
+  static String get fullDateTimePattern => common.fullDateTimePattern;
+
+  ///- [zh_CN] yyyy年M月d日
+  ///- [en_US] yyyy-MM-dd
+  static String get dateOnlyPattern => common.dateOnlyPattern;
+
+  ///- [zh_CN] 今天
+  ///- [en_US] Today
+  static String get today => common.today;
+
+  ///- [zh_CN] 昨天
+  ///- [en_US] Yesterday
+  static String get yesterday => common.yesterday;
+
   // ==========================================
   // 三、 兼容字典映射 (供 AppLocale.translate 兜底查找)
   // ==========================================
@@ -1197,7 +1213,7 @@ class Languages {
       "This week · income": "This week · income",
       "This week · total volume": "This week · total volume",
       "MTWTFSS": "MTWTFSS",
-      "Grouped using device date {date}; supports Today, Yesterday and ISO dates.": "Grouped using device date {date}; supports Today, Yesterday and ISO dates.",
+      "Grouped using device date {date}; supports zoned ISO times and date-only values.": "Grouped using device date {date}; supports zoned ISO times and date-only values.",
       "{count} undated records excluded": "{count} undated records excluded",
       "Home": "Home",
       "Home": "Home",
@@ -1295,7 +1311,7 @@ class Languages {
       "Transaction notifications": "Transaction notifications",
       "No transaction notifications for these filters":
           "No transaction notifications for these filters",
-      "{count} records have no parseable date (for example “Just now”) and are excluded from time filters.": "{count} records have no parseable date (for example “Just now”) and are excluded from time filters.",
+      "{count} records lack a valid ISO date or zoned time and are excluded from time filters.": "{count} records lack a valid ISO date or zoned time and are excluded from time filters.",
       "Unable to load transactions. Please try again later.":
           "Unable to load transactions. Please try again later.",
       "No transaction notifications for these filters":
@@ -1342,6 +1358,10 @@ class Languages {
       "Retry": "Retry",
       "Unable to load content. Please try again.":
           "Unable to load content. Please try again.",
+      "yyyy-MM-dd HH:mm:ss": "yyyy-MM-dd HH:mm:ss",
+      "yyyy-MM-dd": "yyyy-MM-dd",
+      "Today": "Today",
+      "Yesterday": "Yesterday",
     },
     "zh_CN": {
       "Sign In": "登录",
@@ -1463,8 +1483,8 @@ class Languages {
       "This week · income": "本周收入",
       "This week · total volume": "本周交易总额",
       "MTWTFSS": "一二三四五六日",
-      "Grouped using device date {date}; supports Today, Yesterday and ISO dates.":
-          "按设备日期 {date} 统计，支持今天、昨天和 ISO 日期。",
+      "Grouped using device date {date}; supports zoned ISO times and date-only values.":
+          "按设备日期 {date} 统计，支持含时区的 ISO 时间及独立日期。",
       "{count} undated records excluded": "{count} 笔日期未识别，未计入图表",
       "Home": "首页",
       "Home": "首页",
@@ -1562,8 +1582,8 @@ class Languages {
           "按类别和时间查阅已有交易。当前无独立通知服务；类别由交易名称识别，未识别的归入其他。",
       "Transaction notifications": "交易通知",
       "No transaction notifications for these filters": "当前筛选下暂无交易通知",
-      "{count} records have no parseable date (for example “Just now”) and are excluded from time filters.":
-          "{count} 条记录缺少可解析日期（如“刚刚”），未纳入时间筛选。",
+      "{count} records lack a valid ISO date or zoned time and are excluded from time filters.":
+          "{count} 条记录缺少有效 ISO 日期或含时区的时间，未纳入时间筛选。",
       "Unable to load transactions. Please try again later.": "交易加载失败，请稍后重试。",
       "No transaction notifications for these filters": "当前筛选下暂无交易通知",
       "Show password": "显示密码",
@@ -1606,6 +1626,10 @@ class Languages {
       "Go to Home": "返回首页",
       "Retry": "重试",
       "Unable to load content. Please try again.": "内容加载失败，请重试。",
+      "yyyy-MM-dd HH:mm:ss": "yyyy年M月d日 HH:mm:ss",
+      "yyyy-MM-dd": "yyyy年M月d日",
+      "Today": "今天",
+      "Yesterday": "昨天",
     },
   };
 }

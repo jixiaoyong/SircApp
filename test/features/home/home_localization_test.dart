@@ -284,7 +284,8 @@ void main() {
         );
       }
       await tester.drag(activePages, const Offset(-350, 0));
-      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 500));
       expect(controller.page, closeTo(1, .01));
       for (final text in expected.skip(12)) {
         expect(

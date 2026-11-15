@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/storage/storage_service.dart';
@@ -19,22 +20,22 @@ final _today = DateTime(_now.year, _now.month, _now.day);
 List<Transaction> get _records => [
   Transaction(
     moneyActionName: 'Transfer today',
-    time: _today.toIso8601String(),
+    time: _today.toUtc().toIso8601String(),
     moneyAmount: -12,
   ),
   Transaction(
     moneyActionName: 'Recharge today',
-    time: _today.toIso8601String(),
+    time: _today.toUtc().toIso8601String(),
     moneyAmount: 24,
   ),
   Transaction(
     moneyActionName: 'Bill today',
-    time: _today.toIso8601String(),
+    time: _today.toUtc().toIso8601String(),
     moneyAmount: -8,
   ),
   Transaction(
     moneyActionName: 'Unknown dated',
-    time: _today.toIso8601String(),
+    time: _today.toUtc().toIso8601String(),
     moneyAmount: 3,
   ),
   Transaction(
@@ -53,6 +54,7 @@ class _Repository extends WalletRepositoryImpl {
 }
 
 void main() {
+  setUpAll(() => initializeDateFormatting());
   TestWidgetsFlutterBinding.ensureInitialized();
   late ProviderContainer container;
   late SharedPreferences prefs;
@@ -134,23 +136,23 @@ void main() {
     final records = [
       Transaction(
         moneyActionName: 'Transfer week',
-        time: '2026-11-10T10:00:00',
+        time: DateTime(2026, 11, 10, 10).toUtc().toIso8601String(),
       ),
       Transaction(
         moneyActionName: 'Transfer month',
-        time: '2026-11-02T10:00:00',
+        time: DateTime(2026, 11, 2, 10).toUtc().toIso8601String(),
       ),
       Transaction(
         moneyActionName: 'Transfer year',
-        time: '2026-02-02T10:00:00',
+        time: DateTime(2026, 2, 2, 10).toUtc().toIso8601String(),
       ),
       Transaction(
         moneyActionName: 'Transfer previous year',
-        time: '2025-12-02T10:00:00',
+        time: DateTime(2025, 12, 2, 10).toUtc().toIso8601String(),
       ),
       Transaction(
         moneyActionName: 'Transfer future',
-        time: '2027-12-02T10:00:00',
+        time: DateTime(2027, 12, 2, 10).toUtc().toIso8601String(),
       ),
       Transaction(moneyActionName: 'Transfer undated', time: '刚刚'),
     ];

@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:sirc/utils/date_time_formatter.dart';
 import 'package:sirc/core/config/app_author.dart';
 import 'package:sirc/core/layout/app_layout.dart';
 import 'package:sirc/routes/source_detail_navigation.dart';
@@ -520,7 +521,11 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                             Padding(
                               padding: EdgeInsets.only(top: 2),
                               child: Text(
-                                data.time!,
+                                AppDateTimeFormatter.display(
+                                  data.time,
+                                  locale: locale,
+                                  languages: AppLocale.current,
+                                ),
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: textColor.withValues(alpha: 0.8),

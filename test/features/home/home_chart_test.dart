@@ -69,7 +69,7 @@ void main() {
     final data = HomeChartData.aggregate(
       [
         Transaction(time: '2026-11-10T23:00:00Z', moneyAmount: 12),
-        Transaction(time: 'Today', moneyAmount: -8),
+        Transaction(time: '2026-11-20', moneyAmount: -8),
         Transaction(time: '2026-02-30', moneyAmount: 80),
       ],
       HomeChartPeriod.month,
@@ -191,7 +191,7 @@ void main() {
     await tester.pump();
     expect(find.byKey(const ValueKey('home-chart-empty')), findsOneWidget);
     expect(tester.takeException(), isNull);
-    controller.replace([Transaction(time: 'Today', moneyAmount: 0)]);
+    controller.replace([Transaction(time: '2026-11-10', moneyAmount: 0)]);
     await tester.pump();
     expect(find.text('All daily transaction amounts are zero'), findsOneWidget);
     controller.loading();

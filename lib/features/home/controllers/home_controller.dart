@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/wallet/domain/models/bank_card.dart';
@@ -35,33 +37,44 @@ class HomeState {
 /// 首页控制器（纯业务逻辑，不与多语言直接耦合）
 @riverpod
 class HomeController extends _$HomeController {
+  Locale? _loadedLocale;
+
   @override
   HomeState build() {
     final wallet = ref.watch(walletControllerProvider);
     final mock = ref.watch(mockDataRepositoryProvider);
     final locale = ref.watch(localeProvider);
-    Future.microtask(() async {
-      try {
-        final actions = await mock.getQuickActions(locale);
-        if (!ref.mounted) return;
-        state = state.copyWith(
-          quickActions: actions
-              .map(
-                (item) => ImgText(
-                  item['imageUrl'] as String? ?? '',
-                  item['title'] as String? ?? '',
-                ),
-              )
-              .toList(),
-        );
-      } catch (_) {
-        // Keep the UI usable when optional static home content is unavailable.
-      }
-    });
+
+    final previousState = stateOrNull;
+    final cachedActions = previousState?.quickActions ?? const <ImgText>[];
+    final needsFetch = cachedActions.isEmpty || _loadedLocale != locale;
+
+    if (needsFetch) {
+      Future.microtask(() async {
+        try {
+          final actions = await mock.getQuickActions(locale);
+          if (!ref.mounted) return;
+          _loadedLocale = locale;
+          state = state.copyWith(
+            quickActions: actions
+                .map(
+                  (item) => ImgText(
+                    item['imageUrl'] as String? ?? '',
+                    item['title'] as String? ?? '',
+                  ),
+                )
+                .toList(),
+          );
+        } catch (_) {
+          // Keep the UI usable when optional static home content is unavailable.
+        }
+      });
+    }
+
     return HomeState(
       currentBankIndex: wallet.selectedCardIndex,
       banks: wallet.cards,
-      quickActions: const [],
+      quickActions: cachedActions,
     );
   }
 

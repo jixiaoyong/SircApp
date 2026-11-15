@@ -305,4 +305,30 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     expect(() => original.addListener(() {}), throwsFlutterError);
   });
+
+  testWidgets('切换银行卡时保持金刚区快捷入口不被清空，避免下方折线图布局闪现跳动', (tester) async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    final subscription = container.listen(homeControllerProvider, (_, _) {});
+    addTearDown(subscription.close);
+
+    await tester.runAsync(() async {
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    });
+    await tester.pumpAndSettle();
+
+    final initialActions = container.read(homeControllerProvider).quickActions;
+    expect(initialActions, isNotEmpty);
+
+    // 模拟点击切换第二张银行卡
+    container.read(homeControllerProvider.notifier).setBankIndex(1);
+
+    // 紧接着立即读取（未等 microtask），quickActions 必须平滑保留，不可闪现置空为 []
+    final stateImmediatelyAfterSwitch =
+        container.read(homeControllerProvider);
+    expect(stateImmediatelyAfterSwitch.currentBankIndex, 1);
+    expect(stateImmediatelyAfterSwitch.quickActions, isNotEmpty);
+    expect(stateImmediatelyAfterSwitch.quickActions.length,
+        initialActions.length);
+  });
 }

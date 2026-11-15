@@ -40,7 +40,7 @@ class HomeChartData {
     var records = 0;
     final end = DateTime(start.year, start.month, start.day + count);
     for (final transaction in transactions) {
-      final parsed = WalletState.transactionDate(transaction, now: local);
+      final parsed = WalletState.transactionDate(transaction);
       if (parsed == null) {
         undated++;
         continue;

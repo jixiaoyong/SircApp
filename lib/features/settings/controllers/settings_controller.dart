@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
+import 'package:sirc/utils/date_time_formatter.dart';
 
 import '../../../core/localization/app_locale.dart';
 import '../../../core/storage/storage_service.dart';
@@ -97,9 +98,8 @@ class NotificationsState {
   }
 
   DateTime? _dateOf(Transaction item) {
-    final raw = item.time?.trim() ?? '';
-    // "Just now" is deliberately not converted into a fabricated timestamp.
-    return DateTime.tryParse(raw.replaceAll('/', '-'))?.toLocal();
+    // 交易与通知共用 ISO 契约，非法值不补造运行时时间。
+    return AppDateTimeFormatter.parseLocal(item.time);
   }
 
   int get undatedCount =>
