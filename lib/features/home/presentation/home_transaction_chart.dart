@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/controllers/home_chart_data.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
-import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 import 'package:sirc/widgets/line_graph.dart';
+import 'package:sirc/widgets/neutral_segments.dart';
 import 'package:sirc/widgets/title_text.dart';
 
 /// Isolated period selection: never changes Wallet's filters or selected card.

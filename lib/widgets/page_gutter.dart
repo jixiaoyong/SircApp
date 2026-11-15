@@ -24,6 +24,19 @@ class PageGutter extends StatelessWidget {
   final double minGutter;
   final double maxGutter;
 
+  /// 根据可用宽度计算对称留白数值
+  static double gutterFor(
+    double width, {
+    double minGutter = 16,
+    double maxGutter = 32,
+  }) {
+    if (!width.isFinite) return maxGutter;
+    return (minGutter +
+            (maxGutter - minGutter) *
+                ((width - 320) / (560 - 320)).clamp(0.0, 1.0))
+        .clamp(minGutter, maxGutter);
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(

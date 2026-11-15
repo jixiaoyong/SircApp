@@ -14,6 +14,7 @@ import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/utils/number_extension.dart';
 import 'package:sirc/utils/toast.dart';
 import 'package:sirc/widgets/constrained_content.dart';
+import 'package:sirc/features/wallet/domain/utils/transaction_category_helper.dart';
 import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/settings_item_tile.dart';
 import 'package:sirc/core/storage/storage_service.dart';
@@ -339,8 +340,14 @@ class _PersonPageState extends ConsumerState<PersonPage> {
         .fold<double>(0, (sum, e) => sum + (e.moneyAmount ?? 0).abs());
     final email = ref.watch(storageServiceProvider).userEmail ?? navState.userEmail;
     final profileData = profileValue;
-    final displayName = profileData?.name ?? navState.userName;
-    final displayAvatar = profileData?.avatarUrl ?? '';
+    final displayName = (profileData?.name.isNotEmpty == true)
+        ? profileData!.name
+        : (navState.userName.isNotEmpty ? navState.userName : AppAuthor.name);
+    final displayAvatar = (profileData?.avatarUrl.isNotEmpty == true)
+        ? profileData!.avatarUrl
+        : (navState.userAvatar.isNotEmpty
+            ? navState.userAvatar
+            : AppAuthor.avatarUrl);
 
     final generalInformationList = [
       (Icons.email_outlined, Languages.email, AppRoutes.PERSON_EMAIL),
@@ -453,9 +460,7 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                       : transactions.length,
                   itemBuilder: (context, index) {
                     final heroTag = "heroTag_$index";
-                    final data = transactions[index].localizedPlaceholders.copyWith(
-                      userIcon: displayAvatar,
-                    );
+                    final data = transactions[index].localizedPlaceholders;
                     final textColor = AppColors.ink(context);
 
                     return GestureDetector(
@@ -485,18 +490,13 @@ class _PersonPageState extends ConsumerState<PersonPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Hero(
-                              tag: heroTag,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(50),
-                                child: NetworkWebImage(
-                                  data.userIcon?.isNotEmpty == true
-                            ? data.userIcon!
-                            : displayAvatar,
-                                  size: Size.square(50),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+                            TransactionCategoryHelper.buildAdaptiveCategoryAvatar(
+                              context: context,
+                              transaction: data,
+                              heroTag: heroTag,
+                              size: 50,
+                              iconSize: 26,
+                              borderRadius: BorderRadius.circular(50),
                             ),
                             Padding(
                               padding: EdgeInsets.only(top: 5),

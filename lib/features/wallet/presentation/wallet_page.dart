@@ -12,9 +12,9 @@ import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/features/wallet/domain/utils/compact_amount_formatter.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/routes/app_routes.dart';
+import 'package:sirc/features/wallet/domain/utils/transaction_category_helper.dart';
 import 'package:sirc/widgets/bank_card_widget.dart';
 import 'package:sirc/features/wallet/domain/models/bank_card.dart';
-import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/page_gutter.dart';
 import 'package:sirc/utils/date_time_formatter.dart';
 
@@ -643,34 +643,12 @@ class WalletTransactionRow extends ConsumerWidget {
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Hero(
-                    tag: tag,
-                    // Keep the source transaction avatar during both flight directions;
-                    // the resting wallet icon remains neutral as in the design.
-                    flightShuttleBuilder:
-                        (flightContext, animation, direction, from, to) =>
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(11),
-                              child: NetworkWebImage(
-                                data.userIcon ?? '',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: AppColors.line(context).withValues(alpha: 0.4),
-                        borderRadius: BorderRadius.circular(11),
-                      ),
-                      child: Icon(
-                        expense
-                            ? Icons.north_east_rounded
-                            : Icons.south_west_rounded,
-                        color: AppColors.ink(context),
-                        size: 21,
-                      ),
-                    ),
+                  TransactionCategoryHelper.buildAdaptiveCategoryAvatar(
+                    context: context,
+                    transaction: data,
+                    heroTag: tag,
+                    size: 36,
+                    iconSize: 20,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -691,6 +669,8 @@ class WalletTransactionRow extends ConsumerWidget {
                             locale: locale,
                             languages: AppLocale.current,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(color: AppColors.muted(context)),
                         ),

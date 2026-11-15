@@ -1055,7 +1055,7 @@ class Languages {
   ///- [en_US] Unable to load content. Please try again.
   static String get loadFailed => common.loadFailed;
 
-  ///- [zh_CN] yyyy年M月d日 HH:mm:ss
+  ///- [zh_CN] yyyy-MM-dd HH:mm:ss
   ///- [en_US] yyyy-MM-dd HH:mm:ss
   static String get fullDateTimePattern => common.fullDateTimePattern;
 
@@ -1626,7 +1626,7 @@ class Languages {
       "Go to Home": "返回首页",
       "Retry": "重试",
       "Unable to load content. Please try again.": "内容加载失败，请重试。",
-      "yyyy-MM-dd HH:mm:ss": "yyyy年M月d日 HH:mm:ss",
+      "yyyy-MM-dd HH:mm:ss": "yyyy-MM-dd HH:mm:ss",
       "yyyy-MM-dd": "yyyy年M月d日",
       "Today": "今天",
       "Yesterday": "昨天",

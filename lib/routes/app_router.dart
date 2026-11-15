@@ -58,6 +58,14 @@ GoRouter createAppRouter(
   // 同一来源子树在窄屏根 Route 与宽屏窗格间移动，保留滚动及页面状态。
   final personKey = GlobalKey(debugLabel: 'adaptive-person');
   Widget person() => KeyedSubtree(key: personKey, child: const PersonPage());
+  final mainKey = GlobalKey(debugLabel: 'adaptive-main');
+  Widget mainPage() => KeyedSubtree(key: mainKey, child: const HomePage());
+  final walletKey = GlobalKey(debugLabel: 'adaptive-wallet');
+  Widget walletPage() =>
+      KeyedSubtree(key: walletKey, child: const WalletPage());
+  final historyKey = GlobalKey(debugLabel: 'adaptive-history');
+  Widget historyPage() =>
+      KeyedSubtree(key: historyKey, child: const HistoryPage());
   late final GoRouter router;
   router = GoRouter(
     navigatorKey: rootNavigatorKey,
@@ -141,9 +149,9 @@ GoRouter createAppRouter(
           }.contains(state.uri.path),
         ),
         branches: [
-          _sourceBranch(AppRoutes.MAIN, const HomePage()),
-          _sourceBranch(AppRoutes.WALLET, const WalletPage()),
-          _sourceBranch(AppRoutes.HISTORY, const HistoryPage()),
+          _sourceBranch(AppRoutes.MAIN, mainPage),
+          _sourceBranch(AppRoutes.WALLET, walletPage),
+          _sourceBranch(AppRoutes.HISTORY, historyPage),
           StatefulShellBranch(
             routes: [
               ShellRoute(
@@ -252,7 +260,10 @@ GoRouter createAppRouter(
   return router;
 }
 
-StatefulShellBranch _sourceBranch(String source, Widget list) =>
+StatefulShellBranch _sourceBranch(
+  String source,
+  Widget Function() buildPrimary,
+) =>
     StatefulShellBranch(
       routes: [
         ShellRoute(
@@ -260,9 +271,10 @@ StatefulShellBranch _sourceBranch(String source, Widget list) =>
             key: state.pageKey,
             child: AdaptiveDetailLayout(
               hasDetail: state.uri.path != source,
-              primary: list,
+              primary: AppLayout.isWideWindow(context)
+                  ? buildPrimary()
+                  : const SizedBox.shrink(),
               primaryPaneKey: ValueKey('$source-pane'),
-              keepPrimaryMounted: true,
               detail: child,
             ),
           ),
@@ -271,7 +283,9 @@ StatefulShellBranch _sourceBranch(String source, Widget list) =>
               path: source,
               pageBuilder: (context, state) => NoTransitionPage<void>(
                 key: state.pageKey,
-                child: const SizedBox.shrink(),
+                child: AppLayout.isWideWindow(context)
+                    ? const SizedBox.shrink()
+                    : buildPrimary(),
               ),
               routes: [
                 if (source == AppRoutes.WALLET) ...[

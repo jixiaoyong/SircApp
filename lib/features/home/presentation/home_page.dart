@@ -15,12 +15,14 @@ import 'package:sirc/widgets/expandable_page_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/features/home/data/article_repository.dart';
-import 'package:sirc/features/wallet/presentation/wallet_page.dart';
+import 'package:sirc/features/wallet/presentation/wallet_page.dart'
+    hide NeutralSegments;
 import 'package:sirc/features/wallet/domain/utils/compact_amount_formatter.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/jingang_widget.dart';
 import 'package:sirc/features/home/presentation/home_transaction_chart.dart';
 import 'package:sirc/widgets/network_web_image.dart';
+import 'package:sirc/widgets/neutral_segments.dart';
 import 'package:sirc/widgets/page_gutter.dart';
 
 /// 应用主页

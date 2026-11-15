@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/core/theme/app_colors.dart';
+import 'package:sirc/widgets/page_gutter.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/features/wallet/presentation/history_page.dart';
@@ -93,16 +94,16 @@ void main() {
           final listBounds = tester.getRect(
             find.byKey(const ValueKey('history-transaction-container')),
           );
+          expect(searchBounds.bottom, lessThanOrEqualTo(totalBounds.top));
           expect(filtersBounds.top, greaterThan(totalBounds.bottom));
-          expect(searchBounds.top, greaterThan(filtersBounds.bottom));
-          expect(listBounds.top, greaterThan(searchBounds.bottom));
+          expect(listBounds.top, greaterThan(filtersBounds.bottom));
           expect(find.text('Search transactions'), findsOneWidget);
-          expect(find.text('− \$ 1234567.89'), findsOneWidget);
-          final amount = tester.widget<Text>(find.text('− \$ 1234567.89'));
+          expect(find.text('− \$ 1.23M'), findsOneWidget);
+          final amount = tester.widget<Text>(find.text('− \$ 1.23M'));
           final context = tester.element(find.byType(HistoryPage));
           expect(amount.style!.color, AppColors.expense(context));
           expect(
-            tester.getSize(find.text('− \$ 1234567.89')).height,
+            tester.getSize(find.text('− \$ 1.23M')).height,
             greaterThan(0),
           );
           await tester.pumpWidget(const SizedBox());
@@ -151,4 +152,69 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'history filter segments expands to full width only when pinned on narrow screen',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
+      // 1. 窄屏未吸顶状态：具有 gutter 边距
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            walletControllerProvider.overrideWith(HistoryStyleController.new),
+          ],
+          child: MaterialApp(
+            theme: AppTheme.lightTheme,
+            home: const Scaffold(body: HistoryPage()),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final gutter = PageGutter.gutterFor(390.0);
+      final unpinnedRect = tester.getRect(
+        find.byKey(const ValueKey('history-segments')),
+      );
+      expect(unpinnedRect.left, closeTo(gutter, 0.001));
+      expect(unpinnedRect.right, closeTo(390.0 - gutter, 0.001));
+      expect(unpinnedRect.width, closeTo(390.0 - 2 * gutter, 0.001));
+
+      // 2. 向上滚动使筛选器吸顶：窄屏下左右间距移除，占满全宽 390
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -600));
+      await tester.pumpAndSettle();
+
+      final pinnedRect = tester.getRect(
+        find.byKey(const ValueKey('history-segments')),
+      );
+      expect(pinnedRect.left, 0.0);
+      expect(pinnedRect.right, 390.0);
+      expect(pinnedRect.width, 390.0);
+
+      // 3. 宽屏状态：吸顶时依然保留侧边边距
+      tester.view.physicalSize = const Size(1000, 600);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            walletControllerProvider.overrideWith(HistoryStyleController.new),
+          ],
+          child: MaterialApp(
+            theme: AppTheme.lightTheme,
+            home: const Scaffold(body: HistoryPage()),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -600));
+      await tester.pumpAndSettle();
+
+      final widePinnedRect = tester.getRect(
+        find.byKey(const ValueKey('history-segments')),
+      );
+      expect(widePinnedRect.left, greaterThan(0));
+      expect(widePinnedRect.width, lessThan(1000.0));
+    },
+  );
 }

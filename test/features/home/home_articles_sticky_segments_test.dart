@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/data/article_repository.dart';
 import 'package:sirc/features/home/presentation/home_page.dart';
-import 'package:sirc/features/wallet/presentation/wallet_page.dart';
+import 'package:sirc/widgets/neutral_segments.dart';
 
 class _TestLocaleNotifier extends LocaleNotifier {
   _TestLocaleNotifier(this.locale);

@@ -598,6 +598,10 @@ void main() {
       await clickTab(Icons.account_balance_wallet_outlined, AppRoutes.WALLET);
       await clickTab(Icons.av_timer_outlined, AppRoutes.HISTORY);
       expect(scrollState.position.pixels, scrollOffset);
+      if (find.byType(TextField).evaluate().isEmpty) {
+        await tester.drag(scrollable, const Offset(0, 150));
+        await finishTransition(tester);
+      }
       await tester.ensureVisible(find.byType(TextField).first);
       await finishTransition(tester);
       await tester.enterText(find.byType(TextField).first, 'kept search');
@@ -631,6 +635,10 @@ void main() {
         identical(historyElement, tester.element(find.byType(HistoryPage))),
         isTrue,
       );
+      if (find.byType(TextField).evaluate().isEmpty) {
+        await tester.drag(scrollable, const Offset(0, 150));
+        await finishTransition(tester);
+      }
       await tester.enterText(find.byType(TextField).first, '');
       await clickTab(Icons.account_balance_wallet_outlined, AppRoutes.WALLET);
       expect(

@@ -4,10 +4,10 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/theme/app_colors.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
+import 'package:sirc/features/wallet/domain/utils/transaction_category_helper.dart';
 import 'package:sirc/features/wallet/presentation/wallet_page.dart';
 import 'package:sirc/utils/number_extension.dart';
 import 'package:sirc/utils/date_time_formatter.dart';
-import 'package:sirc/widgets/network_web_image.dart';
 import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
 
 /// 钱包业务负责解析旧入口参数与缺失数据；路由不补造交易。
@@ -59,16 +59,13 @@ class TransactionDetailPage extends ConsumerWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 24),
-                    Hero(
-                      tag: heroTag,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
-                        child: NetworkWebImage(
-                          transaction.userIcon ?? '',
-                          size: const Size.square(72),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                    TransactionCategoryHelper.buildAdaptiveCategoryAvatar(
+                      context: context,
+                      transaction: transaction,
+                      heroTag: heroTag,
+                      size: 72,
+                      iconSize: 36,
+                      borderRadius: BorderRadius.circular(18),
                     ),
                     const SizedBox(height: 20),
                     Text(
