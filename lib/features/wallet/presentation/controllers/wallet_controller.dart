@@ -309,11 +309,12 @@ class WalletController extends _$WalletController {
         allTransactions: transactions,
         transactions: state.searchQuery.isNotEmpty
             ? transactions
-                .where((item) =>
-                    '${item.moneyActionName ?? ''} ${item.time ?? ''}'
+                  .where(
+                    (item) => '${item.moneyActionName ?? ''} ${item.time ?? ''}'
                         .toLowerCase()
-                        .contains(state.searchQuery.trim().toLowerCase()))
-                .toList()
+                        .contains(state.searchQuery.trim().toLowerCase()),
+                  )
+                  .toList()
             : transactions.where((item) {
                 final amount = item.moneyAmount ?? 0;
                 return state.currentFilterIndex == 0
@@ -327,6 +328,36 @@ class WalletController extends _$WalletController {
       if (ref.mounted) {
         state = state.copyWith(errorMessage: () => e.toString());
       }
+    }
+  }
+
+  /// 重新读取交易快照，供首页、钱包与历史共享同一份最新数据。
+  Future<void> refreshTransactions() async {
+    if (!ref.mounted || state.isLoading) return;
+    try {
+      final transactions = await _repository.getTransactions();
+      if (!ref.mounted) return;
+      state = state.copyWith(
+        allTransactions: transactions,
+        transactions: state.searchQuery.isNotEmpty
+            ? transactions.where((item) {
+                final query = state.searchQuery.trim().toLowerCase();
+                return '${item.moneyActionName ?? ''} ${item.time ?? ''}'
+                    .toLowerCase()
+                    .contains(query);
+              }).toList()
+            : transactions.where((item) {
+                final amount = item.moneyAmount ?? 0;
+                return state.currentFilterIndex == 0
+                    ? amount < 0
+                    : state.currentFilterIndex == 1
+                    ? amount >= 0
+                    : true;
+              }).toList(),
+      );
+    } catch (error) {
+      if (ref.mounted)
+        state = state.copyWith(errorMessage: () => error.toString());
     }
   }
 

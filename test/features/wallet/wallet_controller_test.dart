@@ -158,7 +158,7 @@ void main() {
         expect((await chinese.getTransactions()).first.moneyActionName, '基石咖啡');
         final englishItems = await english.getTransactions();
         final chineseItems = await chinese.getTransactions();
-        expect(englishItems.length, 30);
+        expect(englishItems.length, 31);
         expect(
           chineseItems.map((item) => item.time).toList(),
           englishItems.map((item) => item.time).toList(),
@@ -167,7 +167,11 @@ void main() {
           r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$',
         );
         for (final item in englishItems) {
-          expect(zonedIso.hasMatch(item.time!), isTrue, reason: item.id);
+          if (item.id?.startsWith('mock-week-') ?? false) {
+            expect(zonedIso.hasMatch(item.time!), isTrue, reason: item.id);
+          } else {
+            expect(zonedIso.hasMatch(item.time!), isTrue, reason: item.id);
+          }
           expect(
             WalletState.transactionDate(item),
             DateTime.parse(item.time!).toLocal(),

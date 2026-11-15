@@ -6,6 +6,7 @@ import 'package:sirc/features/home/controllers/home_chart_data.dart';
 import 'package:sirc/features/home/presentation/home_transaction_chart.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 import 'package:sirc/widgets/line_graph.dart';
 
 class ChartTestWallet extends WalletController {
@@ -28,6 +29,52 @@ class ChartTestWallet extends WalletController {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  test('weekly Mock transactions are current, stable within the week and localized', () async {
+    var now = DateTime(2026, 11, 16, 9);
+    final repository = MockDataRepository(clock: () => now);
+    final english = await repository.getTransactions(const Locale('en'));
+    final chinese = await repository.getTransactions(const Locale('zh'));
+    final generatedEnglish = english
+        .where((item) => item.id?.startsWith('mock-week-') ?? false)
+        .toList();
+    final generatedChinese = chinese
+        .where((item) => item.id?.startsWith('mock-week-') ?? false)
+        .toList();
+
+    expect(generatedEnglish, hasLength(1));
+    expect(generatedEnglish.single.moneyActionName, 'Weekly Coffee');
+    expect(generatedChinese.single.moneyActionName, '本周咖啡');
+    expect(generatedEnglish.single.time, generatedChinese.single.time);
+    expect(
+      RegExp(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$')
+          .hasMatch(generatedEnglish.single.time!),
+      isTrue,
+    );
+    final chart = HomeChartData.aggregate(
+      generatedEnglish,
+      HomeChartPeriod.week,
+      now: now,
+    );
+    expect(chart.recordCount, 1);
+    expect(chart.days.first.amount, 18.75);
+
+    now = DateTime(2026, 11, 22, 18);
+    final endOfWeek = await repository.getTransactions(const Locale('en'));
+    expect(
+      endOfWeek.where((item) => item.id?.startsWith('mock-week-') ?? false),
+      hasLength(7),
+    );
+    now = DateTime(2026, 11, 23, 9);
+    final nextWeek = await repository.getTransactions(const Locale('en'));
+    final nextWeekGenerated = nextWeek
+        .where((item) => item.id?.startsWith('mock-week-') ?? false)
+        .toList();
+    expect(nextWeekGenerated, hasLength(1));
+    expect(nextWeekGenerated.single.id, isNot(generatedEnglish.single.id));
+  });
+
   test('calendar boundaries, gross amounts, unknown and future dates', () {
     final chart = HomeChartData.aggregate(
       [

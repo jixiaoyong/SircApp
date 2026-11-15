@@ -35,6 +35,7 @@ class _HomeTransactionChartState extends ConsumerState<HomeTransactionChart>
       DateTime(now.year, now.month, now.day + 1).difference(now),
       () {
         if (mounted) {
+          ref.read(walletControllerProvider.notifier).refreshTransactions();
           setState(() {});
           scheduleMidnight();
         }
@@ -45,6 +46,7 @@ class _HomeTransactionChartState extends ConsumerState<HomeTransactionChart>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      ref.read(walletControllerProvider.notifier).refreshTransactions();
       setState(() {});
       scheduleMidnight();
     }
