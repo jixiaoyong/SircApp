@@ -53,7 +53,7 @@ void main() {
                       controller: controller,
                       slivers: [
                         const SliverToBoxAdapter(child: SizedBox(height: 180)),
-                        const HomeArticlesPanel.sliver(),
+                        const HomeArticlesPanel(),
                       ],
                     ),
                   ),

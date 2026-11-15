@@ -184,7 +184,7 @@ void main() {
           GoRoute(
             path: '/main',
             builder: (_, _) => const Scaffold(
-              body: SingleChildScrollView(child: HomeArticlesPanel()),
+              body: CustomScrollView(slivers: [HomeArticlesPanel()]),
             ),
             routes: [
               GoRoute(
@@ -464,7 +464,7 @@ void main() {
         MaterialApp(
           theme: AppTheme.lightTheme,
           home: const Scaffold(
-            body: SingleChildScrollView(child: HomeArticlesPanel()),
+            body: CustomScrollView(slivers: [HomeArticlesPanel()]),
           ),
         ),
       ),

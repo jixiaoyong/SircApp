@@ -72,15 +72,19 @@ void main() {
             supportedLocales: AppLocale.supportedLocales,
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
             home: const Scaffold(
-              body: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    HomeBankCardCarousel(),
-                    HomeSummaryCards(),
-                    HomeTransactionsPanel(),
-                    HomeArticlesPanel(),
-                  ],
-                ),
+              body: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        HomeBankCardCarousel(),
+                        HomeSummaryCards(),
+                        HomeTransactionsPanel(),
+                      ],
+                    ),
+                  ),
+                  HomeArticlesPanel(),
+                ],
               ),
             ),
           ),
@@ -209,8 +213,7 @@ void main() {
             supportedLocales: AppLocale.supportedLocales,
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
             home: Scaffold(
-              body: SingleChildScrollView(
-                child: HomeTopBodyWidget(
+              body: HomeTopBodyWidget(
                   homeState: container
                       .read(homeControllerProvider)
                       .copyWith(
@@ -228,8 +231,7 @@ void main() {
             ),
           ),
         ),
-      ),
-    );
+      );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     final grid = find.byWidgetPredicate((widget) => widget is JingangWidget);
@@ -339,11 +341,9 @@ void main() {
                 supportedLocales: AppLocale.supportedLocales,
                 localizationsDelegates: GlobalMaterialLocalizations.delegates,
                 home: Scaffold(
-                  body: SingleChildScrollView(
-                    child: HomeTopBodyWidget(
-                      homeState: state.copyWith(quickActions: quickActions),
-                      userAvatar: '',
-                    ),
+                  body: HomeTopBodyWidget(
+                    homeState: state.copyWith(quickActions: quickActions),
+                    userAvatar: '',
                   ),
                 ),
               ),

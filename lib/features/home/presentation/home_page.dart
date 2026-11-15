@@ -87,10 +87,17 @@ class _HomePageState extends ConsumerState<HomePage> {
                           .read(navigationControllerProvider.notifier)
                           .openDrawer(),
                       child: ClipOval(
-                        child: NetworkWebImage(
-                          userAvatar,
-                          size: Size(avatarSize, avatarSize),
-                          fit: BoxFit.cover,
+                        child: SizedBox(
+                          width: avatarSize,
+                          height: avatarSize,
+                          child: FittedBox(
+                            fit: BoxFit.cover,
+                            child: NetworkWebImage(
+                              userAvatar,
+                              size: const Size(50, 50),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -253,16 +260,10 @@ class HomeTopBodyWidget extends ConsumerWidget {
                     const SizedBox(height: 18),
                   ],
                 );
-                if (Scrollable.maybeOf(context) != null) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [content, const HomeArticlesPanel()],
-                  );
-                }
                 return CustomScrollView(
                   slivers: [
                     SliverToBoxAdapter(child: content),
-                    HomeArticlesPanel.sliver(),
+                    const HomeArticlesPanel(),
                   ],
                 );
               },
@@ -719,19 +720,10 @@ class HomeSummaryCards extends ConsumerWidget {
 
 /// 展示本地文章面板
 ///
-/// 默认构造函数创建普通盒模型 Widget，适用于非 Sliver 环境（如普通列表或单元测试）；
-/// [HomeArticlesPanel.sliver] 构造函数返回 [SliverMainAxisGroup]，在 [CustomScrollView] 中提供分类栏局域吸顶体验。
+/// 作为 [SliverMainAxisGroup] 提供分类栏局域吸顶（Scoped Sticky Header）与文章列表。
 class HomeArticlesPanel extends ConsumerStatefulWidget {
-  /// 创建普通盒模型文章面板
-  ///
-  /// [enableSticky] 是否启用吸顶。普通盒模型下默认为 false。
-  const HomeArticlesPanel({super.key, this.enableSticky = false});
-
-  /// 作为 [SliverMainAxisGroup] 提供局域吸顶（Scoped Sticky Header）的分类文章列表。
-  const HomeArticlesPanel.sliver({super.key}) : enableSticky = true;
-
-  /// 是否启用吸顶
-  final bool enableSticky;
+  /// 创建文章面板 Sliver
+  const HomeArticlesPanel({super.key});
 
   @override
   ConsumerState<HomeArticlesPanel> createState() => _HomeArticlesPanelState();
@@ -816,23 +808,6 @@ class _HomeArticlesPanelState extends ConsumerState<HomeArticlesPanel> {
               ],
             ],
     );
-
-    if (!widget.enableSticky) {
-      return WalletPanel(
-        key: const ValueKey('home-articles'),
-        minimumHeight: 224,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeading(),
-            const SizedBox(height: 12),
-            _buildSegments(keyPrefix: 'article-segment'),
-            const SizedBox(height: 14),
-            ...articleItems,
-          ],
-        ),
-      );
-    }
 
     final surfaceColor = Theme.of(context).colorScheme.surface;
     final borderColor = AppColors.line(context);
