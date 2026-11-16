@@ -69,7 +69,12 @@ void main() {
                   () => _TestLocaleNotifier(Locale(language)),
                 ),
               ],
-              child: MaterialApp(home: Scaffold(body: page)),
+              child: MaterialApp(
+                locale: Locale(language),
+                supportedLocales: AppLocale.supportedLocales,
+                localizationsDelegates: GlobalMaterialLocalizations.delegates,
+                home: Scaffold(body: page),
+              ),
             ),
           );
           await tester.pump();

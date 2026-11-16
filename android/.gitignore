@@ -1,8 +1,9 @@
 gradle-wrapper.jar
 /.gradle
 /captures/
-/gradlew
-/gradlew.bat
+# 项目 wrapper 自动加载仓库镜像脚本，需要随源码保留。
+# /gradlew
+# /gradlew.bat
 /local.properties
 GeneratedPluginRegistrant.java
 

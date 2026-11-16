@@ -53,7 +53,7 @@ void main() {
   });
   tearDown(() => AppLocale.setLocale(originalLocale));
 
-  testWidgets('首页空状态、交易摘要和本地示例随中英文切换', (tester) async {
+  testWidgets('首页空状态、交易摘要和文章标题随中英文切换', (tester) async {
     tester.view.physicalSize = const Size(1000, 2200);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -101,7 +101,7 @@ void main() {
       '转出',
       '转入',
       '交易摘要',
-      '本地示例',
+      '文章',
     ];
     const english = [
       'No cards yet. Add a card in Wallet.',
@@ -110,7 +110,7 @@ void main() {
       'Money Out',
       'Money In',
       'Transaction summary',
-      'Local examples',
+      'Articles',
     ];
     for (final text in chinese) {
       expect(find.text(text), findsOneWidget);
@@ -487,7 +487,14 @@ void main() {
   test('首页UI文案使用分域词条且不包含硬编码字符串', () {
     final source = File('lib/features/home/presentation/home_page.dart')
         .readAsStringSync();
-    final ui = source;
+    final bankCards = File(
+      'lib/features/home/presentation/widgets/home_bank_card_pages.dart',
+    ).readAsStringSync();
+    final articles = File(
+      'lib/features/home/presentation/widgets/home_articles_panel.dart',
+    ).readAsStringSync();
+    // 首页文案分布于主页面、银行卡与文章组件，检查实际渲染方。
+    final ui = [source, bankCards, articles].join('\n');
     expect(ui, isNot(contains("languageCode == 'zh'")));
     expect(
       ui,
@@ -499,25 +506,26 @@ void main() {
       'Money Send',
       'Money Recharge',
       'Transaction summary',
-      'Local examples',
+      'Articles',
     ]) {
-      expect(ui, isNot(contains(text)));
+      expect(ui, isNot(contains("'$text'")));
+      expect(ui, isNot(contains('"$text"')));
     }
     for (final key in [
       'home.noCardsInWallet',
       'home.recentTransactions',
       'home.transactionSummary',
-      'home.localExamples',
       'wallet.noTransactions',
       'wallet.outgoing',
       'wallet.incoming',
     ]) {
       expect(ui, contains('Languages.$key'));
     }
-    expect(source, contains('article.title'));
-    expect(source, contains('article.summary'));
-    expect(source, isNot(contains('MockDataRepository')));
-    expect(source, isNot(contains('titleZh')));
-    expect(source, isNot(contains('titleEn')));
+    expect(articles, contains('Languages.articles'));
+    expect(articles, contains('article.title'));
+    expect(articles, contains('article.summary'));
+    expect(ui, isNot(contains('MockDataRepository')));
+    expect(ui, isNot(contains('titleZh')));
+    expect(ui, isNot(contains('titleEn')));
   });
 }

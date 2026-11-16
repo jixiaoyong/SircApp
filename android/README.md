@@ -50,7 +50,7 @@
 
 ## 构建失败排查记录（2026-11-16）
 
-本次在 `chore/platform-build-migration` 分支验证了 Android Debug APK 和 iOS 模拟器构建。最终均成功，未降级 Flutter、AGP、Gradle 或 Kotlin，也未修改平台工程来绕过错误。以下网络方案仅用于临时诊断，不是项目默认仓库配置。
+最初在 `chore/platform-build-migration` 分支通过临时镜像验证了 Android Debug APK 和 iOS 模拟器构建，未降级 Flutter、AGP、Gradle 或 Kotlin。现已将验证成功的阿里云 Google Maven / Maven Central 镜像落到 `settings.gradle` 的插件仓库和 `build.gradle` 的项目仓库，原 `google()` / `mavenCentral()` 注释保留，不再作为回退源；Google 镜像仍限定下述依赖分组，`gradlePluginPortal()` 保持不变。Flutter SDK included build 的 `settings.gradle.kts` 使用 `FAIL_ON_PROJECT_REPOS`，不会继承应用仓库。因此 `gradlew` / `gradlew.bat` 自动加载项目内 `gradle/android-mirror.init.gradle`，仅对本次构建及 included build 替换仓库。直接执行 `fvm flutter build apk --debug --no-pub` 即可，无需手动 `--init-script`；不修改 SDK 或全局 Gradle 配置。
 
 ### 1. 先区分 SDK 问题与平台问题
 
@@ -85,9 +85,13 @@ curl -I -L --max-time 30 https://dl.google.com/dl/android/maven2/com/android/too
 curl -I -L --max-time 30 https://maven.aliyun.com/repository/google/com/android/tools/build/gradle/9.3.1/gradle-9.3.1.pom
 ```
 
-### 3. 临时镜像复现方式（仅确有网络阻碍时）
+### 3. 项目级自动镜像（同时覆盖 Flutter SDK included build）
 
-先完成上面的 FVM 安装和 `pub get`。在系统临时目录手工保存下面内容为 `android-mirror.init.gradle`，不要放到 `~/.gradle/init.d/`，也不要提交到仓库。该脚本使用 Gradle `--init-script`，仅对本次调用及其项目配置生效；不编辑 `settings.gradle`、`build.gradle` 或全局 Gradle 配置。
+正常构建直接执行 `fvm flutter build apk --debug --no-pub`。受控的 `gradlew` / `gradlew.bat` 自动加载 `gradle/android-mirror.init.gradle`，脚本对重复加载设有保护，路径按参数引用以支持空格。不要将它安装到 `~/.gradle/init.d/`，也不要修改 Flutter SDK。
+
+构建缓存沿用 Gradle 默认的 `~/.gradle`（或调用环境明确设置的 `GRADLE_USER_HOME`），本项目不指定隔离缓存。若 Agent 环境此前使用不同的缓存目录，即使版本一致也可能重复下载。本次确认原隔离缓存可离线构建后，仅用 `rsync -a --ignore-existing` 将其 `caches/modules-2/files-2.1/` 中缺失的哈希构件合入 `~/.gradle` 对应目录，未复制锁或仓库元数据、未覆盖已有文件、未清缓存。随后默认缓存下普通 Flutter 命令构建成功，Gradle 耗时 14.8 秒，后续不需额外缓存参数。
+
+下面保留最初临时诊断的复现步骤，日常构建无需执行：先完成 FVM 安装和 `pub get`，在系统临时目录保存下面内容为 `android-mirror.init.gradle`。临时副本不要提交；当前项目使用的是上述受控脚本。该脚本仅对本次调用及其 included build 生效，不编辑 SDK 或全局 Gradle 配置。
 
 ```groovy
 // Temporary invocation-scoped mirrors. Do not commit.
@@ -144,7 +148,7 @@ allprojects { project ->
 - 这是本项目当次依赖集合验证过的 Google 分组范围，不是适用于所有工程的完整列表；若出现其他 Google 构件缺失，应核实来源后调整临时脚本。
 - 不关闭 TLS 校验，不用 HTTP，不把所有依赖粗暴指向 Google 镜像；镜像同样可能出现 502 或同步延迟。
 - 超时参数只限制网络等待，不会修复代码、保证网络恢复或自动补齐缺失构件。
-- 网络恢复后优先恢复普通 `fvm flutter build apk --debug`；本方案不会永久改变后续构建的仓库配置。
+- 当前 wrapper 已自动加载项目镜像脚本，下面的手动调用仅保留历史排查过程，无需重复传入脚本。连接/读取超时参数未写入项目或全局配置；不要将脚本装到全局 `init.d/`。使用 `./gradlew help --info` 可检查 included build 的仓库替换日志。
 - 构建完成检查 `git status --short`、`git diff --check` 及锁文件差异，不提交本地路径、镜像脚本、`.kotlin/` 缓存或构建产物。
 
 本次结果：`assembleDebug` 成功，产物为项目根目录下 `build/app/outputs/flutter-apk/app-debug.apk`，`apksigner verify --print-certs` 验证通过，证书为 Android Debug。仅验证 Debug 构建和签名，不代表 Release 签名、商店发布或设备运行已经验收。
