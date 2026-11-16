@@ -356,8 +356,9 @@ class WalletController extends _$WalletController {
               }).toList(),
       );
     } catch (error) {
-      if (ref.mounted)
+      if (ref.mounted) {
         state = state.copyWith(errorMessage: () => error.toString());
+      }
     }
   }
 

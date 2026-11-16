@@ -84,6 +84,7 @@ dev_dependencies:
   # 顶层的 plugins: 声明启用，不再需要 custom_lint 依赖
   riverpod_lint: ^3.2.0
 
+  webview_flutter_platform_interface: any
 flutter:
   # 启用 Material Design 图标与组件规范
   uses-material-design: true
