@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/features/wallet/domain/models/bank_card.dart';
@@ -98,72 +99,193 @@ void main() {
     },
   );
 
-  testWidgets('carousel supports arrows, swipes, additions, single and empty', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(390, 1000);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    var selected = 0;
-    var cards = List.generate(
-      3,
-      (i) => BankCard(
-        id: '$i',
-        bankName: 'Bank $i',
-        cardNumber: '1111222233334444',
-        ownerName: 'User',
-        expirationDate: '12/29',
-      ),
-    );
-    late StateSetter update;
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: StatefulBuilder(
-            builder: (context, setState) {
-              update = setState;
-              return WalletCardCarousel(
-                cards: cards,
-                selectedIndex: selected,
-                onSelected: (index) => setState(() => selected = index),
-              );
-            },
+  testWidgets(
+    'stack supports selections, rapid taps, additions, single and empty',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      var selected = 0;
+      var cards = List.generate(
+        3,
+        (i) => BankCard(
+          id: '$i',
+          bankName: 'Bank $i',
+          cardNumber: '1111222233334444',
+          ownerName: 'User',
+          expirationDate: '12/29',
+        ),
+      );
+      late StateSetter update;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: StatefulBuilder(
+              builder: (context, setState) {
+                update = setState;
+                return WalletCardCarousel(
+                  cards: cards,
+                  selectedIndex: selected,
+                  onSelected: (index) => setState(() => selected = index),
+                );
+              },
+            ),
           ),
         ),
-      ),
-    );
-    expect(find.text('1 / 3'), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('wallet-card-next')));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(selected, 1);
-    expect(find.text('2 / 3'), findsOneWidget);
-    await tester.drag(
-      find.byKey(const ValueKey('wallet-cards')),
-      const Offset(-320, 0),
-    );
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(selected, 2);
-    update(() => cards = [...cards, cards.first]);
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(find.text('3 / 4'), findsOneWidget);
-    update(() {
-      cards = [cards.first];
-      selected = 0;
-    });
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(find.byKey(const ValueKey('wallet-card-next')), findsNothing);
-    expect(find.byKey(const ValueKey('wallet-card-count')), findsNothing);
-    update(() => cards = []);
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(find.byKey(const ValueKey('wallet-cards')), findsNothing);
-    expect(find.text(Languages.wallet.noCardsYet), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+      );
+      expect(find.text('1 / 3'), findsOneWidget);
+      final cardButton = tester.widget<TextButton>(
+        find.byKey(const ValueKey('wallet-card-select-1')),
+      );
+      final overlay = cardButton.style!.overlayColor!;
+      for (var mask = 0; mask < 1 << WidgetState.values.length; mask++) {
+        final states = <WidgetState>{
+          for (var i = 0; i < WidgetState.values.length; i++)
+            if (mask & (1 << i) != 0) WidgetState.values[i],
+        };
+        expect(overlay.resolve(states), Colors.transparent);
+      }
+      expect(cardButton.style!.splashFactory, NoSplash.splashFactory);
+      expect(find.text('1111 **** **** 4444 '), findsWidgets);
+      expect(find.text('1111 2222 3333 4444 '), findsNothing);
+      expect(cards.first.cardNumber, '1111222233334444');
+      await tester.tap(find.byKey(const ValueKey('wallet-card-select-1')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 180));
+      expect(selected, 0);
+      await tester.pumpAndSettle();
+      expect(selected, 1);
+      expect(find.text('2 / 3'), findsOneWidget);
+      final keyboardTarget = find.byKey(
+        const ValueKey('wallet-card-select-0'),
+      );
+      final focus = Focus.of(
+        tester.element(
+          find
+              .descendant(of: keyboardTarget, matching: find.byType(SizedBox))
+              .last,
+        ),
+      );
+      focus.requestFocus();
+      await tester.pump();
+      expect(focus.hasPrimaryFocus, isTrue);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 180));
+      expect(selected, 1);
+      await tester.pumpAndSettle();
+      expect(selected, 0);
+      await tester.tap(find.byKey(const ValueKey('wallet-card-select-0')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('wallet-card-select-1')));
+      await tester.tap(find.byKey(const ValueKey('wallet-card-select-2')));
+      await tester.pumpAndSettle();
+      expect(selected, 2);
+      expect(cards.first.cardNumber, '1111222233334444');
+      update(() => cards = [...cards, cards.first.copyWith(id: '3')]);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.text('3 / 4'), findsOneWidget);
+      update(() {
+        cards = [cards.first];
+        selected = 0;
+      });
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.byKey(const ValueKey('wallet-card-next')), findsNothing);
+      expect(find.byKey(const ValueKey('wallet-card-count')), findsNothing);
+      update(() => cards = []);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.byKey(const ValueKey('wallet-cards')), findsNothing);
+      expect(find.text(Languages.wallet.noCardsYet), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+  testWidgets(
+    'stack honors reduced motion, external selection and narrow large text',
+    (tester) async {
+      tester.view.physicalSize = const Size(320, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      var selected = 0;
+      var reduced = true;
+      late StateSetter update;
+      final cards = List.generate(
+        3,
+        (i) => BankCard(
+          id: '$i',
+          bankName: 'A very long bank name $i',
+          cardNumber: '1111222233334444',
+          ownerName: 'Long cardholder name',
+          expirationDate: '12/29',
+        ),
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: StatefulBuilder(
+              builder: (context, setState) {
+                update = setState;
+                return MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    disableAnimations: reduced,
+                    textScaler: const TextScaler.linear(2),
+                  ),
+                  child: WalletCardCarousel(
+                    cards: cards,
+                    selectedIndex: selected,
+                    onSelected: (index) => setState(() => selected = index),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+      final hit = find.byKey(const ValueKey('wallet-card-select-2'));
+      expect(
+        tester
+            .getSize(find.byKey(const ValueKey('wallet-card-select-1')))
+            .height,
+        greaterThanOrEqualTo(48),
+      );
+      await tester.tap(hit);
+      await tester.pump();
+      expect(selected, 2);
+      final stackAnimation =
+          tester
+                  .widget<AnimatedBuilder>(
+                    find
+                        .descendant(
+                          of: find.byKey(const ValueKey('wallet-cards')),
+                          matching: find.byType(AnimatedBuilder),
+                        )
+                        .first,
+                  )
+                  .animation
+              as AnimationController;
+      expect(stackAnimation.isAnimating, isFalse);
+      update(() {
+        reduced = false;
+        selected = 1;
+      });
+      await tester.pump();
+      expect(find.text('2 / 3'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('wallet-card-select-0')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      update(() => selected = 2);
+      await tester.pumpAndSettle();
+      expect(find.text('3 / 3'), findsOneWidget);
+      expect(cards.first.cardNumber, '1111222233334444');
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.byKey(const ValueKey('wallet-card-select-0')));
+      await tester.pump();
+      await tester.pumpWidget(const SizedBox());
+      expect(tester.takeException(), isNull);
+    },
+  );
   for (final locale in [const Locale('zh'), const Locale('en')]) {
     testWidgets(
       'wallet transaction long content and amount at 320, scale 2, locale ${locale.languageCode}',
@@ -355,7 +477,7 @@ void main() {
       tester.widget<Text>(find.byKey(const ValueKey('history-total'))).data,
       '\$ 100.00',
     );
-    expect(find.byKey(const ValueKey('bar-6-100.0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('bar-0-100.0')), findsOneWidget);
   });
   testWidgets('wallet send and receive update totals and records', (
     tester,

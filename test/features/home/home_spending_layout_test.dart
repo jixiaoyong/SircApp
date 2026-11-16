@@ -14,6 +14,7 @@ import 'package:sirc/features/home/presentation/article_detail_page.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
 import 'package:sirc/routes/app_routes.dart';
+import 'package:sirc/utils/date_time_formatter.dart';
 
 class _SummaryWalletController extends WalletController {
   @override
@@ -236,7 +237,17 @@ void main() {
             const Locale('en'),
           );
           expect(find.text(article!['body'] as String), findsOneWidget);
-          expect(find.text(Languages.home.articleDisclaimer), findsOneWidget);
+          expect(find.text(Languages.home.articleDisclaimer), findsNothing);
+          expect(
+            find.text(
+              AppDateTimeFormatter.display(
+                article['publishedAt'] as String,
+                locale: const Locale('en'),
+                languages: AppLocale.current,
+              ),
+            ),
+            findsOneWidget,
+          );
           expect(tester.takeException(), isNull);
           router.pop();
           await tester.pumpAndSettle();
@@ -283,11 +294,37 @@ void main() {
         final gutter = 16 + 16 * ((width - 320) / 240).clamp(0.0, 1.0);
         final expectedContentWidth = width - gutter * 2;
         expect(cards.width, closeTo(expectedContentWidth, 1));
+        final activityHeading = find.byKey(
+          const ValueKey('home-activity-heading'),
+        );
+        final summaryHeading = find.byKey(
+          const ValueKey('home-summary-heading'),
+        );
+        final transactionsHeading = find.byKey(
+          const ValueKey('home-transactions-heading'),
+        );
+        for (final heading in [
+          activityHeading,
+          summaryHeading,
+          transactionsHeading,
+        ]) {
+          final text = tester.widget<Text>(heading);
+          expect(text.style!.fontSize, 16);
+          expect(text.style!.fontWeight, FontWeight.w600);
+        }
+        expect(tester.getRect(activityHeading).left, closeTo(gutter, .01));
+        expect(tester.getRect(summaryHeading).left, closeTo(summary.left, .01));
+        expect(tester.getRect(transactionsHeading).left, closeTo(gutter, .01));
+        expect(
+          tester.getRect(find.byKey(const ValueKey('home-summary-0'))).top -
+              tester.getRect(summaryHeading).bottom,
+          closeTo(12, .01),
+        );
         if (width == 1200 && scale == 1) {
           expect(summary.top, graph.top);
           expect(summary.left, greaterThan(graph.right));
         } else {
-          expect(summary.top, greaterThanOrEqualTo(graph.bottom));
+          expect(summary.top - graph.bottom, closeTo(18, .01));
         }
         expect(transactions.width, closeTo(expectedContentWidth, 1));
         expect(find.byKey(const ValueKey('home-avatar')), findsOneWidget);
@@ -327,6 +364,13 @@ void main() {
           await tester.pump();
         }
         expect(segment, findsOneWidget);
+        final articlesHeading = find.byKey(
+          const ValueKey('home-articles-heading'),
+        );
+        final articleTitle = tester.widget<Text>(articlesHeading);
+        expect(articleTitle.style!.fontSize, 16);
+        expect(articleTitle.style!.fontWeight, FontWeight.w600);
+        expect(tester.getRect(articlesHeading).left, closeTo(gutter, .01));
         final viewport = tester.getRect(scrollView);
         final threshold =
             position.pixels + tester.getRect(segment).top - viewport.top;

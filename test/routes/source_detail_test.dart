@@ -344,9 +344,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const MaterialApp(
-          home: ArticleDetailPage(id: '0-0'),
-        ),
+        child: const MaterialApp(home: ArticleDetailPage(id: '0-0')),
       ),
     );
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -360,9 +358,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const MaterialApp(
-          home: ArticleDetailPage(id: 'missing'),
-        ),
+        child: const MaterialApp(home: ArticleDetailPage(id: 'missing')),
       ),
     );
     await tester.pumpAndSettle();
@@ -399,11 +395,20 @@ void main() {
     );
     await frames(tester);
     final article = find.byKey(const ValueKey('home-article-0-0'));
-    await tester.ensureVisible(article);
+    await tester.scrollUntilVisible(
+      article,
+      300,
+      scrollable: find
+          .descendant(
+            of: find.byType(CustomScrollView).first,
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
     await tester.tap(article);
     await frames(tester);
     expect(find.byType(ArticleDetailPage), findsOneWidget);
-    expect(find.textContaining('Static example'), findsOneWidget);
+    expect(find.textContaining('Static example'), findsNothing);
     final detail = tester.element(find.byType(ArticleDetailPage));
     tester.view.physicalSize = const Size(390, 1100);
     await frames(tester);

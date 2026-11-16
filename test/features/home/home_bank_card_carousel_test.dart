@@ -80,12 +80,19 @@ void main() {
           .widgetList<BankCardWidget>(find.byType(BankCardWidget))
           .toList();
       final cards = container.read(walletControllerProvider).cards;
-      for (final card in displayed) {
-        final source = cards.firstWhere(
-          (e) =>
-              e.cardNumber.replaceAll(' ', '') ==
-              card.cardNumber.replaceAll(' ', ''),
+      for (var index = 0; index < displayed.length; index++) {
+        final card = displayed[index];
+        final source = cards[index];
+        final raw = source.cardNumber.replaceAll(' ', '');
+        final masked = card.cardNumber.replaceAll(' ', '');
+        expect(masked.substring(0, 4), raw.substring(0, 4));
+        expect(
+          masked.substring(masked.length - 4),
+          raw.substring(raw.length - 4),
         );
+        expect(masked.substring(4, masked.length - 4), '*' * (raw.length - 8));
+        expect(masked.length, raw.length);
+        expect(find.textContaining(source.cardNumber), findsNothing);
         expect(card.cardType, source.cardType);
       }
       final viewport = tester.getRect(
@@ -94,7 +101,7 @@ void main() {
       final surface = tester.getRect(
         find.descendant(
           of: first,
-          matching: find.byKey(const ValueKey('bank-card-iridescent-edge')),
+          matching: find.byKey(const ValueKey('bank-card-flat-surface')),
         ),
       );
       expect(surface.center.dy, closeTo(viewport.center.dy, .01));
@@ -132,7 +139,7 @@ void main() {
       .widgetList<BankCardWidget>(find.byType(BankCardWidget))
       .singleWhere((card) => card.isSelected);
 
-  testWidgets('移除短条且选择仅扫光一次，重建不重播并保留品牌和语义', (tester) async {
+  testWidgets('保留旧选择进度兼容性，重建不重播并保留品牌和语义', (tester) async {
     configureView(tester);
     final container = ProviderContainer(
       overrides: [mockDataRepositoryProvider.overrideWithValue(mock)],
@@ -244,7 +251,7 @@ void main() {
         find.byKey(const ValueKey('home-bank-scroll')),
       );
       final surface = tester.getRect(
-        find.byKey(const ValueKey('bank-card-iridescent-edge')),
+        find.byKey(const ValueKey('bank-card-flat-surface')),
       );
       expect(surface.center.dx, closeTo(viewport.center.dx, .01));
       expect(surface.center.dy, closeTo(viewport.center.dy, .01));
@@ -324,11 +331,12 @@ void main() {
     container.read(homeControllerProvider.notifier).setBankIndex(1);
 
     // 紧接着立即读取（未等 microtask），quickActions 必须平滑保留，不可闪现置空为 []
-    final stateImmediatelyAfterSwitch =
-        container.read(homeControllerProvider);
+    final stateImmediatelyAfterSwitch = container.read(homeControllerProvider);
     expect(stateImmediatelyAfterSwitch.currentBankIndex, 1);
     expect(stateImmediatelyAfterSwitch.quickActions, isNotEmpty);
-    expect(stateImmediatelyAfterSwitch.quickActions.length,
-        initialActions.length);
+    expect(
+      stateImmediatelyAfterSwitch.quickActions.length,
+      initialActions.length,
+    );
   });
 }

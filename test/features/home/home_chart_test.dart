@@ -90,8 +90,8 @@ void main() {
     expect(chart.days.length, 7);
     expect(chart.days.first.date, DateTime(2025, 12, 29));
     expect(chart.days.last.date, DateTime(2026, 1, 4));
-    expect(chart.days.map((e) => e.amount), [50, 0, 0, 0, null, null, null]);
-    expect(chart.recordCount, 2);
+    expect(chart.days.map((e) => e.amount), [50, 0, 0, 0, 0, 0, 99]);
+    expect(chart.recordCount, 3);
     expect(chart.undatedCount, 1);
   });
 
@@ -110,7 +110,7 @@ void main() {
       expect(result.days.length, entry.$3);
       expect(result.days.first.date.day, 1);
       expect(result.days[9].amount, 0);
-      expect(result.days[10].amount, isNull);
+      expect(result.days[10].amount, 0);
     }
     final date = DateTime.utc(2026, 11, 10, 23).toLocal();
     final data = HomeChartData.aggregate(
@@ -198,7 +198,14 @@ void main() {
       graph = tester.widget<LineGraph>(find.byType(LineGraph));
       expect(graph.data.length, 30);
       expect(graph.data[8].value, 50);
-      expect(find.text('November'), findsOneWidget);
+      expect(find.text('Transaction activity'), findsOneWidget);
+      expect(find.text('November 2026'), findsOneWidget);
+      expect(
+        tester
+            .widget<Text>(find.byKey(const ValueKey('home-activity-heading')))
+            .style,
+        const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      );
       expect(container.read(walletControllerProvider).currentFilterIndex, 0);
       await tester.tapAt(tester.getCenter(find.byType(LineGraph)));
       await tester.pump();
@@ -218,6 +225,7 @@ void main() {
           .read(localeProvider.notifier)
           .setLocale(const Locale('zh', 'CN'));
       await tester.pump();
+      expect(find.text('交易活动'), findsOneWidget);
       expect(find.text('每日交易总额 (\$)'), findsOneWidget);
       expect(
         tester.widget<LineGraph>(find.byType(LineGraph)).data.first.label,

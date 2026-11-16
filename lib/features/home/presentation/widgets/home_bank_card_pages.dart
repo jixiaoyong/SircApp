@@ -201,6 +201,7 @@ class _HomeBankCardPagesState extends State<HomeBankCardPages>
                                 builder: (context, _) => BankCardWidget(
                                   bankName: _localizedBankName(card.bankName),
                                   cardNumber: card.cardNumber,
+                                  maskCardNumber: true,
                                   ownerName: card.ownerName,
                                   expirationDate: card.expirationDate,
                                   cardType: card.cardType,

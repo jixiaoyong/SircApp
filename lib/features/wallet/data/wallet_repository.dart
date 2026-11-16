@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
@@ -236,6 +237,14 @@ class WalletRepositoryImpl implements WalletRepository {
     String? query,
   }) async {
     await _ensureLoaded();
+    // Mock 会随本地日期更新；不能一直返回初始化时的交易快照。
+    var locale = _locale;
+    var transactions = await _mock.getTransactions(locale);
+    while (_locale != locale) {
+      locale = _locale;
+      transactions = await _mock.getTransactions(locale);
+    }
+    _baseTransactions = transactions;
     var result = _transactions.where((item) {
       final amount = item.moneyAmount ?? 0.0;
       return switch (filter) {

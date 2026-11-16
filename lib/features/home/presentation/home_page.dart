@@ -216,7 +216,6 @@ class HomeTopBodyWidget extends ConsumerWidget {
     );
     final graph = Container(
       key: const ValueKey('home-weekly-graph'),
-      padding: EdgeInsets.symmetric(horizontal: 16),
       child: const HomeTransactionChart(),
     );
     final dark = Theme.of(context).brightness == Brightness.dark;
@@ -310,53 +309,61 @@ class HomeTransactionsPanel extends ConsumerWidget {
     final state = ref.watch(walletControllerProvider);
     final colors = Theme.of(context).colorScheme;
     final items = state.allTransactions.take(3).toList();
-    return Container(
+    return Column(
       key: const ValueKey('home-transactions'),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: colors.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  Languages.home.recentTransactions,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                Languages.home.recentTransactions,
+                key: const ValueKey('home-transactions-heading'),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              IconButton(
-                key: const ValueKey('home-all-transactions'),
-                tooltip: Languages.history,
-                onPressed: () => context.go(AppRoutes.HISTORY),
-                icon: const Icon(Icons.arrow_forward, size: 20),
-              ),
-            ],
-          ),
-          if (state.isLoading) const LinearProgressIndicator(),
-          if (state.errorMessage != null) Text(state.errorMessage!),
-          if (!state.isLoading && items.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Text(Languages.wallet.noTransactions),
             ),
-          for (var i = 0; i < items.length; i++) ...[
-            if (i > 0) Divider(height: 1, color: colors.outlineVariant),
-            WalletTransactionRow(
-              key: ValueKey('home-transaction-$i'),
-              transaction: items[i],
-              heroTag: 'home-transaction-$i',
+            IconButton(
+              key: const ValueKey('home-all-transactions'),
+              tooltip: Languages.history,
+              onPressed: () => context.go(AppRoutes.HISTORY),
+              icon: const Icon(Icons.arrow_forward, size: 20),
             ),
           ],
-        ],
-      ),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          key: const ValueKey('home-transactions-content'),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: colors.outlineVariant),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (state.isLoading) const LinearProgressIndicator(),
+              if (state.errorMessage != null) Text(state.errorMessage!),
+              if (!state.isLoading && items.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Text(Languages.wallet.noTransactions),
+                ),
+              for (var i = 0; i < items.length; i++) ...[
+                if (i > 0) Divider(height: 1, color: colors.outlineVariant),
+                WalletTransactionRow(
+                  key: ValueKey('home-transaction-$i'),
+                  transaction: items[i],
+                  heroTag: 'home-transaction-$i',
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -438,7 +445,8 @@ class HomeSummaryCards extends ConsumerWidget {
       children: [
         Text(
           Languages.home.transactionSummary,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          key: const ValueKey('home-summary-heading'),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 12),
         LayoutBuilder(

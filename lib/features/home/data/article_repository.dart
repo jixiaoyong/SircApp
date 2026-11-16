@@ -8,12 +8,14 @@ class Article {
     required this.title,
     required this.summary,
     required this.body,
+    this.publishedAt,
   });
 
   final String id;
   final String title;
   final String summary;
   final String body;
+  final String? publishedAt;
 
   factory Article.fromLocalizedJson(String id, Map<String, dynamic> json) =>
       Article(
@@ -21,6 +23,7 @@ class Article {
         title: json['title'] as String? ?? '',
         summary: json['summary'] as String? ?? '',
         body: json['body'] as String? ?? '',
+        publishedAt: json['publishedAt'] as String?,
       );
 }
 
@@ -34,9 +37,11 @@ class ArticleRepository {
     return [
       for (var groupIndex = 0; groupIndex < groups.length; groupIndex++)
         [
-          for (var articleIndex = 0;
-              articleIndex < groups[groupIndex].length;
-              articleIndex++)
+          for (
+            var articleIndex = 0;
+            articleIndex < groups[groupIndex].length;
+            articleIndex++
+          )
             Article.fromLocalizedJson(
               '$groupIndex-$articleIndex',
               groups[groupIndex][articleIndex],
@@ -67,12 +72,14 @@ final articleRepositoryProvider = Provider<ArticleRepository>(
   (ref) => ArticleRepository(ref.watch(mockDataRepositoryProvider)),
 );
 
-final articleGroupsProvider = FutureProvider.family<List<List<Article>>, Locale>(
-  (ref, locale) => ref.watch(articleRepositoryProvider).getGroups(locale),
-);
+final articleGroupsProvider =
+    FutureProvider.family<List<List<Article>>, Locale>(
+      (ref, locale) => ref.watch(articleRepositoryProvider).getGroups(locale),
+    );
 
 final articleDetailProvider = FutureProvider.family<Article?, ArticleDetailKey>(
-  (ref, key) => ref.watch(articleRepositoryProvider).getById(key.id, key.locale),
+  (ref, key) =>
+      ref.watch(articleRepositoryProvider).getById(key.id, key.locale),
 );
 
 class ArticleDetailKey {

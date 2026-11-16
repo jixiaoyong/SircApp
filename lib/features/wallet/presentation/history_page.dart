@@ -1,4 +1,6 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:intl/intl.dart';
+import 'package:sirc/features/wallet/domain/services/transaction_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/layout/app_layout.dart';
 import 'package:sirc/core/localization/app_locale.dart';
@@ -25,14 +27,25 @@ class HistoryPage extends ConsumerWidget {
       0,
       (sum, item) => sum + (item.moneyAmount ?? 0).abs(),
     );
-    // All/month views group the visible dated records by weekday, not a fake week.
-    final buckets = List<double>.filled(7, 0);
-    for (final item in items) {
-      final date = WalletState.transactionDate(item);
-      if (date != null) {
-        buckets[date.weekday - 1] += (item.moneyAmount ?? 0).abs();
-      }
-    }
+    final chart = TransactionStatistics.historyBuckets(
+      items,
+      period: state.historyPeriod,
+      referenceDate: state.referenceDate ?? DateTime.now(),
+    );
+    final labels = [
+      for (final date in chart.dates)
+        if (state.historyPeriod == 1)
+          wallet.thisWeekdayLabel[date.weekday - 1]
+        else if (state.historyPeriod == 2)
+          {1, 5, 10, 15, 20, 25, chart.dates.length}.contains(date.day)
+              ? '${date.day}'
+              : ''
+        else
+          DateFormat(
+            'yyyy-MM',
+            Localizations.localeOf(context).toLanguageTag(),
+          ).format(date),
+    ];
     final summary = WalletPanel(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,16 +73,7 @@ class HistoryPage extends ConsumerWidget {
               color: AppColors.muted(context),
             ),
           ),
-          WalletBars(
-            values: buckets,
-            labels: const ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-          ),
-          Text(
-            wallet.recordsGroupedByWeekday,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: AppColors.muted(context),
-            ),
-          ),
+          WalletBars(values: chart.values, labels: labels),
         ],
       ),
     );
@@ -160,15 +164,7 @@ class HistoryPage extends ConsumerWidget {
                 ),
               ),
 
-              // 3. 总交易额卡片与周流水图表
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(gutter, 12, gutter, 16),
-                  child: summary,
-                ),
-              ),
-
-              // 4. 按日期查询标题
+              // 3. 按日期查询标题
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(gutter, 8, gutter, 8),
@@ -179,7 +175,7 @@ class HistoryPage extends ConsumerWidget {
                 ),
               ),
 
-              // 5. 日期筛选栏吸顶（pinned: true），未吸顶时保持正常边距与圆角，吸顶时窄屏占满屏幕宽度
+              // 4. 日期筛选栏吸顶（pinned: true），未吸顶时保持正常边距与圆角，吸顶时窄屏占满屏幕宽度
               SliverPersistentHeader(
                 pinned: true,
                 delegate: _HistoryStickyFilterDelegate(
@@ -190,6 +186,14 @@ class HistoryPage extends ConsumerWidget {
                   textScale: MediaQuery.textScalerOf(context).scale(1.0),
                   gutter: gutter,
                   isWide: isWide,
+                ),
+              ),
+
+              // 5. 总交易额卡片与所选范围流水图表
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(gutter, 12, gutter, 16),
+                  child: summary,
                 ),
               ),
 

@@ -16,16 +16,16 @@ class WalletEn implements WalletLang {
   String get totalSpending => 'Total Spending';
 
   @override
-  String get lastMonth => ' Last Month';
+  String get lastMonth => 'Last Month';
 
   @override
-  String get thisMonth => 'this month';
+  String get thisMonth => 'This month';
 
   @override
-  String get thisWeek => 'this week';
+  String get thisWeek => 'This week';
 
   @override
-  String get thisYear => 'this year';
+  String get thisYear => 'This year';
 
   @override
   String get lastSend => 'Last Send';

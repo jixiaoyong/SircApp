@@ -87,7 +87,13 @@ class MockDataRepository {
         ...json,
         'moneyActionName': json['name$suffix'] ?? json['moneyActionName'],
       });
-    }).toList();
+    }).toList()..sort((a, b) {
+      final aDate = DateTime.tryParse(a.time ?? '');
+      final bDate = DateTime.tryParse(b.time ?? '');
+      if (aDate == null) return bDate == null ? 0 : 1;
+      if (bDate == null) return -1;
+      return bDate.compareTo(aDate);
+    });
   }
 
   DateTime _weekStart(DateTime value) {

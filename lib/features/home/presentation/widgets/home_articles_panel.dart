@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:sirc/core/localization/app_locale.dart' show localeProvider;
+import 'package:sirc/core/localization/app_locale.dart'
+    show localeProvider, AppLocale;
 import 'package:sirc/core/theme/app_colors.dart' show AppColors;
 import 'package:sirc/features/home/data/article_repository.dart'
     show articleGroupsProvider, Article;
@@ -8,6 +9,7 @@ import 'package:sirc/l10n/languages.g.dart' show Languages;
 import 'package:sirc/routes/source_detail_navigation.dart'
     show openSourceDetail;
 import 'package:sirc/widgets/neutral_segments.dart' show NeutralSegments;
+import 'package:sirc/utils/date_time_formatter.dart';
 
 /// 展示本地文章面板
 ///
@@ -29,12 +31,9 @@ class _HomeArticlesPanelState extends ConsumerState<HomeArticlesPanel> {
         Expanded(
           child: Text(
             Languages.articles,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            key: const ValueKey('home-articles-heading'),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
-        ),
-        Text(
-          Languages.home.localExamples,
-          style: TextStyle(fontSize: 10, color: AppColors.muted(context)),
         ),
       ],
     );
@@ -104,20 +103,27 @@ class _HomeArticlesPanelState extends ConsumerState<HomeArticlesPanel> {
     final borderColor = AppColors.line(context);
 
     final sectionStart = SliverToBoxAdapter(
-      child: Container(
+      child: Column(
         key: const ValueKey('home-articles'),
-        decoration: BoxDecoration(
-          color: surfaceColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
-          border: Border(
-            top: BorderSide(color: borderColor),
-            left: BorderSide(color: borderColor),
-            right: BorderSide(color: borderColor),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildHeading(),
+          const SizedBox(height: 12),
+          Container(
+            height: 20,
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(14),
+              ),
+              border: Border(
+                top: BorderSide(color: borderColor),
+                left: BorderSide(color: borderColor),
+                right: BorderSide(color: borderColor),
+              ),
+            ),
           ),
-        ),
-        clipBehavior: Clip.antiAlias,
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-        child: _buildHeading(),
+        ],
       ),
     );
 
@@ -157,7 +163,7 @@ class _HomeArticlesPanelState extends ConsumerState<HomeArticlesPanel> {
   }
 }
 
-class _RepositoryArticleItem extends StatelessWidget {
+class _RepositoryArticleItem extends ConsumerWidget {
   const _RepositoryArticleItem({
     required this.article,
     required this.group,
@@ -168,7 +174,12 @@ class _RepositoryArticleItem extends StatelessWidget {
   final int index;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final publishedAt = AppDateTimeFormatter.display(
+      article.publishedAt,
+      locale: ref.watch(localeProvider),
+      languages: AppLocale.current,
+    );
     final title = article.title;
     final summary = article.summary;
     return InkWell(
@@ -193,6 +204,16 @@ class _RepositoryArticleItem extends StatelessWidget {
                 summary,
                 style: TextStyle(fontSize: 12, color: AppColors.muted(context)),
               ),
+              if (publishedAt.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  publishedAt,
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: AppColors.muted(context),
+                  ),
+                ),
+              ],
             ],
           ),
         ),

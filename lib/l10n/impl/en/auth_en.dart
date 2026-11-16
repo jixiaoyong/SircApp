@@ -146,7 +146,7 @@ class AuthEn implements AuthLang {
       'Please enter the verify code we sent to your email:';
 
   @override
-  String get verify => 'verify';
+  String get verify => 'Verify';
 
   @override
   String get pleaseInputCurrentPassword =>

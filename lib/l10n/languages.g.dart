@@ -226,7 +226,7 @@ class Languages {
   static String get pleaseEnterVerifyCode => auth.pleaseEnterVerifyCode;
 
   ///- [zh_CN] 获取验证码
-  ///- [en_US] verify
+  ///- [en_US] Verify
   static String get verify => auth.verify;
 
   ///- [zh_CN] 请先输入现有密码
@@ -265,19 +265,19 @@ class Languages {
   static String get totalSpending => wallet.totalSpending;
 
   ///- [zh_CN] 上月
-  ///- [en_US]  Last Month
+  ///- [en_US] Last Month
   static String get lastMonth => wallet.lastMonth;
 
   ///- [zh_CN] 本月
-  ///- [en_US] this month
+  ///- [en_US] This month
   static String get thisMonth => wallet.thisMonth;
 
   ///- [zh_CN] 本周
-  ///- [en_US] this week
+  ///- [en_US] This week
   static String get thisWeek => wallet.thisWeek;
 
   ///- [zh_CN] 本年
-  ///- [en_US] this year
+  ///- [en_US] This year
   static String get thisYear => wallet.thisYear;
 
   ///- [zh_CN] 最近转出
@@ -586,6 +586,10 @@ class Languages {
   ///- [zh_CN] 本地静态示例 · 未连接文章服务 · 非投资建议
   ///- [en_US] Static example · Local content · No article service connected · Not investment advice
   static String get articleDisclaimer => home.articleDisclaimer;
+
+  ///- [zh_CN] 交易活动
+  ///- [en_US] Transaction activity
+  static String get transactionActivity => home.transactionActivity;
 
   ///- [zh_CN] 本周
   ///- [en_US] This week
@@ -1134,7 +1138,7 @@ class Languages {
       "Please Sign In": "Please Sign In",
       "Please enter the verify code we sent to your email:":
           "Please enter the verify code we sent to your email:",
-      "verify": "verify",
+      "Verify": "Verify",
       "Please enter your current password first":
           "Please enter your current password first",
       "Please enter a new password": "Please enter a new password",
@@ -1146,10 +1150,10 @@ class Languages {
       "Wallet": "Wallet",
       "Available Balance": "Available Balance",
       "Total Spending": "Total Spending",
-      " Last Month": " Last Month",
-      "this month": "this month",
-      "this week": "this week",
-      "this year": "this year",
+      "Last Month": "Last Month",
+      "This month": "This month",
+      "This week": "This week",
+      "This year": "This year",
       "Last Send": "Last Send",
       "Last Receive": "Last Receive",
       "Total": "Total",
@@ -1233,6 +1237,7 @@ class Languages {
       "Local examples": "Local examples",
       "Article not found": "Article not found",
       "Static example · Local content · No article service connected · Not investment advice": "Static example · Local content · No article service connected · Not investment advice",
+      "Transaction activity": "Transaction activity",
       "This week": "This week",
       "This month": "This month",
       "Daily transaction volume": "Daily transaction volume",
@@ -1411,7 +1416,7 @@ class Languages {
       "I don't have an account": "我没有账户",
       "Please Sign In": "请登录",
       "Please enter the verify code we sent to your email:": "请输入我们发送到您邮箱的验证码：",
-      "verify": "获取验证码",
+      "Verify": "获取验证码",
       "Please enter your current password first": "请先输入现有密码",
       "Please enter a new password": "请输入新密码",
       "Please enter the confirmation new password": "请输入确认新密码",
@@ -1421,10 +1426,10 @@ class Languages {
       "Wallet": "钱包",
       "Available Balance": "可用余额",
       "Total Spending": "总支出",
-      " Last Month": "上月",
-      "this month": "本月",
-      "this week": "本周",
-      "this year": "本年",
+      "Last Month": "上月",
+      "This month": "本月",
+      "This week": "本周",
+      "This year": "本年",
       "Last Send": "最近转出",
       "Last Receive": "最近转入",
       "Total": "总计",
@@ -1504,6 +1509,7 @@ class Languages {
       "Article not found": "未找到文章",
       "Static example · Local content · No article service connected · Not investment advice":
           "本地静态示例 · 未连接文章服务 · 非投资建议",
+      "Transaction activity": "交易活动",
       "This week": "本周",
       "This month": "本月",
       "Daily transaction volume": "每日交易总额",

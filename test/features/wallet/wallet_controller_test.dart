@@ -1,6 +1,9 @@
 import 'dart:ui';
 
+import 'package:sirc/features/wallet/domain/services/transaction_service.dart';
+
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -115,12 +118,143 @@ void main() {
     });
   });
 
+  group('History calendar buckets', () {
+    test('week includes future Sunday and sums absolute amounts', () {
+      final chart = TransactionStatistics.historyBuckets(
+        [
+          Transaction(time: '2026-11-09', moneyAmount: -20),
+          Transaction(time: '2026-11-09', moneyAmount: 10),
+          Transaction(time: '2026-11-15', moneyAmount: -70),
+        ],
+        period: 1,
+        referenceDate: DateTime(2026, 11, 10),
+      );
+      expect(chart.values, [30, 0, 0, 0, 0, 0, 70]);
+      expect(chart.dates.first, DateTime(2026, 11, 9));
+      expect(chart.dates.last, DateTime(2026, 11, 15));
+    });
+
+    for (final (year, month, days) in [
+      (2026, 2, 28),
+      (2028, 2, 29),
+      (2026, 11, 30),
+      (2026, 12, 31),
+    ]) {
+      test('month $year-$month preserves all $days days', () {
+        final chart = TransactionStatistics.historyBuckets(
+          [
+            Transaction(
+              time: '$year-${month.toString().padLeft(2, '0')}-$days',
+              moneyAmount: -50,
+            ),
+          ],
+          period: 2,
+          referenceDate: DateTime(year, month, 1),
+        );
+        expect(chart.values, hasLength(days));
+        expect(chart.values.last, 50);
+        expect(chart.values.take(days - 1), everyElement(0));
+      });
+    }
+
+    test(
+      'all fills from earliest year January through latest month',
+      () {
+        final chart = TransactionStatistics.historyBuckets(
+          [
+            Transaction(time: '2027-02-02', moneyAmount: -30),
+            Transaction(time: '2026-11-01', moneyAmount: 10),
+            Transaction(time: 'unknown', moneyAmount: 999),
+          ],
+          period: 0,
+          referenceDate: DateTime(2026),
+        );
+        expect(chart.values, [...List<double>.filled(10, 0), 10, 0, 0, 30]);
+        expect(chart.dates, [
+          for (var month = 1; month <= 14; month++) DateTime(2026, month),
+        ]);
+        final single = TransactionStatistics.historyBuckets(
+          [Transaction(time: '2026-11-01', moneyAmount: -10)],
+          period: 0,
+          referenceDate: DateTime(2030),
+        );
+        expect(single.values, [...List<double>.filled(10, 0), 10]);
+        expect(single.dates, [
+          for (var month = 1; month <= 11; month++) DateTime(2026, month),
+        ]);
+        final crossYear = TransactionStatistics.historyBuckets(
+          [
+            Transaction(time: '2025-12-01', moneyAmount: -10),
+            Transaction(time: '2026-02-01', moneyAmount: 20),
+          ],
+          period: 0,
+          referenceDate: DateTime(2030),
+        );
+        expect(crossYear.values, [...List<double>.filled(11, 0), 10, 0, 20]);
+        expect(crossYear.dates, [
+          for (var month = 1; month <= 14; month++) DateTime(2025, month),
+        ]);
+        expect(
+          TransactionStatistics.historyBuckets(
+            [Transaction(time: 'unknown', moneyAmount: 10)],
+            period: 0,
+            referenceDate: DateTime(2026),
+          ).values,
+          isEmpty,
+        );
+      },
+    );
+  });
+
   group('WalletRepository Tests', () {
     late WalletRepository repository;
 
     setUp(() {
       repository = WalletRepositoryImpl();
     });
+
+    test(
+      'transaction refresh follows mock days and weeks without duplicates',
+      () async {
+        var now = DateTime(2026, 11, 16, 18);
+        final repository = WalletRepositoryImpl(
+          null,
+          MockDataRepository(clock: () => now),
+          const Locale('en'),
+        );
+        Future<List<Transaction>> weekly() async =>
+            (await repository.getTransactions())
+                .where((item) => item.id?.startsWith('mock-week-') ?? false)
+                .toList();
+
+        final monday = await weekly();
+        expect(monday, hasLength(1));
+        expect(
+          (await weekly()).map((item) => item.id),
+          monday.map((item) => item.id),
+        );
+        now = DateTime(2026, 11, 17, 18);
+        final tuesday = await weekly();
+        expect(tuesday, hasLength(2));
+        expect(tuesday.last.id, monday.single.id);
+        expect(tuesday.first.moneyActionName, 'Weekly Market');
+        now = DateTime(2026, 11, 22, 18);
+        expect(await weekly(), hasLength(7));
+        now = DateTime(2026, 11, 23, 18);
+        final nextWeek = await weekly();
+        expect(nextWeek, hasLength(1));
+        expect(nextWeek.single.id, isNot(monday.single.id));
+        await repository.refreshLocale(const Locale('zh'));
+        expect((await weekly()).single.moneyActionName, '本周咖啡');
+        expect(
+          await repository.getTransactions(
+            filter: TransactionFilter.receive,
+            query: '本周咖啡',
+          ),
+          isEmpty,
+        );
+      },
+    );
 
     test(
       'Initial bank cards should not be empty and contain default cards',
@@ -135,14 +269,17 @@ void main() {
     test(
       'JSON fixtures load and map business fields for explicit Locale',
       () async {
+        final mock = MockDataRepository(
+          clock: () => DateTime(2026, 11, 16, 18),
+        );
         final english = WalletRepositoryImpl(
           null,
-          null,
+          mock,
           const Locale('en', 'US'),
         );
         final chinese = WalletRepositoryImpl(
           null,
-          null,
+          mock,
           const Locale('zh', 'CN'),
         );
         expect(await english.getAvailableBalance(), 39615.16);
@@ -152,13 +289,29 @@ void main() {
         );
         expect((await chinese.getBankCards()).first.bankName, '北辰信用社');
         expect(
-          (await english.getTransactions()).first.moneyActionName,
+          (await english.getTransactions()).last.moneyActionName,
           'Cornerstone Coffee',
         );
-        expect((await chinese.getTransactions()).first.moneyActionName, '基石咖啡');
+        expect((await chinese.getTransactions()).last.moneyActionName, '基石咖啡');
         final englishItems = await english.getTransactions();
         final chineseItems = await chinese.getTransactions();
         expect(englishItems.length, 31);
+        for (final items in [
+          await mock.getTransactions(const Locale('en')),
+          englishItems,
+          chineseItems,
+          await english.getTransactions(filter: TransactionFilter.send),
+          await english.getTransactions(query: 'Weekly'),
+        ]) {
+          for (var i = 1; i < items.length; i++) {
+            expect(
+              DateTime.parse(items[i - 1].time!)
+                  .isBefore(DateTime.parse(items[i].time!)),
+              isFalse,
+              reason: '交易应按实际时间倒序返回',
+            );
+          }
+        }
         expect(
           chineseItems.map((item) => item.time).toList(),
           englishItems.map((item) => item.time).toList(),
@@ -167,11 +320,7 @@ void main() {
           r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$',
         );
         for (final item in englishItems) {
-          if (item.id?.startsWith('mock-week-') ?? false) {
-            expect(zonedIso.hasMatch(item.time!), isTrue, reason: item.id);
-          } else {
-            expect(zonedIso.hasMatch(item.time!), isTrue, reason: item.id);
-          }
+          expect(zonedIso.hasMatch(item.time!), isTrue, reason: item.id);
           expect(
             WalletState.transactionDate(item),
             DateTime.parse(item.time!).toLocal(),
@@ -179,7 +328,7 @@ void main() {
           expect(Transaction.fromJson(item.toJson()).time, item.time);
         }
         expect(
-          DateTime.parse(englishItems.first.time!),
+          DateTime.parse(englishItems.last.time!),
           DateTime.utc(2026, 11, 1, 16, 42),
         );
       },

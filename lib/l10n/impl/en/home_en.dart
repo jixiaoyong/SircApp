@@ -56,6 +56,9 @@ class HomeEn implements HomeLang {
       'Static example · Local content · No article service connected · Not investment advice';
 
   @override
+  String get transactionActivity => 'Transaction activity';
+
+  @override
   String get chartWeek => 'This week';
   @override
   String get chartMonth => 'This month';

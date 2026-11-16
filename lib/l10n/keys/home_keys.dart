@@ -18,6 +18,7 @@ abstract class HomeLang {
   String get articleNotFound;
   String get articleDisclaimer;
 
+  String get transactionActivity;
   String get chartWeek;
   String get chartMonth;
   String get chartVolume;
