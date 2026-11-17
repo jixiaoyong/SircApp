@@ -523,6 +523,79 @@ class Languages {
   static String get undatedRecordsExcluded => wallet.undatedRecordsExcluded;
 
   // --- Home 模块 ---
+  ///- [zh_CN] 网页模块
+  ///- [en_US] Web module
+  static String get payloadTitle => home.payloadTitle;
+
+  ///- [zh_CN] 正在加载本地模块…
+  ///- [en_US] Loading local module…
+  static String get payloadLoading => home.payloadLoading;
+
+  ///- [zh_CN] 本地模块加载失败。
+  ///- [en_US] Unable to load the local module.
+  static String get payloadError => home.payloadError;
+
+  ///- [zh_CN] 重试
+  ///- [en_US] Retry
+  static String get payloadRetry => home.payloadRetry;
+
+  ///- [zh_CN] 仅使用内置资源 · 尚未配置更新地址
+  ///- [en_US] Built-in resources only · no update URL configured
+  static String get payloadBuiltIn => home.payloadBuiltIn;
+
+  ///- [zh_CN] 已配置更新服务
+  ///- [en_US] Update service configured
+  static String get payloadOnline => home.payloadOnline;
+
+  ///- [zh_CN] 离线资源包仅适用于原生应用，请在 Android 或 iOS 上打开 SircApp。
+  ///- [en_US] Offline packages require the native app. Please open SircApp on Android or iOS.
+  static String get payloadWebUnsupported => home.payloadWebUnsupported;
+
+  ///- [zh_CN] 当前平台暂无受支持的 WebView，请使用 Android 或 iOS。
+  ///- [en_US] This platform has no supported WebView. Please use Android or iOS.
+  static String get payloadPlatformUnsupported =>
+      home.payloadPlatformUnsupported;
+
+  ///- [zh_CN] 恢复内置版本
+  ///- [en_US] Restore built-in version
+  static String get payloadRestore => home.payloadRestore;
+
+  ///- [zh_CN] 返回模块上一页
+  ///- [en_US] Back within module
+  static String get payloadBack => home.payloadBack;
+
+  ///- [zh_CN] Sirc 随行
+  ///- [en_US] Sirc companion
+  static String get payloadHeading => home.payloadHeading;
+
+  ///- [zh_CN] 本地随行模块已就绪，无网络时也可查看。
+  ///- [en_US] Your local companion is ready, even without a network connection.
+  static String get payloadDescription => home.payloadDescription;
+
+  ///- [zh_CN] 资源版本
+  ///- [en_US] Resource version
+  static String get payloadVersion => home.payloadVersion;
+
+  ///- [zh_CN] 正在检查或下载更新…
+  ///- [en_US] Checking or downloading updates…
+  static String get payloadUpdating => home.payloadUpdating;
+
+  ///- [zh_CN] 更新暂不可用，仍可使用本地资源。
+  ///- [en_US] Update unavailable; local resources remain available.
+  static String get payloadUpdateFailed => home.payloadUpdateFailed;
+
+  ///- [zh_CN] 资源已是最新版本
+  ///- [en_US] Resources up to date
+  static String get payloadUpdated => home.payloadUpdated;
+
+  ///- [zh_CN] 新版本已就绪，切换将刷新模块。
+  ///- [en_US] New version ready; switching reloads the module.
+  static String get payloadUpdateAvailable => home.payloadUpdateAvailable;
+
+  ///- [zh_CN] 切换并刷新
+  ///- [en_US] Switch and refresh
+  static String get payloadActivateUpdate => home.payloadActivateUpdate;
+
   ///- [zh_CN] 首页
   ///- [en_US] Home
   static String get homeTitle => home.title;
@@ -1219,6 +1292,29 @@ class Languages {
       "MTWTFSS": "MTWTFSS",
       "Grouped using device date {date}; supports zoned ISO times and date-only values.": "Grouped using device date {date}; supports zoned ISO times and date-only values.",
       "{count} undated records excluded": "{count} undated records excluded",
+      "Web module": "Web module",
+      "Loading local module…": "Loading local module…",
+      "Unable to load the local module.": "Unable to load the local module.",
+      "Retry": "Retry",
+      "Built-in resources only · no update URL configured":
+          "Built-in resources only · no update URL configured",
+      "Update service configured": "Update service configured",
+      "Offline packages require the native app. Please open SircApp on Android or iOS.": "Offline packages require the native app. Please open SircApp on Android or iOS.",
+      "This platform has no supported WebView. Please use Android or iOS.":
+          "This platform has no supported WebView. Please use Android or iOS.",
+      "Restore built-in version": "Restore built-in version",
+      "Back within module": "Back within module",
+      "Sirc companion": "Sirc companion",
+      "Your local companion is ready, even without a network connection.":
+          "Your local companion is ready, even without a network connection.",
+      "Resource version": "Resource version",
+      "Checking or downloading updates…": "Checking or downloading updates…",
+      "Update unavailable; local resources remain available.":
+          "Update unavailable; local resources remain available.",
+      "Resources up to date": "Resources up to date",
+      "New version ready; switching reloads the module.":
+          "New version ready; switching reloads the module.",
+      "Switch and refresh": "Switch and refresh",
       "Home": "Home",
       "Home": "Home",
       "Dashboard": "Dashboard",
@@ -1491,6 +1587,29 @@ class Languages {
       "Grouped using device date {date}; supports zoned ISO times and date-only values.":
           "按设备日期 {date} 统计，支持含时区的 ISO 时间及独立日期。",
       "{count} undated records excluded": "{count} 笔日期未识别，未计入图表",
+      "Web module": "网页模块",
+      "Loading local module…": "正在加载本地模块…",
+      "Unable to load the local module.": "本地模块加载失败。",
+      "Retry": "重试",
+      "Built-in resources only · no update URL configured":
+          "仅使用内置资源 · 尚未配置更新地址",
+      "Update service configured": "已配置更新服务",
+      "Offline packages require the native app. Please open SircApp on Android or iOS.":
+          "离线资源包仅适用于原生应用，请在 Android 或 iOS 上打开 SircApp。",
+      "This platform has no supported WebView. Please use Android or iOS.":
+          "当前平台暂无受支持的 WebView，请使用 Android 或 iOS。",
+      "Restore built-in version": "恢复内置版本",
+      "Back within module": "返回模块上一页",
+      "Sirc companion": "Sirc 随行",
+      "Your local companion is ready, even without a network connection.":
+          "本地随行模块已就绪，无网络时也可查看。",
+      "Resource version": "资源版本",
+      "Checking or downloading updates…": "正在检查或下载更新…",
+      "Update unavailable; local resources remain available.":
+          "更新暂不可用，仍可使用本地资源。",
+      "Resources up to date": "资源已是最新版本",
+      "New version ready; switching reloads the module.": "新版本已就绪，切换将刷新模块。",
+      "Switch and refresh": "切换并刷新",
       "Home": "首页",
       "Home": "首页",
       "Dashboard": "控制面板",

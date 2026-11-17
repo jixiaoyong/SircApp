@@ -29,6 +29,7 @@ class MainPage extends ConsumerWidget {
       (Icons.av_timer_outlined, Languages.history),
       (Icons.person_outline_outlined, Languages.person),
       (Icons.menu_outlined, Languages.menu),
+      (Icons.web_outlined, Languages.home.payloadTitle),
     ];
 
     void selectTab(int index) => navigationShell.goBranch(index);

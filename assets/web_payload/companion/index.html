@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Sirc 随行</title>
+    <script type="module" crossorigin>var C=Object.defineProperty;var L=(o,t,e)=>t in o?C(o,t,{enumerable:!0,configurable:!0,writable:!0,value:e}):o[t]=e;var d=(o,t,e)=>L(o,typeof t!="symbol"?t+"":t,e);(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const s of document.querySelectorAll('link[rel="modulepreload"]'))i(s);new MutationObserver(s=>{for(const r of s)if(r.type==="childList")for(const a of r.addedNodes)a.tagName==="LINK"&&a.rel==="modulepreload"&&i(a)}).observe(document,{childList:!0,subtree:!0});function e(s){const r={};return s.integrity&&(r.integrity=s.integrity),s.referrerPolicy&&(r.referrerPolicy=s.referrerPolicy),s.crossOrigin==="use-credentials"?r.credentials="include":s.crossOrigin==="anonymous"?r.credentials="omit":r.credentials="same-origin",r}function i(s){if(s.ep)return;s.ep=!0;const r=e(s);fetch(s.href,r)}})();class l{static init(t){window.sircPresentation=e=>{if(typeof e.dark=="boolean"&&document.body.classList.toggle("dark",e.dark),e.lang&&(document.documentElement.lang=e.lang),e.title){const i=document.getElementById("sirc-page-title");i&&(i.textContent=e.title)}if(e.version){const i=document.getElementById("sirc-version-badge");i&&(i.textContent=`v${e.version}`)}},window.__tryGoBack=()=>t()}static openPage(t,e){if(window.SircNativeBridge&&typeof window.SircNativeBridge.postMessage=="function")try{return window.SircNativeBridge.postMessage(JSON.stringify({action:"openPage",view:t,title:e})),!0}catch(i){console.warn("Failed to call SircNativeBridge.postMessage",i)}if(window.AppToRoute&&typeof window.AppToRoute.postMessage=="function")try{return window.AppToRoute.postMessage(JSON.stringify({path:"/payload-detail",params:{view:t,title:e}})),!0}catch(i){console.warn("Failed to call AppToRoute.postMessage",i)}return!1}static closePage(){if(window.AppClose&&typeof window.AppClose.postMessage=="function"){window.AppClose.postMessage("");return}if(window.SircNativeBridge&&typeof window.SircNativeBridge.postMessage=="function"){window.SircNativeBridge.postMessage(JSON.stringify({action:"close"}));return}}static showToast(t){let e=document.getElementById("sirc-toast");e||(e=document.createElement("div"),e.id="sirc-toast",e.className="sirc-toast",document.body.appendChild(e)),e.textContent=t,e.classList.add("show"),this.toastTimer&&window.clearTimeout(this.toastTimer),this.toastTimer=window.setTimeout(()=>{e==null||e.classList.remove("show")},2e3)}static async copyText(t,e="已复制到剪贴板"){try{if(navigator.clipboard&&navigator.clipboard.writeText)await navigator.clipboard.writeText(t);else{const i=document.createElement("textarea");i.value=t,i.style.position="fixed",i.style.opacity="0",document.body.appendChild(i),i.select(),document.execCommand("copy"),document.body.removeChild(i)}this.showToast(e)}catch{this.showToast(`复制失败: ${t}`)}}}d(l,"toastTimer",null);const m=[{id:"emergency",title:"紧急卡片与全球救援",desc:"3张离线安全卡片 · 全球24小时紧急挂失专线",icon:"🚨",iconClass:"emergency"},{id:"currency",title:"离线汇率与境外用卡",desc:"四大主流币种基准汇率 · DCC 刷卡避坑指南",icon:"📊",iconClass:"currency"},{id:"privilege",title:"尊享权益与离线小票",desc:"全球机场 CIP 贵宾厅 · 离线消费交易签单",icon:"👑",iconClass:"privilege"}];class E{static render(t,e){const i=document.createElement("div");i.className="sirc-master-pane";const s=document.createElement("div");return s.className="sirc-card",s.style.padding="14px 16px",s.innerHTML=`
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 13px; font-weight: 700; color: var(--sirc-ink);">随行离线防护模式</span>
+        <span style="font-size: 11px; font-weight: 600; color: var(--sirc-success);">● 全功能就绪</span>
+      </div>
+      <div style="font-size: 11px; color: var(--sirc-muted); margin-top: 4px;">
+        断网飞行或弱网环境下，均可本地流畅查验。
+      </div>
+    `,i.appendChild(s),m.forEach(r=>{const a=document.createElement("div");a.className=`sirc-card sirc-nav-card ${t===r.id?"active":""}`,a.innerHTML=`
+        <div class="sirc-nav-icon ${r.iconClass}">${r.icon}</div>
+        <div class="sirc-nav-content">
+          <div class="sirc-nav-title">${r.title}</div>
+          <div class="sirc-nav-desc">${r.desc}</div>
+        </div>
+        <div class="sirc-nav-arrow">›</div>
+      `,a.onclick=()=>e(r),i.appendChild(a)}),i}}const g=[{id:"card-001",bankName:"北辰信用社 (Northstar)",cardNumber:"4929 •••• •••• 0042",cardType:"Visa Signature",themeClass:"northstar",hotline:"400-820-0042",owner:"ALEX MORGAN"},{id:"card-002",bankName:"港湾社区银行 (Harbor)",cardNumber:"5264 •••• •••• 0187",cardType:"Mastercard World",themeClass:"harbor",hotline:"400-888-0187",owner:"ALEX MORGAN"},{id:"card-003",bankName:"雪松数字银行 (Cedar)",cardNumber:"4532 •••• •••• 2305",cardType:"Visa Platinum",themeClass:"cedar",hotline:"400-666-2305",owner:"ALEX MORGAN"}];class h{static renderLevel2(t){const e=document.createElement("div");e.className="sirc-view-container",e.innerHTML=`
+      <div class="sirc-card" style="margin-bottom: 14px; border-left: 4px solid var(--sirc-error);">
+        <h3 style="font-size: 16px; margin-bottom: 4px; color: var(--sirc-error);">🚨 离线紧急卡片保护</h3>
+        <p style="font-size: 13px; color: var(--sirc-muted);">
+          手机处于无网络或境外断网状态时，可通过以下离线卡片凭证直接致电银行全球紧急挂失专线进行临时止付。
+        </p>
+      </div>
+      <div style="font-size: 13px; font-weight: 700; color: var(--sirc-muted); margin-bottom: 10px;">
+        已绑定离线安全保护卡片 (点击查看挂失详情与操作)
+      </div>
+      <div id="card-list-container" style="display: flex; flex-direction: column; gap: 12px;"></div>
+    `;const i=e.querySelector("#card-list-container");return g.forEach(s=>{const r=document.createElement("div");r.className=`sirc-bank-card ${s.themeClass}`,r.innerHTML=`
+        <div class="sirc-card-header">
+          <span class="sirc-card-bank-name">${s.bankName}</span>
+          <span class="sirc-card-type-chip">${s.cardType}</span>
+        </div>
+        <div class="sirc-card-number">${s.cardNumber}</div>
+        <div class="sirc-card-footer">
+          <span>持卡人: ${s.owner}</span>
+          <span>挂失专线: ${s.hotline}</span>
+        </div>
+      `,r.onclick=()=>t(s),i.appendChild(r)}),e}static renderLevel3(t){const e=document.createElement("div");return e.className="sirc-view-container",e.innerHTML=`
+      <div class="sirc-bank-card ${t.themeClass}" style="margin-bottom: 16px;">
+        <div class="sirc-card-header">
+          <span class="sirc-card-bank-name">${t.bankName}</span>
+          <span class="sirc-card-type-chip">${t.cardType}</span>
+        </div>
+        <div class="sirc-card-number">${t.cardNumber}</div>
+        <div class="sirc-card-footer">
+          <span>持卡人: ${t.owner}</span>
+          <span>卡片状态: 正常激活 (离线受控)</span>
+        </div>
+      </div>
+
+      <div class="sirc-card" style="margin-bottom: 14px;">
+        <h4 style="font-size: 15px; margin-bottom: 8px;">拨打离线紧急求助热线</h4>
+        <p style="font-size: 13px; color: var(--sirc-muted); margin-bottom: 12px;">
+          此银行 24 小时全球反欺诈及紧急止付中心，支持境外接听与主叫：
+        </p>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <a href="tel:${t.hotline}" class="sirc-btn sirc-btn-danger" style="text-decoration:none; flex: 1;">
+            📞 呼叫紧急专线 (${t.hotline})
+          </a>
+          <button id="btn-copy-hotline" class="sirc-btn sirc-btn-secondary" type="button">
+            复制电话
+          </button>
+        </div>
+      </div>
+
+      <div class="sirc-card" style="margin-bottom: 14px;">
+        <h4 style="font-size: 15px; margin-bottom: 8px;">一键复制应急报案模版</h4>
+        <p style="font-size: 12px; color: var(--sirc-muted); margin-bottom: 10px;">
+          如信号微弱无法通话，可复制下方信息发送短信至发卡行应急短信中心：
+        </p>
+        <pre style="background: var(--sirc-surface-hover); padding: 10px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; overflow-x: auto; color: var(--sirc-ink);">
+【紧急挂失】本人 ${t.owner}，卡号 ${t.cardNumber}，遭遇离线紧急情况申请临时止付，请立即协助核实！</pre>
+        <button id="btn-copy-template" class="sirc-btn sirc-btn-primary" style="width: 100%;">
+          📋 复制报案短信模版
+        </button>
+      </div>
+
+      <div class="sirc-card">
+        <h4 style="font-size: 14px; margin-bottom: 6px; color: var(--sirc-warning);">💡 境外离线安全小贴士</h4>
+        <ul style="font-size: 12px; color: var(--sirc-muted); padding-left: 18px; line-height: 1.8;">
+          <li>若在境外 POS 刷卡失败提示密码错误，境外 Visa/Mastercard 大多仅需签名或 4 位 PIN。</li>
+          <li>切勿让卡片离开视线，谨防盗刷设备记录磁条与 CVV。</li>
+        </ul>
+      </div>
+    `,e.querySelector("#btn-copy-hotline").addEventListener("click",()=>{l.copyText(t.hotline,"已复制客服专线")}),e.querySelector("#btn-copy-template").addEventListener("click",()=>{const i=`【紧急挂失】本人 ${t.owner}，卡号 ${t.cardNumber}，遭遇离线紧急情况申请临时止付，请立即协助核实！`;l.copyText(i,"已复制应急报案短信模版")}),e}}const v=[{code:"USD",name:"美元",symbol:"$",rateToCny:7.245},{code:"EUR",name:"欧元",symbol:"€",rateToCny:7.825},{code:"JPY",name:"日元 (100)",symbol:"¥",rateToCny:4.82},{code:"HKD",name:"港币",symbol:"HK$",rateToCny:.928}];class f{static renderLevel2(t){const e=document.createElement("div");return e.className="sirc-view-container",e.innerHTML=`
+      <div class="sirc-card" style="margin-bottom: 14px; border-left: 4px solid var(--sirc-accent);">
+        <h3 style="font-size: 16px; margin-bottom: 4px; color: var(--sirc-accent);">📊 离线基准汇率参考</h3>
+        <p style="font-size: 13px; color: var(--sirc-muted);">
+          基于离线包同步时间缓存的基准外汇参考汇率，断网环境下依然可快速估算交易成本。
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px;">
+        ${v.map(i=>`
+          <div class="sirc-card" style="padding: 12px; text-align: center;">
+            <div style="font-size: 12px; color: var(--sirc-muted); font-weight: 600;">${i.name} (${i.code})</div>
+            <div style="font-size: 18px; font-weight: 800; color: var(--sirc-ink); margin: 4px 0;">${i.rateToCny.toFixed(3)}</div>
+            <div style="font-size: 11px; color: var(--sirc-success);">1 ${i.code} ≈ ${i.rateToCny} CNY</div>
+          </div>
+        `).join("")}
+      </div>
+
+      <div class="sirc-card" style="margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h4 style="font-size: 15px; font-weight: 700;">🧮 交互式随身汇率换算</h4>
+          <span style="font-size: 12px; color: var(--sirc-accent); font-weight: 600;">支持实时换算</span>
+        </div>
+        <p style="font-size: 13px; color: var(--sirc-muted); margin-bottom: 12px;">
+          快速输入商品当地标价，实时折算人民币，并检测是否包含 DCC 汇率溢价。
+        </p>
+        <button id="btn-open-calc" class="sirc-btn sirc-btn-primary" style="width: 100%;">
+          进入离线汇率换算器 →
+        </button>
+      </div>
+
+      <div class="sirc-card" style="border-left: 4px solid var(--sirc-warning);">
+        <h4 style="font-size: 14px; margin-bottom: 6px; color: var(--sirc-warning);">⚠️ 境外刷卡 DCC 避坑核心守则</h4>
+        <p style="font-size: 12px; color: var(--sirc-muted); line-height: 1.7;">
+          在境外 POS 机刷卡提示选择币种时，<strong>务必选择消费地当地货币（如美元/欧元/日元）结算</strong>！
+          若选择人民币结算（DCC 动态货币转换），商户将按极差汇率加收 3%~8% 的二次转换手续费。
+        </p>
+      </div>
+    `,e.querySelector("#btn-open-calc").addEventListener("click",t),e}static renderLevel3(){const t=document.createElement("div");t.className="sirc-view-container";let e=v[0],i=100;t.innerHTML=`
+      <div class="sirc-card sirc-exchange-card" style="margin-bottom: 16px;">
+        <h3 style="font-size: 16px; font-weight: 700;">离线实时汇率换算</h3>
+        
+        <div class="sirc-exchange-row">
+          <select id="select-currency" style="background:transparent; border:none; font-size:15px; font-weight:700; color:var(--sirc-ink); outline:none;">
+            ${v.map(n=>`<option value="${n.code}">${n.name} (${n.code})</option>`).join("")}
+          </select>
+          <input id="input-foreign" class="sirc-exchange-input" type="number" value="100" />
+        </div>
+
+        <div style="text-align: center; color: var(--sirc-light); font-size: 18px;">⇅</div>
+
+        <div class="sirc-exchange-row" style="background: var(--sirc-accent-soft);">
+          <span class="sirc-exchange-currency" style="color: var(--sirc-accent);">人民币 (CNY)</span>
+          <span id="output-cny" class="sirc-exchange-input" style="color: var(--sirc-accent);">¥ 724.50</span>
+        </div>
+      </div>
+
+      <div class="sirc-card" id="dcc-warning-box" style="margin-bottom: 16px;">
+        <div style="font-size: 14px; font-weight: 700; color: var(--sirc-error); margin-bottom: 6px;">
+          🚨 DCC 汇率溢价预警
+        </div>
+        <div id="dcc-loss-text" style="font-size: 13px; color: var(--sirc-muted); line-height: 1.6;">
+          若在刷卡机上误选了人民币计价，预计将被多扣除约 <strong>¥21.74 ~ ¥36.23</strong> 的隐形手续费！
+        </div>
+      </div>
+    `;const s=t.querySelector("#select-currency"),r=t.querySelector("#input-foreign"),a=t.querySelector("#output-cny"),u=t.querySelector("#dcc-loss-text"),c=()=>{const n=s.value;e=v.find(w=>w.code===n)||v[0],i=parseFloat(r.value)||0;let p=0;e.code==="JPY"?p=i/100*e.rateToCny:p=i*e.rateToCny,a.textContent=`¥ ${p.toFixed(2)}`;const b=(p*.03).toFixed(2),x=(p*.05).toFixed(2);u.innerHTML=`若在刷卡机上误选了人民币计价，预计将被多扣除约 <strong>¥${b} ~ ¥${x}</strong> (3%~5%) 的隐形手续费！建议明确告知收银员“Local Currency Only”。`};return s.addEventListener("change",c),r.addEventListener("input",c),t}}class y{static renderLevel2(t){const e=document.createElement("div");return e.className="sirc-view-container",e.innerHTML=`
+      <div class="sirc-card" style="margin-bottom: 14px; border-left: 4px solid var(--sirc-warning);">
+        <h3 style="font-size: 16px; margin-bottom: 4px; color: var(--sirc-warning);">👑 尊享离线商旅权益</h3>
+        <p style="font-size: 13px; color: var(--sirc-muted);">
+          断网或飞行模式下，出示本随行凭据可向合作机场贵宾室或商户享受尊享权益。
+        </p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+        <div class="sirc-card" style="display: flex; gap: 12px; align-items: center;">
+          <div style="font-size: 28px;">🛫</div>
+          <div>
+            <div style="font-size: 14px; font-weight: 700; color: var(--sirc-ink);">全球机场 CIP 快速安检通道</div>
+            <div style="font-size: 12px; color: var(--sirc-muted);">支持北辰信用社 Visa Signature 卡，全年 4 次离线核销</div>
+          </div>
+        </div>
+
+        <div class="sirc-card" style="display: flex; gap: 12px; align-items: center;">
+          <div style="font-size: 28px;">☕</div>
+          <div>
+            <div style="font-size: 14px; font-weight: 700; color: var(--sirc-ink);">国际机场贵宾候机室 LoungeKey</div>
+            <div style="font-size: 12px; color: var(--sirc-muted);">出示港湾社区银行卡片与离线条码即可入座</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sirc-card" style="margin-bottom: 14px;">
+        <h4 style="font-size: 15px; margin-bottom: 8px;">🧾 离线消费交易凭证记录器</h4>
+        <p style="font-size: 13px; color: var(--sirc-muted); margin-bottom: 12px;">
+          在飞机或无信号场所消费时，可模拟生成标准离线交易小票，用于后续账单核对与报销。
+        </p>
+        <button id="btn-open-receipt" class="sirc-btn sirc-btn-primary" style="width: 100%;">
+          生成离线交易凭证小票 →
+        </button>
+      </div>
+    `,e.querySelector("#btn-open-receipt").addEventListener("click",t),e}static renderLevel3(){const t=document.createElement("div");t.className="sirc-view-container";const e=new Date().toISOString().replace("T"," ").slice(0,19),i=`OFFLINE-${Math.floor(1e5+Math.random()*9e5)}`;return t.innerHTML=`
+      <div class="sirc-voucher-receipt" style="margin-bottom: 16px;">
+        <div class="sirc-voucher-watermark">SIRC OFFLINE</div>
+        
+        <div style="text-align: center; border-bottom: 1px dashed var(--sirc-border); padding-bottom: 12px; margin-bottom: 12px;">
+          <div style="font-size: 18px; font-weight: 800; letter-spacing: 1px;">SIRC 离线商旅消费签单</div>
+          <div style="font-size: 11px; color: var(--sirc-muted); margin-top: 4px;">凭单编号: <span id="voucher-code">${i}</span></div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--sirc-muted);">商户名称</span>
+            <span style="font-weight: 600;">国际航线机上免税品中心</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--sirc-muted);">支付卡号</span>
+            <span style="font-weight: 600; font-family: monospace;">4929 •••• •••• 0042</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--sirc-muted);">交易时间</span>
+            <span style="font-weight: 600;">${e}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--sirc-muted);">交易类型</span>
+            <span style="font-weight: 600; color: var(--sirc-success);">离线预授权 (Pre-Auth)</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-top: 1px dashed var(--sirc-border); padding-top: 10px; margin-top: 6px;">
+            <span style="font-size: 14px; font-weight: 700;">消费金额</span>
+            <span style="font-size: 18px; font-weight: 800; color: var(--sirc-accent);">$ 99.00 USD</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button id="btn-copy-voucher" class="sirc-btn sirc-btn-primary" style="flex: 1;">
+          📋 复制凭单编号
+        </button>
+        <button id="btn-refresh-voucher" class="sirc-btn sirc-btn-secondary" style="flex: 1;">
+          🔄 重新生成小票
+        </button>
+      </div>
+    `,t.querySelector("#btn-copy-voucher").addEventListener("click",()=>{l.copyText(i,"已复制凭单编号")}),t.querySelector("#btn-refresh-voucher").addEventListener("click",()=>{const s=t.parentElement;s&&(s.innerHTML="",s.appendChild(y.renderLevel3())),l.showToast("已生成新流水凭证")}),t}}class N{constructor(){d(this,"activeCategory","emergency");d(this,"currentLevel",1);d(this,"selectedCard",g[0]);d(this,"isStandalone",!1);d(this,"appEl");d(this,"masterPaneEl");d(this,"detailPaneEl");this.init()}isWide(){return window.innerWidth>=768}init(){this.appEl=document.getElementById("app");const t=new URLSearchParams(window.location.search),e=window.location.hash.replace(/^#\/?/,""),i=t.get("mode"),s=t.get("view")||e;i==="standalone"||s&&s!=="root"?(this.isStandalone=!0,s&&["emergency","currency","privilege"].includes(s)&&(this.activeCategory=s),this.currentLevel=2):this.isWide()?this.currentLevel=2:this.currentLevel=1,l.init(()=>this.handleBack()),window.addEventListener("resize",()=>{this.render()}),this.render()}handleBack(){return this.isStandalone?this.currentLevel===3?(this.currentLevel=2,this.render(),!0):!1:this.isWide()?this.currentLevel===3?(this.currentLevel=2,this.render(),!0):!1:this.currentLevel===3?(this.currentLevel=2,this.render(),!0):this.currentLevel===2?(this.currentLevel=1,this.render(),!0):!1}selectCategory(t){this.activeCategory=t.id,!(!this.isWide()&&!this.isStandalone&&l.openPage(t.id,t.title))&&(this.currentLevel=2,this.render())}selectCardDetail(t){this.selectedCard=t,this.currentLevel=3,this.render()}openCalculator(){this.currentLevel=3,this.render()}openReceipt(){this.currentLevel=3,this.render()}render(){if(this.appEl.innerHTML="",this.isStandalone){const e=m.find(r=>r.id===this.activeCategory)||m[0],i=document.createElement("header");i.className="sirc-top-bar",i.innerHTML=`
+        <div class="sirc-brand">
+          <button class="sirc-back-btn" id="sirc-standalone-nav-back" style="margin-right: 8px;">
+            ‹ 返回
+          </button>
+          <div class="sirc-title-text" id="sirc-page-title">${e.title}</div>
+          <span class="sirc-status-badge">
+            <span class="sirc-status-dot"></span>
+            <span>离线随行</span>
+          </span>
+        </div>
+      `,this.appEl.appendChild(i);const s=i.querySelector("#sirc-standalone-nav-back");s&&s.addEventListener("click",()=>{this.handleBack()||l.closePage()})}else{const e=document.createElement("header");e.className="sirc-top-bar",e.innerHTML=`
+        <div class="sirc-brand">
+          <div class="sirc-logo-icon">S</div>
+          <div class="sirc-title-text" id="sirc-page-title">Sirc 随行</div>
+          <span class="sirc-status-badge">
+            <span class="sirc-status-dot"></span>
+            <span>离线可用</span>
+          </span>
+        </div>
+        <div style="font-size: 12px; color: var(--sirc-light); font-weight: 600;" id="sirc-version-badge">
+          v1.0.0
+        </div>
+      `,this.appEl.appendChild(e)}const t=document.createElement("main");t.className="sirc-container",this.masterPaneEl=E.render(this.activeCategory,e=>{this.selectCategory(e)}),this.detailPaneEl=document.createElement("div"),this.detailPaneEl.className="sirc-detail-pane",this.renderDetailContent(this.detailPaneEl),this.isStandalone?(t.style.display="block",this.masterPaneEl.style.display="none",this.detailPaneEl.style.display="flex",this.detailPaneEl.style.width="100%"):this.isWide()?(this.masterPaneEl.style.display="flex",this.detailPaneEl.style.display="flex"):this.currentLevel===1?(this.masterPaneEl.style.display="flex",this.detailPaneEl.style.display="none"):(this.masterPaneEl.style.display="none",this.detailPaneEl.style.display="flex"),t.appendChild(this.masterPaneEl),t.appendChild(this.detailPaneEl),this.appEl.appendChild(t)}renderDetailContent(t){t.innerHTML="";const e=document.createElement("div");e.className="sirc-breadcrumb-bar";const i=m.find(n=>n.id===this.activeCategory)||m[0];let s="";if(!this.isWide()&&!this.isStandalone&&(s+=`
+        <button class="sirc-back-btn" id="sirc-header-back-btn">
+          ‹ 返回
+        </button>
+      `),s+='<span class="sirc-breadcrumb-item" id="bc-home">随行中心</span>',this.currentLevel>=2&&(s+=`
+        <span class="sirc-breadcrumb-separator">/</span>
+        <span class="sirc-breadcrumb-item ${this.currentLevel===2?"sirc-breadcrumb-current":""}" id="bc-level2">
+          ${i.title}
+        </span>
+      `),this.currentLevel===3){let n="详情操作";this.activeCategory==="emergency"?n=`${this.selectedCard.bankName} 紧急处置`:this.activeCategory==="currency"?n="实时汇率换算":this.activeCategory==="privilege"&&(n="离线交易签单"),s+=`
+        <span class="sirc-breadcrumb-separator">/</span>
+        <span class="sirc-breadcrumb-current">${n}</span>
+      `}e.innerHTML=s;const r=e.querySelector("#sirc-header-back-btn");r&&r.addEventListener("click",()=>{this.handleBack()||l.closePage()});const a=e.querySelector("#bc-home");a&&a.addEventListener("click",()=>{this.isStandalone?l.closePage():(this.currentLevel=1,this.render())});const u=e.querySelector("#bc-level2");u&&this.currentLevel===3&&u.addEventListener("click",()=>{this.currentLevel=2,this.render()}),t.appendChild(e);const c=document.createElement("div");c.style.display="flex",c.style.flexDirection="column",c.style.gap="12px",this.activeCategory==="emergency"?this.currentLevel===2?c.appendChild(h.renderLevel2(n=>this.selectCardDetail(n))):c.appendChild(h.renderLevel3(this.selectedCard)):this.activeCategory==="currency"?this.currentLevel===2?c.appendChild(f.renderLevel2(()=>this.openCalculator())):c.appendChild(f.renderLevel3()):this.activeCategory==="privilege"&&(this.currentLevel===2?c.appendChild(y.renderLevel2(()=>this.openReceipt())):c.appendChild(y.renderLevel3())),t.appendChild(c)}}window.addEventListener("DOMContentLoaded",()=>{new N});</script>
+    <style rel="stylesheet" crossorigin>:root{--sirc-bg: #f7f7f7;--sirc-surface: #ffffff;--sirc-surface-hover: #f1f3f5;--sirc-surface-active: #e8ecf1;--sirc-ink: #26282b;--sirc-muted: #66686c;--sirc-light: #85888d;--sirc-border: #dedede;--sirc-border-subtle: #eaeaea;--sirc-primary: #26282b;--sirc-accent: #0066d6;--sirc-accent-soft: #eaf2ff;--sirc-success: #277045;--sirc-success-soft: #eaf6ef;--sirc-warning: #e3a35c;--sirc-warning-soft: #fcf4eb;--sirc-error: #cf242c;--sirc-error-soft: #fdebee;--sirc-shadow-sm: 0 2px 6px rgba(0, 0, 0, .04);--sirc-shadow-md: 0 4px 14px rgba(0, 0, 0, .07);--sirc-radius-sm: 8px;--sirc-radius-md: 14px;--sirc-radius-lg: 20px;--sirc-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif}body.dark{--sirc-bg: #14191f;--sirc-surface: #1c222b;--sirc-surface-hover: #232b36;--sirc-surface-active: #2a3442;--sirc-ink: #eef2f8;--sirc-muted: #9ba4b0;--sirc-light: #6c7684;--sirc-border: #2c3644;--sirc-border-subtle: #242c38;--sirc-primary: #eef2f8;--sirc-accent: #3a8df5;--sirc-accent-soft: #17273d;--sirc-success: #38a169;--sirc-success-soft: #142a1f;--sirc-warning: #f6ad55;--sirc-warning-soft: #332210;--sirc-error: #e53e3e;--sirc-error-soft: #381618;--sirc-shadow-sm: 0 2px 6px rgba(0, 0, 0, .2);--sirc-shadow-md: 0 4px 14px rgba(0, 0, 0, .35)}*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}body{font-family:var(--sirc-font);background-color:var(--sirc-bg);color:var(--sirc-ink);line-height:1.5;min-height:100vh;transition:background-color .25s ease,color .25s ease;-webkit-user-select:none;user-select:none}#app{width:100%;min-height:100vh;display:flex;flex-direction:column}.sirc-top-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--sirc-surface);border-bottom:1px solid var(--sirc-border-subtle);position:sticky;top:0;z-index:50;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}.sirc-brand{display:flex;align-items:center;gap:10px}.sirc-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#0066d6,#26282b);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;box-shadow:0 2px 6px #0066d659}.sirc-title-text{font-size:17px;font-weight:700;color:var(--sirc-ink)}.sirc-status-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--sirc-success-soft);color:var(--sirc-success)}.sirc-status-dot{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 0 2px #27704533}.sirc-breadcrumb-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--sirc-surface);border-bottom:1px solid var(--sirc-border-subtle);font-size:13px;color:var(--sirc-muted)}.sirc-breadcrumb-item{cursor:pointer;transition:color .15s}.sirc-breadcrumb-item:hover{color:var(--sirc-accent)}.sirc-breadcrumb-separator{color:var(--sirc-light)}.sirc-breadcrumb-current{font-weight:600;color:var(--sirc-ink)}.sirc-back-btn{display:inline-flex;align-items:center;gap:4px;background:none;border:none;color:var(--sirc-accent);font-size:14px;font-weight:600;cursor:pointer;padding:4px 8px;margin-right:6px;border-radius:6px}.sirc-back-btn:hover{background:var(--sirc-accent-soft)}.sirc-container{flex:1;display:flex;flex-direction:column;padding:16px;max-width:100%}.sirc-master-pane{display:flex;flex-direction:column;gap:16px;width:100%}.sirc-detail-pane{display:none;flex-direction:column;gap:16px;width:100%}@media(min-width:768px){.sirc-container{flex-direction:row;align-items:stretch;padding:24px;gap:24px;max-width:1280px;margin:0 auto;width:100%}.sirc-master-pane{width:360px;flex-shrink:0;display:flex!important;gap:14px}.sirc-detail-pane{flex:1;display:flex!important;min-width:0;gap:16px}.sirc-nav-card.active{border-color:var(--sirc-accent)!important;background:var(--sirc-accent-soft)!important;box-shadow:0 0 0 1px var(--sirc-accent),var(--sirc-shadow-md)!important}.sirc-nav-card.active .sirc-nav-title{color:var(--sirc-accent)!important}.sirc-master-pane .sirc-back-btn{display:none}}.sirc-card{background:var(--sirc-surface);border-radius:var(--sirc-radius-md);border:1px solid var(--sirc-border-subtle);box-shadow:var(--sirc-shadow-sm);padding:18px;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}.sirc-nav-card{display:flex;align-items:center;gap:14px;cursor:pointer;position:relative;overflow:hidden}.sirc-nav-card:hover{transform:translateY(-2px);box-shadow:var(--sirc-shadow-md);border-color:var(--sirc-border)}.sirc-nav-card:active{transform:translateY(0)}.sirc-nav-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}.sirc-nav-icon.emergency{background:var(--sirc-error-soft);color:var(--sirc-error)}.sirc-nav-icon.currency{background:var(--sirc-accent-soft);color:var(--sirc-accent)}.sirc-nav-icon.privilege{background:var(--sirc-warning-soft);color:var(--sirc-warning)}.sirc-nav-content{flex:1;min-width:0}.sirc-nav-title{font-size:15px;font-weight:700;color:var(--sirc-ink);margin-bottom:2px}.sirc-nav-desc{font-size:12px;color:var(--sirc-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sirc-nav-arrow{color:var(--sirc-light);font-size:14px;font-weight:700}.sirc-bank-card{border-radius:var(--sirc-radius-md);padding:16px;color:#fff;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 4px 14px #00000026;transition:transform .2s ease,box-shadow .2s ease}.sirc-bank-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px #00000038}.sirc-bank-card.northstar{background:linear-gradient(135deg,#1f2937,#111827)}.sirc-bank-card.harbor{background:linear-gradient(135deg,#0f4c81,#082440)}.sirc-bank-card.cedar{background:linear-gradient(135deg,#1b4332,#081c15)}.sirc-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.sirc-card-bank-name{font-size:15px;font-weight:700;letter-spacing:.5px}.sirc-card-type-chip{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:#fff3}.sirc-card-number{font-family:SF Mono,Menlo,Consolas,monospace;font-size:18px;font-weight:600;letter-spacing:2px;margin-bottom:12px}.sirc-card-footer{display:flex;justify-content:space-between;align-items:center;font-size:12px;opacity:.85}.sirc-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:var(--sirc-radius-sm);font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .15s ease}.sirc-btn-primary{background:var(--sirc-accent);color:#fff}.sirc-btn-primary:hover{background:#0056b3}.sirc-btn-danger{background:var(--sirc-error);color:#fff}.sirc-btn-danger:hover{background:#b01f26}.sirc-btn-secondary{background:var(--sirc-surface-hover);color:var(--sirc-ink);border:1px solid var(--sirc-border)}.sirc-btn-secondary:hover{background:var(--sirc-surface-active)}.sirc-exchange-card{display:flex;flex-direction:column;gap:14px}.sirc-exchange-row{display:flex;align-items:center;gap:12px;background:var(--sirc-surface-hover);padding:12px 16px;border-radius:12px;border:1px solid var(--sirc-border-subtle)}.sirc-exchange-currency{font-weight:700;font-size:16px;min-width:60px}.sirc-exchange-input{flex:1;min-width:0;width:100%;background:transparent;border:none;outline:none;font-size:18px;font-weight:700;color:var(--sirc-ink);text-align:right;font-family:inherit}.sirc-voucher-receipt{background:#fff;border:1px dashed var(--sirc-border);border-radius:12px;padding:20px;color:#26282b;position:relative;box-shadow:0 4px 12px #0000000d}body.dark .sirc-voucher-receipt{background:#1c222b;color:#eef2f8}.sirc-voucher-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-25deg);font-size:32px;font-weight:900;color:#2770451f;border:3px dashed rgba(39,112,69,.25);padding:6px 16px;border-radius:8px;pointer-events:none;text-transform:uppercase}.sirc-toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%) translateY(100px);background:#26282beb;color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:0 4px 16px #00000040;z-index:9999;opacity:0;transition:transform .25s cubic-bezier(.18,.89,.32,1.28),opacity .25s ease;pointer-events:none}.sirc-toast.show{transform:translate(-50%) translateY(0);opacity:1}</style>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>

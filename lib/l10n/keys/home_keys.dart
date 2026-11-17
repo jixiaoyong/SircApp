@@ -1,6 +1,26 @@
 /// 首页、看板、月份、星期及快捷分类词条契约
 abstract class HomeLang {
   String get title;
+
+  /// H5 模块及其运行状态文案。
+  String get payloadTitle;
+  String get payloadLoading;
+  String get payloadError;
+  String get payloadRetry;
+  String get payloadBuiltIn;
+  String get payloadOnline;
+  String get payloadWebUnsupported;
+  String get payloadPlatformUnsupported;
+  String get payloadRestore;
+  String get payloadBack;
+  String get payloadHeading;
+  String get payloadDescription;
+  String get payloadVersion;
+  String get payloadUpdating;
+  String get payloadUpdateFailed;
+  String get payloadUpdated;
+  String get payloadUpdateAvailable;
+  String get payloadActivateUpdate;
   String get home;
   String get dashboard;
   String get follow;

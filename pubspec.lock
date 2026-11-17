@@ -53,10 +53,10 @@ packages:
     dependency: transitive
     description:
       name: archive
-      sha256: "4bb7d60637561012df2a7b04e48bcc2485e849e81048dc075a6d45b95c342910"
+      sha256: "2fda90592c0afd219c5e285618a98da835cd10df38372666093d25dfe457a2d0"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "4.7.0"
+    version: "4.7.1"
   args:
     dependency: transitive
     description:
@@ -217,6 +217,22 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.1.14"
+  dio:
+    dependency: transitive
+    description:
+      name: dio
+      sha256: "852ec3b48cc431ac04fff978413c541502b67ffc3e26921e74e3d994694192c1"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "5.11.1"
+  dio_web_adapter:
+    dependency: transitive
+    description:
+      name: dio_web_adapter
+      sha256: "3a1b2cd7be71086f38504956e3ebcd2837288d231ff454bafa78021244102bfc"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.2.2"
   embed_webview:
     dependency: "direct main"
     description:
@@ -425,10 +441,10 @@ packages:
     dependency: transitive
     description:
       name: image
-      sha256: "89ed75b2f8231fe676808c5564f9590d728024ded7ac782a7ed8474f1c95b72a"
+      sha256: bc13f61f0f5cb77936e78ae5dae3800f442718dac5d2bc4654f03c239230ed0c
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "4.12.0"
+    version: "4.13.1"
   intl:
     dependency: "direct main"
     description:
@@ -1082,6 +1098,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.1.2"
+  web_payload_manager:
+    dependency: "direct main"
+    description:
+      path: "../21.21-web_payload_manager"
+      relative: true
+    source: path
+    version: "0.0.1"
   web_socket:
     dependency: transitive
     description:
@@ -1150,10 +1173,10 @@ packages:
     dependency: transitive
     description:
       name: xml
-      sha256: "67f0aff7be013d107995e9b75bf4e7f2c3ef2dfdb2c8e68024bba0a7fd5756a4"
+      sha256: "971043b3a0d3da28727e40ed3e0b5d18b742fa5a68665cca88e74b7876d5e025"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "7.0.1"
+    version: "6.6.1"
   yaml:
     dependency: transitive
     description:

@@ -1,0 +1,19 @@
+{
+  "name": "sirc-companion-web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/build-payload.mjs",
+    "build:builtin": "vite build && node scripts/build-payload.mjs --target=builtin",
+    "build:release": "vite build && node scripts/build-payload.mjs --target=release",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "archiver": "^7.0.1",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7",
+    "vite-plugin-singlefile": "^2.3.4"
+  }
+}

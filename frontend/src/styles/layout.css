@@ -1,0 +1,188 @@
+/* 主容器与布局基类 */
+#app {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部状态与标题栏 */
+.sirc-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: var(--sirc-surface);
+  border-bottom: 1px solid var(--sirc-border-subtle);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(12px);
+}
+
+.sirc-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sirc-logo-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #0066d6, #26282b);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  box-shadow: 0 2px 6px rgba(0, 102, 214, 0.35);
+}
+
+.sirc-title-text {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--sirc-ink);
+}
+
+.sirc-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--sirc-success-soft);
+  color: var(--sirc-success);
+}
+
+.sirc-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 2px rgba(39, 112, 69, 0.2);
+}
+
+/* 面包屑导航栏（在各级子页面顶部） */
+.sirc-breadcrumb-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--sirc-surface);
+  border-bottom: 1px solid var(--sirc-border-subtle);
+  font-size: 13px;
+  color: var(--sirc-muted);
+}
+
+.sirc-breadcrumb-item {
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.sirc-breadcrumb-item:hover {
+  color: var(--sirc-accent);
+}
+
+.sirc-breadcrumb-separator {
+  color: var(--sirc-light);
+}
+
+.sirc-breadcrumb-current {
+  font-weight: 600;
+  color: var(--sirc-ink);
+}
+
+.sirc-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--sirc-accent);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  margin-right: 6px;
+  border-radius: 6px;
+}
+
+.sirc-back-btn:hover {
+  background: var(--sirc-accent-soft);
+}
+
+/* ======================================================== */
+/* 窄屏 / 手机布局 (默认 < 768px) */
+/* ======================================================== */
+.sirc-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  max-width: 100%;
+}
+
+.sirc-master-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.sirc-detail-pane {
+  display: none; /* 窄屏由 SPA 视图路由显隐控制 */
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+/* ======================================================== */
+/* 宽屏 / 平板 / 横屏双栏布局 (>= 768px) - 在旁边打开！ */
+/* ======================================================== */
+@media (min-width: 768px) {
+  .sirc-container {
+    flex-direction: row;
+    align-items: stretch;
+    padding: 24px;
+    gap: 24px;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* 左侧主栏 (Master 列表) */
+  .sirc-master-pane {
+    width: 360px;
+    flex-shrink: 0;
+    display: flex !important;
+    gap: 14px;
+  }
+
+  /* 右侧从栏 (Detail 详情) - 在旁边展开！ */
+  .sirc-detail-pane {
+    flex: 1;
+    display: flex !important;
+    min-width: 0;
+    gap: 16px;
+  }
+
+  /* 宽屏下的左栏选中状态聚焦 */
+  .sirc-nav-card.active {
+    border-color: var(--sirc-accent) !important;
+    background: var(--sirc-accent-soft) !important;
+    box-shadow: 0 0 0 1px var(--sirc-accent), var(--sirc-shadow-md) !important;
+  }
+
+  .sirc-nav-card.active .sirc-nav-title {
+    color: var(--sirc-accent) !important;
+  }
+
+  /* 宽屏下隐藏左栏多余的“返回”按钮 */
+  .sirc-master-pane .sirc-back-btn {
+    display: none;
+  }
+}

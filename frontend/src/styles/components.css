@@ -1,0 +1,282 @@
+/* 通用卡片容器 */
+.sirc-card {
+  background: var(--sirc-surface);
+  border-radius: var(--sirc-radius-md);
+  border: 1px solid var(--sirc-border-subtle);
+  box-shadow: var(--sirc-shadow-sm);
+  padding: 18px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+/* 一级导航卡片 */
+.sirc-nav-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.sirc-nav-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sirc-shadow-md);
+  border-color: var(--sirc-border);
+}
+
+.sirc-nav-card:active {
+  transform: translateY(0);
+}
+
+.sirc-nav-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.sirc-nav-icon.emergency {
+  background: var(--sirc-error-soft);
+  color: var(--sirc-error);
+}
+
+.sirc-nav-icon.currency {
+  background: var(--sirc-accent-soft);
+  color: var(--sirc-accent);
+}
+
+.sirc-nav-icon.privilege {
+  background: var(--sirc-warning-soft);
+  color: var(--sirc-warning);
+}
+
+.sirc-nav-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.sirc-nav-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--sirc-ink);
+  margin-bottom: 2px;
+}
+
+.sirc-nav-desc {
+  font-size: 12px;
+  color: var(--sirc-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sirc-nav-arrow {
+  color: var(--sirc-light);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* 银行卡片设计 (还原 SircApp 钱包卡片) */
+.sirc-bank-card {
+  border-radius: var(--sirc-radius-md);
+  padding: 16px;
+  color: #fff;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sirc-bank-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+}
+
+.sirc-bank-card.northstar {
+  background: linear-gradient(135deg, #1f2937, #111827);
+}
+
+.sirc-bank-card.harbor {
+  background: linear-gradient(135deg, #0f4c81, #082440);
+}
+
+.sirc-bank-card.cedar {
+  background: linear-gradient(135deg, #1b4332, #081c15);
+}
+
+.sirc-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.sirc-card-bank-name {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.sirc-card-type-chip {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sirc-card-number {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.sirc-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+/* 按钮规范 */
+.sirc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: var(--sirc-radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sirc-btn-primary {
+  background: var(--sirc-accent);
+  color: #fff;
+}
+
+.sirc-btn-primary:hover {
+  background: #0056b3;
+}
+
+.sirc-btn-danger {
+  background: var(--sirc-error);
+  color: #fff;
+}
+
+.sirc-btn-danger:hover {
+  background: #b01f26;
+}
+
+.sirc-btn-secondary {
+  background: var(--sirc-surface-hover);
+  color: var(--sirc-ink);
+  border: 1px solid var(--sirc-border);
+}
+
+.sirc-btn-secondary:hover {
+  background: var(--sirc-surface-active);
+}
+
+/* 汇率换算器组件 */
+.sirc-exchange-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sirc-exchange-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--sirc-surface-hover);
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--sirc-border-subtle);
+}
+
+.sirc-exchange-currency {
+  font-weight: 700;
+  font-size: 16px;
+  min-width: 60px;
+}
+
+.sirc-exchange-input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--sirc-ink);
+  text-align: right;
+  font-family: inherit;
+}
+
+/* 离线消费小票模拟 */
+.sirc-voucher-receipt {
+  background: #fff;
+  border: 1px dashed var(--sirc-border);
+  border-radius: 12px;
+  padding: 20px;
+  color: #26282b;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+body.dark .sirc-voucher-receipt {
+  background: #1c222b;
+  color: #eef2f8;
+}
+
+.sirc-voucher-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-25deg);
+  font-size: 32px;
+  font-weight: 900;
+  color: rgba(39, 112, 69, 0.12);
+  border: 3px dashed rgba(39, 112, 69, 0.25);
+  padding: 6px 16px;
+  border-radius: 8px;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+/* 悬浮 Toast 提示 */
+.sirc-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(38, 40, 43, 0.92);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+  opacity: 0;
+  transition: transform 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.sirc-toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
