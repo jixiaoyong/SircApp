@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 
 /// 全局导航与根 ScaffoldMessenger Key
 final rootNavigatorKey = GlobalKey<NavigatorState>();

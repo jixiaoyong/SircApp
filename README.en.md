@@ -33,6 +33,14 @@ These screenshots were captured from the locally running app on 2026-11-11, not 
 
 ![Wide Appearance settings: light English and dark Chinese with a reverse diagonal](doc/imgs/settings-appearance-wide.webp)
 
+### HarmonyOS / OpenHarmony large screen
+
+These screenshots show Home and transaction details expanded alongside Home, captured from the running app on an OHOS large-screen emulator on 2026-11-17 and compressed as WebP. They do not certify support for a particular foldable device. Some network images did not display correctly; the cause remains under investigation.
+
+![Home on an OHOS large-screen emulator](doc/imgs/ohos-home-wide.webp)
+
+![Transaction details expanded alongside Home on an OHOS large-screen emulator](doc/imgs/ohos-transaction-detail-wide.webp)
+
 ## Main capabilities
 
 - **Responsive navigation and layouts:** bottom navigation on narrow screens, a navigation rail on wide screens, and adaptive dashboard and Wallet sections.
@@ -43,7 +51,7 @@ These screenshots were captured from the locally running app on 2026-11-11, not 
 
 ## Quick start
 
-Use [FVM](https://fvm.app/) and the Flutter version pinned in [`.fvmrc`](.fvmrc) (currently **3.47.9**). Use that Flutter SDK's bundled Dart; do not rely on the old Flutter 3.24 / Dart 3.5 setup instructions.
+Use [FVM](https://fvm.app/) and the Flutter version pinned in [`.fvmrc`](.fvmrc) (currently the OHOS fork **`ohos/oh-3.47.9-dev`**). Use that Flutter SDK's bundled Dart; do not rely on the old Flutter 3.24 / Dart 3.5 setup instructions.
 
 ```sh
 git clone https://github.com/jixiaoyong/SircApp.git
@@ -59,7 +67,9 @@ For a release web build:
 fvm flutter build web --release
 ```
 
-The repository includes Android, iOS, Web, and macOS platform projects. Their presence does not mean every native target has been validated for every change. Native builds require the corresponding platform toolchain; for iOS, use macOS with Xcode and the CocoaPods setup required by the plugins.
+The repository includes Android, iOS, Web, macOS, and OHOS platform projects. Their presence does not mean every native target has been validated for every change. Native builds require the corresponding platform toolchain; for iOS, use macOS with Xcode and the CocoaPods setup required by the plugins.
+
+**HarmonyOS / OpenHarmony:** the OHOS project and required plugin implementations are included, using the DevEco Studio toolchain and HarmonyOS SDK API 26. IDE build/install, Home and Wallet interactions, and hot reload have been verified; hot restart was manually verified by the user. Signing configuration must be generated locally and is not committed. See the [OHOS development guide (Chinese)](ohos/README.md) for environment setup, the signing template, and known limitations.
 
 ## Demo data and limitations
 
@@ -72,10 +82,10 @@ The repository includes Android, iOS, Web, and macOS platform projects. Their pr
 
 ```sh
 fvm flutter test
-fvm flutter analyze
+fvm flutter analyze --no-fatal-infos
 ```
 
-Tests cover state/controllers, localization, navigation, responsive layouts, card management, themes, and chart aggregation/interactions. Static analysis currently has existing warning/info diagnostics; it should not be described as warning-free.
+Tests cover state/controllers, localization, navigation, responsive layouts, card management, themes, and chart aggregation/interactions. Errors and warnings block validation; info diagnostics currently do not. Local analysis for this OHOS migration reported `No issues found`.
 
 After changing localization contracts or translations, regenerate the localization facade:
 

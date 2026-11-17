@@ -1,8 +1,6 @@
 import 'dart:ui' show lerpDouble;
 
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart'
-    hide SizeExtension;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sirc/features/home/presentation/widgets/home_articles_panel.dart';
 import 'package:sirc/features/home/presentation/widgets/home_bank_card_pages.dart';
@@ -229,44 +227,45 @@ class HomeTopBodyWidget extends ConsumerWidget {
         top: false,
         bottom: false,
         child: PageGutter(
-          child: LayoutScope(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final beside =
-                    ResponsiveQuery.of(context).width >= 760 &&
-                    MediaQuery.textScalerOf(context).scale(14) < 24;
-                final content = Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    headerAndCards,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final localWidth = constraints.maxWidth.isFinite
+                  ? constraints.maxWidth
+                  : MediaQuery.sizeOf(context).width;
+              final beside =
+                  localWidth >= 760 &&
+                  MediaQuery.textScalerOf(context).scale(14) < 24;
+              final content = Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  headerAndCards,
+                  const SizedBox(height: 18),
+                  if (beside)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: graph),
+                        const SizedBox(width: 22),
+                        const Expanded(child: HomeSummaryCards()),
+                      ],
+                    )
+                  else ...[
+                    graph,
                     const SizedBox(height: 18),
-                    if (beside)
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(child: graph),
-                          const SizedBox(width: 22),
-                          const Expanded(child: HomeSummaryCards()),
-                        ],
-                      )
-                    else ...[
-                      graph,
-                      const SizedBox(height: 18),
-                      const HomeSummaryCards(),
-                    ],
-                    const SizedBox(height: 18),
-                    const HomeTransactionsPanel(),
-                    const SizedBox(height: 18),
+                    const HomeSummaryCards(),
                   ],
-                );
-                return CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(child: content),
-                    const HomeArticlesPanel(),
-                  ],
-                );
-              },
-            ),
+                  const SizedBox(height: 18),
+                  const HomeTransactionsPanel(),
+                  const SizedBox(height: 18),
+                ],
+              );
+              return CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(child: content),
+                  const HomeArticlesPanel(),
+                ],
+              );
+            },
           ),
         ),
       ),

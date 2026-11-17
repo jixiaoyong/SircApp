@@ -1,8 +1,6 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart'
-    show ResponsiveQuery;
 import 'package:sirc/features/auth/presentation/sign_in_page.dart';
 import 'package:sirc/widgets/constrained_content.dart';
 import 'package:go_router/go_router.dart';
@@ -45,7 +43,7 @@ void main() {
       final form = find.byType(ConstrainedContent);
       final localContext = tester.element(form);
       expect(MediaQuery.sizeOf(localContext).width, 1461);
-      expect(ResponsiveQuery.of(localContext).width, width);
+      expect(tester.getSize(find.byType(Scaffold).first).width, width);
       final expectedWidth = width.clamp(0.0, 520.0);
       final fields = find.byType(TextField);
       expect(fields, findsNWidgets(2));

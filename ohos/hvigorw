@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Flutter oh-3.47.9-dev (canary) 引擎要求 DevEco Studio 26 / API 26 工具链。
+# 本脚本将 hvigor 固定为 DevEco Studio 26 自带的 hvigor 6.26.8，
+# 使构建不依赖用户 shell PATH 中的 hvigorw 版本。
+# flutter 工具会优先调用 ohos 目录下的 hvigorw（见 flutter_tools getHvigorwPath）。
+export NODE_HOME="${NODE_HOME:-/Applications/DevEco-Studio.app/Contents/tools/node}"
+exec "/Applications/DevEco-Studio.app/Contents/tools/hvigor/bin/hvigorw" "$@"

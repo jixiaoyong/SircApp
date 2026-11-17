@@ -11,13 +11,13 @@ part of 'navigation_controller.dart';
 /// 底部导航与抽屉控制器
 
 @ProviderFor(NavigationController)
-final navigationControllerProvider = NavigationControllerProvider._();
+const navigationControllerProvider = NavigationControllerProvider._();
 
 /// 底部导航与抽屉控制器
 final class NavigationControllerProvider
     extends $NotifierProvider<NavigationController, NavigationState> {
   /// 底部导航与抽屉控制器
-  NavigationControllerProvider._()
+  const NavigationControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -53,7 +53,8 @@ abstract class _$NavigationController extends $Notifier<NavigationState> {
   NavigationState build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
+    final created = build();
     final ref = this.ref as $Ref<NavigationState, NavigationState>;
     final element =
         ref.element
@@ -63,6 +64,6 @@ abstract class _$NavigationController extends $Notifier<NavigationState> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleValue(ref, created);
   }
 }

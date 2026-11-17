@@ -10,11 +10,11 @@ part of 'wallet_controller.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(WalletController)
-final walletControllerProvider = WalletControllerProvider._();
+const walletControllerProvider = WalletControllerProvider._();
 
 final class WalletControllerProvider
     extends $NotifierProvider<WalletController, WalletState> {
-  WalletControllerProvider._()
+  const WalletControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -41,13 +41,14 @@ final class WalletControllerProvider
   }
 }
 
-String _$walletControllerHash() => r'367f570c107e8bcb06765501f5fdcd444f32a799';
+String _$walletControllerHash() => r'1af4eabf45c6bf3fea15b8411f35e409c6347449';
 
 abstract class _$WalletController extends $Notifier<WalletState> {
   WalletState build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
+    final created = build();
     final ref = this.ref as $Ref<WalletState, WalletState>;
     final element =
         ref.element
@@ -57,16 +58,16 @@ abstract class _$WalletController extends $Notifier<WalletState> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleValue(ref, created);
   }
 }
 
 @ProviderFor(AddCardController)
-final addCardControllerProvider = AddCardControllerProvider._();
+const addCardControllerProvider = AddCardControllerProvider._();
 
 final class AddCardControllerProvider
     extends $NotifierProvider<AddCardController, AddCardState> {
-  AddCardControllerProvider._()
+  const AddCardControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -99,7 +100,8 @@ abstract class _$AddCardController extends $Notifier<AddCardState> {
   AddCardState build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
+    final created = build();
     final ref = this.ref as $Ref<AddCardState, AddCardState>;
     final element =
         ref.element
@@ -109,6 +111,6 @@ abstract class _$AddCardController extends $Notifier<AddCardState> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleValue(ref, created);
   }
 }

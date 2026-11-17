@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 
 typedef LibraryLoader = Future<void> Function();
 typedef DeferredWidgetBuilder = Widget Function();

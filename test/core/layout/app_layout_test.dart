@@ -1,5 +1,4 @@
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/layout/app_layout.dart';
 
@@ -37,7 +36,9 @@ void main() {
     });
   }
 
-  testWidgets('window query ignores a narrower LayoutScope', (tester) async {
+  testWidgets('window query stays distinct from a narrower parent constraint', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(841, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -52,15 +53,13 @@ void main() {
           child: SizedBox(
             width: 320,
             height: 500,
-            child: LayoutScope(
-              child: Builder(
-                builder: (context) {
-                  isWide = AppLayout.isWideWindow(context);
-                  containerWidth = AppLayout.containerQuery(context).width;
-                  isWideContainer = AppLayout.isWideWidth(containerWidth);
-                  return const SizedBox.shrink();
-                },
-              ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                isWide = AppLayout.isWideWindow(context);
+                containerWidth = AppLayout.containerWidth(constraints);
+                isWideContainer = AppLayout.isWideWidth(containerWidth);
+                return const SizedBox.shrink();
+              },
             ),
           ),
         ),

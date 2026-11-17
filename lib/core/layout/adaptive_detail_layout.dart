@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:sirc/core/adaptive_pane/adaptive_two_pane.dart';
 
 /// 根据窗口宽度切换来源区域 [primary] 与详情区域 [detail] 的通用布局。

@@ -1,6 +1,5 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/theme/app_colors.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
@@ -53,84 +52,81 @@ class TransactionDetailPage extends ConsumerWidget {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 580),
-            child: LayoutScope(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 24),
-                    TransactionCategoryHelper.buildAdaptiveCategoryAvatar(
-                      context: context,
-                      transaction: transaction,
-                      heroTag: heroTag,
-                      size: 72,
-                      iconSize: 36,
-                      borderRadius: BorderRadius.circular(18),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  const SizedBox(height: 24),
+                  TransactionCategoryHelper.buildAdaptiveCategoryAvatar(
+                    context: context,
+                    transaction: transaction,
+                    heroTag: heroTag,
+                    size: 72,
+                    iconSize: 36,
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    transaction.moneyActionName ?? '',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    transaction.moneyAmount.toFormatedMoneyStr,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      color: amountColor,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const SizedBox(height: 20),
-                    Text(
-                      transaction.moneyActionName ?? '',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    AppDateTimeFormatter.display(
+                      transaction.time,
+                      locale: locale,
+                      languages: AppLocale.current,
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      transaction.moneyAmount.toFormatedMoneyStr,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineLarge
-                          ?.copyWith(
-                            color: amountColor,
-                            fontWeight: FontWeight.w600,
+                    style: TextStyle(color: AppColors.muted(context)),
+                  ),
+                  const SizedBox(height: 32),
+                  WalletPanel(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          Languages.wallet.transactionType,
+                          style: TextStyle(color: AppColors.muted(context)),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(transaction.moneyActionName ?? ''),
+                        const Divider(height: 32),
+                        Text(
+                          Languages.wallet.amount,
+                          style: TextStyle(color: AppColors.muted(context)),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          transaction.moneyAmount.toFormatedMoneyStr,
+                          style: TextStyle(color: amountColor),
+                        ),
+                        const Divider(height: 32),
+                        Text(
+                          Languages.wallet.time,
+                          style: TextStyle(color: AppColors.muted(context)),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          AppDateTimeFormatter.display(
+                            transaction.time,
+                            locale: locale,
+                            languages: AppLocale.current,
                           ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      AppDateTimeFormatter.display(
-                        transaction.time,
-                        locale: locale,
-                        languages: AppLocale.current,
-                      ),
-                      style: TextStyle(color: AppColors.muted(context)),
-                    ),
-                    const SizedBox(height: 32),
-                    WalletPanel(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            Languages.wallet.transactionType,
-                            style: TextStyle(color: AppColors.muted(context)),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(transaction.moneyActionName ?? ''),
-                          const Divider(height: 32),
-                          Text(
-                            Languages.wallet.amount,
-                            style: TextStyle(color: AppColors.muted(context)),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            transaction.moneyAmount.toFormatedMoneyStr,
-                            style: TextStyle(color: amountColor),
-                          ),
-                          const Divider(height: 32),
-                          Text(
-                            Languages.wallet.time,
-                            style: TextStyle(color: AppColors.muted(context)),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            AppDateTimeFormatter.display(
-                              transaction.time,
-                              locale: locale,
-                              languages: AppLocale.current,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

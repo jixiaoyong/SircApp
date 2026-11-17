@@ -1,6 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-
 /// Application layout thresholds and commonly used content widths.
 abstract final class AppLayout {
   /// Existing application-wide compact/wide boundary.
@@ -21,7 +19,9 @@ abstract final class AppLayout {
   static bool isWideWindow(BuildContext context) =>
       isWideWidth(MediaQuery.sizeOf(context).width);
 
-  /// Container-level query that respects the nearest [LayoutScope].
-  static ResponsiveQuery containerQuery(BuildContext context) =>
-      ResponsiveQuery.of(context);
+  /// 容器级查询，返回最近父布局提供的局部可用宽度。
+  static double containerWidth(BoxConstraints constraints) =>
+      constraints.maxWidth.isFinite
+      ? constraints.maxWidth
+      : 0;
 }

@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:sirc/core/layout/app_layout.dart';
 
 import 'adaptive_navigation_adapter.dart';

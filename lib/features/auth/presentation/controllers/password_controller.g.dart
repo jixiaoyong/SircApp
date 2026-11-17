@@ -10,11 +10,11 @@ part of 'password_controller.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(PasswordController)
-final passwordControllerProvider = PasswordControllerProvider._();
+const passwordControllerProvider = PasswordControllerProvider._();
 
 final class PasswordControllerProvider
     extends $NotifierProvider<PasswordController, PasswordState> {
-  PasswordControllerProvider._()
+  const PasswordControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -48,7 +48,8 @@ abstract class _$PasswordController extends $Notifier<PasswordState> {
   PasswordState build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
+    final created = build();
     final ref = this.ref as $Ref<PasswordState, PasswordState>;
     final element =
         ref.element
@@ -58,6 +59,6 @@ abstract class _$PasswordController extends $Notifier<PasswordState> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleValue(ref, created);
   }
 }

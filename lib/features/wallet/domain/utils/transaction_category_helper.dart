@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:sirc/core/layout/app_layout.dart';
 import 'package:sirc/core/theme/app_colors.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';

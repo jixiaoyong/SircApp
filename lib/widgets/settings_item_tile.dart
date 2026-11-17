@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 
 /// 资料与设置共用的行内容；由外层 Material 提供卡片和裁剪。
 class SettingsItemTile extends StatelessWidget {

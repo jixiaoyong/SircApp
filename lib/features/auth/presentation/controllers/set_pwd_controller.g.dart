@@ -10,11 +10,11 @@ part of 'set_pwd_controller.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(SetPwdController)
-final setPwdControllerProvider = SetPwdControllerProvider._();
+const setPwdControllerProvider = SetPwdControllerProvider._();
 
 final class SetPwdControllerProvider
     extends $NotifierProvider<SetPwdController, SetPwdState> {
-  SetPwdControllerProvider._()
+  const SetPwdControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -47,7 +47,8 @@ abstract class _$SetPwdController extends $Notifier<SetPwdState> {
   SetPwdState build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
+    final created = build();
     final ref = this.ref as $Ref<SetPwdState, SetPwdState>;
     final element =
         ref.element
@@ -57,6 +58,6 @@ abstract class _$SetPwdController extends $Notifier<SetPwdState> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleValue(ref, created);
   }
 }

@@ -1,8 +1,6 @@
 import 'package:flutter/gestures.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart'
-    show LayoutScope;
 import 'package:sirc/widgets/common_text_filed.dart';
 import 'package:sirc/widgets/constrained_content.dart';
 import 'package:sirc/widgets/password_text_field.dart';
@@ -111,151 +109,146 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     final iconSize = 20.toDouble();
 
     return Scaffold(
-      body: LayoutScope(
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) => SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Center(
-                  child: ConstrainedContent(
-                    maxWidth: constraints.maxWidth.clamp(0.0, 520.0),
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        CommonTextFiled(
-                          controller: nameTextFieldController,
-                          label: Languages.username,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Center(
+                child: ConstrainedContent(
+                  maxWidth: constraints.maxWidth.clamp(0.0, 520.0),
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      CommonTextFiled(
+                        controller: nameTextFieldController,
+                        label: Languages.username,
+                        enabled: !isLoginInProgress,
+                        errorText: state.userNameError,
+                        suffixIcon: const Icon(Icons.person_outline),
+                        onChanged: notifier.setUserName,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: PasswordTextField(
+                          controller: pwdTextFieldController,
+                          label: Languages.password,
                           enabled: !isLoginInProgress,
-                          errorText: state.userNameError,
-                          suffixIcon: const Icon(Icons.person_outline),
-                          onChanged: notifier.setUserName,
+                          errorText: state.userPwdError,
+                          onChanged: notifier.setUserPwd,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20),
-                          child: PasswordTextField(
-                            controller: pwdTextFieldController,
-                            label: Languages.password,
-                            enabled: !isLoginInProgress,
-                            errorText: state.userPwdError,
-                            onChanged: notifier.setUserPwd,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              final result = await context.push<bool>(
+                                AppRoutes.FORGET_PWD,
+                              );
+                              if (true == result && context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          Languages.setPasswordSucceed,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          Languages.pleaseLoginWithNewPassword,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                            child: Text(
+                              Languages.forgetPasswords,
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                height: 3,
+                                fontSize: 12.toDouble(),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 24, bottom: 24),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(
+                              minimumSize: const Size(0, 50),
+                              textStyle: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            onPressed: isButtonEnabled ? notifier.login : null,
+                            child: Text(Languages.login),
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: Row(
                           children: [
-                            GestureDetector(
-                              onTap: () async {
-                                final result = await context.push<bool>(
-                                  AppRoutes.FORGET_PWD,
-                                );
-                                if (true == result && context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            Languages.setPasswordSucceed,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            Languages
-                                                .pleaseLoginWithNewPassword,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }
-                              },
+                            const Expanded(child: Divider()),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 13,
+                              ),
                               child: Text(
-                                Languages.forgetPasswords,
-                                textAlign: TextAlign.end,
+                                Languages.orSignInWith,
                                 style: TextStyle(
-                                  height: 3,
-                                  fontSize: 12.toDouble(),
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                  color: colors.onSurfaceVariant,
                                 ),
                               ),
+                            ),
+                            const Expanded(child: Divider()),
+                          ],
+                        ),
+                      ),
+                      SocialLoginButtons(
+                        state: state,
+                        notifier: notifier,
+                        colors: colors,
+                        iconSize: iconSize,
+                      ),
+                      const SizedBox(height: 24),
+                      RichText(
+                        text: TextSpan(
+                          text: Languages.dontHaveAccount,
+                          style: TextStyle(
+                            color: colors.onSurfaceVariant,
+                            fontSize: 12.toDouble(),
+                          ),
+                          children: [
+                            TextSpan(
+                              text: " ${Languages.signUp}",
+                              style: TextStyle(
+                                color: colors.onSurface,
+                                decoration: TextDecoration.underline,
+                                fontSize: 12.toDouble(),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () => context.go(AppRoutes.SIGN_UP),
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 24, bottom: 24),
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: FilledButton(
-                              style: FilledButton.styleFrom(
-                                minimumSize: const Size(0, 50),
-                                textStyle: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              onPressed: isButtonEnabled
-                                  ? notifier.login
-                                  : null,
-                              child: Text(Languages.login),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: Row(
-                            children: [
-                              const Expanded(child: Divider()),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 13,
-                                ),
-                                child: Text(
-                                  Languages.orSignInWith,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: colors.onSurfaceVariant,
-                                  ),
-                                ),
-                              ),
-                              const Expanded(child: Divider()),
-                            ],
-                          ),
-                        ),
-                        SocialLoginButtons(
-                          state: state,
-                          notifier: notifier,
-                          colors: colors,
-                          iconSize: iconSize,
-                        ),
-                        const SizedBox(height: 24),
-                        RichText(
-                          text: TextSpan(
-                            text: Languages.dontHaveAccount,
-                            style: TextStyle(
-                              color: colors.onSurfaceVariant,
-                              fontSize: 12.toDouble(),
-                            ),
-                            children: [
-                              TextSpan(
-                                text: " ${Languages.signUp}",
-                                style: TextStyle(
-                                  color: colors.onSurface,
-                                  decoration: TextDecoration.underline,
-                                  fontSize: 12.toDouble(),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () => context.go(AppRoutes.SIGN_UP),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),

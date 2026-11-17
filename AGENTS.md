@@ -4,6 +4,9 @@
 
 - 本项目使用 FVM 管理 Flutter SDK。执行任何 Flutter 或 Dart 命令前必须通过 FVM（例如 `fvm flutter ...`、`fvm dart ...`），不要直接调用全局 `flutter` 或 `dart`。
 - 静态分析统一使用 `fvm flutter analyze --no-fatal-infos`：Flutter 3.50 起 `--fatal-infos` 默认开启，会把历史 info 级提示当成失败；info 暂不纳入门禁，仅 error / warning 阻断。
+- Cursor / VS Code 的 OHOS 环境由项目 `.vscode/settings.json` 中 `dart.env` 提供（覆盖设备 daemon、pub 与调试）；修改后执行 Reload Window。默认使用 `/Applications/DevEco-Studio.app`，自定义安装按 `ohos/README.md` 同步调整，不能只设置 `launch.json` 的 `env`。
+- OHOS 开发前阅读 `ohos/README.md`：通过 DevEco Studio SDK Manager 安装 HarmonyOS API 26，`DEVECO_SDK_HOME` 和 `fvm flutter config --ohos-sdk` 均指向 SDK 根（含 `default/` 的 `Contents/sdk`），勿提交本机 `local.properties`、真实 `build-profile.json5` 或签名材料。
+- 当前 Dart-Code 的 `dart.env` 不展开 `${env:PATH}`；自定义工具位置需追加真实路径，终端环境则保留原 PATH 与 FVM。OHOS 构建通过不等于启动通过：分别验收安装、首帧、交互与热重载；新增 OHOS 原生插件后需完整重建安装，不能只热重载。
 
 ## 公共 API 文档注释
 

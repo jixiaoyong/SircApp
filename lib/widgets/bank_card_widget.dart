@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/wallet/domain/models/bank_card.dart';
 import 'package:sirc/features/wallet/presentation/card_brand_label.dart';

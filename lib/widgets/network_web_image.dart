@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:extended_image/extended_image.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 
 import '../core/image/app_image_cache_service.dart';
 

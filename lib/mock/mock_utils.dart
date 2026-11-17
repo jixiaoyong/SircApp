@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 
 /*
 * @description: 认证与网络延迟模拟工具类

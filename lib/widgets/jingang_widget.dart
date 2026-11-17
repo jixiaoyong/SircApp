@@ -1,5 +1,4 @@
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:flutter/material.dart';
 
 import 'expandable_page_view.dart';
 
@@ -56,60 +55,62 @@ class _JingangWidgetState extends State<JingangWidget> {
   Widget build(BuildContext context) {
     final childCount = widget.data.length;
     if (childCount == 0) return const SizedBox.shrink();
-    return LayoutScope(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final scale = MediaQuery.textScalerOf(context).scale(11) / 11;
-          // 约 52px 单元可在常见手机内容区提供六列；大字扩大点击/文字空间。
-          final minWidth = 52.0 * scale.clamp(1.0, 2.5);
-          final columns = (ResponsiveQuery.of(context).width / minWidth)
-              .floor()
-              .clamp(1, childCount);
-          final rows = (widget.childCountPerPage / widget.childCountPerRow)
-              .ceil();
-          final perPage = columns * rows;
-          final extent = widget.mainAxisExtent == null
-              ? null
-              : widget.mainAxisExtent! + (scale - 1).clamp(0, 3) * 32;
-          return ExpandablePageView(
-            key: ValueKey('jingang-$columns-$perPage'),
-            pageBuilder: (context, index) {
-              final int childIndexStart = index * perPage;
-              final int childIndexExpectEnd = childIndexStart + perPage - 1;
-              final int childIndexEnd = childIndexExpectEnd > childCount - 1
-                  ? childCount - 1
-                  : childIndexExpectEnd;
-              return GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: columns,
-                  mainAxisExtent: extent,
-                  childAspectRatio: widget.childAspectRatio,
-                ),
-                itemBuilder: (context, subIndex) {
-                  // the index of the child in the total children
-                  final int childIndex = childIndexStart + subIndex;
-                  var data = widget.data[childIndex];
-                  return widget.itemBuilder(context, subIndex, index, data);
-                },
-                itemCount: childIndexEnd - childIndexStart + 1,
-                shrinkWrap: true,
-              );
-            },
-            pageCount: (childCount / perPage).ceil(),
-            childAspectRatio: widget.childAspectRatio,
-            indicatorOffset: widget.indicatorOffset,
-            indicatorBuilder:
-                widget.indicatorBuilder ??
-                (context, onPageSelected, scrollPercentage) {
-                  return ScrollableIndicator(
-                    onPageSelected: onPageSelected,
-                    scrollPercentage: scrollPercentage,
-                  );
-                },
-          );
-        },
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final scale = MediaQuery.textScalerOf(context).scale(11) / 11;
+        // 约 52px 单元可在常见手机内容区提供六列；大字扩大点击/文字空间。
+        final minWidth = 52.0 * scale.clamp(1.0, 2.5);
+        final availableWidth = constraints.maxWidth.isFinite
+            ? constraints.maxWidth
+            : MediaQuery.sizeOf(context).width;
+        final columns = (availableWidth / minWidth).floor().clamp(
+          1,
+          childCount,
+        );
+        final rows = (widget.childCountPerPage / widget.childCountPerRow)
+            .ceil();
+        final perPage = columns * rows;
+        final extent = widget.mainAxisExtent == null
+            ? null
+            : widget.mainAxisExtent! + (scale - 1).clamp(0.0, 3.0) * 32;
+        return ExpandablePageView(
+          key: ValueKey('jingang-$columns-$perPage'),
+          pageBuilder: (context, index) {
+            final int childIndexStart = index * perPage;
+            final int childIndexExpectEnd = childIndexStart + perPage - 1;
+            final int childIndexEnd = childIndexExpectEnd > childCount - 1
+                ? childCount - 1
+                : childIndexExpectEnd;
+            return GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: columns,
+                mainAxisExtent: extent,
+                childAspectRatio: widget.childAspectRatio,
+              ),
+              itemBuilder: (context, subIndex) {
+                // the index of the child in the total children
+                final int childIndex = childIndexStart + subIndex;
+                var data = widget.data[childIndex];
+                return widget.itemBuilder(context, subIndex, index, data);
+              },
+              itemCount: childIndexEnd - childIndexStart + 1,
+              shrinkWrap: true,
+            );
+          },
+          pageCount: (childCount / perPage).ceil(),
+          childAspectRatio: widget.childAspectRatio,
+          indicatorOffset: widget.indicatorOffset,
+          indicatorBuilder:
+              widget.indicatorBuilder ??
+              (context, onPageSelected, scrollPercentage) {
+                return ScrollableIndicator(
+                  onPageSelected: onPageSelected,
+                  scrollPercentage: scrollPercentage,
+                );
+              },
+        );
+      },
     );
   }
 }

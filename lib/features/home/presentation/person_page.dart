@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:sirc/utils/date_time_formatter.dart';
 import 'package:sirc/core/config/app_author.dart';
 import 'package:sirc/core/layout/app_layout.dart';

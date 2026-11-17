@@ -1,7 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart'
-    hide SizeExtension;
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:sirc/core/localization/app_locale.dart';
@@ -110,86 +108,168 @@ class _CardEditorPageState extends ConsumerState<CardEditorPage> {
       body: SingleChildScrollView(
         child: ConstrainedContent(
           maxWidth: 520,
-          child: LayoutScope(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 300,
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(35),
-                        child: GestureDetector(
-                          onVerticalDragUpdate: (details) {
-                            controller.onBankCardPanUpdate(details.delta);
-                          },
-                          onVerticalDragEnd: (details) {
-                            controller.onBankCardPanUpdate(null);
-                          },
-                          child: Transform.rotate(
-                            angle: state.cardRotateAngle,
-                            child: BankCardWidget(
-                              bankName: state.bankName.isEmpty
-                                  ? _defaultBankName
-                                  : state.bankName,
-                              cardNumber: state.cardNumber.isEmpty
-                                  ? _defaultCardNumber
-                                  : state.cardNumber,
-                              ownerName: state.ownerName.isEmpty
-                                  ? _defaultOwnerName
-                                  : state.ownerName,
-                              expirationDate:
-                                  state.expireDateString ?? _defaultExpireDate,
-                              cardType: state.cardType.isEmpty
-                                  ? _defaultCardType
-                                  : state.cardType,
-                              height: 200,
-                              width: 200,
-                            ),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 300,
+                child: Stack(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(35),
+                      child: GestureDetector(
+                        onVerticalDragUpdate: (details) {
+                          controller.onBankCardPanUpdate(details.delta);
+                        },
+                        onVerticalDragEnd: (details) {
+                          controller.onBankCardPanUpdate(null);
+                        },
+                        child: Transform.rotate(
+                          angle: state.cardRotateAngle,
+                          child: BankCardWidget(
+                            bankName: state.bankName.isEmpty
+                                ? _defaultBankName
+                                : state.bankName,
+                            cardNumber: state.cardNumber.isEmpty
+                                ? _defaultCardNumber
+                                : state.cardNumber,
+                            ownerName: state.ownerName.isEmpty
+                                ? _defaultOwnerName
+                                : state.ownerName,
+                            expirationDate:
+                                state.expireDateString ?? _defaultExpireDate,
+                            cardType: state.cardType.isEmpty
+                                ? _defaultCardType
+                                : state.cardType,
+                            height: 200,
+                            width: 200,
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 25),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CommonTextFiled(
-                        controller: _owner,
-                        label: Languages.nameOnCard,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CommonTextFiled(
+                      controller: _owner,
+                      label: Languages.nameOnCard,
+                      onChanged: (value) {
+                        controller.setOwnerName(value);
+                      },
+                      errorText: state.ownerNameError,
+                      maxLength: 20,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 20),
+                      child: CommonTextFiled(
+                        controller: _number,
+                        label: Languages.cardNumber,
                         onChanged: (value) {
-                          controller.setOwnerName(value);
+                          controller.setCardNumber(value);
                         },
-                        errorText: state.ownerNameError,
-                        maxLength: 20,
+                        errorText: state.cardNumberError,
+                        maxLength: 16,
+                        keyboardType: TextInputType.number,
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 20),
-                        child: CommonTextFiled(
-                          controller: _number,
-                          label: Languages.cardNumber,
-                          onChanged: (value) {
-                            controller.setCardNumber(value);
-                          },
-                          errorText: state.cardNumberError,
-                          maxLength: 16,
-                          keyboardType: TextInputType.number,
-                        ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 20),
+                      child: Wrap(
+                        alignment: WrapAlignment.start,
+                        spacing: 16,
+                        runSpacing: 12,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Text(
+                            "${Languages.expireDate}:",
+                            style: TextStyle(
+                              fontSize: 16.toDouble(),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
+                          ),
+                          Theme(
+                            data: Theme.of(context),
+                            child: Builder(
+                              builder: (innerBuildContext) {
+                                return GestureDetector(
+                                  onTap: () async {
+                                    HapticFeedback.lightImpact();
+                                    final nowDate = DateTime.now();
+                                    final firstDate = DateTime(
+                                      nowDate.year - 1,
+                                    );
+                                    final lastDate = DateTime(
+                                      nowDate.year + 20,
+                                    );
+                                    final initialDate =
+                                        state.expireDate ?? nowDate;
+                                    final selectedDate = await showMonthPicker(
+                                      context: innerBuildContext,
+                                      initialDate:
+                                          initialDate.isBefore(firstDate)
+                                          ? firstDate
+                                          : initialDate.isAfter(lastDate)
+                                          ? lastDate
+                                          : initialDate,
+                                      firstDate: DateTime.utc(nowDate.year - 1),
+                                      lastDate: DateTime.utc(nowDate.year + 20),
+                                      monthPickerDialogSettings:
+                                          MonthPickerDialogSettings(
+                                            dialogSettings:
+                                                PickerDialogSettings(
+                                                  locale:
+                                                      AppLocale.currentLocale,
+                                                ),
+                                          ),
+                                    );
+                                    if (selectedDate != null) {
+                                      HapticFeedback.selectionClick();
+                                      controller.setExpireDate(selectedDate);
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 5,
+                                      horizontal: 10,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(14),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainerHighest,
+                                      border: Border.all(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      state.expireDateString ?? "00/00",
+                                      style: TextStyle(fontSize: 18.toDouble()),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 20),
-                        child: Wrap(
-                          alignment: WrapAlignment.start,
-                          spacing: 16,
-                          runSpacing: 12,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            Text(
-                              "${Languages.expireDate}:",
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 20, bottom: 20),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(right: 16),
+                            child: Text(
+                              "${Languages.cvv}:",
                               style: TextStyle(
                                 fontSize: 16.toDouble(),
                                 color: Theme.of(context)
@@ -197,142 +277,51 @@ class _CardEditorPageState extends ConsumerState<CardEditorPage> {
                                     .onSurfaceVariant,
                               ),
                             ),
-                            Theme(
-                              data: Theme.of(context),
-                              child: Builder(
-                                builder: (innerBuildContext) {
-                                  return GestureDetector(
-                                    onTap: () async {
+                          ),
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 220,
+                                ),
+                                child: VerifyCodeWidget(
+                                  onChanged: (value) {
+                                    controller.setCvv(value);
+                                    if (value.length == 4) {
                                       HapticFeedback.lightImpact();
-                                      final nowDate = DateTime.now();
-                                      final firstDate = DateTime(
-                                        nowDate.year - 1,
-                                      );
-                                      final lastDate = DateTime(
-                                        nowDate.year + 20,
-                                      );
-                                      final initialDate =
-                                          state.expireDate ?? nowDate;
-                                      final selectedDate =
-                                          await showMonthPicker(
-                                            context: innerBuildContext,
-                                            initialDate:
-                                                initialDate.isBefore(firstDate)
-                                                ? firstDate
-                                                : initialDate.isAfter(lastDate)
-                                                ? lastDate
-                                                : initialDate,
-                                            firstDate: DateTime.utc(
-                                              nowDate.year - 1,
-                                            ),
-                                            lastDate: DateTime.utc(
-                                              nowDate.year + 20,
-                                            ),
-                                            monthPickerDialogSettings:
-                                                MonthPickerDialogSettings(
-                                                  dialogSettings:
-                                                      PickerDialogSettings(
-                                                        locale: AppLocale
-                                                            .currentLocale,
-                                                      ),
-                                                ),
-                                          );
-                                      if (selectedDate != null) {
-                                        HapticFeedback.selectionClick();
-                                        controller.setExpireDate(selectedDate);
-                                      }
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 5,
-                                        horizontal: 10,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(14),
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surfaceContainerHighest,
-                                        border: Border.all(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .outline,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        state.expireDateString ?? "00/00",
-                                        style: TextStyle(
-                                          fontSize: 18.toDouble(),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 20, bottom: 20),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(right: 16),
-                              child: Text(
-                                "${Languages.cvv}:",
-                                style: TextStyle(
-                                  fontSize: 16.toDouble(),
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
+                                    }
+                                  },
+                                  verifyCodeCount: 4,
                                 ),
                               ),
                             ),
-                            Expanded(
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: ConstrainedBox(
-                                  constraints: const BoxConstraints(
-                                    maxWidth: 220,
-                                  ),
-                                  child: VerifyCodeWidget(
-                                    onChanged: (value) {
-                                      controller.setCvv(value);
-                                      if (value.length == 4) {
-                                        HapticFeedback.lightImpact();
-                                      }
-                                    },
-                                    verifyCodeCount: 4,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      CommonTextButton(
-                        text: editingId == null
-                            ? title
-                            : Languages.wallet.saveCard,
-                        isButtonEnabled: isButtonEnable && !state.isSubmitting,
-                        onTap: () async {
-                          HapticFeedback.lightImpact();
-                          final success = await controller.addCard();
-                          if (success && context.mounted) {
-                            Toast.show(Languages.wallet.cardSaved);
-                            if (onBack != null) {
-                              onBack!();
-                            } else {
-                              Navigator.of(context).maybePop();
-                            }
+                    ),
+                    CommonTextButton(
+                      text: editingId == null
+                          ? title
+                          : Languages.wallet.saveCard,
+                      isButtonEnabled: isButtonEnable && !state.isSubmitting,
+                      onTap: () async {
+                        HapticFeedback.lightImpact();
+                        final success = await controller.addCard();
+                        if (success && context.mounted) {
+                          Toast.show(Languages.wallet.cardSaved);
+                          if (onBack != null) {
+                            onBack!();
+                          } else {
+                            Navigator.of(context).maybePop();
                           }
-                        },
-                      ),
-                    ],
-                  ),
+                        }
+                      },
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

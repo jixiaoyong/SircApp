@@ -1,5 +1,15 @@
 {
-  "dart.flutterSdkPath": ".fvm/versions/3.50.0",
+  "dart.flutterSdkPath": ".fvm/flutter_sdk",
+  "dart.env": {
+    "DEVECO_SDK_HOME": "/Applications/DevEco-Studio.app/Contents/sdk",
+    "NODE_HOME": "/Applications/DevEco-Studio.app/Contents/tools/node",
+    "PATH": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/toolchains:/Applications/DevEco-Studio.app/Contents/tools/hvigor/bin:/Applications/DevEco-Studio.app/Contents/tools/ohpm/bin:/Applications/DevEco-Studio.app/Contents/tools/node/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+  },
+  "terminal.integrated.env.osx": {
+    "DEVECO_SDK_HOME": "/Applications/DevEco-Studio.app/Contents/sdk",
+    "NODE_HOME": "/Applications/DevEco-Studio.app/Contents/tools/node",
+    "PATH": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/toolchains:/Applications/DevEco-Studio.app/Contents/tools/hvigor/bin:/Applications/DevEco-Studio.app/Contents/tools/ohpm/bin:/Applications/DevEco-Studio.app/Contents/tools/node/bin:/opt/homebrew/bin:${env:PATH}"
+  },
   "dart.hotReloadOnSave": "manual",
   "javascript.updateImportsOnFileMove.enabled": "always",
   "commentTranslate.source": "Baidu",

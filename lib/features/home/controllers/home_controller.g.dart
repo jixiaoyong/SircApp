@@ -11,13 +11,13 @@ part of 'home_controller.dart';
 /// 首页控制器（纯业务逻辑，不与多语言直接耦合）
 
 @ProviderFor(HomeController)
-final homeControllerProvider = HomeControllerProvider._();
+const homeControllerProvider = HomeControllerProvider._();
 
 /// 首页控制器（纯业务逻辑，不与多语言直接耦合）
 final class HomeControllerProvider
     extends $NotifierProvider<HomeController, HomeState> {
   /// 首页控制器（纯业务逻辑，不与多语言直接耦合）
-  HomeControllerProvider._()
+  const HomeControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -44,7 +44,7 @@ final class HomeControllerProvider
   }
 }
 
-String _$homeControllerHash() => r'9468336fa7bbaf6e01ee70a196ece97b4c27a880';
+String _$homeControllerHash() => r'd18fb65af51e19d08daf7ba193fbb729b8353d43';
 
 /// 首页控制器（纯业务逻辑，不与多语言直接耦合）
 
@@ -52,7 +52,8 @@ abstract class _$HomeController extends $Notifier<HomeState> {
   HomeState build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
+    final created = build();
     final ref = this.ref as $Ref<HomeState, HomeState>;
     final element =
         ref.element
@@ -62,6 +63,6 @@ abstract class _$HomeController extends $Notifier<HomeState> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleValue(ref, created);
   }
 }

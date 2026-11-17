@@ -1,6 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 
 import '../core/localization/app_locale.dart';
 import '../core/router/nav_keys.dart';

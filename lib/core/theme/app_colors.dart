@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 
 /// UI 2.0 semantic palette. Bank-card materials intentionally remain independent.
 class AppColors {

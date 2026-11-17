@@ -10,11 +10,11 @@ part of 'settings_controller.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(NotificationsController)
-final notificationsControllerProvider = NotificationsControllerProvider._();
+const notificationsControllerProvider = NotificationsControllerProvider._();
 
 final class NotificationsControllerProvider
     extends $NotifierProvider<NotificationsController, NotificationsState> {
-  NotificationsControllerProvider._()
+  const NotificationsControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -48,7 +48,8 @@ abstract class _$NotificationsController extends $Notifier<NotificationsState> {
   NotificationsState build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
+    final created = build();
     final ref = this.ref as $Ref<NotificationsState, NotificationsState>;
     final element =
         ref.element
@@ -58,16 +59,16 @@ abstract class _$NotificationsController extends $Notifier<NotificationsState> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleValue(ref, created);
   }
 }
 
 @ProviderFor(InitialController)
-final initialControllerProvider = InitialControllerProvider._();
+const initialControllerProvider = InitialControllerProvider._();
 
 final class InitialControllerProvider
     extends $NotifierProvider<InitialController, InitialState> {
-  InitialControllerProvider._()
+  const InitialControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -100,7 +101,8 @@ abstract class _$InitialController extends $Notifier<InitialState> {
   InitialState build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
+    final created = build();
     final ref = this.ref as $Ref<InitialState, InitialState>;
     final element =
         ref.element
@@ -110,6 +112,6 @@ abstract class _$InitialController extends $Notifier<InitialState> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleValue(ref, created);
   }
 }

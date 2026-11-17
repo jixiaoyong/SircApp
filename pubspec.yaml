@@ -24,13 +24,13 @@ dependencies:
   # ==========================================
   # 2. 状态管理 (Riverpod 3.x 现代架构)
   # ==========================================
-  flutter_riverpod: ^3.1.0
-  riverpod_annotation: ^4.0.0
+  flutter_riverpod: 3.0.3
+  riverpod_annotation: 3.0.3
 
   # ==========================================
   # 3. 声明式路由导航
   # ==========================================
-  go_router: ^18.1.4
+  go_router: 14.8.1
 
   # ==========================================
   # 4. 网络通信、加密与持久化
@@ -38,16 +38,16 @@ dependencies:
   http: ^1.2.2
   crypto: ^3.0.5
   shared_preferences: ^2.3.2
+  # 上游插件尚未声明 OHOS 默认实现，需要显式引入以生成平台注册代码。
+  shared_preferences_ohos: ^2.2.0
 
   # ==========================================
   # 5. UI 适配与界面视图组件
   # ==========================================
-  flutter_screenutil_plus:
-    hosted: https://pub.dev
-    version: 2.0.0
   extended_image: ^10.1.0
-  month_picker_dialog: ^7.0.0
+  month_picker_dialog: ^6.7.3
   webview_flutter: ^4.8.0
+  webview_flutter_ohos: ^3.15.0
   # 自适应高度内嵌 WebView 组件（基于现代 ResizeObserver 标准）
   embed_webview:
     hosted: https://pub.dev
@@ -57,11 +57,12 @@ dependencies:
   # 6. 系统交互与原生支持
   # ==========================================
   path_provider: ^2.1.6
+  path_provider_ohos: ^2.2.1
   url_launcher: ^6.3.0
+  url_launcher_ohos: ^6.3.0
   logger: ^2.4.0
   flutter_native_splash: ^2.4.1
   flutter_svg: ^2.3.2
-  material_ui: ^1.11.0
 
 dev_dependencies:
   # ==========================================
@@ -74,7 +75,7 @@ dev_dependencies:
   # 2. 自动化代码生成工具链
   # ==========================================
   build_runner: ^2.4.15
-  riverpod_generator: ^4.0.10
+  riverpod_generator: 3.0.3
 
   # ==========================================
   # 3. 静态代码分析与代码规范
@@ -82,7 +83,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   # riverpod_lint 3.x 使用 analysis_server_plugin 机制，通过 analysis_options.yaml
   # 顶层的 plugins: 声明启用，不再需要 custom_lint 依赖
-  riverpod_lint: ^3.2.0
+  riverpod_lint: 3.0.3
 
   webview_flutter_platform_interface: any
 flutter:

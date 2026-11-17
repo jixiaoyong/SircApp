@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:sirc/routes/source_detail_navigation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
@@ -152,86 +151,93 @@ class WalletPage extends ConsumerWidget {
           maxWidth: 1017,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 28),
-            child: LayoutScope(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          Languages.walletTitle,
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                      ),
-                      IconButton(
-                        tooltip: Languages.menu,
-                        onPressed:
-                            onMenuTap ??
-                            () => ref
-                                .read(navigationControllerProvider.notifier)
-                                .openDrawer(),
-                        icon: const Icon(Icons.menu),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  if (state.isLoading) const LinearProgressIndicator(),
-                  if (state.errorMessage != null)
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final localWidth = constraints.maxWidth.isFinite
+                    ? constraints.maxWidth
+                    : MediaQuery.sizeOf(context).width;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Row(
                       children: [
-                        Expanded(child: Text(state.errorMessage!)),
-                        TextButton(
-                          onPressed: state.isLoading ? null : controller.retry,
-                          child: Text(Languages.retry),
+                        Expanded(
+                          child: Text(
+                            Languages.walletTitle,
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: Languages.menu,
+                          onPressed:
+                              onMenuTap ??
+                              () => ref
+                                  .read(navigationControllerProvider.notifier)
+                                  .openDrawer(),
+                          icon: const Icon(Icons.menu),
                         ),
                       ],
                     ),
-                  Builder(
-                    builder: (context) {
-                      final beside =
-                          ResponsiveQuery.of(context).width >= 760 &&
-                          MediaQuery.textScalerOf(context).scale(14) < 24;
-                      return Flex(
-                        direction: beside ? Axis.horizontal : Axis.vertical,
+                    const SizedBox(height: 20),
+                    if (state.isLoading) const LinearProgressIndicator(),
+                    if (state.errorMessage != null)
+                      Row(
+                        children: [
+                          Expanded(child: Text(state.errorMessage!)),
+                          TextButton(
+                            onPressed: state.isLoading
+                                ? null
+                                : controller.retry,
+                            child: Text(Languages.retry),
+                          ),
+                        ],
+                      ),
+                    Builder(
+                      builder: (context) {
+                        final beside =
+                            localWidth >= 760 &&
+                            MediaQuery.textScalerOf(context).scale(14) < 24;
+                        return Flex(
+                          direction: beside ? Axis.horizontal : Axis.vertical,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Flexible(flex: beside ? 1 : 0, child: balance),
+                            SizedBox(
+                              width: beside ? 16 : 0,
+                              height: beside ? 0 : 16,
+                            ),
+                            Flexible(flex: beside ? 1 : 0, child: cards),
+                          ],
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    stats,
+                    const SizedBox(height: 16),
+                    WalletPanel(
+                      key: const ValueKey('wallet-transactions'),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Flexible(flex: beside ? 1 : 0, child: balance),
-                          SizedBox(
-                            width: beside ? 16 : 0,
-                            height: beside ? 0 : 16,
+                          Text(
+                            Languages.transactions,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                          Flexible(flex: beside ? 1 : 0, child: cards),
+                          const SizedBox(height: 16),
+                          WalletTransactionList(
+                            items: items.take(3).toList(),
+                            heroPrefix: 'heroTag_',
+                            designStyle: true,
+                          ),
                         ],
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  stats,
-                  const SizedBox(height: 16),
-                  WalletPanel(
-                    key: const ValueKey('wallet-transactions'),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          Languages.transactions,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        WalletTransactionList(
-                          items: items.take(3).toList(),
-                          heroPrefix: 'heroTag_',
-                          designStyle: true,
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                );
+              },
             ),
           ),
         ),

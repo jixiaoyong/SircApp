@@ -33,6 +33,14 @@ SircApp 是一个使用 Flutter 实现的响应式金融界面与本地交互演
 
 ![宽屏主题设置亮色英文与暗色中文反向斜切对照](doc/imgs/settings-appearance-wide.webp)
 
+### 鸿蒙 / OpenHarmony 大屏
+
+以下为 2026-11-17 在 OHOS 大屏模拟器中实际运行的首页，以及首页展开交易详情的截图，已压缩为 WebP；并非特定折叠屏机型的适配认证。部分网络图片未正常显示，原因仍待排查。
+
+![OHOS 大屏模拟器首页](doc/imgs/ohos-home-wide.webp)
+
+![OHOS 大屏模拟器：首页展开交易详情](doc/imgs/ohos-transaction-detail-wide.webp)
+
 ## 主要功能
 
 - **响应式导航与布局：** 窄屏底部导航、宽屏侧边导航栏，以及自适应的首页和钱包区域。
@@ -43,7 +51,7 @@ SircApp 是一个使用 Flutter 实现的响应式金融界面与本地交互演
 
 ## 快速开始
 
-使用 [FVM](https://fvm.app/) 和 [`.fvmrc`](.fvmrc) 固定的 Flutter 版本（当前为 **3.47.9**）。Dart 使用该 Flutter SDK 自带的版本，不要沿用旧的 Flutter 3.24 / Dart 3.5 配置说明。
+使用 [FVM](https://fvm.app/) 和 [`.fvmrc`](.fvmrc) 固定的 Flutter 版本（当前为鸿蒙分支 **`ohos/oh-3.47.9-dev`**）。Dart 使用该 Flutter SDK 自带的版本，不要沿用旧的 Flutter 3.24 / Dart 3.5 配置说明。
 
 ```sh
 git clone https://github.com/jixiaoyong/SircApp.git
@@ -59,7 +67,9 @@ fvm flutter run -d chrome
 fvm flutter build web --release
 ```
 
-仓库包含 Android、iOS、Web 和 macOS 平台工程，但这不代表每次改动都已在所有原生平台上验证。原生构建需要对应平台工具链；iOS 需使用 macOS、Xcode，以及插件所需的 CocoaPods 配置。
+仓库包含 Android、iOS、Web、macOS 和 OHOS 平台工程，但这不代表每次改动都已在所有原生平台上验证。原生构建需要对应平台工具链；iOS 需使用 macOS、Xcode，以及插件所需的 CocoaPods 配置。
+
+**鸿蒙 / OpenHarmony：** 已接入 OHOS 平台工程与所需插件实现，当前基线为 DevEco Studio 配套工具链和 HarmonyOS SDK API 26。已验证 IDE 构建、安装、首页与钱包交互、热重载；热重启由用户实测确认通过。签名配置需在本机生成，不随仓库提交。环境配置、签名模板与已知限制见 [OHOS 开发指南](ohos/README.md)。
 
 ## 演示数据与边界
 
@@ -72,10 +82,10 @@ fvm flutter build web --release
 
 ```sh
 fvm flutter test
-fvm flutter analyze
+fvm flutter analyze --no-fatal-infos
 ```
 
-测试覆盖状态与控制器、本地化、导航、响应式布局、卡片管理、主题，以及图表聚合与交互。静态分析当前存在既有的 warning/info 诊断，不应视为零警告项目。
+测试覆盖状态与控制器、本地化、导航、响应式布局、卡片管理、主题，以及图表聚合与交互。静态分析以 error / warning 为门禁，info 暂不阻断；本次 OHOS 迁移的本地分析结果为 `No issues found`。
 
 修改本地化接口或译文后，重新生成本地化访问代码：
 

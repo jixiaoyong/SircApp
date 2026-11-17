@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:sirc/features/home/controllers/home_controller.dart';
 import 'package:sirc/l10n/languages.g.dart' show Languages;
 import 'package:sirc/widgets/bank_card_widget.dart' show BankCardWidget;

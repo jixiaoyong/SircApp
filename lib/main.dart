@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
@@ -61,8 +62,6 @@ class MyApp extends ConsumerWidget {
       routerConfig: ref.watch(appRouterProvider),
       scaffoldMessengerKey: rootScaffoldMessengerKey,
       title: "Sirc App",
-      // material_ui 的 delegates 已同时包含 material / widgets / cupertino 三套委托，
-      // 避免再混用 flutter_localizations 的旧 GlobalCupertinoLocalizations（不支持 zh）
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: AppLocale.supportedLocales,
       locale: locale,

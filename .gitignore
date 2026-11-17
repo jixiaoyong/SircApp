@@ -249,3 +249,46 @@ doc/api/
 
 # Custom lint log
 custom_lint.log
+
+# Apple platform build products and per-user Xcode state
+**/DerivedData/
+**/xcuserdata/
+**/*.xcuserstate
+**/*.mode1v3
+**/*.mode2v3
+**/*.perspectivev3
+**/Flutter/ephemeral/
+**/Flutter/Generated.xcconfig
+**/Flutter/flutter_export_environment.sh
+**/Flutter/.last_build_id
+**/Flutter/Flutter.podspec
+**/Pods/
+
+# Local SDK paths and signing credentials
+**/local.properties
+**/*.jks
+**/*.keystore
+**/*.p12
+**/*.mobileprovision
+**/key.properties
+**/secrets.properties
+
+# Firebase service credentials (keep examples/templates tracked)
+**/google-services.json
+**/GoogleService-Info.plist
+
+# OpenHarmony tooling state and generated dependencies
+/ohos/.appanalyzer/
+/ohos/.codegenie/
+/ohos/.hvigor/
+/ohos/**/oh_modules/
+/ohos/**/node_modules/
+/ohos/package.json
+/ohos/package-lock.json
+/ohos/**/oh-package-lock.json5
+/ohos/**/src/main/resources/rawfile/flutter_assets/
+
+# Generated platform plugin registrants
+/ios/Runner/GeneratedPluginRegistrant.h
+/ios/Runner/GeneratedPluginRegistrant.m
+/macos/Flutter/GeneratedPluginRegistrant.swift

@@ -10,11 +10,11 @@ part of 'sign_in_controller.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(SignInController)
-final signInControllerProvider = SignInControllerProvider._();
+const signInControllerProvider = SignInControllerProvider._();
 
 final class SignInControllerProvider
     extends $NotifierProvider<SignInController, SignInState> {
-  SignInControllerProvider._()
+  const SignInControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -41,13 +41,14 @@ final class SignInControllerProvider
   }
 }
 
-String _$signInControllerHash() => r'1d15f886555603802ee5d9fd8b9652b2cfa2c503';
+String _$signInControllerHash() => r'eeaf9f3c68e0aa9595af8c6b7e231aeb3d567991';
 
 abstract class _$SignInController extends $Notifier<SignInState> {
   SignInState build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
+    final created = build();
     final ref = this.ref as $Ref<SignInState, SignInState>;
     final element =
         ref.element
@@ -57,6 +58,6 @@ abstract class _$SignInController extends $Notifier<SignInState> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleValue(ref, created);
   }
 }

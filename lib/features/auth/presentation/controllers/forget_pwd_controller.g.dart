@@ -10,11 +10,11 @@ part of 'forget_pwd_controller.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(ForgetPwdController)
-final forgetPwdControllerProvider = ForgetPwdControllerProvider._();
+const forgetPwdControllerProvider = ForgetPwdControllerProvider._();
 
 final class ForgetPwdControllerProvider
     extends $NotifierProvider<ForgetPwdController, ForgetPwdState> {
-  ForgetPwdControllerProvider._()
+  const ForgetPwdControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -48,7 +48,8 @@ abstract class _$ForgetPwdController extends $Notifier<ForgetPwdState> {
   ForgetPwdState build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
+    final created = build();
     final ref = this.ref as $Ref<ForgetPwdState, ForgetPwdState>;
     final element =
         ref.element
@@ -58,6 +59,6 @@ abstract class _$ForgetPwdController extends $Notifier<ForgetPwdState> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleValue(ref, created);
   }
 }
