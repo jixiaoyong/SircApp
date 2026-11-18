@@ -87,6 +87,9 @@ class _PayloadDetailPageState extends ConsumerState<PayloadDetailPage>
       await web.setJavaScriptMode(JavaScriptMode.unrestricted);
       if (isNew) {
         try {
+          await web.setBackgroundColor(Colors.transparent);
+        } catch (_) {}
+        try {
           await web.addJavaScriptChannel(
             'AppClose',
             onMessageReceived: (_) => _closePage(),

@@ -1,51 +1,166 @@
+/* ==========================================================================
+   SircApp UI 2.0 × VibeDesign Tactile Craft Token System
+   精确对齐 SircApp 原生 AppTheme 亮暗语义色板，融合 vibedesign.tips
+   物理按键质感、连续圆角 (superellipse)、等宽表格数字与克制层次
+   ========================================================================== */
+
+@property --sirc-corner-shape {
+  syntax: "*";
+  inherits: false;
+  initial-value: superellipse(1.25);
+}
+
+@supports (corner-shape: superellipse(1.25)) {
+  :where(.sirc-panel, .sirc-group, .sirc-key, .sirc-ink-key, .sirc-danger-key, .sirc-pill, .sirc-bank-card, .sirc-rate-tile, .sirc-well, .sirc-seg-tray, .sirc-seg-btn, .sirc-callout, .sirc-receipt) {
+    corner-shape: var(--sirc-corner-shape);
+  }
+}
+
 :root {
+  /* SircApp Native Light Surface Palette */
   --sirc-bg: #f7f7f7;
   --sirc-surface: #ffffff;
-  --sirc-surface-hover: #f1f3f5;
-  --sirc-surface-active: #e8ecf1;
+  --sirc-surface-elevated: #ffffff;
+  --sirc-field: #f2f2f2;
+  --sirc-surface-hover: #f3f4f6;
+  --sirc-surface-active: #eaedf0;
+
+  /* SircApp Ink & Hairlines */
   --sirc-ink: #26282b;
   --sirc-muted: #66686c;
   --sirc-light: #85888d;
   --sirc-border: #dedede;
-  --sirc-border-subtle: #eaeaea;
+  --sirc-border-subtle: rgba(38, 40, 43, 0.08);
+  --sirc-hatch: rgba(38, 40, 43, 0.07);
+
+  /* Semantic Accents (10% Rule - Restrained & High Contrast) */
   --sirc-primary: #26282b;
+  --sirc-on-primary: #ffffff;
   --sirc-accent: #0066d6;
-  --sirc-accent-soft: #eaf2ff;
+  --sirc-accent-soft: rgba(0, 102, 214, 0.08);
+  --sirc-accent-border: rgba(0, 102, 214, 0.22);
   --sirc-success: #277045;
-  --sirc-success-soft: #eaf6ef;
-  --sirc-warning: #e3a35c;
-  --sirc-warning-soft: #fcf4eb;
+  --sirc-success-soft: rgba(39, 112, 69, 0.09);
+  --sirc-warning: #b8731e;
+  --sirc-warning-soft: rgba(227, 163, 92, 0.14);
+  --sirc-warning-border: rgba(227, 163, 92, 0.34);
   --sirc-error: #cf242c;
-  --sirc-error-soft: #fdebee;
-  --sirc-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
-  --sirc-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.07);
-  --sirc-radius-sm: 8px;
+  --sirc-error-soft: rgba(207, 36, 44, 0.08);
+  --sirc-error-border: rgba(207, 36, 44, 0.22);
+
+  /* Bank Card Native Architectural Material (matches BankCardWidget) */
+  --card-bg: #fafbfc;
+  --card-ink: #232b36;
+  --card-muted: #596473;
+  --card-edge: #cbd2da;
+  --card-divider: #dce1e7;
+  --card-chip-bg: #e6eaef;
+  --card-chip-line: #7d8997;
+  --card-sheen: linear-gradient(125deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0) 42%, rgba(0, 102, 214, 0.03) 100%);
+
+  /* VibeDesign 001 Tactile Key Tokens (Light) */
+  --key-bg: #f4f4f5;
+  --key-bg-hover: #f9f9fa;
+  --key-bg-down: #ececee;
+  --key-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
+  --key-rim: rgba(0, 0, 0, 0.11);
+  --key-rim-low: rgba(0, 0, 0, 0.18);
+  --key-lift: inset 0 1px 0 rgba(255, 255, 255, 0.96), inset 0 -1px 0 rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.06), 0 2px 5px -2px rgba(0, 0, 0, 0.11);
+  --key-down: inset 0 1.5px 2.5px rgba(0, 0, 0, 0.14), 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  /* Primary Ink Key Tokens */
+  --ink-key-bg: #1e2023;
+  --ink-key-bg-down: #282b30;
+  --ink-key-text: #ffffff;
+  --ink-key-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 48%, rgba(255, 255, 255, 0.05));
+  --ink-key-rim: #121315;
+  --ink-key-lift: inset 0 1px 0 rgba(255, 255, 255, 0.24), inset 0 -2px 3px -1px rgba(255, 255, 255, 0.16), 0 1px 2px rgba(0, 0, 0, 0.2), 0 3px 8px -2px rgba(0, 0, 0, 0.28);
+  --ink-key-down: inset 0 1.5px 3px rgba(0, 0, 0, 0.68), inset 0 -1px 0 rgba(255, 255, 255, 0.12), 0 1px 1px rgba(0, 0, 0, 0.12);
+
+  /* Recessed Well & Segmented Tray */
+  --well-bg: #f1f2f3;
+  --well-inset: inset 0 1px 2px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+
+  /* Radii & Motion */
+  --sirc-radius-sm: 10px;
   --sirc-radius-md: 14px;
-  --sirc-radius-lg: 20px;
-  --sirc-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --sirc-radius-lg: 18px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --key-motion: background-color 0.14s ease, box-shadow 0.14s ease, transform 0.12s var(--ease-out);
+
+  /* Typography */
+  --sirc-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --sirc-mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+
+  color-scheme: light;
 }
 
 body.dark {
-  --sirc-bg: #14191f;
-  --sirc-surface: #1c222b;
-  --sirc-surface-hover: #232b36;
-  --sirc-surface-active: #2a3442;
-  --sirc-ink: #eef2f8;
-  --sirc-muted: #9ba4b0;
-  --sirc-light: #6c7684;
-  --sirc-border: #2c3644;
-  --sirc-border-subtle: #242c38;
-  --sirc-primary: #eef2f8;
-  --sirc-accent: #3a8df5;
-  --sirc-accent-soft: #17273d;
-  --sirc-success: #38a169;
-  --sirc-success-soft: #142a1f;
-  --sirc-warning: #f6ad55;
-  --sirc-warning-soft: #332210;
-  --sirc-error: #e53e3e;
-  --sirc-error-soft: #381618;
-  --sirc-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.2);
-  --sirc-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
+  /* SircApp Native Dark Surface Palette (Exact match: #171819 / #222426 / #2D2F32) */
+  --sirc-bg: #171819;
+  --sirc-surface: #222426;
+  --sirc-surface-elevated: #27292c;
+  --sirc-field: #2d2f32;
+  --sirc-surface-hover: #292b2e;
+  --sirc-surface-active: #313438;
+
+  /* SircApp Dark Ink & Hairlines */
+  --sirc-ink: #f1f1f2;
+  --sirc-muted: #b2b4b8;
+  --sirc-light: #85898f;
+  --sirc-border: #3a3d42;
+  --sirc-border-subtle: rgba(255, 255, 255, 0.08);
+  --sirc-hatch: rgba(255, 255, 255, 0.06);
+
+  /* Semantic Accents (Dark) */
+  --sirc-primary: #e4e5e7;
+  --sirc-on-primary: #171819;
+  --sirc-accent: #64b0ff;
+  --sirc-accent-soft: rgba(100, 176, 255, 0.12);
+  --sirc-accent-border: rgba(100, 176, 255, 0.28);
+  --sirc-success: #8bd6a6;
+  --sirc-success-soft: rgba(139, 214, 166, 0.12);
+  --sirc-warning: #e8b268;
+  --sirc-warning-soft: rgba(232, 178, 104, 0.12);
+  --sirc-warning-border: rgba(232, 178, 104, 0.26);
+  --sirc-error: #ff747c;
+  --sirc-error-soft: rgba(255, 116, 124, 0.12);
+  --sirc-error-border: rgba(255, 116, 124, 0.28);
+
+  /* Bank Card Native Dark Architectural Material (matches BankCardWidget dark) */
+  --card-bg: #252c35;
+  --card-ink: #eef1f6;
+  --card-muted: #b7c1ce;
+  --card-edge: #495361;
+  --card-divider: #424c59;
+  --card-chip-bg: #333e4b;
+  --card-chip-line: #9caabb;
+  --card-sheen: linear-gradient(125deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 45%, rgba(100, 176, 255, 0.05) 100%);
+
+  /* VibeDesign 001 Tactile Key Tokens (Dark) */
+  --key-bg: #2a2c2f;
+  --key-bg-hover: #323539;
+  --key-bg-down: #242628;
+  --key-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0));
+  --key-rim: rgba(0, 0, 0, 0.52);
+  --key-rim-low: rgba(0, 0, 0, 0.78);
+  --key-lift: inset 0 1px 0 rgba(255, 255, 255, 0.09), inset 0 -1px 0 rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.42), 0 2px 6px -2px rgba(0, 0, 0, 0.55);
+  --key-down: inset 0 1.5px 3px rgba(0, 0, 0, 0.58), 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  /* Primary Ink Key Tokens (Dark — inverted high-contrast tactile key like vibedesign.tips & SircApp primary) */
+  --ink-key-bg: #e4e5e7;
+  --ink-key-bg-down: #d3d5d8;
+  --ink-key-text: #171819;
+  --ink-key-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.3));
+  --ink-key-rim: rgba(0, 0, 0, 0.65);
+  --ink-key-lift: inset 0 1px 0 rgba(255, 255, 255, 0.92), inset 0 -2px 3px -1px rgba(255, 255, 255, 0.65), 0 1px 2px rgba(0, 0, 0, 0.45), 0 3px 8px -2px rgba(0, 0, 0, 0.55);
+  --ink-key-down: inset 0 1.5px 3px rgba(0, 0, 0, 0.38), inset 0 -1px 0 rgba(255, 255, 255, 0.5), 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* Recessed Well & Segmented Tray */
+  --well-bg: #1c1e20;
+  --well-inset: inset 0 1px 2px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  color-scheme: dark;
 }
 
 * {
@@ -53,14 +168,61 @@ body.dark {
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   font-family: var(--sirc-font);
   background-color: var(--sirc-bg);
   color: var(--sirc-ink);
-  line-height: 1.5;
+  font-size: 14px;
+  line-height: 1.48;
   min-height: 100vh;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
   user-select: none;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.mono {
+  font-family: var(--sirc-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Staggered physical entrance (vibedesign.tips 011/015) */
+@keyframes sirc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sirc-stagger > * {
+  animation: sirc-rise 0.32s var(--ease-out) backwards;
+}
+.sirc-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.sirc-stagger > *:nth-child(2) { animation-delay: 28ms; }
+.sirc-stagger > *:nth-child(3) { animation-delay: 56ms; }
+.sirc-stagger > *:nth-child(4) { animation-delay: 84ms; }
+.sirc-stagger > *:nth-child(5) { animation-delay: 112ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sirc-stagger > * {
+    animation: none;
+  }
 }

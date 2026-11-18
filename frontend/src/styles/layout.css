@@ -1,129 +1,170 @@
-/* 主容器与布局基类 */
+/* ==========================================================================
+   布局壳层：Tab 内嵌概览 / 全屏沉浸详情 / 宽屏 Master-Detail 双栏
+   ========================================================================== */
+
 #app {
   width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--sirc-bg);
 }
 
-/* 顶部状态与标题栏 */
+/* 全屏独立模式（及宽屏模式）极简粘性顶栏 */
 .sirc-top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 20px;
-  background: var(--sirc-surface);
-  border-bottom: 1px solid var(--sirc-border-subtle);
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  backdrop-filter: blur(12px);
+  gap: 12px;
+  min-height: 54px;
+  padding: 10px 16px;
+  background: color-mix(in srgb, var(--sirc-bg) 88%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 1px 0 transparent;
+  transition: box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
-.sirc-brand {
+.sirc-top-bar.is-stuck {
+  background: color-mix(in srgb, var(--sirc-surface) 92%, transparent);
+  box-shadow: 0 1px 0 var(--sirc-border-subtle);
+}
+
+.sirc-top-left {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.sirc-logo-icon {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, #0066d6, #26282b);
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-weight: 800;
-  font-size: 16px;
-  box-shadow: 0 2px 6px rgba(0, 102, 214, 0.35);
+  min-width: 0;
+  flex: 1;
 }
 
 .sirc-title-text {
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
   color: var(--sirc-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.sirc-status-badge {
+/* 宽屏左栏微弱品牌头 */
+.sirc-wide-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.sirc-logo-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: var(--ink-key-bg);
+  color: var(--ink-key-text);
+  box-shadow: var(--ink-key-lift);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+/* 精巧状态徽标 */
+.sirc-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
+  border-radius: 999px;
+  font-size: 11px;
   font-weight: 600;
-  background: var(--sirc-success-soft);
-  color: var(--sirc-success);
-}
-
-.sirc-status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: currentColor;
-  box-shadow: 0 0 0 2px rgba(39, 112, 69, 0.2);
-}
-
-/* 面包屑导航栏（在各级子页面顶部） */
-.sirc-breadcrumb-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border: 1px solid var(--sirc-border-subtle);
   background: var(--sirc-surface);
-  border-bottom: 1px solid var(--sirc-border-subtle);
-  font-size: 13px;
   color: var(--sirc-muted);
 }
 
-.sirc-breadcrumb-item {
-  cursor: pointer;
-  transition: color 0.15s;
+.sirc-pill-success {
+  background: var(--sirc-success-soft);
+  border-color: color-mix(in srgb, var(--sirc-success) 24%, transparent);
+  color: var(--sirc-success);
 }
 
-.sirc-breadcrumb-item:hover {
+.sirc-pill-accent {
+  background: var(--sirc-accent-soft);
+  border-color: var(--sirc-accent-border);
   color: var(--sirc-accent);
 }
 
-.sirc-breadcrumb-separator {
-  color: var(--sirc-light);
+.sirc-pill-warning {
+  background: var(--sirc-warning-soft);
+  border-color: var(--sirc-warning-border);
+  color: var(--sirc-warning);
 }
 
-.sirc-breadcrumb-current {
-  font-weight: 600;
+.sirc-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 2.5px color-mix(in srgb, currentColor 22%, transparent);
+}
+
+/* 轻量级内联面包屑（仅三级详情或宽屏显示，零冗余） */
+.sirc-breadcrumb-trail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 2px 10px;
+  font-size: 12px;
+  color: var(--sirc-light);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.sirc-bc-link {
+  cursor: pointer;
+  color: var(--sirc-muted);
+  transition: color 0.14s ease;
+}
+
+.sirc-bc-link:active,
+.sirc-bc-link:hover {
   color: var(--sirc-ink);
 }
 
-.sirc-back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: none;
-  border: none;
-  color: var(--sirc-accent);
-  font-size: 14px;
+.sirc-bc-sep {
+  opacity: 0.45;
+  font-size: 11px;
+}
+
+.sirc-bc-current {
+  color: var(--sirc-ink);
   font-weight: 600;
-  cursor: pointer;
-  padding: 4px 8px;
-  margin-right: 6px;
-  border-radius: 6px;
 }
 
-.sirc-back-btn:hover {
-  background: var(--sirc-accent-soft);
-}
-
-/* ======================================================== */
-/* 窄屏 / 手机布局 (默认 < 768px) */
-/* ======================================================== */
+/* ==========================================================================
+   窄屏默认容器 (< 768px)
+   ========================================================================== */
 .sirc-container {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 12px 16px 28px;
+}
+
+.sirc-container.is-standalone {
+  padding-top: 8px;
 }
 
 .sirc-master-pane {
@@ -134,55 +175,60 @@
 }
 
 .sirc-detail-pane {
-  display: none; /* 窄屏由 SPA 视图路由显隐控制 */
+  display: none;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
 }
 
-/* ======================================================== */
-/* 宽屏 / 平板 / 横屏双栏布局 (>= 768px) - 在旁边打开！ */
-/* ======================================================== */
+.sirc-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* 分区眉标 */
+.sirc-section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sirc-muted);
+  letter-spacing: 0.01em;
+  padding: 0 4px;
+}
+
+.sirc-section-meta {
+  font-family: var(--sirc-mono);
+  font-size: 10.5px;
+  color: var(--sirc-light);
+  letter-spacing: 0.03em;
+}
+
+/* ==========================================================================
+   宽屏 / 平板双栏布局 (>= 768px) — Master-Detail 并排展开
+   ========================================================================== */
 @media (min-width: 768px) {
-  .sirc-container {
+  .sirc-container:not(.is-standalone) {
     flex-direction: row;
-    align-items: stretch;
-    padding: 24px;
+    align-items: flex-start;
+    max-width: 1120px;
+    padding: 20px 24px 40px;
     gap: 24px;
-    max-width: 1280px;
-    margin: 0 auto;
-    width: 100%;
   }
 
-  /* 左侧主栏 (Master 列表) */
-  .sirc-master-pane {
+  .sirc-container:not(.is-standalone) .sirc-master-pane {
     width: 360px;
     flex-shrink: 0;
     display: flex !important;
-    gap: 14px;
+    position: sticky;
+    top: 72px;
   }
 
-  /* 右侧从栏 (Detail 详情) - 在旁边展开！ */
-  .sirc-detail-pane {
+  .sirc-container:not(.is-standalone) .sirc-detail-pane {
     flex: 1;
-    display: flex !important;
     min-width: 0;
-    gap: 16px;
-  }
-
-  /* 宽屏下的左栏选中状态聚焦 */
-  .sirc-nav-card.active {
-    border-color: var(--sirc-accent) !important;
-    background: var(--sirc-accent-soft) !important;
-    box-shadow: 0 0 0 1px var(--sirc-accent), var(--sirc-shadow-md) !important;
-  }
-
-  .sirc-nav-card.active .sirc-nav-title {
-    color: var(--sirc-accent) !important;
-  }
-
-  /* 宽屏下隐藏左栏多余的“返回”按钮 */
-  .sirc-master-pane .sirc-back-btn {
-    display: none;
+    display: flex !important;
   }
 }

@@ -1,4 +1,5 @@
 // SircApp 与 H5 双向通信和生命周期桥接
+import { Icons } from '../utils/icons';
 
 export interface SircPresentationData {
   title?: string;
@@ -38,7 +39,9 @@ export class SircBridge {
       }
       if (data.title) {
         const titleEl = document.getElementById('sirc-page-title');
-        if (titleEl) titleEl.textContent = data.title;
+        if (titleEl && titleEl.dataset.allowHostTitle === 'true') {
+          titleEl.textContent = data.title;
+        }
       }
       if (data.version) {
         const verEl = document.getElementById('sirc-version-badge');
@@ -96,7 +99,7 @@ export class SircBridge {
     }
   }
 
-  // 原生 Toast 弹窗反馈
+  // 精工悬浮胶囊 Toast（vibedesign.tips 016）
   public static showToast(message: string) {
     let toast = document.getElementById('sirc-toast');
     if (!toast) {
@@ -105,7 +108,7 @@ export class SircBridge {
       toast.className = 'sirc-toast';
       document.body.appendChild(toast);
     }
-    toast.textContent = message;
+    toast.innerHTML = `${Icons.check(15)}<span>${message}</span>`;
     toast.classList.add('show');
 
     if (this.toastTimer) {

@@ -75,6 +75,9 @@ class _PayloadPageState extends ConsumerState<PayloadPage>
       await web.setJavaScriptMode(JavaScriptMode.unrestricted);
       if (isNew) {
         try {
+          await web.setBackgroundColor(Colors.transparent);
+        } catch (_) {}
+        try {
           await web.addJavaScriptChannel(
             'SircNativeBridge',
             onMessageReceived: (JavaScriptMessage message) {
@@ -296,33 +299,121 @@ class _PayloadPageState extends ConsumerState<PayloadPage>
               )
             : Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(
-                      payloadUpdateUrl.isEmpty
-                          ? Languages.home.payloadBuiltIn
-                          : switch (_runtime?.syncStatus) {
-                              'updating' => Languages.home.payloadUpdating,
-                              'failed' => Languages.home.payloadUpdateFailed,
-                              'ready' => Languages.home.payloadUpdated,
-                              _ => Languages.home.payloadOnline,
-                            },
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Theme.of(context).colorScheme.outlineVariant
+                              .withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 7,
+                          height: 7,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _runtime?.syncStatus == 'failed'
+                                ? Theme.of(context).colorScheme.error
+                                : Theme.of(context).brightness ==
+                                      Brightness.dark
+                                ? const Color(0xFF8BD6A6)
+                                : const Color(0xFF277045),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            payloadUpdateUrl.isEmpty
+                                ? Languages.home.payloadBuiltIn
+                                : switch (_runtime?.syncStatus) {
+                                    'updating' => Languages.home.payloadUpdating,
+                                    'failed' =>
+                                      Languages.home.payloadUpdateFailed,
+                                    'ready' => Languages.home.payloadUpdated,
+                                    _ => Languages.home.payloadOnline,
+                                  },
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (_runtime?.version case final String version)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerHighest,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              '${Languages.home.payloadVersion}: $version',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontFamily: 'monospace',
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
-                  if (_runtime?.version case final String version)
-                    Text('${Languages.home.payloadVersion}: $version'),
                   if (_runtime?.availableVersion case final String available)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(16, 10, 16, 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondary.withValues(alpha: 0.35),
+                        ),
+                      ),
                       child: Wrap(
                         spacing: 12,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Text(
                             '${Languages.home.payloadUpdateAvailable} ($available)',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                           ),
                           TextButton(
                             onPressed: _activating ? null : _activateUpdate,
+                            style: TextButton.styleFrom(
+                              foregroundColor: Theme.of(
+                                context,
+                              ).colorScheme.secondary,
+                              visualDensity: VisualDensity.compact,
+                            ),
                             child: Text(Languages.home.payloadActivateUpdate),
                           ),
                         ],

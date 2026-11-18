@@ -3,6 +3,7 @@ import './styles/layout.css';
 import './styles/components.css';
 
 import { SircBridge } from './bridge/sircBridge';
+import { Icons } from './utils/icons';
 import { MasterNavView, masterNavItems, MasterNavItem } from './views/MasterNavView';
 import { EmergencyView, CardItem, sircCards } from './views/EmergencyView';
 import { CurrencyView } from './views/CurrencyView';
@@ -12,9 +13,11 @@ class SircCompanionApp {
   private activeCategory: string = 'emergency';
   private currentLevel: 1 | 2 | 3 = 1;
   private selectedCard: CardItem = sircCards[0];
+  private selectedCurrencyCode: string = 'USD';
   private isStandalone: boolean = false;
 
   private appEl!: HTMLElement;
+  private topBarEl: HTMLElement | null = null;
   private masterPaneEl!: HTMLElement;
   private detailPaneEl!: HTMLElement;
 
@@ -29,6 +32,11 @@ class SircCompanionApp {
   private init() {
     this.appEl = document.getElementById('app')!;
 
+    // 同步系统暗色偏好作为首屏默认值（宿主 sircPresentation 回调后精确覆盖）
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.body.classList.add('dark');
+    }
+
     // 解析 URL 参数：是否为独立全屏子页面模式以及指定展示的 view
     const urlParams = new URLSearchParams(window.location.search);
     const hash = window.location.hash.replace(/^#\/?/, '');
@@ -42,7 +50,6 @@ class SircCompanionApp {
       }
       this.currentLevel = 2;
     } else if (this.isWide()) {
-      // 默认在宽屏模式下一并展示二级详情
       this.currentLevel = 2;
     } else {
       this.currentLevel = 1;
@@ -55,40 +62,49 @@ class SircCompanionApp {
       this.render();
     });
 
+    // vibedesign.tips 风格：仅在滚动离开顶部时浮现 1px 细分割线
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (this.topBarEl) {
+          this.topBarEl.classList.toggle('is-stuck', window.scrollY > 4);
+        }
+      },
+      { passive: true }
+    );
+
     this.render();
   }
 
   // 处理返回键协商 (__tryGoBack)
   public handleBack(): boolean {
     if (this.isStandalone) {
-      // 全屏独立页面模式下：三级退回二级；二级退到底通知原生关闭页面
       if (this.currentLevel === 3) {
         this.currentLevel = 2;
+        window.scrollTo({ top: 0 });
         this.render();
         return true;
       }
-      // 已在二级根部，返回 false 交由原生 Navigator.pop() 关闭全屏
       return false;
     }
 
     if (this.isWide()) {
-      // 宽屏模式下：若右侧处于三级详情，后退至二级详情
       if (this.currentLevel === 3) {
         this.currentLevel = 2;
         this.render();
         return true;
       }
-      // 右侧已在二级根部，允许 Flutter 退出
       return false;
     } else {
-      // 窄屏模式下：逐级出栈
       if (this.currentLevel === 3) {
         this.currentLevel = 2;
+        window.scrollTo({ top: 0 });
         this.render();
         return true;
       }
       if (this.currentLevel === 2) {
         this.currentLevel = 1;
+        window.scrollTo({ top: 0 });
         this.render();
         return true;
       }
@@ -109,48 +125,70 @@ class SircCompanionApp {
     }
 
     this.currentLevel = 2;
+    window.scrollTo({ top: 0 });
     this.render();
   }
 
   private selectCardDetail(card: CardItem) {
     this.selectedCard = card;
     this.currentLevel = 3;
+    window.scrollTo({ top: 0 });
     this.render();
   }
 
-  private openCalculator() {
+  private openCalculator(currencyCode?: string) {
+    if (currencyCode) {
+      this.selectedCurrencyCode = currencyCode;
+    }
     this.currentLevel = 3;
+    window.scrollTo({ top: 0 });
     this.render();
   }
 
   private openReceipt() {
     this.currentLevel = 3;
+    window.scrollTo({ top: 0 });
     this.render();
+  }
+
+  private getLevel3Title(): string {
+    if (this.activeCategory === 'emergency') {
+      return `${this.selectedCard.bankName} · 紧急处置`;
+    }
+    if (this.activeCategory === 'currency') {
+      return '离线汇率换算';
+    }
+    return '离线消费签单';
   }
 
   // 渲染整体界面
   private render() {
     this.appEl.innerHTML = '';
+    this.topBarEl = null;
 
-    // 1. 顶部 Header
+    const currentCatItem = masterNavItems.find((i) => i.id === this.activeCategory) || masterNavItems[0];
+
+    // 1. 顶部 Header（窄屏 Tab 首页由原生 AppBar 承载，避免双重顶栏！）
     if (this.isStandalone) {
-      // 独立全屏模式：展示原生风格的沉浸式子页面顶栏，包含返回按键与当前模块标题
-      const currentCatItem = masterNavItems.find((i) => i.id === this.activeCategory) || masterNavItems[0];
       const topBar = document.createElement('header');
       topBar.className = 'sirc-top-bar';
+      const titleText = this.currentLevel === 3 ? this.getLevel3Title() : currentCatItem.title;
+
       topBar.innerHTML = `
-        <div class="sirc-brand">
-          <button class="sirc-back-btn" id="sirc-standalone-nav-back" style="margin-right: 8px;">
-            ‹ 返回
+        <div class="sirc-top-left">
+          <button class="sirc-key sirc-key-nav" id="sirc-standalone-nav-back" type="button">
+            ${Icons.chevronLeft(16)}
+            <span>返回</span>
           </button>
-          <div class="sirc-title-text" id="sirc-page-title">${currentCatItem.title}</div>
-          <span class="sirc-status-badge">
-            <span class="sirc-status-dot"></span>
-            <span>离线随行</span>
-          </span>
+          <div class="sirc-title-text" id="sirc-page-title" data-allow-host-title="false">${titleText}</div>
         </div>
+        <span class="sirc-pill sirc-pill-success">
+          <span class="sirc-status-dot"></span>
+          <span>离线</span>
+        </span>
       `;
       this.appEl.appendChild(topBar);
+      this.topBarEl = topBar;
 
       const navBackBtn = topBar.querySelector('#sirc-standalone-nav-back');
       if (navBackBtn) {
@@ -160,45 +198,41 @@ class SircCompanionApp {
           }
         });
       }
-    } else {
+    } else if (this.isWide()) {
       const topBar = document.createElement('header');
       topBar.className = 'sirc-top-bar';
       topBar.innerHTML = `
-        <div class="sirc-brand">
-          <div class="sirc-logo-icon">S</div>
-          <div class="sirc-title-text" id="sirc-page-title">Sirc 随行</div>
-          <span class="sirc-status-badge">
-            <span class="sirc-status-dot"></span>
-            <span>离线可用</span>
-          </span>
+        <div class="sirc-wide-brand">
+          <span class="sirc-logo-mark">S</span>
+          <span class="sirc-title-text" id="sirc-page-title" data-allow-host-title="false">Sirc 随行中心</span>
         </div>
-        <div style="font-size: 12px; color: var(--sirc-light); font-weight: 600;" id="sirc-version-badge">
-          v1.0.0
-        </div>
+        <span class="sirc-pill sirc-pill-success">
+          <span class="sirc-status-dot"></span>
+          <span>离线可用</span>
+        </span>
       `;
       this.appEl.appendChild(topBar);
+      this.topBarEl = topBar;
     }
 
     // 2. 容器
     const container = document.createElement('main');
-    container.className = 'sirc-container';
+    container.className = `sirc-container ${this.isStandalone ? 'is-standalone' : ''}`;
 
     // 3. 左侧 Master 面板
     this.masterPaneEl = MasterNavView.render(this.activeCategory, (item) => {
       this.selectCategory(item);
     });
 
-    // 4. 右侧 Detail 面板 (或窄屏推栈视图)
+    // 4. 右侧 Detail 面板
     this.detailPaneEl = document.createElement('div');
     this.detailPaneEl.className = 'sirc-detail-pane';
     this.renderDetailContent(this.detailPaneEl);
 
-    // 独立全屏模式 / 窄屏与宽屏显隐规则
+    // 显隐规则
     if (this.isStandalone) {
-      container.style.display = 'block';
       this.masterPaneEl.style.display = 'none';
       this.detailPaneEl.style.display = 'flex';
-      this.detailPaneEl.style.width = '100%';
     } else if (!this.isWide()) {
       if (this.currentLevel === 1) {
         this.masterPaneEl.style.display = 'flex';
@@ -221,118 +255,90 @@ class SircCompanionApp {
   private renderDetailContent(pane: HTMLElement) {
     pane.innerHTML = '';
 
-    // 面包屑 / 返回导航栏
-    const breadcrumb = document.createElement('div');
-    breadcrumb.className = 'sirc-breadcrumb-bar';
-
     const currentCatItem = masterNavItems.find((i) => i.id === this.activeCategory) || masterNavItems[0];
 
-    let breadcrumbHtml = '';
-    if (!this.isWide() && !this.isStandalone) {
-      breadcrumbHtml += `
-        <button class="sirc-back-btn" id="sirc-header-back-btn">
-          ‹ 返回
-        </button>
-      `;
-    }
+    // 轻量面包屑：仅在宽屏模式，或独立全屏三级页时展示，避免与二级顶栏重复
+    const shouldShowTrail = this.isWide() || (this.isStandalone && this.currentLevel === 3) || (!this.isWide() && !this.isStandalone);
+    if (shouldShowTrail) {
+      const trail = document.createElement('nav');
+      trail.className = 'sirc-breadcrumb-trail';
 
-    breadcrumbHtml += `<span class="sirc-breadcrumb-item" id="bc-home">随行中心</span>`;
-
-    if (this.currentLevel >= 2) {
-      breadcrumbHtml += `
-        <span class="sirc-breadcrumb-separator">/</span>
-        <span class="sirc-breadcrumb-item ${this.currentLevel === 2 ? 'sirc-breadcrumb-current' : ''}" id="bc-level2">
-          ${currentCatItem.title}
-        </span>
-      `;
-    }
-
-    if (this.currentLevel === 3) {
-      let subTitle = '详情操作';
-      if (this.activeCategory === 'emergency') {
-        subTitle = `${this.selectedCard.bankName} 紧急处置`;
-      } else if (this.activeCategory === 'currency') {
-        subTitle = '实时汇率换算';
-      } else if (this.activeCategory === 'privilege') {
-        subTitle = '离线交易签单';
+      let html = '';
+      if (!this.isWide() && !this.isStandalone) {
+        html += `<button class="sirc-key sirc-key-nav" id="sirc-header-back-btn" type="button" style="margin-right: 4px;">${Icons.chevronLeft(15)}<span>返回</span></button>`;
       }
-      breadcrumbHtml += `
-        <span class="sirc-breadcrumb-separator">/</span>
-        <span class="sirc-breadcrumb-current">${subTitle}</span>
-      `;
-    }
+      html += `<span class="sirc-bc-link" id="bc-home">随行中心</span>`;
+      if (this.currentLevel >= 2) {
+        html += `
+          <span class="sirc-bc-sep">/</span>
+          <span class="${this.currentLevel === 2 ? 'sirc-bc-current' : 'sirc-bc-link'}" id="bc-level2">${currentCatItem.title}</span>
+        `;
+      }
+      if (this.currentLevel === 3) {
+        html += `
+          <span class="sirc-bc-sep">/</span>
+          <span class="sirc-bc-current">${this.getLevel3Title()}</span>
+        `;
+      }
+      trail.innerHTML = html;
 
-    breadcrumb.innerHTML = breadcrumbHtml;
+      const backBtn = trail.querySelector('#sirc-header-back-btn');
+      if (backBtn) {
+        backBtn.addEventListener('click', () => {
+          if (!this.handleBack()) SircBridge.closePage();
+        });
+      }
 
-    // 绑定返回与面包屑点击事件
-    const backBtn = breadcrumb.querySelector('#sirc-header-back-btn');
-    if (backBtn) {
-      backBtn.addEventListener('click', () => {
-        if (!this.handleBack()) {
-          SircBridge.closePage();
-        }
-      });
-    }
+      const bcHome = trail.querySelector('#bc-home');
+      if (bcHome) {
+        bcHome.addEventListener('click', () => {
+          if (this.isStandalone) {
+            SircBridge.closePage();
+          } else {
+            this.currentLevel = 1;
+            this.render();
+          }
+        });
+      }
 
-    const bcHome = breadcrumb.querySelector('#bc-home');
-    if (bcHome) {
-      bcHome.addEventListener('click', () => {
-        if (this.isStandalone) {
-          SircBridge.closePage();
-        } else {
-          this.currentLevel = 1;
+      const bcLevel2 = trail.querySelector('#bc-level2');
+      if (bcLevel2 && this.currentLevel === 3) {
+        bcLevel2.addEventListener('click', () => {
+          this.currentLevel = 2;
+          window.scrollTo({ top: 0 });
           this.render();
-        }
-      });
+        });
+      }
+
+      pane.appendChild(trail);
     }
 
-    const bcLevel2 = breadcrumb.querySelector('#bc-level2');
-    if (bcLevel2 && this.currentLevel === 3) {
-      bcLevel2.addEventListener('click', () => {
-        this.currentLevel = 2;
-        this.render();
-      });
-    }
-
-    pane.appendChild(breadcrumb);
-
-    // 详情内容窗格
+    // 详情业务内容
     const contentBox = document.createElement('div');
-    contentBox.style.display = 'flex';
-    contentBox.style.flexDirection = 'column';
-    contentBox.style.gap = '12px';
-
     if (this.activeCategory === 'emergency') {
-      if (this.currentLevel === 2) {
-        contentBox.appendChild(
-          EmergencyView.renderLevel2((card) => this.selectCardDetail(card))
-        );
-      } else {
-        contentBox.appendChild(EmergencyView.renderLevel3(this.selectedCard));
-      }
+      contentBox.appendChild(
+        this.currentLevel === 2
+          ? EmergencyView.renderLevel2((card) => this.selectCardDetail(card))
+          : EmergencyView.renderLevel3(this.selectedCard)
+      );
     } else if (this.activeCategory === 'currency') {
-      if (this.currentLevel === 2) {
-        contentBox.appendChild(
-          CurrencyView.renderLevel2(() => this.openCalculator())
-        );
-      } else {
-        contentBox.appendChild(CurrencyView.renderLevel3());
-      }
+      contentBox.appendChild(
+        this.currentLevel === 2
+          ? CurrencyView.renderLevel2((code) => this.openCalculator(code))
+          : CurrencyView.renderLevel3(this.selectedCurrencyCode)
+      );
     } else if (this.activeCategory === 'privilege') {
-      if (this.currentLevel === 2) {
-        contentBox.appendChild(
-          PrivilegeView.renderLevel2(() => this.openReceipt())
-        );
-      } else {
-        contentBox.appendChild(PrivilegeView.renderLevel3());
-      }
+      contentBox.appendChild(
+        this.currentLevel === 2
+          ? PrivilegeView.renderLevel2(() => this.openReceipt())
+          : PrivilegeView.renderLevel3()
+      );
     }
 
     pane.appendChild(contentBox);
   }
 }
 
-// 页面加载即启动应用
 window.addEventListener('DOMContentLoaded', () => {
   new SircCompanionApp();
 });
