@@ -38,6 +38,7 @@ class _PayloadDetailPageState extends ConsumerState<PayloadDetailPage>
   String? _defaultUa;
   int _generation = 0;
   bool _processRecoveryAttempted = false;
+  bool _webCanGoBack = false;
 
   bool get _supported =>
       !kIsWeb &&
@@ -80,6 +81,7 @@ class _PayloadDetailPageState extends ConsumerState<PayloadDetailPage>
     setState(() {
       _loading = true;
       _error = false;
+      _webCanGoBack = false;
     });
     try {
       final isNew = _web == null;
@@ -200,8 +202,14 @@ class _PayloadDetailPageState extends ConsumerState<PayloadDetailPage>
   void _handleBridgeMessage(String jsonStr) {
     try {
       final map = jsonDecode(jsonStr) as Map<String, dynamic>;
-      if (map['action'] == 'close') {
+      final action = map['action'];
+      if (action == 'close') {
         _closePage();
+      } else if (action == 'navigationState') {
+        final canGoBack = map['canGoBack'] == true;
+        if (mounted && _webCanGoBack != canGoBack) {
+          setState(() => _webCanGoBack = canGoBack);
+        }
       }
     } catch (_) {
       // 容错非法格式消息
@@ -236,7 +244,7 @@ class _PayloadDetailPageState extends ConsumerState<PayloadDetailPage>
     final failed = _error || (_runtime?.failed ?? false);
 
     return PopScope(
-      canPop: false,
+      canPop: !_webCanGoBack,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) unawaited(_handleBack());
       },

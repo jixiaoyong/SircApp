@@ -99,6 +99,22 @@ export class SircBridge {
     }
   }
 
+  // 实时同步 H5 内部是否可继续回退，供原生动态切换 iOS 侧滑返回 (PopScope.canPop)
+  public static notifyNavigationState(canGoBack: boolean): void {
+    if (window.SircNativeBridge && typeof window.SircNativeBridge.postMessage === 'function') {
+      try {
+        window.SircNativeBridge.postMessage(
+          JSON.stringify({
+            action: 'navigationState',
+            canGoBack,
+          })
+        );
+      } catch (e) {
+        console.warn('Failed to notify navigationState', e);
+      }
+    }
+  }
+
   // 精工悬浮胶囊 Toast（vibedesign.tips 016）
   public static showToast(message: string) {
     let toast = document.getElementById('sirc-toast');

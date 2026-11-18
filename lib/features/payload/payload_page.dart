@@ -269,189 +269,109 @@ class _PayloadPageState extends ConsumerState<PayloadPage>
         if (!didPop) unawaited(_back());
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(Languages.home.payloadTitle),
-          actions: [
-            if (_supported) ...[
-              IconButton(
-                onPressed: _back,
-                tooltip: Languages.home.payloadBack,
-                icon: const Icon(Icons.arrow_back),
-              ),
-              IconButton(
-                onPressed: () => _retry(restore: true),
-                tooltip: Languages.home.payloadRestore,
-                icon: const Icon(Icons.restore),
-              ),
-            ],
-          ],
-        ),
-        body: !_supported
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(
-                    kIsWeb
-                        ? Languages.home.payloadWebUnsupported
-                        : Languages.home.payloadPlatformUnsupported,
+        body: SafeArea(
+          bottom: false,
+          child: !_supported
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      kIsWeb
+                          ? Languages.home.payloadWebUnsupported
+                          : Languages.home.payloadPlatformUnsupported,
+                    ),
                   ),
-                ),
-              )
-            : Column(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Theme.of(context).colorScheme.outlineVariant
-                              .withValues(alpha: 0.6),
+                )
+              : Column(
+                  children: [
+                    if (_runtime?.availableVersion case final String available)
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(16, 10, 16, 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
                         ),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 7,
-                          height: 7,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _runtime?.syncStatus == 'failed'
-                                ? Theme.of(context).colorScheme.error
-                                : Theme.of(context).brightness ==
-                                      Brightness.dark
-                                ? const Color(0xFF8BD6A6)
-                                : const Color(0xFF277045),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.secondary.withValues(alpha: 0.35),
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            payloadUpdateUrl.isEmpty
-                                ? Languages.home.payloadBuiltIn
-                                : switch (_runtime?.syncStatus) {
-                                    'updating' => Languages.home.payloadUpdating,
-                                    'failed' =>
-                                      Languages.home.payloadUpdateFailed,
-                                    'ready' => Languages.home.payloadUpdated,
-                                    _ => Languages.home.payloadOnline,
-                                  },
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        if (_runtime?.version case final String version)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.surfaceContainerHighest,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              '${Languages.home.payloadVersion}: $version',
+                        child: Wrap(
+                          spacing: 12,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Text(
+                              '${Languages.home.payloadUpdateAvailable} ($available)',
                               style: TextStyle(
-                                fontSize: 11,
-                                fontFamily: 'monospace',
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  if (_runtime?.availableVersion case final String available)
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(16, 10, 16, 2),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.secondary.withValues(alpha: 0.35),
+                            TextButton(
+                              onPressed: _activating ? null : _activateUpdate,
+                              style: TextButton.styleFrom(
+                                foregroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.secondary,
+                                visualDensity: VisualDensity.compact,
+                              ),
+                              child: Text(Languages.home.payloadActivateUpdate),
+                            ),
+                          ],
                         ),
                       ),
-                      child: Wrap(
-                        spacing: 12,
-                        crossAxisAlignment: WrapCrossAlignment.center,
+                    Expanded(
+                      child: Stack(
                         children: [
-                          Text(
-                            '${Languages.home.payloadUpdateAvailable} ($available)',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).colorScheme.onSurface,
+                          if (_web != null && !failed)
+                            WebViewWidget(controller: _web!),
+                          if (_loading && !failed)
+                            Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const CircularProgressIndicator(),
+                                  const SizedBox(height: 12),
+                                  Text(Languages.home.payloadLoading),
+                                ],
+                              ),
                             ),
-                          ),
-                          TextButton(
-                            onPressed: _activating ? null : _activateUpdate,
-                            style: TextButton.styleFrom(
-                              foregroundColor: Theme.of(
-                                context,
-                              ).colorScheme.secondary,
-                              visualDensity: VisualDensity.compact,
+                          if (failed)
+                            Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(Languages.home.payloadError),
+                                  const SizedBox(height: 8),
+                                  Wrap(
+                                    spacing: 8,
+                                    children: [
+                                      TextButton(
+                                        onPressed: _retry,
+                                        child: Text(Languages.home.payloadRetry),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => _retry(restore: true),
+                                        child: Text(
+                                          Languages.home.payloadRestore,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                            child: Text(Languages.home.payloadActivateUpdate),
-                          ),
                         ],
                       ),
                     ),
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        if (_web != null && !failed)
-                          WebViewWidget(controller: _web!),
-                        if (_loading && !failed)
-                          Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const CircularProgressIndicator(),
-                                Text(Languages.home.payloadLoading),
-                              ],
-                            ),
-                          ),
-                        if (failed)
-                          Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(Languages.home.payloadError),
-                                TextButton(
-                                  onPressed: _retry,
-                                  child: Text(Languages.home.payloadRetry),
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+        ),
       ),
     );
   }

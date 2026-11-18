@@ -145,6 +145,7 @@ void main() {
         ),
       );
       await tester.pump();
+      expect(find.byType(AppBar), findsNothing);
       expect(find.text(Languages.home.payloadLoading), findsOneWidget);
       runtime.data(
         'http://127.0.0.1:1234/companion/index.html',
@@ -204,7 +205,15 @@ void main() {
       );
       await tester.pump();
       expect(runtime.resumes, 1);
-      await tester.tap(find.byTooltip(Languages.home.payloadRestore));
+      platform.delegate.error(
+        const WebResourceError(
+          errorCode: -2,
+          description: 'broken bundle',
+          isForMainFrame: true,
+        ),
+      );
+      await tester.pump();
+      await tester.tap(find.text(Languages.home.payloadRestore));
       await tester.pump();
       expect(runtime.restores, 1);
       await tester.pumpWidget(const SizedBox());

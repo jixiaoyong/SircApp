@@ -14,6 +14,9 @@ export const Icons = {
     svg('<path d="M4 17l1.5-9 4.5 4 2-6 2 6 4.5-4L20 17H4z"/><path d="M5 20h14"/>', size),
   chevronLeft: (size = 18) =>
     svg('<path d="M15 18l-6-6 6-6"/>', size),
+  // 1:1 对齐 Flutter Material Icons.arrow_back（SircApp OneTitleWithBackButtonAppBar 同款返回箭头）
+  arrowBack: (size = 24) =>
+    `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>`,
   chevronRight: (size = 16) =>
     svg('<path d="M9 6l6 6-6 6"/>', size),
   arrowRight: (size = 16) =>

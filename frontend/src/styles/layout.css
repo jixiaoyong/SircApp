@@ -10,7 +10,7 @@
   background: var(--sirc-bg);
 }
 
-/* 全屏独立模式（及宽屏模式）极简粘性顶栏 */
+/* 全屏独立模式（及宽屏模式）顶栏：精确对齐 SircApp OneTitleWithBackButtonAppBar */
 .sirc-top-bar {
   position: sticky;
   top: 0;
@@ -18,18 +18,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  min-height: 54px;
-  padding: 10px 16px;
-  background: color-mix(in srgb, var(--sirc-bg) 88%, transparent);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  gap: 8px;
+  height: 56px;
+  padding: 0 16px 0 6px;
+  background: var(--sirc-bg);
   box-shadow: 0 1px 0 transparent;
   transition: box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .sirc-top-bar.is-stuck {
-  background: color-mix(in srgb, var(--sirc-surface) 92%, transparent);
+  background: var(--sirc-surface);
   box-shadow: 0 1px 0 var(--sirc-border-subtle);
 }
 
@@ -42,13 +40,38 @@
 }
 
 .sirc-title-text {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
   color: var(--sirc-ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 原生同款 44x44 圆形无边框返回图标按钮（Material IconButton） */
+.sirc-native-back-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--sirc-ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background-color 0.14s ease, transform 0.1s ease;
+}
+
+.sirc-native-back-btn:hover {
+  background: var(--sirc-surface-hover);
+}
+
+.sirc-native-back-btn:active {
+  background: var(--sirc-surface-active);
+  transform: scale(0.94);
 }
 
 /* 宽屏左栏微弱品牌头 */

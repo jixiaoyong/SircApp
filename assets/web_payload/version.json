@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "buildLabel": "2026-11-18 03:40:59",
+  "buildLabel": "2026-11-18 19:58:02",
   "modules": [
     {
       "key": "companion",
@@ -15,8 +15,8 @@
     "files": [
       {
         "path": "companion/index.html",
-        "md5": "97718f0aed4e613f69d43a6acb911ae6",
-        "size": 59655
+        "md5": "ec3f96607529664d662cfb96a9667dd3",
+        "size": 60452
       }
     ]
   }

@@ -176,9 +176,8 @@ class SircCompanionApp {
 
       topBar.innerHTML = `
         <div class="sirc-top-left">
-          <button class="sirc-key sirc-key-nav" id="sirc-standalone-nav-back" type="button">
-            ${Icons.chevronLeft(16)}
-            <span>返回</span>
+          <button class="sirc-native-back-btn" id="sirc-standalone-nav-back" type="button" aria-label="返回">
+            ${Icons.arrowBack(24)}
           </button>
           <div class="sirc-title-text" id="sirc-page-title" data-allow-host-title="false">${titleText}</div>
         </div>
@@ -249,6 +248,11 @@ class SircCompanionApp {
     container.appendChild(this.masterPaneEl);
     container.appendChild(this.detailPaneEl);
     this.appEl.appendChild(container);
+
+    // 独立全屏模式下，实时同步是否可内部回退给原生宿主（驱动 iOS 原生跟手侧滑返回）
+    if (this.isStandalone) {
+      SircBridge.notifyNavigationState(this.currentLevel > 2);
+    }
   }
 
   // 渲染详情区域内容（二级或三级）
