@@ -41,4 +41,16 @@ class CommonEn implements CommonLang {
 
   @override
   String get loadFailed => 'Unable to load content. Please try again.';
+
+  @override
+  String get fullDateTimePattern => 'yyyy-MM-dd HH:mm:ss';
+
+  @override
+  String get dateOnlyPattern => 'yyyy-MM-dd';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get yesterday => 'Yesterday';
 }

@@ -14,7 +14,18 @@ class BankCard {
     ownerName: json['ownerName'] as String,
     expirationDate: json['expirationDate'] as String,
     cardType: json['cardType'] as String?,
+    cvv: json['cvv'] as String?,
   );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'bankName': bankName,
+    'cardNumber': cardNumber,
+    'ownerName': ownerName,
+    'expirationDate': expirationDate,
+    if (cardType != null) 'cardType': cardType,
+    if (cvv != null) 'cvv': cvv,
+  };
 
   const BankCard({
     required this.id,

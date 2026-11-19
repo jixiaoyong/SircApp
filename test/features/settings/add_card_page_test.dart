@@ -104,7 +104,8 @@ void main() {
       );
       await tester.pump();
       expect(find.byType(BankCardWidget), findsOneWidget);
-      expect(find.text(Languages.nameOnCard), findsOneWidget);
+      // 卡面新增姓名标签，表单标签仍保留。
+      expect(find.text(Languages.nameOnCard), findsNWidgets(2));
       expect(find.text(Languages.cardNumber), findsOneWidget);
       expect(find.text('00/00'), findsWidgets);
       expect(

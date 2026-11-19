@@ -7,6 +7,7 @@ import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/data/common_keys.dart';
 import 'package:sirc/features/wallet/presentation/transaction_detail_page.dart';
+import 'package:sirc/features/home/presentation/home_page.dart';
 import 'package:sirc/routes/app_router.dart';
 import 'package:sirc/routes/app_routes.dart';
 import 'package:sirc/widgets/network_web_image.dart';
@@ -208,6 +209,107 @@ void main() {
     await tester.pump();
     expect(flightCount(), 0);
     expect(find.byType(TransactionDetailPage), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('窄屏钱包、历史、首页交易Hero在窄屏下真实触发飞行过渡', (tester) async {
+    SharedPreferences.setMockInitialValues({CommonKeys.IS_LOGIN_SUCCESS: true});
+    final prefs = await SharedPreferences.getInstance();
+    final container = ProviderContainer(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        mockDataRepositoryProvider.overrideWithValue(mock),
+      ],
+    );
+    addTearDown(container.dispose);
+    final router = createAppRouter(
+      container.read(storageServiceProvider),
+      initialLocation: AppRoutes.WALLET,
+    );
+    addTearDown(router.dispose);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp.router(
+          routerConfig: router,
+          theme: AppTheme.lightTheme,
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+
+    int flights() => find.byType(NetworkWebImage).evaluate().where((element) {
+      final navigator = element.findAncestorStateOfType<NavigatorState>();
+      return navigator != null &&
+          ModalRoute.of(element)?.navigator != navigator;
+    }).length;
+
+    // 1. 验证钱包页交易项点击有 Hero 飞行
+    final walletHero = find.byType(Hero).first;
+    await tester.ensureVisible(walletHero);
+    await tester.tap(walletHero);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 80));
+    expect(flights(), greaterThan(0), reason: '钱包交易项在窄屏下点击必须触发Hero飞行');
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    expect(find.byType(TransactionDetailPage), findsOneWidget);
+    router.pop();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+
+    // 2. 切换到历史页，验证交易项点击有 Hero 飞行
+    router.go(AppRoutes.HISTORY);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    final historyHero = find.byType(Hero).first;
+    expect(tester.widget<Hero>(historyHero).tag, startsWith('hero_history_'));
+    await tester.ensureVisible(historyHero);
+    await tester.tap(historyHero);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 80));
+    expect(flights(), greaterThan(0), reason: '历史交易项在窄屏下点击必须触发Hero飞行');
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    expect(find.byType(TransactionDetailPage), findsOneWidget);
+    router.pop();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+
+    // 3. 切换到首页，验证最近交易点击有 Hero 飞行
+    router.go(AppRoutes.MAIN);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    final homeScrollable = find.descendant(
+      of: find.byType(HomePage),
+      matching: find.byType(Scrollable),
+    ).first;
+    await tester.drag(homeScrollable, const Offset(0, -500));
+    await tester.pump(const Duration(milliseconds: 300));
+    final homeHero = find.byWidgetPredicate(
+      (w) => w is Hero && (w.tag as String).startsWith('home-transaction-'),
+    );
+    expect(homeHero, findsWidgets);
+    await tester.ensureVisible(homeHero.first);
+    await tester.tap(homeHero.first);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 80));
+    expect(flights(), greaterThan(0), reason: '首页最近交易项在窄屏下点击必须触发Hero飞行');
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    expect(find.byType(TransactionDetailPage), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

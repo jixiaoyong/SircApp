@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "buildLabel": "2026-11-20 03:02:25",
+  "modules": [
+    {
+      "key": "companion",
+      "name": "Sirc 随行",
+      "entryHtml": "companion/index.html",
+      "version": "1.0.0",
+      "description": "Sirc 全球随行金融中心（离线应急卡片、全球救援专线、离线汇率与防盗刷指南）"
+    }
+  ],
+  "fileInfo": {
+    "total_files": 1,
+    "files": [
+      {
+        "path": "companion/index.html",
+        "md5": "22c9dd898468628f2d616320dba10ca5",
+        "size": 77089
+      }
+    ]
+  }
+}

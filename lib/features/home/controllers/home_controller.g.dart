@@ -44,7 +44,7 @@ final class HomeControllerProvider
   }
 }
 
-String _$homeControllerHash() => r'e56b136fe5103943c2e6edc1d0d6b1c67a79a3a7';
+String _$homeControllerHash() => r'9468336fa7bbaf6e01ee70a196ece97b4c27a880';
 
 /// 首页控制器（纯业务逻辑，不与多语言直接耦合）
 

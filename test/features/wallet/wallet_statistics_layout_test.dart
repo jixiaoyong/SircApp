@@ -51,8 +51,8 @@ void main() {
           expectVerticalStatistics(tester, width);
           final filters = [
             ('− \$ 20.00', ['Coffee', 'Old'], 'bar-0-20.0'),
-            ('+ \$ 10.00', ['Salary', 'Undated'], 'bar-1-10.0'),
-            ('\$ 30.00', ['Coffee', 'Salary', 'Old'], 'bar-0-20.0'),
+            ('+ \$ 0.00', ['Salary', 'Undated'], 'bar-1-0.0'),
+            ('\$ 20.00', ['Coffee', 'Salary', 'Old'], 'bar-0-20.0'),
           ];
           for (var index = 0; index < filters.length; index++) {
             final filter = find.byKey(ValueKey('wallet-filter-$index'));

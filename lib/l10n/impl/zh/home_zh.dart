@@ -4,6 +4,45 @@ class HomeZh implements HomeLang {
   const HomeZh();
 
   @override
+  String get payloadTitle => '网页';
+  @override
+  String get payloadLoading => '正在加载本地模块…';
+  @override
+  String get payloadError => '本地模块加载失败。';
+  @override
+  String get payloadRetry => '重试';
+  @override
+  String get payloadBuiltIn => '仅使用内置资源 · 尚未配置更新地址';
+  @override
+  String get payloadOnline => '已配置更新服务';
+  @override
+  String get payloadWebUnsupported =>
+      '离线资源包仅适用于原生应用，请在 Android 或 iOS 上打开 SircApp。';
+  @override
+  String get payloadPlatformUnsupported =>
+      '当前平台暂无受支持的 WebView，请使用 Android 或 iOS。';
+  @override
+  String get payloadRestore => '恢复内置版本';
+  @override
+  String get payloadBack => '返回模块上一页';
+  @override
+  String get payloadHeading => 'Sirc 随行';
+  @override
+  String get payloadDescription => '本地随行模块已就绪，无网络时也可查看。';
+  @override
+  String get payloadVersion => '资源版本';
+  @override
+  String get payloadUpdating => '正在检查或下载更新…';
+  @override
+  String get payloadUpdateFailed => '更新暂不可用，仍可使用本地资源。';
+  @override
+  String get payloadUpdated => '资源已是最新版本';
+  @override
+  String get payloadUpdateAvailable => '新版本已就绪，切换将刷新模块。';
+  @override
+  String get payloadActivateUpdate => '切换并刷新';
+
+  @override
   String get title => '首页';
 
   @override
@@ -53,6 +92,9 @@ class HomeZh implements HomeLang {
 
   @override
   String get articleDisclaimer => '本地静态示例 · 未连接文章服务 · 非投资建议';
+
+  @override
+  String get transactionActivity => '交易活动';
 
   @override
   String get chartWeek => '本周';

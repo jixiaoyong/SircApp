@@ -38,7 +38,7 @@ class HttpApiClient implements ApiClient {
   }
 
   Map<String, String> _mergeHeaders(Map<String, String>? headers) {
-    return {...defaultHeaders, if (headers != null) ...headers};
+    return {...defaultHeaders, ...?headers};
   }
 
   @override

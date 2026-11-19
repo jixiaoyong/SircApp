@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:sirc/features/payload/payload_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/router/nav_keys.dart';
+import 'package:sirc/core/logging/app_log_service.dart';
 import 'package:sirc/core/storage/storage_service.dart';
 import 'package:sirc/core/theme/app_theme.dart';
 import 'package:sirc/routes/app_router.dart';
@@ -22,12 +26,31 @@ void main() async {
   }
   final prefs = await SharedPreferences.getInstance();
 
+  // Record initial diagnostic log
+  AppLogService.instance.i(
+    'AppInit',
+    'Application initialized on ${kIsWeb ? "Web (WASM)" : defaultTargetPlatform.name}',
+  );
+
+  // Hook global Flutter uncaught error handler
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    AppLogService.instance.e(
+      'FlutterError',
+      details.exceptionAsString(),
+      details.exception,
+      details.stack,
+    );
+  };
+
   runApp(
     ProviderScope(
+      observers: [AppLogProviderObserver()],
       overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       child: const MyApp(),
     ),
   );
+  unawaited(startPayloadService());
 }
 
 class MyApp extends ConsumerWidget {

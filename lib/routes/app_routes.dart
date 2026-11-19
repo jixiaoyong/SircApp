@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 /*
 * @description: TODO
 *
@@ -16,6 +18,12 @@ abstract class AppRoutes {
   static const HISTORY = "/history";
   static const PERSON = "/person";
   static const MENU = "/menu";
+
+  /// 独立 H5 模块入口，不占用已有分支索引。
+  static const PAYLOAD = "/payload";
+
+  /// 独立全屏 H5 详情子页面（脱离底部 TabBar，顶层 Navigator 沉浸展示）。
+  static const PAYLOAD_DETAIL = "/payload-detail";
 
   // nested GoRoute 使用相对片段，导航与 URL 比较使用完整路径。
   static const APPEARANCE_SEGMENT = "appearance";

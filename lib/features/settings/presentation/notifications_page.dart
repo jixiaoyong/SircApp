@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:sirc/utils/date_time_formatter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_locale.dart';
@@ -15,7 +16,7 @@ class NotificationsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(localeProvider);
+    final locale = ref.watch(localeProvider);
     final state = ref.watch(notificationsControllerProvider);
     final notifier = ref.read(notificationsControllerProvider.notifier);
     final colors = Theme.of(context).colorScheme;
@@ -168,7 +169,11 @@ class NotificationsPage extends ConsumerWidget {
                                     Text(item.moneyActionName ?? ''),
                                     const SizedBox(height: 4),
                                     Text(
-                                      item.time ?? '',
+                                      AppDateTimeFormatter.display(
+                                        item.time,
+                                        locale: locale,
+                                        languages: AppLocale.current,
+                                      ),
                                       style: TextStyle(
                                         color: colors.onSurfaceVariant,
                                       ),

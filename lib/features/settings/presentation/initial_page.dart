@@ -13,7 +13,7 @@ import '../controllers/settings_controller.dart';
 *
 * @author: jixiaoyong
 * @email: jixiaoyong1995@gmail.com
-* @date: 22/04/19 (Refactored to Riverpod 2.x)
+* @date: 22/04/19
 */
 class InitialPage extends ConsumerStatefulWidget {
   const InitialPage({super.key});
@@ -80,6 +80,7 @@ class _InitialPageState extends ConsumerState<InitialPage> {
   }
 }
 
+// 引导页
 class _InitialOnboarding extends StatelessWidget {
   const _InitialOnboarding({
     required this.controller,
@@ -185,6 +186,7 @@ class _InitialTipPage extends StatelessWidget {
   }
 }
 
+// 引导页指示器
 class _PageIndicator extends StatelessWidget {
   const _PageIndicator({required this.currentIndex, required this.pageCount});
 
@@ -274,6 +276,7 @@ class _GetStartedButton extends StatelessWidget {
   }
 }
 
+// 闪屏页
 class _SplashContent extends StatelessWidget {
   const _SplashContent();
 

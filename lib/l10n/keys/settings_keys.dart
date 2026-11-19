@@ -40,4 +40,27 @@ abstract class SettingsLang {
   String get showPassword;
   String get hidePassword;
   String get noCardsYetShort;
+  String get developerConsole;
+  String get copyLogs;
+  String get logsCopied;
+  String get clearLogs;
+  String get logLevelAll;
+  String get logLevelInfo;
+  String get logLevelWarn;
+  String get logLevelError;
+  String get securityCredential;
+  String get credentialVerified;
+  String get securityProtection;
+  String get rebind;
+  String get copiedToClipboard;
+  String get userProfileTitle;
+  String get accountSecurity;
+  String get devModeActivated;
+  String get imageCacheMemory;
+  String get imageCacheDisk;
+  String get clearMemoryCache;
+  String get clearDiskCache;
+  String get clearAllCache;
+  String get cacheClearedToast;
+  String get diskCacheWebNotice;
 }

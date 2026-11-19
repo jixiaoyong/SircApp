@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/core/storage/storage_service.dart';
@@ -18,23 +19,27 @@ final _now = DateTime.now();
 final _today = DateTime(_now.year, _now.month, _now.day);
 List<Transaction> get _records => [
   Transaction(
-    moneyActionName: 'Transfer today',
-    time: _today.toIso8601String(),
+    category: 'transfer',
+    moneyActionName: 'A to B',
+    time: _today.toUtc().toIso8601String(),
     moneyAmount: -12,
   ),
   Transaction(
-    moneyActionName: 'Recharge today',
-    time: _today.toIso8601String(),
+    category: 'recharge',
+    moneyActionName: 'Funds added',
+    time: _today.toUtc().toIso8601String(),
     moneyAmount: 24,
   ),
   Transaction(
-    moneyActionName: 'Bill today',
-    time: _today.toIso8601String(),
+    category: 'bills',
+    moneyActionName: 'Electricity payment',
+    time: _today.toUtc().toIso8601String(),
     moneyAmount: -8,
   ),
   Transaction(
+    category: 'unknown',
     moneyActionName: 'Unknown dated',
-    time: _today.toIso8601String(),
+    time: _today.toUtc().toIso8601String(),
     moneyAmount: 3,
   ),
   Transaction(
@@ -53,6 +58,7 @@ class _Repository extends WalletRepositoryImpl {
 }
 
 void main() {
+  setUpAll(() => initializeDateFormatting());
   TestWidgetsFlutterBinding.ensureInitialized();
   late ProviderContainer container;
   late SharedPreferences prefs;
@@ -101,7 +107,7 @@ void main() {
       1,
     ]);
     expect(state.undatedCount, 1);
-    expect(state.visibleItems.single.moneyActionName, 'Transfer today');
+    expect(state.visibleItems.single.moneyActionName, 'A to B');
     final notifier = container.read(notificationsControllerProvider.notifier);
     notifier.selectNotificationCategory(1);
     expect(
@@ -110,7 +116,7 @@ void main() {
           .visibleItems
           .single
           .moneyActionName,
-      'Recharge today',
+      'Funds added',
     );
     notifier.setCategory(2);
     expect(
@@ -133,26 +139,35 @@ void main() {
   test('时间边界、未知类别和缺失日期不被伪造', () {
     final records = [
       Transaction(
-        moneyActionName: 'Transfer week',
-        time: '2026-11-10T10:00:00',
+        category: 'transfer',
+        moneyActionName: 'Not a transfer label',
+        time: DateTime(2026, 11, 10, 10).toUtc().toIso8601String(),
       ),
       Transaction(
-        moneyActionName: 'Transfer month',
-        time: '2026-11-02T10:00:00',
+        category: 'transfer',
+        moneyActionName: 'Not a transfer label',
+        time: DateTime(2026, 11, 2, 10).toUtc().toIso8601String(),
       ),
       Transaction(
-        moneyActionName: 'Transfer year',
-        time: '2026-02-02T10:00:00',
+        category: 'transfer',
+        moneyActionName: 'Not a transfer label',
+        time: DateTime(2026, 2, 2, 10).toUtc().toIso8601String(),
       ),
       Transaction(
-        moneyActionName: 'Transfer previous year',
-        time: '2025-12-02T10:00:00',
+        category: 'transfer',
+        moneyActionName: 'Not a transfer label',
+        time: DateTime(2025, 12, 2, 10).toUtc().toIso8601String(),
       ),
       Transaction(
-        moneyActionName: 'Transfer future',
-        time: '2027-12-02T10:00:00',
+        category: 'transfer',
+        moneyActionName: 'Not a transfer label',
+        time: DateTime(2027, 12, 2, 10).toUtc().toIso8601String(),
       ),
-      Transaction(moneyActionName: 'Transfer undated', time: '刚刚'),
+      Transaction(
+      category: 'transfer',
+      moneyActionName: 'Not a transfer label',
+      time: '刚刚',
+    ),
     ];
     final state = NotificationsState(
       transactions: records,
@@ -213,8 +228,8 @@ void main() {
             ),
           );
           await tester.pump();
-          expect(find.text('Transfer today'), findsOneWidget);
-          expect(find.text('Recharge today'), findsNothing);
+          expect(find.text('A to B'), findsOneWidget);
+          expect(find.text('Funds added'), findsNothing);
           await tester.tap(find.byKey(const ValueKey('period-1')));
           await tester.pump();
           expect(
@@ -228,8 +243,8 @@ void main() {
           await tester.pumpAndSettle();
           await tester.tap(category);
           await tester.pump();
-          expect(find.text('Transfer today'), findsNothing);
-          expect(find.text('Recharge today'), findsOneWidget);
+          expect(find.text('A to B'), findsNothing);
+          expect(find.text('Funds added'), findsOneWidget);
           expect(find.byKey(const ValueKey('undated-notice')), findsOneWidget);
           expect(tester.takeException(), isNull);
         });

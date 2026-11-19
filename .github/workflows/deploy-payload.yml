@@ -1,0 +1,78 @@
+name: SircApp Web Payload CI/CD
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'frontend/**'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'frontend/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-package:
+    name: Build & Package Payload
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build Frontend & Generate Payload Releases
+        working-directory: frontend
+        run: npm run build
+
+      - name: Verify Release Artifacts
+        run: |
+          ls -la build/payload_releases
+          cat build/payload_releases/server_manifest.json
+
+      - name: Upload Payload Artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v4
+        with:
+          name: payload-releases
+          path: build/payload_releases
+          retention-days: 1
+
+  deploy-payload:
+    name: Deploy Payload to GitHub Pages 🚀
+    needs: test-and-package
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Payload Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: payload-releases
+          path: build/payload_releases
+
+      - name: Deploy Payload to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build/payload_releases
+          target-folder: payload
+          branch: gh-pages
+          clean: false

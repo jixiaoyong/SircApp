@@ -9,6 +9,7 @@ import 'package:sirc/features/home/controllers/navigation_controller.dart';
 
 import '../../data/wallet_repository.dart';
 import '../../domain/models/bank_card.dart';
+import '../../domain/services/transaction_service.dart';
 
 part 'wallet_controller.g.dart';
 
@@ -51,37 +52,9 @@ class WalletState {
     this.errorMessage,
   });
 
-  /// Relative labels have day-level precision only; never invent a time of day.
-  static DateTime? transactionDate(Transaction transaction, {DateTime? now}) {
-    final text = transaction.time?.trim() ?? '';
-    final reference = now ?? DateTime.now();
-    final today = DateTime(reference.year, reference.month, reference.day);
-    switch (text.toLowerCase()) {
-      case 'just now':
-      case 'today':
-      case '刚刚':
-      case '今天':
-        return today;
-      case 'yesterday':
-      case '昨天':
-        return DateTime(today.year, today.month, today.day - 1);
-    }
-    // Full ISO/slash dates remain compatible. Month/day and time-only strings
-    // have no reliable year/day and intentionally remain undated.
-    final normalized = text.replaceAll(RegExp(r'\s*/\s*'), '-');
-    if (!RegExp(r'^\d{4}-\d{2}-\d{2}(?:$|[T ])').hasMatch(normalized)) {
-      return null;
-    }
-    final parsed = DateTime.tryParse(normalized);
-    if (parsed == null) return null;
-    final parts = normalized
-        .substring(0, 10)
-        .split('-')
-        .map(int.parse)
-        .toList();
-    final date = DateTime(parts[0], parts[1], parts[2]);
-    if (date.month != parts[1] || date.day != parts[2]) return null;
-    return parsed.isUtc ? parsed.toLocal() : parsed;
+  /// 解析 [transaction] 的 ISO 时间或独立日期；非法值保持未知。
+  static DateTime? transactionDate(Transaction transaction) {
+    return TransactionDateParser.parse(transaction);
   }
 
   List<Transaction> get walletTransactions => allTransactions.where((item) {
@@ -103,7 +76,7 @@ class WalletState {
       return false;
     }
     if (historyPeriod == 0) return true;
-    final date = transactionDate(item, now: referenceDate);
+    final date = transactionDate(item);
     if (date == null) return false;
     final now = referenceDate ?? DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -116,25 +89,17 @@ class WalletState {
     return !date.isBefore(start) && date.isBefore(end);
   }).toList();
 
-  int get undatedCount => allTransactions
-      .where((item) => transactionDate(item, now: referenceDate) == null)
-      .length;
+  int get undatedCount =>
+      allTransactions.where((item) => transactionDate(item) == null).length;
 
-  List<double> weeklyAmounts(List<Transaction> items) {
-    final now = referenceDate ?? DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final start = today.subtract(Duration(days: today.weekday - 1));
-    final result = List<double>.filled(7, 0);
-    for (final item in items) {
-      final date = transactionDate(item, now: referenceDate);
-      if (date == null ||
-          date.isBefore(start) ||
-          !date.isBefore(start.add(const Duration(days: 7)))) {
-        continue;
-      }
-      result[date.weekday - 1] += (item.moneyAmount ?? 0).abs();
-    }
-    return result;
+  List<double> weeklyAmounts(
+    List<Transaction> items, {
+    DateTime? referenceDate,
+  }) {
+    return TransactionStatistics.weeklyAmounts(
+      items,
+      referenceDate: referenceDate ?? this.referenceDate,
+    );
   }
 
   WalletState copyWith({
@@ -344,11 +309,12 @@ class WalletController extends _$WalletController {
         allTransactions: transactions,
         transactions: state.searchQuery.isNotEmpty
             ? transactions
-                .where((item) =>
-                    '${item.moneyActionName ?? ''} ${item.time ?? ''}'
+                  .where(
+                    (item) => '${item.moneyActionName ?? ''} ${item.time ?? ''}'
                         .toLowerCase()
-                        .contains(state.searchQuery.trim().toLowerCase()))
-                .toList()
+                        .contains(state.searchQuery.trim().toLowerCase()),
+                  )
+                  .toList()
             : transactions.where((item) {
                 final amount = item.moneyAmount ?? 0;
                 return state.currentFilterIndex == 0
@@ -361,6 +327,37 @@ class WalletController extends _$WalletController {
     } catch (e) {
       if (ref.mounted) {
         state = state.copyWith(errorMessage: () => e.toString());
+      }
+    }
+  }
+
+  /// 重新读取交易快照，供首页、钱包与历史共享同一份最新数据。
+  Future<void> refreshTransactions() async {
+    if (!ref.mounted || state.isLoading) return;
+    try {
+      final transactions = await _repository.getTransactions();
+      if (!ref.mounted) return;
+      state = state.copyWith(
+        allTransactions: transactions,
+        transactions: state.searchQuery.isNotEmpty
+            ? transactions.where((item) {
+                final query = state.searchQuery.trim().toLowerCase();
+                return '${item.moneyActionName ?? ''} ${item.time ?? ''}'
+                    .toLowerCase()
+                    .contains(query);
+              }).toList()
+            : transactions.where((item) {
+                final amount = item.moneyAmount ?? 0;
+                return state.currentFilterIndex == 0
+                    ? amount < 0
+                    : state.currentFilterIndex == 1
+                    ? amount >= 0
+                    : true;
+              }).toList(),
+      );
+    } catch (error) {
+      if (ref.mounted) {
+        state = state.copyWith(errorMessage: () => error.toString());
       }
     }
   }

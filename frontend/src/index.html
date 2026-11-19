@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Sirc 随行</title>
+    <script>
+      (function() {
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var darkParam = params.get('dark');
+          var langParam = params.get('lang');
+          if (darkParam === 'true') {
+            document.documentElement.classList.add('dark');
+          } else if (darkParam === 'false') {
+            document.documentElement.classList.remove('dark');
+          } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+          }
+          if (langParam) {
+            document.documentElement.lang = langParam.startsWith('en') ? 'en' : 'zh-CN';
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

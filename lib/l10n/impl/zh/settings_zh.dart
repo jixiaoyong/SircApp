@@ -96,7 +96,7 @@ class SettingsZh implements SettingsLang {
   @override
   String get notificationEmptyState => '当前筛选下暂无交易通知';
   @override
-  String get undatedNotifications => '{count} 条记录缺少可解析日期（如“刚刚”），未纳入时间筛选。';
+  String get undatedNotifications => '{count} 条记录缺少有效 ISO 日期或含时区的时间，未纳入时间筛选。';
   @override
   String get transactionsLoadFailed => '交易加载失败，请稍后重试。';
   @override
@@ -107,4 +107,50 @@ class SettingsZh implements SettingsLang {
   String get hidePassword => '隐藏密码';
   @override
   String get noCardsYetShort => '暂无卡片';
+  @override
+  String get developerConsole => '开发者日志与诊断控制台';
+  @override
+  String get copyLogs => '复制日志';
+  @override
+  String get logsCopied => '日志已复制到剪贴板';
+  @override
+  String get clearLogs => '清空日志';
+  @override
+  String get logLevelAll => '全部';
+  @override
+  String get logLevelInfo => '信息';
+  @override
+  String get logLevelWarn => '警告';
+  @override
+  String get logLevelError => '错误';
+  @override
+  String get securityCredential => '安全认证凭据';
+  @override
+  String get credentialVerified => '已完成实名与安全验证';
+  @override
+  String get securityProtection => '此凭据用于双重验证、交易风控通知及重要密码找回。受端到端加密保护。';
+  @override
+  String get rebind => '申请换绑';
+  @override
+  String get copiedToClipboard => '已复制到剪贴板';
+  @override
+  String get userProfileTitle => '个人资料与账户安全';
+  @override
+  String get accountSecurity => '账户安全等级：极佳';
+  @override
+  String get devModeActivated => '已激活开发者调试控制台';
+  @override
+  String get imageCacheMemory => '内存缓存 (L1)';
+  @override
+  String get imageCacheDisk => '磁盘持久化 (L2)';
+  @override
+  String get clearMemoryCache => '清内存';
+  @override
+  String get clearDiskCache => '清磁盘';
+  @override
+  String get clearAllCache => '清理全部图片缓存';
+  @override
+  String get cacheClearedToast => '图片缓存已成功清理';
+  @override
+  String get diskCacheWebNotice => 'Web 端由浏览器 HTTP 强缓存接管';
 }

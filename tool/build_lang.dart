@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, curly_braces_in_flow_control_structures
+
 import 'dart:async';
 import 'dart:io';
 
@@ -133,6 +135,7 @@ class Languages {
     sb.writeln('  // --- ${_capitalize(mod)} 模块 ---');
     final entries = moduleData[mod] ?? [];
     for (final e in entries) {
+      if (e.key == 'compactAmountUnits') continue;
       if (e.key == 'title') {
         final propName = '${mod}Title';
         final cleanZh = e.zh.replaceAll('\n', r'\n');
@@ -195,7 +198,7 @@ class Languages {
 
   targetFile.writeAsStringSync(sb.toString());
 
-  Process.runSync('dart', ['format', targetFile.path]);
+  Process.runSync('fvm', ['dart', 'format', targetFile.path]);
   print('✅ 自动生成完成！lib/l10n/languages.g.dart 已更新。');
 
   // 审计在生成成功后运行；无引用仅作提示，审计故障不影响生成结果。
@@ -230,6 +233,7 @@ Map<String, String> _parseTranslations(String code) {
   );
   for (final match in tripleRegex.allMatches(code)) {
     final key = match.group(1)!;
+    if (key == 'compactAmountUnits') continue;
     final val = match.group(2) ?? match.group(3) ?? '';
     map[key] = val;
   }

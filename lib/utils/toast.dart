@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:material_ui/material_ui.dart';
 
 import '../core/localization/app_locale.dart';
@@ -14,13 +16,13 @@ class Toast {
   static const int lengthLong = 2;
 
   /// 保留方法签名以向下兼容
-  static init(BuildContext context) {}
+  static void init(BuildContext context) {}
 
   /// 显示toast
   /// @param msg: 显示的文字
   /// @param duration: 显示时间 单位秒
   /// @param gravity: 显示位置
-  static show(
+  static void show(
     String msg, {
     int duration = lengthLong,
     ToastGravity gravity = ToastGravity.BOTTOM,
@@ -48,7 +50,7 @@ class Toast {
     }
   }
 
-  static showDefaultToast() {
+  static void showDefaultToast() {
     Toast.show(Languages.stillWorkingOnIt);
   }
 }

@@ -68,6 +68,7 @@ abstract class WalletLang {
   String get thisWeekdayLabel;
   String get undatedRecordsTooltip;
   String get undatedRecordsExcluded;
+  List<(double, String)> get compactAmountUnits;
 
   /// 单复数支持示例：银行卡数量统计
   String cardCount(int count);

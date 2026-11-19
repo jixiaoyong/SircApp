@@ -1,0 +1,33 @@
+// 仅由本项目 wrapper 加载，同时覆盖 Flutter included build，不修改 SDK 或全局配置。
+if (gradle.ext.has('sircRepositoryMirrorsApplied')) return
+gradle.ext.sircRepositoryMirrorsApplied = true
+
+def replaceRepositories = { repositories ->
+    repositories.withType(org.gradle.api.artifacts.repositories.MavenArtifactRepository).configureEach { repository ->
+        def url = repository.url.toString()
+        if (url.startsWith('https://dl.google.com/dl/android/maven2') ||
+            url.startsWith('https://maven.google.com')) {
+            repository.setUrl('https://maven.aliyun.com/repository/google')
+            repository.content {
+                includeGroupByRegex('com\\.android(\\..*)?')
+                includeGroupByRegex('androidx(\\..*)?')
+                includeGroupByRegex('com\\.google\\.android(\\..*)?')
+                includeGroupByRegex('com\\.google\\.testing(\\..*)?')
+            }
+            logger.info("Sirc repository mirror: ${url} -> ${repository.url}")
+        } else if (url.startsWith('https://repo.maven.apache.org/maven2') ||
+                   url.startsWith('https://repo1.maven.org/maven2')) {
+            repository.setUrl('https://maven.aliyun.com/repository/central')
+            logger.info("Sirc repository mirror: ${url} -> ${repository.url}")
+        }
+    }
+}
+beforeSettings { settings ->
+    logger.info("Sirc repository mirrors: settings ${settings.settingsDir}")
+    replaceRepositories(settings.pluginManagement.repositories)
+    replaceRepositories(settings.dependencyResolutionManagement.repositories)
+}
+allprojects { project ->
+    replaceRepositories(project.repositories)
+    replaceRepositories(project.buildscript.repositories)
+}

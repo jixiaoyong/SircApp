@@ -174,9 +174,16 @@ class WalletZh implements WalletLang {
   @override
   String get thisWeekdayLabel => '一二三四五六日';
   @override
-  String get undatedRecordsTooltip => '按设备日期 {date} 统计，支持今天、昨天和 ISO 日期。';
+  String get undatedRecordsTooltip => '按设备日期 {date} 统计，支持含时区的 ISO 时间及独立日期。';
   @override
   String get undatedRecordsExcluded => '{count} 笔日期未识别，未计入图表';
+
+  @override
+  List<(double, String)> get compactAmountUnits => [
+    (1e12, '万亿'),
+    (1e8, '亿'),
+    (1e4, '万'),
+  ];
 
   @override
   String cardCount(int count) => '共 $count 张卡片';

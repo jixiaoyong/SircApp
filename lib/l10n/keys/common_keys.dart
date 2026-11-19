@@ -13,4 +13,8 @@ abstract class CommonLang {
   String get goToHome;
   String get retry;
   String get loadFailed;
+  String get fullDateTimePattern;
+  String get dateOnlyPattern;
+  String get today;
+  String get yesterday;
 }

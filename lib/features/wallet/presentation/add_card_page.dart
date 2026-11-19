@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart'
     hide SizeExtension;
@@ -155,6 +156,7 @@ class _CardEditorPageState extends ConsumerState<CardEditorPage> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 25),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CommonTextFiled(
                         controller: _owner,
@@ -181,6 +183,7 @@ class _CardEditorPageState extends ConsumerState<CardEditorPage> {
                       Padding(
                         padding: EdgeInsets.only(top: 20),
                         child: Wrap(
+                          alignment: WrapAlignment.start,
                           spacing: 16,
                           runSpacing: 12,
                           crossAxisAlignment: WrapCrossAlignment.center,
@@ -200,6 +203,7 @@ class _CardEditorPageState extends ConsumerState<CardEditorPage> {
                                 builder: (innerBuildContext) {
                                   return GestureDetector(
                                     onTap: () async {
+                                      HapticFeedback.lightImpact();
                                       final nowDate = DateTime.now();
                                       final firstDate = DateTime(
                                         nowDate.year - 1,
@@ -234,6 +238,7 @@ class _CardEditorPageState extends ConsumerState<CardEditorPage> {
                                                 ),
                                           );
                                       if (selectedDate != null) {
+                                        HapticFeedback.selectionClick();
                                         controller.setExpireDate(selectedDate);
                                       }
                                     },
@@ -272,7 +277,7 @@ class _CardEditorPageState extends ConsumerState<CardEditorPage> {
                         child: Row(
                           children: [
                             Padding(
-                              padding: EdgeInsets.only(right: 20),
+                              padding: EdgeInsets.only(right: 16),
                               child: Text(
                                 "${Languages.cvv}:",
                                 style: TextStyle(
@@ -284,11 +289,22 @@ class _CardEditorPageState extends ConsumerState<CardEditorPage> {
                               ),
                             ),
                             Expanded(
-                              child: VerifyCodeWidget(
-                                onChanged: (value) {
-                                  controller.setCvv(value);
-                                },
-                                verifyCodeCount: 4,
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 220,
+                                  ),
+                                  child: VerifyCodeWidget(
+                                    onChanged: (value) {
+                                      controller.setCvv(value);
+                                      if (value.length == 4) {
+                                        HapticFeedback.lightImpact();
+                                      }
+                                    },
+                                    verifyCodeCount: 4,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -300,6 +316,7 @@ class _CardEditorPageState extends ConsumerState<CardEditorPage> {
                             : Languages.wallet.saveCard,
                         isButtonEnabled: isButtonEnable && !state.isSubmitting,
                         onTap: () async {
+                          HapticFeedback.lightImpact();
                           final success = await controller.addCard();
                           if (success && context.mounted) {
                             Toast.show(Languages.wallet.cardSaved);

@@ -6,7 +6,7 @@ enum HomeChartPeriod { week, month }
 class HomeChartDay {
   final DateTime date;
 
-  /// Null means a future day, not a zero or a prediction.
+  /// 汇总所选周期内已有的交易，无记录的日期为零，包括未来日期。
   final double? amount;
   const HomeChartDay(this.date, this.amount);
 }
@@ -40,7 +40,7 @@ class HomeChartData {
     var records = 0;
     final end = DateTime(start.year, start.month, start.day + count);
     for (final transaction in transactions) {
-      final parsed = WalletState.transactionDate(transaction, now: local);
+      final parsed = WalletState.transactionDate(transaction);
       if (parsed == null) {
         undated++;
         continue;
@@ -49,7 +49,6 @@ class HomeChartData {
       final amount = transaction.moneyAmount;
       if (date.isBefore(start) ||
           !date.isBefore(end) ||
-          date.isAfter(today) ||
           amount == null ||
           !amount.isFinite) {
         continue;
@@ -58,10 +57,7 @@ class HomeChartData {
       totals[date] = (totals[date] ?? 0) + amount.abs();
     }
     return HomeChartData(
-      [
-        for (final date in dates)
-          HomeChartDay(date, date.isAfter(today) ? null : totals[date] ?? 0),
-      ],
+      [for (final date in dates) HomeChartDay(date, totals[date] ?? 0)],
       undated,
       records,
     );

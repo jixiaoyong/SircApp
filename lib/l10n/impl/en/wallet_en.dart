@@ -16,16 +16,16 @@ class WalletEn implements WalletLang {
   String get totalSpending => 'Total Spending';
 
   @override
-  String get lastMonth => ' Last Month';
+  String get lastMonth => 'Last Month';
 
   @override
-  String get thisMonth => 'this month';
+  String get thisMonth => 'This month';
 
   @override
-  String get thisWeek => 'this week';
+  String get thisWeek => 'This week';
 
   @override
-  String get thisYear => 'this year';
+  String get thisYear => 'This year';
 
   @override
   String get lastSend => 'Last Send';
@@ -175,9 +175,17 @@ class WalletEn implements WalletLang {
   String get thisWeekdayLabel => 'MTWTFSS';
   @override
   String get undatedRecordsTooltip =>
-      'Grouped using device date {date}; supports Today, Yesterday and ISO dates.';
+      'Grouped using device date {date}; supports zoned ISO times and date-only values.';
   @override
   String get undatedRecordsExcluded => '{count} undated records excluded';
+
+  @override
+  List<(double, String)> get compactAmountUnits => [
+    (1e12, 'T'),
+    (1e9, 'B'),
+    (1e6, 'M'),
+    (1e3, 'K'),
+  ];
 
   @override
   String cardCount(int count) =>

@@ -41,4 +41,16 @@ class CommonZh implements CommonLang {
 
   @override
   String get loadFailed => '内容加载失败，请重试。';
+
+  @override
+  String get fullDateTimePattern => 'yyyy-MM-dd HH:mm:ss';
+
+  @override
+  String get dateOnlyPattern => 'yyyy年M月d日';
+
+  @override
+  String get today => '今天';
+
+  @override
+  String get yesterday => '昨天';
 }

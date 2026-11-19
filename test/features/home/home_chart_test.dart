@@ -6,6 +6,7 @@ import 'package:sirc/features/home/controllers/home_chart_data.dart';
 import 'package:sirc/features/home/presentation/home_transaction_chart.dart';
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
 import 'package:sirc/features/wallet/presentation/controllers/wallet_controller.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 import 'package:sirc/widgets/line_graph.dart';
 
 class ChartTestWallet extends WalletController {
@@ -28,6 +29,52 @@ class ChartTestWallet extends WalletController {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  test('weekly Mock transactions are current, stable within the week and localized', () async {
+    var now = DateTime(2026, 11, 16, 9);
+    final repository = MockDataRepository(clock: () => now);
+    final english = await repository.getTransactions(const Locale('en'));
+    final chinese = await repository.getTransactions(const Locale('zh'));
+    final generatedEnglish = english
+        .where((item) => item.id?.startsWith('mock-week-') ?? false)
+        .toList();
+    final generatedChinese = chinese
+        .where((item) => item.id?.startsWith('mock-week-') ?? false)
+        .toList();
+
+    expect(generatedEnglish, hasLength(1));
+    expect(generatedEnglish.single.moneyActionName, 'Weekly Coffee');
+    expect(generatedChinese.single.moneyActionName, '本周咖啡');
+    expect(generatedEnglish.single.time, generatedChinese.single.time);
+    expect(
+      RegExp(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$')
+          .hasMatch(generatedEnglish.single.time!),
+      isTrue,
+    );
+    final chart = HomeChartData.aggregate(
+      generatedEnglish,
+      HomeChartPeriod.week,
+      now: now,
+    );
+    expect(chart.recordCount, 1);
+    expect(chart.days.first.amount, 18.75);
+
+    now = DateTime(2026, 11, 22, 18);
+    final endOfWeek = await repository.getTransactions(const Locale('en'));
+    expect(
+      endOfWeek.where((item) => item.id?.startsWith('mock-week-') ?? false),
+      hasLength(7),
+    );
+    now = DateTime(2026, 11, 23, 9);
+    final nextWeek = await repository.getTransactions(const Locale('en'));
+    final nextWeekGenerated = nextWeek
+        .where((item) => item.id?.startsWith('mock-week-') ?? false)
+        .toList();
+    expect(nextWeekGenerated, hasLength(1));
+    expect(nextWeekGenerated.single.id, isNot(generatedEnglish.single.id));
+  });
+
   test('calendar boundaries, gross amounts, unknown and future dates', () {
     final chart = HomeChartData.aggregate(
       [
@@ -43,8 +90,8 @@ void main() {
     expect(chart.days.length, 7);
     expect(chart.days.first.date, DateTime(2025, 12, 29));
     expect(chart.days.last.date, DateTime(2026, 1, 4));
-    expect(chart.days.map((e) => e.amount), [50, 0, 0, 0, null, null, null]);
-    expect(chart.recordCount, 2);
+    expect(chart.days.map((e) => e.amount), [50, 0, 0, 0, 0, 0, 99]);
+    expect(chart.recordCount, 3);
     expect(chart.undatedCount, 1);
   });
 
@@ -63,13 +110,13 @@ void main() {
       expect(result.days.length, entry.$3);
       expect(result.days.first.date.day, 1);
       expect(result.days[9].amount, 0);
-      expect(result.days[10].amount, isNull);
+      expect(result.days[10].amount, 0);
     }
     final date = DateTime.utc(2026, 11, 10, 23).toLocal();
     final data = HomeChartData.aggregate(
       [
         Transaction(time: '2026-11-10T23:00:00Z', moneyAmount: 12),
-        Transaction(time: 'Today', moneyAmount: -8),
+        Transaction(time: '2026-11-20', moneyAmount: -8),
         Transaction(time: '2026-02-30', moneyAmount: 80),
       ],
       HomeChartPeriod.month,
@@ -151,7 +198,14 @@ void main() {
       graph = tester.widget<LineGraph>(find.byType(LineGraph));
       expect(graph.data.length, 30);
       expect(graph.data[8].value, 50);
-      expect(find.text('November'), findsOneWidget);
+      expect(find.text('Transaction activity'), findsOneWidget);
+      expect(find.text('November 2026'), findsOneWidget);
+      expect(
+        tester
+            .widget<Text>(find.byKey(const ValueKey('home-activity-heading')))
+            .style,
+        const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      );
       expect(container.read(walletControllerProvider).currentFilterIndex, 0);
       await tester.tapAt(tester.getCenter(find.byType(LineGraph)));
       await tester.pump();
@@ -171,6 +225,7 @@ void main() {
           .read(localeProvider.notifier)
           .setLocale(const Locale('zh', 'CN'));
       await tester.pump();
+      expect(find.text('交易活动'), findsOneWidget);
       expect(find.text('每日交易总额 (\$)'), findsOneWidget);
       expect(
         tester.widget<LineGraph>(find.byType(LineGraph)).data.first.label,
@@ -191,7 +246,7 @@ void main() {
     await tester.pump();
     expect(find.byKey(const ValueKey('home-chart-empty')), findsOneWidget);
     expect(tester.takeException(), isNull);
-    controller.replace([Transaction(time: 'Today', moneyAmount: 0)]);
+    controller.replace([Transaction(time: '2026-11-10', moneyAmount: 0)]);
     await tester.pump();
     expect(find.text('All daily transaction amounts are zero'), findsOneWidget);
     controller.loading();

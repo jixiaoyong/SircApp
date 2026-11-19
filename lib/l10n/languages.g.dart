@@ -226,7 +226,7 @@ class Languages {
   static String get pleaseEnterVerifyCode => auth.pleaseEnterVerifyCode;
 
   ///- [zh_CN] 获取验证码
-  ///- [en_US] verify
+  ///- [en_US] Verify
   static String get verify => auth.verify;
 
   ///- [zh_CN] 请先输入现有密码
@@ -265,19 +265,19 @@ class Languages {
   static String get totalSpending => wallet.totalSpending;
 
   ///- [zh_CN] 上月
-  ///- [en_US]  Last Month
+  ///- [en_US] Last Month
   static String get lastMonth => wallet.lastMonth;
 
   ///- [zh_CN] 本月
-  ///- [en_US] this month
+  ///- [en_US] This month
   static String get thisMonth => wallet.thisMonth;
 
   ///- [zh_CN] 本周
-  ///- [en_US] this week
+  ///- [en_US] This week
   static String get thisWeek => wallet.thisWeek;
 
   ///- [zh_CN] 本年
-  ///- [en_US] this year
+  ///- [en_US] This year
   static String get thisYear => wallet.thisYear;
 
   ///- [zh_CN] 最近转出
@@ -514,8 +514,8 @@ class Languages {
   ///- [en_US] MTWTFSS
   static String get thisWeekdayLabel => wallet.thisWeekdayLabel;
 
-  ///- [zh_CN] 按设备日期 {date} 统计，支持今天、昨天和 ISO 日期。
-  ///- [en_US] Grouped using device date {date}; supports Today, Yesterday and ISO dates.
+  ///- [zh_CN] 按设备日期 {date} 统计，支持含时区的 ISO 时间及独立日期。
+  ///- [en_US] Grouped using device date {date}; supports zoned ISO times and date-only values.
   static String get undatedRecordsTooltip => wallet.undatedRecordsTooltip;
 
   ///- [zh_CN] {count} 笔日期未识别，未计入图表
@@ -523,6 +523,79 @@ class Languages {
   static String get undatedRecordsExcluded => wallet.undatedRecordsExcluded;
 
   // --- Home 模块 ---
+  ///- [zh_CN] 网页
+  ///- [en_US] Web
+  static String get payloadTitle => home.payloadTitle;
+
+  ///- [zh_CN] 正在加载本地模块…
+  ///- [en_US] Loading local module…
+  static String get payloadLoading => home.payloadLoading;
+
+  ///- [zh_CN] 本地模块加载失败。
+  ///- [en_US] Unable to load the local module.
+  static String get payloadError => home.payloadError;
+
+  ///- [zh_CN] 重试
+  ///- [en_US] Retry
+  static String get payloadRetry => home.payloadRetry;
+
+  ///- [zh_CN] 仅使用内置资源 · 尚未配置更新地址
+  ///- [en_US] Built-in resources only · no update URL configured
+  static String get payloadBuiltIn => home.payloadBuiltIn;
+
+  ///- [zh_CN] 已配置更新服务
+  ///- [en_US] Update service configured
+  static String get payloadOnline => home.payloadOnline;
+
+  ///- [zh_CN] 离线资源包仅适用于原生应用，请在 Android 或 iOS 上打开 SircApp。
+  ///- [en_US] Offline packages require the native app. Please open SircApp on Android or iOS.
+  static String get payloadWebUnsupported => home.payloadWebUnsupported;
+
+  ///- [zh_CN] 当前平台暂无受支持的 WebView，请使用 Android 或 iOS。
+  ///- [en_US] This platform has no supported WebView. Please use Android or iOS.
+  static String get payloadPlatformUnsupported =>
+      home.payloadPlatformUnsupported;
+
+  ///- [zh_CN] 恢复内置版本
+  ///- [en_US] Restore built-in version
+  static String get payloadRestore => home.payloadRestore;
+
+  ///- [zh_CN] 返回模块上一页
+  ///- [en_US] Back within module
+  static String get payloadBack => home.payloadBack;
+
+  ///- [zh_CN] Sirc 随行
+  ///- [en_US] Sirc companion
+  static String get payloadHeading => home.payloadHeading;
+
+  ///- [zh_CN] 本地随行模块已就绪，无网络时也可查看。
+  ///- [en_US] Your local companion is ready, even without a network connection.
+  static String get payloadDescription => home.payloadDescription;
+
+  ///- [zh_CN] 资源版本
+  ///- [en_US] Resource version
+  static String get payloadVersion => home.payloadVersion;
+
+  ///- [zh_CN] 正在检查或下载更新…
+  ///- [en_US] Checking or downloading updates…
+  static String get payloadUpdating => home.payloadUpdating;
+
+  ///- [zh_CN] 更新暂不可用，仍可使用本地资源。
+  ///- [en_US] Update unavailable; local resources remain available.
+  static String get payloadUpdateFailed => home.payloadUpdateFailed;
+
+  ///- [zh_CN] 资源已是最新版本
+  ///- [en_US] Resources up to date
+  static String get payloadUpdated => home.payloadUpdated;
+
+  ///- [zh_CN] 新版本已就绪，切换将刷新模块。
+  ///- [en_US] New version ready; switching reloads the module.
+  static String get payloadUpdateAvailable => home.payloadUpdateAvailable;
+
+  ///- [zh_CN] 切换并刷新
+  ///- [en_US] Switch and refresh
+  static String get payloadActivateUpdate => home.payloadActivateUpdate;
+
   ///- [zh_CN] 首页
   ///- [en_US] Home
   static String get homeTitle => home.title;
@@ -586,6 +659,10 @@ class Languages {
   ///- [zh_CN] 本地静态示例 · 未连接文章服务 · 非投资建议
   ///- [en_US] Static example · Local content · No article service connected · Not investment advice
   static String get articleDisclaimer => home.articleDisclaimer;
+
+  ///- [zh_CN] 交易活动
+  ///- [en_US] Transaction activity
+  static String get transactionActivity => home.transactionActivity;
 
   ///- [zh_CN] 本周
   ///- [en_US] This week
@@ -885,8 +962,8 @@ class Languages {
   ///- [en_US] No transaction notifications for these filters
   static String get notificationEmptyState => settings.notificationEmptyState;
 
-  ///- [zh_CN] {count} 条记录缺少可解析日期（如“刚刚”），未纳入时间筛选。
-  ///- [en_US] {count} records have no parseable date (for example “Just now”) and are excluded from time filters.
+  ///- [zh_CN] {count} 条记录缺少有效 ISO 日期或含时区的时间，未纳入时间筛选。
+  ///- [en_US] {count} records lack a valid ISO date or zoned time and are excluded from time filters.
   static String get undatedNotifications => settings.undatedNotifications;
 
   ///- [zh_CN] 交易加载失败，请稍后重试。
@@ -909,6 +986,98 @@ class Languages {
   ///- [zh_CN] 暂无卡片
   ///- [en_US] No cards yet
   static String get noCardsYetShort => settings.noCardsYetShort;
+
+  ///- [zh_CN] 开发者日志与诊断控制台
+  ///- [en_US] Developer Console & Logs
+  static String get developerConsole => settings.developerConsole;
+
+  ///- [zh_CN] 复制日志
+  ///- [en_US] Copy Logs
+  static String get copyLogs => settings.copyLogs;
+
+  ///- [zh_CN] 日志已复制到剪贴板
+  ///- [en_US] Logs copied to clipboard
+  static String get logsCopied => settings.logsCopied;
+
+  ///- [zh_CN] 清空日志
+  ///- [en_US] Clear Logs
+  static String get clearLogs => settings.clearLogs;
+
+  ///- [zh_CN] 全部
+  ///- [en_US] All
+  static String get logLevelAll => settings.logLevelAll;
+
+  ///- [zh_CN] 信息
+  ///- [en_US] Info
+  static String get logLevelInfo => settings.logLevelInfo;
+
+  ///- [zh_CN] 警告
+  ///- [en_US] Warn
+  static String get logLevelWarn => settings.logLevelWarn;
+
+  ///- [zh_CN] 错误
+  ///- [en_US] Error
+  static String get logLevelError => settings.logLevelError;
+
+  ///- [zh_CN] 安全认证凭据
+  ///- [en_US] Security Credential
+  static String get securityCredential => settings.securityCredential;
+
+  ///- [zh_CN] 已完成实名与安全验证
+  ///- [en_US] Verified Security Credential
+  static String get credentialVerified => settings.credentialVerified;
+
+  ///- [zh_CN] 此凭据用于双重验证、交易风控通知及重要密码找回。受端到端加密保护。
+  ///- [en_US] Used for dual-factor authentication, transaction security alerts, and recovery. Protected with end-to-end encryption.
+  static String get securityProtection => settings.securityProtection;
+
+  ///- [zh_CN] 申请换绑
+  ///- [en_US] Rebind / Update
+  static String get rebind => settings.rebind;
+
+  ///- [zh_CN] 已复制到剪贴板
+  ///- [en_US] Copied to clipboard
+  static String get copiedToClipboard => settings.copiedToClipboard;
+
+  ///- [zh_CN] 个人资料与账户安全
+  ///- [en_US] Profile & Account Security
+  static String get userProfileTitle => settings.userProfileTitle;
+
+  ///- [zh_CN] 账户安全等级：极佳
+  ///- [en_US] Security Score: Excellent (98/100)
+  static String get accountSecurity => settings.accountSecurity;
+
+  ///- [zh_CN] 已激活开发者调试控制台
+  ///- [en_US] Developer Console Activated
+  static String get devModeActivated => settings.devModeActivated;
+
+  ///- [zh_CN] 内存缓存 (L1)
+  ///- [en_US] Memory Cache (L1)
+  static String get imageCacheMemory => settings.imageCacheMemory;
+
+  ///- [zh_CN] 磁盘持久化 (L2)
+  ///- [en_US] Disk Persistent (L2)
+  static String get imageCacheDisk => settings.imageCacheDisk;
+
+  ///- [zh_CN] 清内存
+  ///- [en_US] Clear Memory
+  static String get clearMemoryCache => settings.clearMemoryCache;
+
+  ///- [zh_CN] 清磁盘
+  ///- [en_US] Clear Disk
+  static String get clearDiskCache => settings.clearDiskCache;
+
+  ///- [zh_CN] 清理全部图片缓存
+  ///- [en_US] Clear All Image Caches
+  static String get clearAllCache => settings.clearAllCache;
+
+  ///- [zh_CN] 图片缓存已成功清理
+  ///- [en_US] Image cache cleared successfully
+  static String get cacheClearedToast => settings.cacheClearedToast;
+
+  ///- [zh_CN] Web 端由浏览器 HTTP 强缓存接管
+  ///- [en_US] Web delegates caching to browser HTTP cache
+  static String get diskCacheWebNotice => settings.diskCacheWebNotice;
 
   // --- Common 模块 ---
   ///- [zh_CN] 取消
@@ -962,6 +1131,22 @@ class Languages {
   ///- [zh_CN] 内容加载失败，请重试。
   ///- [en_US] Unable to load content. Please try again.
   static String get loadFailed => common.loadFailed;
+
+  ///- [zh_CN] yyyy-MM-dd HH:mm:ss
+  ///- [en_US] yyyy-MM-dd HH:mm:ss
+  static String get fullDateTimePattern => common.fullDateTimePattern;
+
+  ///- [zh_CN] yyyy年M月d日
+  ///- [en_US] yyyy-MM-dd
+  static String get dateOnlyPattern => common.dateOnlyPattern;
+
+  ///- [zh_CN] 今天
+  ///- [en_US] Today
+  static String get today => common.today;
+
+  ///- [zh_CN] 昨天
+  ///- [en_US] Yesterday
+  static String get yesterday => common.yesterday;
 
   // ==========================================
   // 三、 兼容字典映射 (供 AppLocale.translate 兜底查找)
@@ -1026,7 +1211,7 @@ class Languages {
       "Please Sign In": "Please Sign In",
       "Please enter the verify code we sent to your email:":
           "Please enter the verify code we sent to your email:",
-      "verify": "verify",
+      "Verify": "Verify",
       "Please enter your current password first":
           "Please enter your current password first",
       "Please enter a new password": "Please enter a new password",
@@ -1038,10 +1223,10 @@ class Languages {
       "Wallet": "Wallet",
       "Available Balance": "Available Balance",
       "Total Spending": "Total Spending",
-      " Last Month": " Last Month",
-      "this month": "this month",
-      "this week": "this week",
-      "this year": "this year",
+      "Last Month": "Last Month",
+      "This month": "This month",
+      "This week": "This week",
+      "This year": "This year",
       "Last Send": "Last Send",
       "Last Receive": "Last Receive",
       "Total": "Total",
@@ -1105,8 +1290,31 @@ class Languages {
       "This week · income": "This week · income",
       "This week · total volume": "This week · total volume",
       "MTWTFSS": "MTWTFSS",
-      "Grouped using device date {date}; supports Today, Yesterday and ISO dates.": "Grouped using device date {date}; supports Today, Yesterday and ISO dates.",
+      "Grouped using device date {date}; supports zoned ISO times and date-only values.": "Grouped using device date {date}; supports zoned ISO times and date-only values.",
       "{count} undated records excluded": "{count} undated records excluded",
+      "Web": "Web",
+      "Loading local module…": "Loading local module…",
+      "Unable to load the local module.": "Unable to load the local module.",
+      "Retry": "Retry",
+      "Built-in resources only · no update URL configured":
+          "Built-in resources only · no update URL configured",
+      "Update service configured": "Update service configured",
+      "Offline packages require the native app. Please open SircApp on Android or iOS.": "Offline packages require the native app. Please open SircApp on Android or iOS.",
+      "This platform has no supported WebView. Please use Android or iOS.":
+          "This platform has no supported WebView. Please use Android or iOS.",
+      "Restore built-in version": "Restore built-in version",
+      "Back within module": "Back within module",
+      "Sirc companion": "Sirc companion",
+      "Your local companion is ready, even without a network connection.":
+          "Your local companion is ready, even without a network connection.",
+      "Resource version": "Resource version",
+      "Checking or downloading updates…": "Checking or downloading updates…",
+      "Update unavailable; local resources remain available.":
+          "Update unavailable; local resources remain available.",
+      "Resources up to date": "Resources up to date",
+      "New version ready; switching reloads the module.":
+          "New version ready; switching reloads the module.",
+      "Switch and refresh": "Switch and refresh",
       "Home": "Home",
       "Home": "Home",
       "Dashboard": "Dashboard",
@@ -1125,6 +1333,7 @@ class Languages {
       "Local examples": "Local examples",
       "Article not found": "Article not found",
       "Static example · Local content · No article service connected · Not investment advice": "Static example · Local content · No article service connected · Not investment advice",
+      "Transaction activity": "Transaction activity",
       "This week": "This week",
       "This month": "This month",
       "Daily transaction volume": "Daily transaction volume",
@@ -1203,7 +1412,7 @@ class Languages {
       "Transaction notifications": "Transaction notifications",
       "No transaction notifications for these filters":
           "No transaction notifications for these filters",
-      "{count} records have no parseable date (for example “Just now”) and are excluded from time filters.": "{count} records have no parseable date (for example “Just now”) and are excluded from time filters.",
+      "{count} records lack a valid ISO date or zoned time and are excluded from time filters.": "{count} records lack a valid ISO date or zoned time and are excluded from time filters.",
       "Unable to load transactions. Please try again later.":
           "Unable to load transactions. Please try again later.",
       "No transaction notifications for these filters":
@@ -1211,6 +1420,31 @@ class Languages {
       "Show password": "Show password",
       "Hide password": "Hide password",
       "No cards yet": "No cards yet",
+      "Developer Console & Logs": "Developer Console & Logs",
+      "Copy Logs": "Copy Logs",
+      "Logs copied to clipboard": "Logs copied to clipboard",
+      "Clear Logs": "Clear Logs",
+      "All": "All",
+      "Info": "Info",
+      "Warn": "Warn",
+      "Error": "Error",
+      "Security Credential": "Security Credential",
+      "Verified Security Credential": "Verified Security Credential",
+      "Used for dual-factor authentication, transaction security alerts, and recovery. Protected with end-to-end encryption.": "Used for dual-factor authentication, transaction security alerts, and recovery. Protected with end-to-end encryption.",
+      "Rebind / Update": "Rebind / Update",
+      "Copied to clipboard": "Copied to clipboard",
+      "Profile & Account Security": "Profile & Account Security",
+      "Security Score: Excellent (98/100)":
+          "Security Score: Excellent (98/100)",
+      "Developer Console Activated": "Developer Console Activated",
+      "Memory Cache (L1)": "Memory Cache (L1)",
+      "Disk Persistent (L2)": "Disk Persistent (L2)",
+      "Clear Memory": "Clear Memory",
+      "Clear Disk": "Clear Disk",
+      "Clear All Image Caches": "Clear All Image Caches",
+      "Image cache cleared successfully": "Image cache cleared successfully",
+      "Web delegates caching to browser HTTP cache":
+          "Web delegates caching to browser HTTP cache",
       "Cancel": "Cancel",
       "All": "All",
       "Submit": "Submit",
@@ -1225,6 +1459,10 @@ class Languages {
       "Retry": "Retry",
       "Unable to load content. Please try again.":
           "Unable to load content. Please try again.",
+      "yyyy-MM-dd HH:mm:ss": "yyyy-MM-dd HH:mm:ss",
+      "yyyy-MM-dd": "yyyy-MM-dd",
+      "Today": "Today",
+      "Yesterday": "Yesterday",
     },
     "zh_CN": {
       "Sign In": "登录",
@@ -1274,7 +1512,7 @@ class Languages {
       "I don't have an account": "我没有账户",
       "Please Sign In": "请登录",
       "Please enter the verify code we sent to your email:": "请输入我们发送到您邮箱的验证码：",
-      "verify": "获取验证码",
+      "Verify": "获取验证码",
       "Please enter your current password first": "请先输入现有密码",
       "Please enter a new password": "请输入新密码",
       "Please enter the confirmation new password": "请输入确认新密码",
@@ -1284,10 +1522,10 @@ class Languages {
       "Wallet": "钱包",
       "Available Balance": "可用余额",
       "Total Spending": "总支出",
-      " Last Month": "上月",
-      "this month": "本月",
-      "this week": "本周",
-      "this year": "本年",
+      "Last Month": "上月",
+      "This month": "本月",
+      "This week": "本周",
+      "This year": "本年",
       "Last Send": "最近转出",
       "Last Receive": "最近转入",
       "Total": "总计",
@@ -1346,9 +1584,32 @@ class Languages {
       "This week · income": "本周收入",
       "This week · total volume": "本周交易总额",
       "MTWTFSS": "一二三四五六日",
-      "Grouped using device date {date}; supports Today, Yesterday and ISO dates.":
-          "按设备日期 {date} 统计，支持今天、昨天和 ISO 日期。",
+      "Grouped using device date {date}; supports zoned ISO times and date-only values.":
+          "按设备日期 {date} 统计，支持含时区的 ISO 时间及独立日期。",
       "{count} undated records excluded": "{count} 笔日期未识别，未计入图表",
+      "Web": "网页",
+      "Loading local module…": "正在加载本地模块…",
+      "Unable to load the local module.": "本地模块加载失败。",
+      "Retry": "重试",
+      "Built-in resources only · no update URL configured":
+          "仅使用内置资源 · 尚未配置更新地址",
+      "Update service configured": "已配置更新服务",
+      "Offline packages require the native app. Please open SircApp on Android or iOS.":
+          "离线资源包仅适用于原生应用，请在 Android 或 iOS 上打开 SircApp。",
+      "This platform has no supported WebView. Please use Android or iOS.":
+          "当前平台暂无受支持的 WebView，请使用 Android 或 iOS。",
+      "Restore built-in version": "恢复内置版本",
+      "Back within module": "返回模块上一页",
+      "Sirc companion": "Sirc 随行",
+      "Your local companion is ready, even without a network connection.":
+          "本地随行模块已就绪，无网络时也可查看。",
+      "Resource version": "资源版本",
+      "Checking or downloading updates…": "正在检查或下载更新…",
+      "Update unavailable; local resources remain available.":
+          "更新暂不可用，仍可使用本地资源。",
+      "Resources up to date": "资源已是最新版本",
+      "New version ready; switching reloads the module.": "新版本已就绪，切换将刷新模块。",
+      "Switch and refresh": "切换并刷新",
       "Home": "首页",
       "Home": "首页",
       "Dashboard": "控制面板",
@@ -1367,6 +1628,7 @@ class Languages {
       "Article not found": "未找到文章",
       "Static example · Local content · No article service connected · Not investment advice":
           "本地静态示例 · 未连接文章服务 · 非投资建议",
+      "Transaction activity": "交易活动",
       "This week": "本周",
       "This month": "本月",
       "Daily transaction volume": "每日交易总额",
@@ -1445,13 +1707,37 @@ class Languages {
           "按类别和时间查阅已有交易。当前无独立通知服务；类别由交易名称识别，未识别的归入其他。",
       "Transaction notifications": "交易通知",
       "No transaction notifications for these filters": "当前筛选下暂无交易通知",
-      "{count} records have no parseable date (for example “Just now”) and are excluded from time filters.":
-          "{count} 条记录缺少可解析日期（如“刚刚”），未纳入时间筛选。",
+      "{count} records lack a valid ISO date or zoned time and are excluded from time filters.":
+          "{count} 条记录缺少有效 ISO 日期或含时区的时间，未纳入时间筛选。",
       "Unable to load transactions. Please try again later.": "交易加载失败，请稍后重试。",
       "No transaction notifications for these filters": "当前筛选下暂无交易通知",
       "Show password": "显示密码",
       "Hide password": "隐藏密码",
       "No cards yet": "暂无卡片",
+      "Developer Console & Logs": "开发者日志与诊断控制台",
+      "Copy Logs": "复制日志",
+      "Logs copied to clipboard": "日志已复制到剪贴板",
+      "Clear Logs": "清空日志",
+      "All": "全部",
+      "Info": "信息",
+      "Warn": "警告",
+      "Error": "错误",
+      "Security Credential": "安全认证凭据",
+      "Verified Security Credential": "已完成实名与安全验证",
+      "Used for dual-factor authentication, transaction security alerts, and recovery. Protected with end-to-end encryption.":
+          "此凭据用于双重验证、交易风控通知及重要密码找回。受端到端加密保护。",
+      "Rebind / Update": "申请换绑",
+      "Copied to clipboard": "已复制到剪贴板",
+      "Profile & Account Security": "个人资料与账户安全",
+      "Security Score: Excellent (98/100)": "账户安全等级：极佳",
+      "Developer Console Activated": "已激活开发者调试控制台",
+      "Memory Cache (L1)": "内存缓存 (L1)",
+      "Disk Persistent (L2)": "磁盘持久化 (L2)",
+      "Clear Memory": "清内存",
+      "Clear Disk": "清磁盘",
+      "Clear All Image Caches": "清理全部图片缓存",
+      "Image cache cleared successfully": "图片缓存已成功清理",
+      "Web delegates caching to browser HTTP cache": "Web 端由浏览器 HTTP 强缓存接管",
       "Cancel": "取消",
       "All": "全部",
       "Submit": "提交",
@@ -1465,6 +1751,10 @@ class Languages {
       "Go to Home": "返回首页",
       "Retry": "重试",
       "Unable to load content. Please try again.": "内容加载失败，请重试。",
+      "yyyy-MM-dd HH:mm:ss": "yyyy-MM-dd HH:mm:ss",
+      "yyyy-MM-dd": "yyyy年M月d日",
+      "Today": "今天",
+      "Yesterday": "昨天",
     },
   };
 }

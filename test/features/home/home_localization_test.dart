@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sirc/core/localization/app_locale.dart';
+import 'package:sirc/features/home/presentation/widgets/home_articles_panel.dart';
 import 'package:sirc/features/home/presentation/home_page.dart';
 import 'package:sirc/features/home/presentation/person_page.dart';
 import 'package:sirc/features/home/controllers/navigation_controller.dart';
@@ -52,7 +53,7 @@ void main() {
   });
   tearDown(() => AppLocale.setLocale(originalLocale));
 
-  testWidgets('首页空状态、交易摘要和本地示例随中英文切换', (tester) async {
+  testWidgets('首页空状态、交易摘要和文章标题随中英文切换', (tester) async {
     tester.view.physicalSize = const Size(1000, 2200);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -72,15 +73,19 @@ void main() {
             supportedLocales: AppLocale.supportedLocales,
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
             home: const Scaffold(
-              body: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    HomeBankCardCarousel(),
-                    HomeSummaryCards(),
-                    HomeTransactionsPanel(),
-                    HomeArticlesPanel(),
-                  ],
-                ),
+              body: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        HomeBankCardCarousel(),
+                        HomeSummaryCards(),
+                        HomeTransactionsPanel(),
+                      ],
+                    ),
+                  ),
+                  HomeArticlesPanel(),
+                ],
               ),
             ),
           ),
@@ -96,7 +101,7 @@ void main() {
       '转出',
       '转入',
       '交易摘要',
-      '本地示例',
+      '文章',
     ];
     const english = [
       'No cards yet. Add a card in Wallet.',
@@ -105,7 +110,7 @@ void main() {
       'Money Out',
       'Money In',
       'Transaction summary',
-      'Local examples',
+      'Articles',
     ];
     for (final text in chinese) {
       expect(find.text(text), findsOneWidget);
@@ -131,41 +136,47 @@ void main() {
   });
 
   testWidgets('个人页资料中英文映射且流水来自钱包同源交易', (tester) async {
-    final container = ProviderContainer(overrides: [
-      localeProvider.overrideWith(_TestLocaleNotifier.new),
-      walletControllerProvider.overrideWith(_EmptyWalletController.new),
-      navigationControllerProvider.overrideWithValue(const NavigationState()),
-      personProfileProvider(const Locale('zh', 'CN')).overrideWith(
-        (ref) async => const UserProfile(
-          id: 'user-test-001',
-          name: 'Alex Morgan',
-          email: 'alex.morgan@example.test',
-          phone: '+1 202 555 0142 (TEST)',
-          address: '100 Example Avenue, Sample City (TEST)',
-          avatarUrl: '',
+    final container = ProviderContainer(
+      overrides: [
+        localeProvider.overrideWith(_TestLocaleNotifier.new),
+        walletControllerProvider.overrideWith(_EmptyWalletController.new),
+        navigationControllerProvider.overrideWithValue(const NavigationState()),
+        personProfileProvider(const Locale('zh', 'CN')).overrideWith(
+          (ref) async => const UserProfile(
+            id: 'user-test-001',
+            name: 'Alex Morgan',
+            email: 'alex.morgan@example.test',
+            phone: '+1 202 555 0142 (TEST)',
+            address: '100 Example Avenue, Sample City (TEST)',
+            avatarUrl: '',
+          ),
         ),
-      ),
-      personProfileProvider(const Locale('en', 'US')).overrideWith(
-        (ref) async => const UserProfile(
-          id: 'user-test-001',
-          name: 'Alex Morgan',
-          email: 'alex.morgan@example.test',
-          phone: '+1 202 555 0142 (TEST)',
-          address: '100 Example Avenue, Sample City (TEST)',
-          avatarUrl: '',
+        personProfileProvider(const Locale('en', 'US')).overrideWith(
+          (ref) async => const UserProfile(
+            id: 'user-test-001',
+            name: 'Alex Morgan',
+            email: 'alex.morgan@example.test',
+            phone: '+1 202 555 0142 (TEST)',
+            address: '100 Example Avenue, Sample City (TEST)',
+            avatarUrl: '',
+          ),
         ),
-      ),
-    ]);
+      ],
+    );
     addTearDown(container.dispose);
-    await tester.pumpWidget(UncontrolledProviderScope(
-      container: container,
-      child: Consumer(builder: (context, ref, _) => MaterialApp(
-        locale: ref.watch(localeProvider),
-        supportedLocales: AppLocale.supportedLocales,
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        home: const PersonPage(),
-      )),
-    ));
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: Consumer(
+          builder: (context, ref, _) => MaterialApp(
+            locale: ref.watch(localeProvider),
+            supportedLocales: AppLocale.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            home: const PersonPage(),
+          ),
+        ),
+      ),
+    );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));
     await tester.pump(const Duration(milliseconds: 50));
@@ -209,21 +220,19 @@ void main() {
             supportedLocales: AppLocale.supportedLocales,
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
             home: Scaffold(
-              body: SingleChildScrollView(
-                child: HomeTopBodyWidget(
-                  homeState: container
-                      .read(homeControllerProvider)
-                      .copyWith(
-                        quickActions: [
-                          for (final item in actualActions)
-                            ImgText(
-                              item['imageUrl'] as String? ?? '',
-                              item['title'] as String? ?? '',
-                            ),
-                        ],
-                      ),
-                  userAvatar: '',
-                ),
+              body: HomeTopBodyWidget(
+                homeState: container
+                    .read(homeControllerProvider)
+                    .copyWith(
+                      quickActions: [
+                        for (final item in actualActions)
+                          ImgText(
+                            item['imageUrl'] as String? ?? '',
+                            item['title'] as String? ?? '',
+                          ),
+                      ],
+                    ),
+                userAvatar: '',
               ),
             ),
           ),
@@ -284,7 +293,8 @@ void main() {
         );
       }
       await tester.drag(activePages, const Offset(-350, 0));
-      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 500));
       expect(controller.page, closeTo(1, .01));
       for (final text in expected.skip(12)) {
         expect(
@@ -338,11 +348,9 @@ void main() {
                 supportedLocales: AppLocale.supportedLocales,
                 localizationsDelegates: GlobalMaterialLocalizations.delegates,
                 home: Scaffold(
-                  body: SingleChildScrollView(
-                    child: HomeTopBodyWidget(
-                      homeState: state.copyWith(quickActions: quickActions),
-                      userAvatar: '',
-                    ),
+                  body: HomeTopBodyWidget(
+                    homeState: state.copyWith(quickActions: quickActions),
+                    userAvatar: '',
                   ),
                 ),
               ),
@@ -479,7 +487,14 @@ void main() {
   test('首页UI文案使用分域词条且不包含硬编码字符串', () {
     final source = File('lib/features/home/presentation/home_page.dart')
         .readAsStringSync();
-    final ui = source.split('class HomeTabViewListItemWidget').first;
+    final bankCards = File(
+      'lib/features/home/presentation/widgets/home_bank_card_pages.dart',
+    ).readAsStringSync();
+    final articles = File(
+      'lib/features/home/presentation/widgets/home_articles_panel.dart',
+    ).readAsStringSync();
+    // 首页文案分布于主页面、银行卡与文章组件，检查实际渲染方。
+    final ui = [source, bankCards, articles].join('\n');
     expect(ui, isNot(contains("languageCode == 'zh'")));
     expect(
       ui,
@@ -491,25 +506,26 @@ void main() {
       'Money Send',
       'Money Recharge',
       'Transaction summary',
-      'Local examples',
+      'Articles',
     ]) {
-      expect(ui, isNot(contains(text)));
+      expect(ui, isNot(contains("'$text'")));
+      expect(ui, isNot(contains('"$text"')));
     }
     for (final key in [
       'home.noCardsInWallet',
       'home.recentTransactions',
       'home.transactionSummary',
-      'home.localExamples',
       'wallet.noTransactions',
       'wallet.outgoing',
       'wallet.incoming',
     ]) {
       expect(ui, contains('Languages.$key'));
     }
-    expect(source, contains('article.title'));
-    expect(source, contains('article.summary'));
-    expect(source, isNot(contains('MockDataRepository')));
-    expect(source, isNot(contains('titleZh')));
-    expect(source, isNot(contains('titleEn')));
+    expect(articles, contains('Languages.articles'));
+    expect(articles, contains('article.title'));
+    expect(articles, contains('article.summary'));
+    expect(ui, isNot(contains('MockDataRepository')));
+    expect(ui, isNot(contains('titleZh')));
+    expect(ui, isNot(contains('titleEn')));
   });
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/data/article_repository.dart';
 import 'package:sirc/widgets/one_title_with_back_button_appbar.dart';
+import 'package:sirc/utils/date_time_formatter.dart';
 
 class ArticleDetailPage extends ConsumerWidget {
   const ArticleDetailPage({super.key, required this.id});
@@ -11,7 +12,9 @@ class ArticleDetailPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider);
-    final state = ref.watch(articleDetailProvider(ArticleDetailKey(id, locale)));
+    final state = ref.watch(
+      articleDetailProvider(ArticleDetailKey(id, locale)),
+    );
     final article = state.asData?.value;
     final title = article?.title ?? Languages.home.articles;
     return Scaffold(
@@ -42,17 +45,35 @@ class ArticleDetailPage extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(Languages.home.articleDisclaimer,
-                            style: Theme.of(context).textTheme.labelMedium),
-                        const SizedBox(height: 24),
-                        Text(article.title,
-                            style: Theme.of(context).textTheme.headlineMedium),
+                        Text(
+                          article.title,
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                        if (AppDateTimeFormatter.parseLocal(
+                              article.publishedAt,
+                            ) !=
+                            null) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            AppDateTimeFormatter.display(
+                              article.publishedAt,
+                              locale: locale,
+                              languages: AppLocale.current,
+                            ),
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                        ],
                         const SizedBox(height: 16),
-                        Text(article.summary,
-                            style: Theme.of(context).textTheme.titleMedium),
+                        Text(
+                          article.summary,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
                         const SizedBox(height: 24),
-                        Text(article.body,
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.8)),
+                        Text(
+                          article.body,
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(height: 1.8),
+                        ),
                       ],
                     ),
                   ),

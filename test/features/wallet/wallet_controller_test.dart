@@ -1,6 +1,9 @@
 import 'dart:ui';
 
+import 'package:sirc/features/wallet/domain/services/transaction_service.dart';
+
 import 'package:sirc/features/wallet/domain/models/transaction.dart';
+import 'package:sirc/mock/mock_data_repository.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -33,50 +36,33 @@ void main() {
       allTransactions: items,
     );
 
-    test(
-      'relative labels use injected local day, unknown dates remain unknown',
-      () {
-        for (final label in ['Just now', 'Today', '刚刚', '今天']) {
-          expect(
-            WalletState.transactionDate(Transaction(time: label), now: now),
-            DateTime(2026, 11, 10),
-          );
-        }
-        for (final label in ['Yesterday', '昨天']) {
-          expect(
-            WalletState.transactionDate(Transaction(time: label), now: now),
-            DateTime(2026, 11, 9),
-          );
-        }
-        for (final label in ['11/10', '10:30', 'unknown', '2026-02-30', '']) {
-          expect(
-            WalletState.transactionDate(Transaction(time: label), now: now),
-            isNull,
-          );
-        }
-        expect(
-          WalletState.transactionDate(
-            Transaction(time: '2026 / 11 / 09'),
-            now: now,
-          ),
-          DateTime(2026, 11, 9),
-        );
-        expect(
-          WalletState.transactionDate(
-            Transaction(time: '2026-11-09T10:30:00'),
-            now: now,
-          ),
-          DateTime(2026, 11, 9, 10, 30),
-        );
-        expect(
-          WalletState.transactionDate(
-            Transaction(time: 'Yesterday'),
-            now: DateTime(2026, 1, 1),
-          ),
-          DateTime(2025, 12, 31),
-        );
-      },
-    );
+    test('only explicit ISO dates and zoned instants are accepted', () {
+      for (final raw in [
+        'Just now',
+        'Today',
+        '刚刚',
+        '今天',
+        'Yesterday',
+        '昨天',
+        '11/10',
+        '10:30',
+        'unknown',
+        '2026-02-30',
+        '',
+        '2026 / 11 / 09',
+        '2026-11-09T10:30:00',
+      ]) {
+        expect(WalletState.transactionDate(Transaction(time: raw)), isNull);
+      }
+      expect(
+        WalletState.transactionDate(Transaction(time: '2026-11-09')),
+        DateTime(2026, 11, 9),
+      );
+      expect(
+        WalletState.transactionDate(Transaction(time: '2026-11-09T10:30:00Z')),
+        DateTime.utc(2026, 11, 9, 10, 30).toLocal(),
+      );
+    });
 
     test(
       'seven days, week boundaries, filters and zero preserve genuine volume',
@@ -87,7 +73,7 @@ void main() {
               time: '2026-11-${day.toString().padLeft(2, '0')}',
               moneyAmount: -day.toDouble(),
             ),
-          Transaction(time: 'Just now', moneyAmount: 100),
+          Transaction(time: '2026-11-10', moneyAmount: 100),
           Transaction(time: '2026-11-08', moneyAmount: 999),
           Transaction(time: '2026-11-16', moneyAmount: 999),
           Transaction(time: 'unknown', moneyAmount: 999),
@@ -132,12 +118,143 @@ void main() {
     });
   });
 
+  group('History calendar buckets', () {
+    test('week includes future Sunday and sums absolute amounts', () {
+      final chart = TransactionStatistics.historyBuckets(
+        [
+          Transaction(time: '2026-11-09', moneyAmount: -20),
+          Transaction(time: '2026-11-09', moneyAmount: 10),
+          Transaction(time: '2026-11-15', moneyAmount: -70),
+        ],
+        period: 1,
+        referenceDate: DateTime(2026, 11, 10),
+      );
+      expect(chart.values, [30, 0, 0, 0, 0, 0, 70]);
+      expect(chart.dates.first, DateTime(2026, 11, 9));
+      expect(chart.dates.last, DateTime(2026, 11, 15));
+    });
+
+    for (final (year, month, days) in [
+      (2026, 2, 28),
+      (2028, 2, 29),
+      (2026, 11, 30),
+      (2026, 12, 31),
+    ]) {
+      test('month $year-$month preserves all $days days', () {
+        final chart = TransactionStatistics.historyBuckets(
+          [
+            Transaction(
+              time: '$year-${month.toString().padLeft(2, '0')}-$days',
+              moneyAmount: -50,
+            ),
+          ],
+          period: 2,
+          referenceDate: DateTime(year, month, 1),
+        );
+        expect(chart.values, hasLength(days));
+        expect(chart.values.last, 50);
+        expect(chart.values.take(days - 1), everyElement(0));
+      });
+    }
+
+    test(
+      'all fills from earliest year January through latest month',
+      () {
+        final chart = TransactionStatistics.historyBuckets(
+          [
+            Transaction(time: '2027-02-02', moneyAmount: -30),
+            Transaction(time: '2026-11-01', moneyAmount: 10),
+            Transaction(time: 'unknown', moneyAmount: 999),
+          ],
+          period: 0,
+          referenceDate: DateTime(2026),
+        );
+        expect(chart.values, [...List<double>.filled(10, 0), 10, 0, 0, 30]);
+        expect(chart.dates, [
+          for (var month = 1; month <= 14; month++) DateTime(2026, month),
+        ]);
+        final single = TransactionStatistics.historyBuckets(
+          [Transaction(time: '2026-11-01', moneyAmount: -10)],
+          period: 0,
+          referenceDate: DateTime(2030),
+        );
+        expect(single.values, [...List<double>.filled(10, 0), 10]);
+        expect(single.dates, [
+          for (var month = 1; month <= 11; month++) DateTime(2026, month),
+        ]);
+        final crossYear = TransactionStatistics.historyBuckets(
+          [
+            Transaction(time: '2025-12-01', moneyAmount: -10),
+            Transaction(time: '2026-02-01', moneyAmount: 20),
+          ],
+          period: 0,
+          referenceDate: DateTime(2030),
+        );
+        expect(crossYear.values, [...List<double>.filled(11, 0), 10, 0, 20]);
+        expect(crossYear.dates, [
+          for (var month = 1; month <= 14; month++) DateTime(2025, month),
+        ]);
+        expect(
+          TransactionStatistics.historyBuckets(
+            [Transaction(time: 'unknown', moneyAmount: 10)],
+            period: 0,
+            referenceDate: DateTime(2026),
+          ).values,
+          isEmpty,
+        );
+      },
+    );
+  });
+
   group('WalletRepository Tests', () {
     late WalletRepository repository;
 
     setUp(() {
       repository = WalletRepositoryImpl();
     });
+
+    test(
+      'transaction refresh follows mock days and weeks without duplicates',
+      () async {
+        var now = DateTime(2026, 11, 16, 18);
+        final repository = WalletRepositoryImpl(
+          null,
+          MockDataRepository(clock: () => now),
+          const Locale('en'),
+        );
+        Future<List<Transaction>> weekly() async =>
+            (await repository.getTransactions())
+                .where((item) => item.id?.startsWith('mock-week-') ?? false)
+                .toList();
+
+        final monday = await weekly();
+        expect(monday, hasLength(1));
+        expect(
+          (await weekly()).map((item) => item.id),
+          monday.map((item) => item.id),
+        );
+        now = DateTime(2026, 11, 17, 18);
+        final tuesday = await weekly();
+        expect(tuesday, hasLength(2));
+        expect(tuesday.last.id, monday.single.id);
+        expect(tuesday.first.moneyActionName, 'Weekly Market');
+        now = DateTime(2026, 11, 22, 18);
+        expect(await weekly(), hasLength(7));
+        now = DateTime(2026, 11, 23, 18);
+        final nextWeek = await weekly();
+        expect(nextWeek, hasLength(1));
+        expect(nextWeek.single.id, isNot(monday.single.id));
+        await repository.refreshLocale(const Locale('zh'));
+        expect((await weekly()).single.moneyActionName, '本周咖啡');
+        expect(
+          await repository.getTransactions(
+            filter: TransactionFilter.receive,
+            query: '本周咖啡',
+          ),
+          isEmpty,
+        );
+      },
+    );
 
     test(
       'Initial bank cards should not be empty and contain default cards',
@@ -152,14 +269,17 @@ void main() {
     test(
       'JSON fixtures load and map business fields for explicit Locale',
       () async {
+        final mock = MockDataRepository(
+          clock: () => DateTime(2026, 11, 16, 18),
+        );
         final english = WalletRepositoryImpl(
           null,
-          null,
+          mock,
           const Locale('en', 'US'),
         );
         final chinese = WalletRepositoryImpl(
           null,
-          null,
+          mock,
           const Locale('zh', 'CN'),
         );
         expect(await english.getAvailableBalance(), 39615.16);
@@ -169,10 +289,48 @@ void main() {
         );
         expect((await chinese.getBankCards()).first.bankName, '北辰信用社');
         expect(
-          (await english.getTransactions()).first.moneyActionName,
+          (await english.getTransactions()).last.moneyActionName,
           'Cornerstone Coffee',
         );
-        expect((await chinese.getTransactions()).first.moneyActionName, '基石咖啡');
+        expect((await chinese.getTransactions()).last.moneyActionName, '基石咖啡');
+        final englishItems = await english.getTransactions();
+        final chineseItems = await chinese.getTransactions();
+        expect(englishItems.length, 31);
+        for (final items in [
+          await mock.getTransactions(const Locale('en')),
+          englishItems,
+          chineseItems,
+          await english.getTransactions(filter: TransactionFilter.send),
+          await english.getTransactions(query: 'Weekly'),
+        ]) {
+          for (var i = 1; i < items.length; i++) {
+            expect(
+              DateTime.parse(items[i - 1].time!)
+                  .isBefore(DateTime.parse(items[i].time!)),
+              isFalse,
+              reason: '交易应按实际时间倒序返回',
+            );
+          }
+        }
+        expect(
+          chineseItems.map((item) => item.time).toList(),
+          englishItems.map((item) => item.time).toList(),
+        );
+        final zonedIso = RegExp(
+          r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$',
+        );
+        for (final item in englishItems) {
+          expect(zonedIso.hasMatch(item.time!), isTrue, reason: item.id);
+          expect(
+            WalletState.transactionDate(item),
+            DateTime.parse(item.time!).toLocal(),
+          );
+          expect(Transaction.fromJson(item.toJson()).time, item.time);
+        }
+        expect(
+          DateTime.parse(englishItems.last.time!),
+          DateTime.utc(2026, 11, 1, 16, 42),
+        );
       },
     );
 
@@ -298,32 +456,42 @@ void main() {
       container.dispose();
     });
 
-    test('Initial wallet state has no placeholder balance and starts loading', () {
-      final state = container.read(walletControllerProvider);
-      expect(state.availableBalance, 0);
-      expect(state.isLoading, isTrue);
-      expect(state.currentFilterIndex, equals(0));
-      expect(state.selectedMonth, equals('January'));
-      expect(state.moneyTypes, contains('Last Send'));
-      expect(state.moneyTypes, contains('Last Receive'));
-      expect(state.moneyTypes, contains('Total'));
-    });
+    test(
+      'Initial wallet state has no placeholder balance and starts loading',
+      () {
+        final state = container.read(walletControllerProvider);
+        expect(state.availableBalance, 0);
+        expect(state.isLoading, isTrue);
+        expect(state.currentFilterIndex, equals(0));
+        expect(state.selectedMonth, equals('January'));
+        expect(state.moneyTypes, contains('Last Send'));
+        expect(state.moneyTypes, contains('Last Receive'));
+        expect(state.moneyTypes, contains('Total'));
+      },
+    );
 
     test('failed initial load can be retried and clears error state', () async {
       var attempts = 0;
-      final failingThenSuccess = _RetryWalletRepository(onBalance: () async {
-        attempts++;
-        if (attempts == 1) throw StateError('temporary failure');
-        return 123.45;
-      });
+      final failingThenSuccess = _RetryWalletRepository(
+        onBalance: () async {
+          attempts++;
+          if (attempts == 1) throw StateError('temporary failure');
+          return 123.45;
+        },
+      );
       final retryContainer = ProviderContainer(
-        overrides: [walletRepositoryProvider.overrideWithValue(failingThenSuccess)],
+        overrides: [
+          walletRepositoryProvider.overrideWithValue(failingThenSuccess),
+        ],
       );
       addTearDown(retryContainer.dispose);
       final controller = retryContainer.read(walletControllerProvider.notifier);
 
       await controller.loadInitialData();
-      expect(retryContainer.read(walletControllerProvider).errorMessage, isNotNull);
+      expect(
+        retryContainer.read(walletControllerProvider).errorMessage,
+        isNotNull,
+      );
       expect(retryContainer.read(walletControllerProvider).isLoading, isFalse);
 
       await controller.retry();
@@ -336,12 +504,19 @@ void main() {
     });
 
     test('repository locale remapping preserves wallet mutations', () async {
-      final repository = WalletRepositoryImpl(null, null, const Locale('zh', 'CN'));
+      final repository = WalletRepositoryImpl(
+        null,
+        null,
+        const Locale('zh', 'CN'),
+      );
       final before = await repository.getBankCards();
       expect(before, isNotEmpty);
       const added = BankCard(
-        id: 'locale-mutation', bankName: 'Custom Bank', cardNumber: '1234',
-        ownerName: 'User', expirationDate: '01/30',
+        id: 'locale-mutation',
+        bankName: 'Custom Bank',
+        cardNumber: '1234',
+        ownerName: 'User',
+        expirationDate: '01/30',
       );
       await repository.addBankCard(added);
       await repository.deleteBankCard(before.last.id);

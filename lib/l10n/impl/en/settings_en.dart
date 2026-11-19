@@ -100,7 +100,7 @@ class SettingsEn implements SettingsLang {
       'No transaction notifications for these filters';
   @override
   String get undatedNotifications =>
-      '{count} records have no parseable date (for example “Just now”) and are excluded from time filters.';
+      '{count} records lack a valid ISO date or zoned time and are excluded from time filters.';
   @override
   String get transactionsLoadFailed =>
       'Unable to load transactions. Please try again later.';
@@ -113,4 +113,50 @@ class SettingsEn implements SettingsLang {
   String get hidePassword => 'Hide password';
   @override
   String get noCardsYetShort => 'No cards yet';
+  @override
+  String get developerConsole => 'Developer Console & Logs';
+  @override
+  String get copyLogs => 'Copy Logs';
+  @override
+  String get logsCopied => 'Logs copied to clipboard';
+  @override
+  String get clearLogs => 'Clear Logs';
+  @override
+  String get logLevelAll => 'All';
+  @override
+  String get logLevelInfo => 'Info';
+  @override
+  String get logLevelWarn => 'Warn';
+  @override
+  String get logLevelError => 'Error';
+  @override
+  String get securityCredential => 'Security Credential';
+  @override
+  String get credentialVerified => 'Verified Security Credential';
+  @override
+  String get securityProtection => 'Used for dual-factor authentication, transaction security alerts, and recovery. Protected with end-to-end encryption.';
+  @override
+  String get rebind => 'Rebind / Update';
+  @override
+  String get copiedToClipboard => 'Copied to clipboard';
+  @override
+  String get userProfileTitle => 'Profile & Account Security';
+  @override
+  String get accountSecurity => 'Security Score: Excellent (98/100)';
+  @override
+  String get devModeActivated => 'Developer Console Activated';
+  @override
+  String get imageCacheMemory => 'Memory Cache (L1)';
+  @override
+  String get imageCacheDisk => 'Disk Persistent (L2)';
+  @override
+  String get clearMemoryCache => 'Clear Memory';
+  @override
+  String get clearDiskCache => 'Clear Disk';
+  @override
+  String get clearAllCache => 'Clear All Image Caches';
+  @override
+  String get cacheClearedToast => 'Image cache cleared successfully';
+  @override
+  String get diskCacheWebNotice => 'Web delegates caching to browser HTTP cache';
 }
