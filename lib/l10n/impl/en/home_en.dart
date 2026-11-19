@@ -4,6 +4,49 @@ class HomeEn implements HomeLang {
   const HomeEn();
 
   @override
+  String get payloadTitle => 'Web';
+  @override
+  String get payloadLoading => 'Loading local module…';
+  @override
+  String get payloadError => 'Unable to load the local module.';
+  @override
+  String get payloadRetry => 'Retry';
+  @override
+  String get payloadBuiltIn =>
+      'Built-in resources only · no update URL configured';
+  @override
+  String get payloadOnline => 'Update service configured';
+  @override
+  String get payloadWebUnsupported =>
+      'Offline packages require the native app. Please open SircApp on Android or iOS.';
+  @override
+  String get payloadPlatformUnsupported =>
+      'This platform has no supported WebView. Please use Android or iOS.';
+  @override
+  String get payloadRestore => 'Restore built-in version';
+  @override
+  String get payloadBack => 'Back within module';
+  @override
+  String get payloadHeading => 'Sirc companion';
+  @override
+  String get payloadDescription =>
+      'Your local companion is ready, even without a network connection.';
+  @override
+  String get payloadVersion => 'Resource version';
+  @override
+  String get payloadUpdating => 'Checking or downloading updates…';
+  @override
+  String get payloadUpdateFailed =>
+      'Update unavailable; local resources remain available.';
+  @override
+  String get payloadUpdated => 'Resources up to date';
+  @override
+  String get payloadUpdateAvailable =>
+      'New version ready; switching reloads the module.';
+  @override
+  String get payloadActivateUpdate => 'Switch and refresh';
+
+  @override
   String get title => 'Home';
 
   @override

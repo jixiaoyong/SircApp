@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:sirc/features/payload/payload_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
@@ -47,6 +50,7 @@ void main() async {
       child: const MyApp(),
     ),
   );
+  unawaited(startPayloadService());
 }
 
 class MyApp extends ConsumerWidget {

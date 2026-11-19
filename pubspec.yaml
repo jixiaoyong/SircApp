@@ -47,6 +47,10 @@ dependencies:
     version: 2.0.0
   extended_image: ^10.1.0
   month_picker_dialog: ^7.0.0
+  web_payload_manager:
+    git:
+      url: https://github.com/jixiaoyong/web_payload_manager.git
+      ref: ecee622132c592a53524dce095ca644eb77d41cc
   webview_flutter: ^4.8.0
   # 自适应高度内嵌 WebView 组件（基于现代 ResizeObserver 标准）
   embed_webview:
@@ -59,9 +63,12 @@ dependencies:
   path_provider: ^2.1.6
   url_launcher: ^6.3.0
   logger: ^2.4.0
-  flutter_native_splash: ^2.4.1
+  flutter_native_splash: ^2.4.8
   flutter_svg: ^2.3.2
   material_ui: ^1.11.0
+  image_picker: ^1.2.4
+  record: ^7.2.0
+  audioplayers: ^6.8.1
 
 dev_dependencies:
   # ==========================================
@@ -94,3 +101,5 @@ flutter:
     - assets/
     - assets/imgs/
     - assets/mock/
+    - assets/web_payload/
+    - assets/web_payload/companion/

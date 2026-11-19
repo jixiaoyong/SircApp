@@ -1,0 +1,951 @@
+/* ==========================================================================
+   核心组件：SircApp 架构面板 × VibeDesign 物理微质感
+   ========================================================================== */
+
+/* 1. 基础架构面板（对齐 SircApp WalletPanel / CardTheme） */
+.sirc-panel {
+  background: var(--sirc-surface);
+  border: 1px solid var(--sirc-border-subtle);
+  border-radius: var(--sirc-radius-md);
+  padding: 16px;
+}
+
+/* 2. Tab 首页 Hero 概览卡（含 vibedesign.tips 极淡斜纹装饰带 + 竖线遥测条） */
+.sirc-hero-panel {
+  position: relative;
+  overflow: hidden;
+  padding: 18px 18px 16px;
+  background: var(--sirc-surface);
+  border: 1px solid var(--sirc-border-subtle);
+  border-radius: var(--sirc-radius-md);
+}
+
+.sirc-hero-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--sirc-hatch) 0 4px,
+    transparent 4px 8px
+  );
+  border-bottom: 1px solid var(--sirc-border-subtle);
+}
+
+.sirc-hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.sirc-hero-eyebrow {
+  font-family: var(--sirc-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sirc-light);
+}
+
+.sirc-hero-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--sirc-ink);
+  line-height: 1.25;
+}
+
+.sirc-hero-desc {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--sirc-muted);
+  line-height: 1.55;
+}
+
+/* vibedesign.tips 风格竖线分隔指标栏 (.pstat) */
+.sirc-telemetry-row {
+  display: flex;
+  align-items: stretch;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--sirc-border-subtle);
+}
+
+.sirc-telemetry-item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+}
+
+.sirc-telemetry-item + .sirc-telemetry-item {
+  padding-left: 14px;
+}
+
+.sirc-telemetry-item + .sirc-telemetry-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 3px;
+  bottom: 3px;
+  width: 1px;
+  background: var(--sirc-border-subtle);
+}
+
+.sirc-telemetry-val {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--sirc-ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.sirc-telemetry-label {
+  font-size: 11px;
+  color: var(--sirc-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 3. SircApp MenuPage 风格分组列表容器（无重边框，1px 精致内分割线） */
+.sirc-group {
+  background: var(--sirc-surface);
+  border: 1px solid var(--sirc-border-subtle);
+  border-radius: var(--sirc-radius-md);
+  overflow: hidden;
+}
+
+.sirc-list-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 16px;
+  cursor: pointer;
+  position: relative;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  transition: background-color 0.14s ease;
+}
+
+.sirc-list-row + .sirc-list-row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 70px;
+  right: 16px;
+  height: 1px;
+  background: var(--sirc-border-subtle);
+}
+
+.sirc-list-row:hover {
+  background: var(--sirc-surface-hover);
+}
+
+.sirc-list-row:active {
+  background: var(--sirc-surface-active);
+}
+
+.sirc-list-row.active {
+  background: var(--sirc-surface-hover);
+}
+
+.sirc-list-row.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--sirc-ink);
+}
+
+.sirc-icon-well {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--sirc-border-subtle);
+  background: var(--sirc-field);
+  color: var(--sirc-ink);
+}
+
+.sirc-icon-well.emergency {
+  background: var(--sirc-error-soft);
+  border-color: var(--sirc-error-border);
+  color: var(--sirc-error);
+}
+
+.sirc-icon-well.currency {
+  background: var(--sirc-accent-soft);
+  border-color: var(--sirc-accent-border);
+  color: var(--sirc-accent);
+}
+
+.sirc-icon-well.privilege {
+  background: var(--sirc-warning-soft);
+  border-color: var(--sirc-warning-border);
+  color: var(--sirc-warning);
+}
+
+.sirc-row-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.sirc-row-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sirc-row-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--sirc-ink);
+  letter-spacing: -0.01em;
+}
+
+.sirc-row-desc {
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--sirc-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sirc-row-trailing {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  color: var(--sirc-light);
+}
+
+.sirc-row-tag {
+  font-family: var(--sirc-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: var(--sirc-field);
+  color: var(--sirc-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 4. 快捷双格速览卡（Tab 页底部） */
+.sirc-glance-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.sirc-glance-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  background: var(--sirc-surface);
+  border: 1px solid var(--sirc-border-subtle);
+  border-radius: var(--sirc-radius-md);
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  transition: var(--key-motion), border-color 0.14s ease;
+}
+
+.sirc-glance-card:active {
+  transform: translateY(1px);
+  background: var(--sirc-surface-hover);
+}
+
+.sirc-glance-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--sirc-muted);
+}
+
+.sirc-glance-figure {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--sirc-ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+
+.sirc-glance-sub {
+  font-size: 11.5px;
+  color: var(--sirc-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   5. VibeDesign 001 物理拟物按键（Tactile Keys）
+   ========================================================================== */
+.sirc-key,
+.sirc-ink-key,
+.sirc-danger-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--key-motion);
+  user-select: none;
+}
+
+/* 次级物理键 */
+.sirc-key {
+  color: var(--sirc-ink);
+  background: var(--key-sheen) var(--key-bg);
+  border: 1px solid var(--key-rim);
+  border-bottom-color: var(--key-rim-low);
+  box-shadow: var(--key-lift);
+}
+
+.sirc-key:hover {
+  background: var(--key-sheen) var(--key-bg-hover);
+}
+
+.sirc-key:active {
+  background: var(--key-bg-down);
+  box-shadow: var(--key-down);
+  transform: translateY(1px);
+}
+
+/* 顶部返回迷你物理键 */
+.sirc-key-nav {
+  min-height: 34px;
+  padding: 0 11px 0 8px;
+  border-radius: 999px;
+  font-size: 13px;
+  gap: 3px;
+}
+
+/* 主操作墨色物理键（对齐 SircApp FilledButton + vibedesign.tips ink-key） */
+.sirc-ink-key {
+  color: var(--ink-key-text);
+  background: var(--ink-key-sheen) var(--ink-key-bg);
+  border: 1px solid var(--ink-key-rim);
+  box-shadow: var(--ink-key-lift);
+}
+
+.sirc-ink-key:active {
+  background: var(--ink-key-bg-down);
+  box-shadow: var(--ink-key-down);
+  transform: translateY(1px);
+}
+
+/* 紧急呼叫物理红键 */
+.sirc-danger-key {
+  color: #ffffff;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 50%) #cf242c;
+  border: 1px solid #9f1b22;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), inset 0 -2px 3px -1px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.22), 0 3px 8px -2px rgba(207, 36, 44, 0.42);
+}
+
+.sirc-danger-key:active {
+  background: #b51f26;
+  box-shadow: inset 0 1.5px 3px rgba(0, 0, 0, 0.45);
+  transform: translateY(1px);
+}
+
+/* ==========================================================================
+   6. 架构级银行卡（精确还原 SircApp BankCardWidget + 极克制微光材质）
+   ========================================================================== */
+.sirc-bank-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  padding: 16px 18px 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-edge);
+  color: var(--card-ink);
+  cursor: pointer;
+  transition: transform 0.16s var(--ease-out), border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.sirc-bank-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--card-sheen);
+  pointer-events: none;
+}
+
+.sirc-bank-card.is-interactive:hover {
+  border-color: var(--card-muted);
+}
+
+.sirc-bank-card.is-interactive:active {
+  transform: scale(0.992);
+}
+
+/* 微妙的卡片主题指示色条（顶边 2px，不破坏极简扁平卡面） */
+.sirc-bank-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 18px;
+  width: 36px;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+  background: var(--card-accent, var(--card-muted));
+  opacity: 0.85;
+}
+
+.sirc-bank-card.northstar { --card-accent: #64b0ff; }
+.sirc-bank-card.harbor { --card-accent: #8bd6a6; }
+.sirc-bank-card.cedar { --card-accent: #e8b268; }
+
+.sirc-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.sirc-card-bank-name {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--card-ink);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sirc-card-tail {
+  font-family: var(--sirc-mono);
+  font-size: 12px;
+  color: var(--card-muted);
+  flex-shrink: 0;
+}
+
+.sirc-card-mid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.sirc-card-number {
+  font-family: var(--sirc-mono);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--card-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 复刻 BankCardWidget 的精密 EMV 金属芯片 */
+.sirc-emv-chip {
+  width: 34px;
+  height: 25px;
+  border-radius: 5px;
+  background: var(--card-chip-bg);
+  border: 1px solid var(--card-chip-line);
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sirc-emv-chip::before {
+  content: "";
+  width: 12px;
+  height: 15px;
+  border: 1px solid var(--card-chip-line);
+  border-radius: 3px;
+}
+
+.sirc-emv-chip::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--card-chip-line);
+}
+
+.sirc-card-divider {
+  height: 1px;
+  background: var(--card-divider);
+  margin: 0 0 10px;
+}
+
+.sirc-card-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sirc-card-field {
+  min-width: 0;
+}
+
+.sirc-card-field-label {
+  font-size: 10.5px;
+  color: var(--card-muted);
+  line-height: 1.2;
+}
+
+.sirc-card-field-val {
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--card-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sirc-card-brand {
+  font-size: 14px;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--card-ink);
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   7. 克制信息提示条（无粗暴 4px 左边条）
+   ========================================================================== */
+.sirc-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 13px 14px;
+  border-radius: var(--sirc-radius-md);
+  border: 1px solid var(--sirc-border-subtle);
+  background: var(--sirc-surface);
+  font-size: 12.5px;
+  color: var(--sirc-muted);
+  line-height: 1.55;
+}
+
+.sirc-callout-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--sirc-ink);
+}
+
+.sirc-callout-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--sirc-ink);
+  margin-bottom: 3px;
+}
+
+.sirc-callout.is-danger {
+  background: var(--sirc-error-soft);
+  border-color: var(--sirc-error-border);
+}
+.sirc-callout.is-danger .sirc-callout-icon,
+.sirc-callout.is-danger .sirc-callout-title {
+  color: var(--sirc-error);
+}
+
+.sirc-callout.is-warning {
+  background: var(--sirc-warning-soft);
+  border-color: var(--sirc-warning-border);
+}
+.sirc-callout.is-warning .sirc-callout-icon,
+.sirc-callout.is-warning .sirc-callout-title {
+  color: var(--sirc-warning);
+}
+
+/* ==========================================================================
+   8. 汇率网格 & 凹槽换算器（零溢出 + 物理分段键）
+   ========================================================================== */
+.sirc-rate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.sirc-rate-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
+  background: var(--sirc-surface);
+  border: 1px solid var(--sirc-border-subtle);
+  border-radius: var(--sirc-radius-md);
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  transition: var(--key-motion), border-color 0.14s ease;
+}
+
+.sirc-rate-tile:hover {
+  border-color: var(--sirc-border);
+}
+
+.sirc-rate-tile:active {
+  transform: translateY(1px);
+  background: var(--sirc-surface-hover);
+}
+
+.sirc-rate-tile-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sirc-currency-code {
+  font-family: var(--sirc-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--sirc-field);
+  color: var(--sirc-ink);
+}
+
+.sirc-currency-name {
+  font-size: 12px;
+  color: var(--sirc-muted);
+}
+
+.sirc-rate-value {
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--sirc-ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+
+.sirc-rate-sub {
+  font-family: var(--sirc-mono);
+  font-size: 11px;
+  color: var(--sirc-success);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 分段物理键托盘（vibedesign.tips .top-panel-langs） */
+.sirc-seg-tray {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--well-bg);
+  box-shadow: var(--well-inset);
+}
+
+.sirc-seg-btn {
+  height: 36px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--sirc-muted);
+  font-family: var(--sirc-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--key-motion), color 0.14s ease;
+}
+
+.sirc-seg-btn.is-active {
+  background: var(--key-sheen) var(--key-bg);
+  border-color: var(--key-rim);
+  border-bottom-color: var(--key-rim-low);
+  box-shadow: var(--key-lift);
+  color: var(--sirc-ink);
+}
+
+/* 凹槽输入框 */
+.sirc-well {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--well-bg);
+  box-shadow: var(--well-inset);
+}
+
+.sirc-well.is-result {
+  background: var(--sirc-accent-soft);
+  box-shadow: inset 0 0 0 1px var(--sirc-accent-border);
+}
+
+.sirc-well-label {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.sirc-well-code {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--sirc-ink);
+  line-height: 1.2;
+}
+
+.sirc-well-sub {
+  font-size: 11px;
+  color: var(--sirc-light);
+  margin-top: 2px;
+}
+
+.sirc-exchange-input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--sirc-ink);
+  text-align: right;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.sirc-preset-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sirc-preset-chip {
+  flex: 1;
+  min-width: 60px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--sirc-border-subtle);
+  background: var(--sirc-field);
+  color: var(--sirc-muted);
+  font-family: var(--sirc-mono);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.14s ease, color 0.14s ease, transform 0.12s var(--ease-out);
+}
+
+.sirc-preset-chip:active {
+  transform: translateY(1px);
+  background: var(--sirc-surface-active);
+  color: var(--sirc-ink);
+}
+
+/* ==========================================================================
+   9. 短信模板代码槽 & 安全编号清单
+   ========================================================================== */
+.sirc-sms-box {
+  background: var(--well-bg);
+  box-shadow: var(--well-inset);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: var(--sirc-mono);
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--sirc-ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+  user-select: text;
+}
+
+.sirc-tip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sirc-tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--sirc-muted);
+  line-height: 1.55;
+}
+
+.sirc-tip-index {
+  font-family: var(--sirc-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 5px;
+  background: var(--sirc-field);
+  color: var(--sirc-light);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ==========================================================================
+   10. 建筑感离线纸质签单（带左右物理撕口与条码带）
+   ========================================================================== */
+.sirc-receipt {
+  position: relative;
+  background: var(--sirc-surface);
+  border: 1px solid var(--sirc-border-subtle);
+  border-radius: var(--sirc-radius-md);
+  padding: 20px 18px 18px;
+  overflow: hidden;
+}
+
+.sirc-receipt-watermark {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-18deg);
+  font-family: var(--sirc-mono);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: color-mix(in srgb, var(--sirc-success) 9%, transparent);
+  border: 2px solid color-mix(in srgb, var(--sirc-success) 12%, transparent);
+  padding: 5px 14px;
+  border-radius: 8px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.sirc-receipt-perf {
+  position: relative;
+  height: 1px;
+  margin: 16px -18px;
+  border-top: 1px dashed var(--sirc-border);
+}
+
+.sirc-receipt-perf::before,
+.sirc-receipt-perf::after {
+  content: "";
+  position: absolute;
+  top: -8px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--sirc-bg);
+  border: 1px solid var(--sirc-border-subtle);
+}
+
+.sirc-receipt-perf::before { left: -9px; }
+.sirc-receipt-perf::after { right: -9px; }
+
+.sirc-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sirc-ledger-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.sirc-ledger-key {
+  color: var(--sirc-muted);
+  flex-shrink: 0;
+}
+
+.sirc-ledger-val {
+  color: var(--sirc-ink);
+  font-weight: 600;
+  text-align: right;
+}
+
+.sirc-barcode {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--sirc-border-subtle);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.sirc-barcode-bars {
+  width: 100%;
+  height: 28px;
+  opacity: 0.72;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--sirc-ink) 0 2px,
+    transparent 2px 4px,
+    var(--sirc-ink) 4px 5px,
+    transparent 5px 8px,
+    var(--sirc-ink) 8px 11px,
+    transparent 11px 13px,
+    var(--sirc-ink) 13px 14px,
+    transparent 14px 17px
+  );
+  border-radius: 2px;
+}
+
+/* ==========================================================================
+   11. 悬浮精工胶囊 Toast（vibedesign.tips 016）
+   ========================================================================== */
+.sirc-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px) scale(0.95);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--ink-key-bg);
+  color: var(--ink-key-text);
+  border: 1px solid var(--ink-key-rim);
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.24s var(--ease-out), opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.sirc-toast.show {
+  transform: translateX(-50%) translateY(0) scale(1);
+  opacity: 1;
+}

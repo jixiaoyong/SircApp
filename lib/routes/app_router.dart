@@ -1,4 +1,9 @@
 import 'package:material_ui/material_ui.dart';
+
+import '../features/payload/payload_page.dart';
+import '../features/payload/payload_detail_page.dart';
+import '../core/localization/app_locale.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sirc/core/layout/adaptive_detail_layout.dart';
@@ -147,6 +152,7 @@ GoRouter createAppRouter(
             AppRoutes.HISTORY,
             AppRoutes.PERSON,
             AppRoutes.MENU,
+            AppRoutes.PAYLOAD,
           }.contains(state.uri.path),
         ),
         branches: [
@@ -225,6 +231,14 @@ GoRouter createAppRouter(
               ),
             ],
           ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.PAYLOAD,
+                builder: (context, state) => const PayloadPage(),
+              ),
+            ],
+          ),
         ],
       ),
       GoRoute(
@@ -233,6 +247,20 @@ GoRouter createAppRouter(
           load: about_page.loadLibrary,
           builder: () => about_page.AboutPage(),
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.PAYLOAD_DETAIL,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          final view = extra['view'] as String? ??
+              state.uri.queryParameters['view'] ??
+              'emergency';
+          final title = extra['title'] as String? ??
+              state.uri.queryParameters['title'] ??
+              Languages.home.payloadTitle;
+          return PayloadDetailPage(view: view, title: title);
+        },
       ),
     ],
   );

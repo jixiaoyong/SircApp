@@ -1,11 +1,11 @@
 {
-  "name": "finance_mobile_banking_app",
-  "short_name": "finance_mobile_banking_app",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#0175C2",
-  "theme_color": "#0175C2",
-  "description": "A new Flutter project.",
+    "name": "Sirc",
+    "short_name": "Sirc",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#FFFFFF",
+    "theme_color": "#26282B",
+    "description": "Sirc Finance Mobile Banking App",
   "orientation": "portrait-primary",
   "prefer_related_applications": false,
   "icons": [
