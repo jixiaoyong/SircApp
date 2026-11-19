@@ -1,0 +1,15 @@
+{
+  "version": 1795115509699,
+  "versionStr": "1795115509699",
+  "downloadUrl": "https://jixiaoyong.github.io/SircApp/payload/payload_v1795115509699.zip",
+  "zipUrl": "https://jixiaoyong.github.io/SircApp/payload/payload_v1795115509699.zip",
+  "md5": "d731ae9bf01a204886b1051593b5dd97",
+  "zipMd5": "d731ae9bf01a204886b1051593b5dd97",
+  "fileSize": 21321,
+  "zipSize": 21321,
+  "zipFilename": "payload_v1795115509699.zip",
+  "timestamp": 1795115509699,
+  "buildLabel": "2026-11-19 19:11:49",
+  "minAppVersion": "1.0.0",
+  "description": "Sirc Companion v1795115509699 (2026-11-19 19:11:49)"
+}
