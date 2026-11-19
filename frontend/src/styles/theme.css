@@ -95,7 +95,7 @@
   color-scheme: light;
 }
 
-body.dark {
+:root.dark, body.dark {
   /* SircApp Native Dark Surface Palette (Exact match: #171819 / #222426 / #2D2F32) */
   --sirc-bg: #171819;
   --sirc-surface: #222426;

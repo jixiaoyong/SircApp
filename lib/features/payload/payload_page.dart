@@ -13,6 +13,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'payload_native_bridge.dart';
 import 'payload_runtime.dart';
 import 'payload_service.dart';
+import 'payload_skeleton.dart';
 
 /// 独立全宽 H5 分支；[runtime] 可注入测试资源会话。
 class PayloadPage extends ConsumerStatefulWidget {
@@ -149,7 +150,13 @@ class _PayloadPageState extends ConsumerState<PayloadPage>
         ),
       );
       if (generation != _generation || !mounted) return;
-      await web.loadRequest(Uri.parse(_runtime!.url!));
+      final uri = Uri.parse(_runtime!.url!);
+      final queryParams = Map<String, String>.from(uri.queryParameters);
+      queryParams['dark'] =
+          (Theme.of(context).brightness == Brightness.dark).toString();
+      queryParams['lang'] = Localizations.localeOf(context).toLanguageTag();
+      final targetUri = uri.replace(queryParameters: queryParams);
+      await web.loadRequest(targetUri);
     } catch (_) {
       if (mounted) {
         setState(() {
@@ -345,14 +352,10 @@ class _PayloadPageState extends ConsumerState<PayloadPage>
                           if (_web != null && !failed)
                             WebViewWidget(controller: _web!),
                           if (_loading && !failed)
-                            Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const CircularProgressIndicator(),
-                                  const SizedBox(height: 12),
-                                  Text(Languages.home.payloadLoading),
-                                ],
+                            Positioned.fill(
+                              child: Container(
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                child: const PayloadSkeleton(),
                               ),
                             ),
                           if (failed)

@@ -75,6 +75,11 @@ class _PayloadDetailPageState extends ConsumerState<PayloadDetailPage>
     final query = Map<String, String>.from(uri.queryParameters);
     query['mode'] = 'standalone';
     query['view'] = widget.view;
+    if (mounted) {
+      query['dark'] =
+          (Theme.of(context).brightness == Brightness.dark).toString();
+      query['lang'] = Localizations.localeOf(context).toLanguageTag();
+    }
     return uri.replace(queryParameters: query).toString();
   }
 

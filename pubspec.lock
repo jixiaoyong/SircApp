@@ -1333,9 +1333,11 @@ packages:
   web_payload_manager:
     dependency: "direct main"
     description:
-      path: "../21.21-web_payload_manager"
-      relative: true
-    source: path
+      path: "."
+      ref: ecee622132c592a53524dce095ca644eb77d41cc
+      resolved-ref: ecee622132c592a53524dce095ca644eb77d41cc
+      url: "https://github.com/jixiaoyong/web_payload_manager.git"
+    source: git
     version: "0.1.0"
   web_socket:
     dependency: transitive

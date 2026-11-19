@@ -523,8 +523,8 @@ class Languages {
   static String get undatedRecordsExcluded => wallet.undatedRecordsExcluded;
 
   // --- Home 模块 ---
-  ///- [zh_CN] 网页模块
-  ///- [en_US] Web module
+  ///- [zh_CN] 网页
+  ///- [en_US] Web
   static String get payloadTitle => home.payloadTitle;
 
   ///- [zh_CN] 正在加载本地模块…
@@ -1292,7 +1292,7 @@ class Languages {
       "MTWTFSS": "MTWTFSS",
       "Grouped using device date {date}; supports zoned ISO times and date-only values.": "Grouped using device date {date}; supports zoned ISO times and date-only values.",
       "{count} undated records excluded": "{count} undated records excluded",
-      "Web module": "Web module",
+      "Web": "Web",
       "Loading local module…": "Loading local module…",
       "Unable to load the local module.": "Unable to load the local module.",
       "Retry": "Retry",
@@ -1587,7 +1587,7 @@ class Languages {
       "Grouped using device date {date}; supports zoned ISO times and date-only values.":
           "按设备日期 {date} 统计，支持含时区的 ISO 时间及独立日期。",
       "{count} undated records excluded": "{count} 笔日期未识别，未计入图表",
-      "Web module": "网页模块",
+      "Web": "网页",
       "Loading local module…": "正在加载本地模块…",
       "Unable to load the local module.": "本地模块加载失败。",
       "Retry": "重试",

@@ -8,6 +8,7 @@ import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/data/common_keys.dart';
 import 'package:sirc/features/payload/payload_page.dart';
 import 'package:sirc/features/payload/payload_runtime.dart';
+import 'package:sirc/features/payload/payload_skeleton.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 class _Runtime extends PayloadRuntime {
@@ -146,17 +147,17 @@ void main() {
       );
       await tester.pump();
       expect(find.byType(AppBar), findsNothing);
-      expect(find.text(Languages.home.payloadLoading), findsOneWidget);
+      expect(find.byType(PayloadSkeleton), findsOneWidget);
       runtime.data(
         'http://127.0.0.1:1234/companion/index.html',
         'WebPayloadManager/token1',
       );
       await tester.pump();
       expect(platform.controller.ua, 'Native-UA WebPayloadManager/token1');
-      expect(platform.controller.requests.last, runtime.url);
-      platform.delegate.finished(runtime.url!);
-      await tester.pump();
-      expect(find.text(Languages.home.payloadLoading), findsNothing);
+      expect(platform.controller.requests.last, startsWith(runtime.url!));
+      platform.delegate.finished(platform.controller.requests.last);
+      await tester.pumpAndSettle();
+      expect(find.byType(PayloadSkeleton), findsNothing);
       expect(
         platform.controller.scripts.last,
         contains(Languages.home.payloadHeading),
@@ -195,7 +196,7 @@ void main() {
       );
       await tester.pump();
       expect(platform.controller.ua, 'Native-UA WebPayloadManager/token2');
-      expect(platform.controller.requests.last, runtime.url);
+      expect(platform.controller.requests.last, startsWith(runtime.url!));
       platform.delegate.error(
         const WebResourceError(
           errorCode: -1,

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sirc/core/layout/app_layout.dart';
 import 'package:sirc/core/localization/app_locale.dart';
 import 'package:sirc/features/home/presentation/slide_menu_page.dart';
+import 'package:sirc/features/payload/payload_page.dart';
 import 'package:sirc/utils/toast.dart';
 
 /// 单一主框架；分支页面及返回栈由 StatefulNavigationShell 持有。
@@ -53,13 +54,24 @@ class MainPage extends ConsumerWidget {
                     )
                     .toList(),
               ),
-            // 各分支 Navigator 自带独立 HeroController；indexedStack
-            // 负责 Offstage/TickerMode，无第二层五页 IndexedStack。
+            // 各分支 Navigator 自带独立 HeroController；
+            // 采用对齐公考项目的架构：将 Web Tab 保持常驻且静默预载，切到时瞬间可见。
             Expanded(
-              child: Semantics(
-                container: true,
-                explicitChildNodes: true,
-                child: navigationShell,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Semantics(
+                    container: true,
+                    explicitChildNodes: true,
+                    child: navigationShell,
+                  ),
+                  // 当未点击到网页 Tab 时，在后台通过 Offstage 保持常驻并提早渲染
+                  if (currentIndex != 5)
+                    const Offstage(
+                      offstage: true,
+                      child: PayloadPage(),
+                    ),
+                ],
               ),
             ),
           ],

@@ -4,7 +4,7 @@ class HomeZh implements HomeLang {
   const HomeZh();
 
   @override
-  String get payloadTitle => '网页模块';
+  String get payloadTitle => '网页';
   @override
   String get payloadLoading => '正在加载本地模块…';
   @override

@@ -48,7 +48,9 @@ dependencies:
   extended_image: ^10.1.0
   month_picker_dialog: ^7.0.0
   web_payload_manager:
-    path: ../21.21-web_payload_manager
+    git:
+      url: https://github.com/jixiaoyong/web_payload_manager.git
+      ref: ecee622132c592a53524dce095ca644eb77d41cc
   webview_flutter: ^4.8.0
   # 自适应高度内嵌 WebView 组件（基于现代 ResizeObserver 标准）
   embed_webview:

@@ -1,4 +1,5 @@
 import { Icons } from '../utils/icons';
+import { i18n } from '../i18n';
 
 export interface CurrencyRate {
   code: string;
@@ -9,27 +10,34 @@ export interface CurrencyRate {
   unitDivisor: number;
 }
 
-export const defaultRates: CurrencyRate[] = [
-  { code: 'USD', name: '美元', symbol: '$', unitLabel: '1 USD', rateToCny: 7.245, unitDivisor: 1 },
-  { code: 'EUR', name: '欧元', symbol: '€', unitLabel: '1 EUR', rateToCny: 7.825, unitDivisor: 1 },
-  { code: 'JPY', name: '日元', symbol: '¥', unitLabel: '100 JPY', rateToCny: 4.82, unitDivisor: 100 },
-  { code: 'HKD', name: '港币', symbol: 'HK$', unitLabel: '1 HKD', rateToCny: 0.928, unitDivisor: 1 },
-];
+export function getDefaultRates(): CurrencyRate[] {
+  const isEn = i18n.lang === 'en';
+  return [
+    { code: 'USD', name: isEn ? 'US Dollar' : '美元', symbol: '$', unitLabel: '1 USD', rateToCny: 7.245, unitDivisor: 1 },
+    { code: 'EUR', name: isEn ? 'Euro' : '欧元', symbol: '€', unitLabel: '1 EUR', rateToCny: 7.825, unitDivisor: 1 },
+    { code: 'JPY', name: isEn ? 'Japanese Yen' : '日元', symbol: '¥', unitLabel: '100 JPY', rateToCny: 4.82, unitDivisor: 100 },
+    { code: 'HKD', name: isEn ? 'HK Dollar' : '港币', symbol: 'HK$', unitLabel: '1 HKD', rateToCny: 0.928, unitDivisor: 1 },
+  ];
+}
+
+export const defaultRates: CurrencyRate[] = getDefaultRates();
 
 export class CurrencyView {
   // 二级页面：离线基准汇率总览与避坑指引
   public static renderLevel2(onOpenCalculator: (currencyCode?: string) => void): HTMLElement {
+    const t = i18n.t;
+    const rates = getDefaultRates();
     const container = document.createElement('div');
     container.className = 'sirc-view-container sirc-stagger';
 
     container.innerHTML = `
       <div class="sirc-section-label">
-        <span>离线基准汇率</span>
-        <span class="sirc-section-meta">BASE CNY · TAP TO CONVERT</span>
+        <span>${t.currencySectionLabel}</span>
+        <span class="sirc-section-meta">${t.currencySectionMeta}</span>
       </div>
 
       <div class="sirc-rate-grid" id="rate-grid">
-        ${defaultRates
+        ${rates
           .map(
             (r) => `
           <button type="button" class="sirc-rate-tile" data-code="${r.code}">
@@ -50,13 +58,13 @@ export class CurrencyView {
           <div style="display: flex; align-items: center; gap: 10px;">
             <span class="sirc-icon-well currency" style="width: 36px; height: 36px;">${Icons.calculator(18)}</span>
             <div>
-              <div style="font-size: 15px; font-weight: 600; color: var(--sirc-ink);">交互式随身汇率换算</div>
-              <div style="font-size: 12px; color: var(--sirc-muted);">快速折算人民币并测算 DCC 隐形溢价</div>
+              <div style="font-size: 15px; font-weight: 600; color: var(--sirc-ink);">${t.currencyCalculatorTitle}</div>
+              <div style="font-size: 12px; color: var(--sirc-muted);">${t.currencyCalculatorSub}</div>
             </div>
           </div>
         </div>
         <button id="btn-open-calc" class="sirc-ink-key" type="button" style="width: 100%;">
-          <span>进入离线汇率换算器</span>
+          <span>${t.currencyCalculatorBtn}</span>
           ${Icons.arrowRight(15)}
         </button>
       </div>
@@ -64,8 +72,8 @@ export class CurrencyView {
       <div class="sirc-callout is-warning">
         <span class="sirc-callout-icon">${Icons.alert(18)}</span>
         <div>
-          <div class="sirc-callout-title">境外刷卡 DCC 避坑守则</div>
-          <div>境外 POS 机提示选择币种时，<strong>务必选择当地货币（如 USD / EUR / JPY）结算</strong>。若误选人民币结算（DCC 动态货币转换），商户通常加收 3%–8% 的隐形汇兑溢价。</div>
+          <div class="sirc-callout-title">${t.currencyDccTitle}</div>
+          <div>${t.currencyDccDesc} <strong>${t.currencyDccItem1}</strong> ${t.currencyDccItem2}</div>
         </div>
       </div>
     `;
@@ -80,21 +88,23 @@ export class CurrencyView {
 
   // 三级页面：交互式离线换算器（物理分段键 + 零溢出凹槽输入框）
   public static renderLevel3(initialCode = 'USD'): HTMLElement {
+    const t = i18n.t;
+    const rates = getDefaultRates();
     const container = document.createElement('div');
     container.className = 'sirc-view-container sirc-stagger';
 
-    let currentCurrency = defaultRates.find((r) => r.code === initialCode) || defaultRates[0];
+    let currentCurrency = rates.find((r) => r.code === initialCode) || rates[0];
     let amount = currentCurrency.code === 'JPY' ? 10000 : 100;
 
     container.innerHTML = `
       <div class="sirc-panel" style="display: flex; flex-direction: column; gap: 14px;">
         <div style="display: flex; align-items: center; justify-content: space-between;">
-          <span style="font-size: 15px; font-weight: 600; color: var(--sirc-ink);">离线实时换算</span>
+          <span style="font-size: 15px; font-weight: 600; color: var(--sirc-ink);">${t.currencyCalcTitle}</span>
           <span id="calc-unit-rate" class="sirc-pill mono" style="font-size: 11px;"></span>
         </div>
 
         <div class="sirc-seg-tray" id="currency-seg-tray" role="tablist" aria-label="选择外币">
-          ${defaultRates
+          ${rates
             .map(
               (r) => `
             <button type="button" class="sirc-seg-btn ${r.code === currentCurrency.code ? 'is-active' : ''}" data-code="${r.code}">
@@ -114,10 +124,10 @@ export class CurrencyView {
         </div>
 
         <div class="sirc-preset-row" id="preset-row">
-          <button type="button" class="sirc-preset-chip" data-amt="100">100</button>
-          <button type="button" class="sirc-preset-chip" data-amt="500">500</button>
-          <button type="button" class="sirc-preset-chip" data-amt="1000">1,000</button>
-          <button type="button" class="sirc-preset-chip" data-amt="5000">5,000</button>
+          <button type="button" class="sirc-preset-chip" data-amt="100">${t.currencyPreset100}</button>
+          <button type="button" class="sirc-preset-chip" data-amt="500">${t.currencyPreset500}</button>
+          <button type="button" class="sirc-preset-chip" data-amt="1000">${t.currencyPreset1000}</button>
+          <button type="button" class="sirc-preset-chip" data-amt="5000">${t.currencyPreset2000}</button>
         </div>
 
         <div style="display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--sirc-light); font-size: 11px;">
@@ -131,7 +141,7 @@ export class CurrencyView {
         <div class="sirc-well is-result">
           <div class="sirc-well-label">
             <span class="sirc-well-code" style="color: var(--sirc-accent);">CNY</span>
-            <span class="sirc-well-sub">人民币折算</span>
+            <span class="sirc-well-sub">${t.currencyCalcUnit}</span>
           </div>
           <div id="output-cny" class="sirc-exchange-input" style="color: var(--sirc-accent);">¥ 724.50</div>
         </div>
@@ -140,7 +150,7 @@ export class CurrencyView {
       <div class="sirc-callout is-danger">
         <span class="sirc-callout-icon">${Icons.alert(18)}</span>
         <div>
-          <div class="sirc-callout-title">DCC 汇率溢价测算（3% – 5%）</div>
+          <div class="sirc-callout-title">${t.currencyDccTitle}</div>
           <div id="dcc-loss-text"></div>
         </div>
       </div>
@@ -165,12 +175,12 @@ export class CurrencyView {
 
       const minLoss = (cny * 0.03).toFixed(2);
       const maxLoss = (cny * 0.05).toFixed(2);
-      lossEl.innerHTML = `若在刷卡机误选人民币计价，本笔消费预计多付 <strong class="tabular" style="color: var(--sirc-error);">¥${minLoss} – ¥${maxLoss}</strong> 隐形汇差。结账时请明确告知收银员 <strong>Local Currency Only</strong>。`;
+      lossEl.innerHTML = t.currencyDccLossText(minLoss, maxLoss);
     };
 
     segButtons.forEach((btn) => {
       btn.addEventListener('click', () => {
-        const found = defaultRates.find((r) => r.code === btn.dataset.code);
+        const found = rates.find((r) => r.code === btn.dataset.code);
         if (!found) return;
         currentCurrency = found;
         segButtons.forEach((b) => b.classList.toggle('is-active', b === btn));

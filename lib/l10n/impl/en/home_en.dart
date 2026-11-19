@@ -4,7 +4,7 @@ class HomeEn implements HomeLang {
   const HomeEn();
 
   @override
-  String get payloadTitle => 'Web module';
+  String get payloadTitle => 'Web';
   @override
   String get payloadLoading => 'Loading local module…';
   @override

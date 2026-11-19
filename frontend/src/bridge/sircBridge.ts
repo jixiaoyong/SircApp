@@ -1,5 +1,6 @@
 // SircApp 与 H5 双向通信和生命周期桥接
 import { Icons } from '../utils/icons';
+import { i18n } from '../i18n';
 
 export interface SircPresentationData {
   title?: string;
@@ -58,7 +59,7 @@ export class SircBridge {
         document.body.classList.toggle('dark', data.dark);
       }
       if (data.lang) {
-        document.documentElement.lang = data.lang;
+        i18n.setLang(data.lang);
       }
       if (data.title) {
         const titleEl = document.getElementById('sirc-page-title');

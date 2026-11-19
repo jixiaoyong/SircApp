@@ -1,4 +1,5 @@
 import { Icons } from '../utils/icons';
+import { i18n } from '../i18n';
 
 export interface MasterNavItem {
   id: string;
@@ -9,38 +10,43 @@ export interface MasterNavItem {
   iconClass: string;
 }
 
-export const masterNavItems: MasterNavItem[] = [
-  {
-    id: 'emergency',
-    title: '紧急卡片与全球救援',
-    desc: '离线卡片凭据与 24 小时挂失专线',
-    tag: '3 张卡',
-    iconSvg: Icons.shieldAlert(19),
-    iconClass: 'emergency',
-  },
-  {
-    id: 'currency',
-    title: '离线汇率与境外用卡',
-    desc: '四大主流币种实时折算与 DCC 避坑',
-    tag: '7.245',
-    iconSvg: Icons.currency(19),
-    iconClass: 'currency',
-  },
-  {
-    id: 'privilege',
-    title: '尊享权益与离线签单',
-    desc: '全球机场 CIP 贵宾厅与交易凭单',
-    tag: 'CIP',
-    iconSvg: Icons.crown(19),
-    iconClass: 'privilege',
-  },
-];
+export function getMasterNavItems(): MasterNavItem[] {
+  const t = i18n.t;
+  return [
+    {
+      id: 'emergency',
+      title: t.navEmergencyTitle,
+      desc: t.navEmergencyDesc,
+      tag: t.navEmergencyTag,
+      iconSvg: Icons.shieldAlert(19),
+      iconClass: 'emergency',
+    },
+    {
+      id: 'currency',
+      title: t.navCurrencyTitle,
+      desc: t.navCurrencyDesc,
+      tag: t.navCurrencyTag,
+      iconSvg: Icons.currency(19),
+      iconClass: 'currency',
+    },
+    {
+      id: 'privilege',
+      title: t.navPrivilegeTitle,
+      desc: t.navPrivilegeDesc,
+      tag: t.navPrivilegeTag,
+      iconSvg: Icons.crown(19),
+      iconClass: 'privilege',
+    },
+  ];
+}
 
 export class MasterNavView {
   public static render(
     activeId: string,
     onSelect: (item: MasterNavItem) => void
   ): HTMLElement {
+    const t = i18n.t;
+    const items = getMasterNavItems();
     const list = document.createElement('div');
     list.className = 'sirc-master-pane sirc-stagger';
 
@@ -49,34 +55,30 @@ export class MasterNavView {
     hero.className = 'sirc-hero-panel';
     hero.innerHTML = `
       <div class="sirc-hero-top">
-        <span class="sirc-hero-eyebrow">SIRC COMPANION · <span id="sirc-version-badge">v1.0.0</span></span>
-        <span class="sirc-pill sirc-pill-success">
-          <span class="sirc-status-dot"></span>
-          <span>离线就绪</span>
-        </span>
+        <span class="sirc-hero-eyebrow">${t.heroEyebrow}<span id="sirc-version-badge">v1.0.0</span></span>
       </div>
-      <h1 class="sirc-hero-title">随行离线中心</h1>
+      <h1 class="sirc-hero-title">${t.heroTitle}</h1>
       <p class="sirc-hero-desc">
-        断网飞行或境外弱网状态下，银行卡应急挂失、基准汇率折算与商旅凭证均支持本地零延迟查验。
+        ${t.heroDesc}
       </p>
       <div class="sirc-telemetry-row">
         <div class="sirc-telemetry-item">
           <span class="sirc-telemetry-val">03</span>
-          <span class="sirc-telemetry-label">受保护卡片</span>
+          <span class="sirc-telemetry-label">${t.telemetryCards}</span>
         </div>
         <div class="sirc-telemetry-item">
           <span class="sirc-telemetry-val">04</span>
-          <span class="sirc-telemetry-label">离线基准币种</span>
+          <span class="sirc-telemetry-label">${t.telemetryCurrencies}</span>
         </div>
         <div class="sirc-telemetry-item">
           <span class="sirc-telemetry-val">24h</span>
-          <span class="sirc-telemetry-label">全球紧急专线</span>
+          <span class="sirc-telemetry-label">${t.telemetryHotline}</span>
         </div>
       </div>
     `;
     list.appendChild(hero);
 
-    // 2. 分组业务入口（对齐 SircApp MenuPage 分组列表样式）
+    // 2. 分组业务入口
     const serviceSection = document.createElement('section');
     serviceSection.style.display = 'flex';
     serviceSection.style.flexDirection = 'column';
@@ -85,15 +87,15 @@ export class MasterNavView {
     const label = document.createElement('div');
     label.className = 'sirc-section-label';
     label.innerHTML = `
-      <span>核心随行服务</span>
-      <span class="sirc-section-meta">LOCAL VAULT</span>
+      <span>${t.sectionServices}</span>
+      <span class="sirc-section-meta">${t.sectionServicesMeta}</span>
     `;
     serviceSection.appendChild(label);
 
     const group = document.createElement('div');
     group.className = 'sirc-group';
 
-    masterNavItems.forEach((item) => {
+    items.forEach((item) => {
       const row = document.createElement('button');
       row.type = 'button';
       row.className = `sirc-list-row ${activeId === item.id ? 'active' : ''}`;
@@ -102,11 +104,11 @@ export class MasterNavView {
         <span class="sirc-row-body">
           <span class="sirc-row-head">
             <span class="sirc-row-title">${item.title}</span>
+            <span class="sirc-row-tag">${item.tag}</span>
           </span>
           <span class="sirc-row-desc">${item.desc}</span>
         </span>
         <span class="sirc-row-trailing">
-          <span class="sirc-row-tag">${item.tag}</span>
           ${Icons.chevronRight(16)}
         </span>
       `;
@@ -126,8 +128,8 @@ export class MasterNavView {
     const glanceLabel = document.createElement('div');
     glanceLabel.className = 'sirc-section-label';
     glanceLabel.innerHTML = `
-      <span>高频离线速览</span>
-      <span class="sirc-section-meta">TAP TO OPEN</span>
+      <span>${t.sectionGlance}</span>
+      <span class="sirc-section-meta">${t.sectionGlanceMeta}</span>
     `;
     glanceSection.appendChild(glanceLabel);
 
@@ -143,22 +145,24 @@ export class MasterNavView {
         <span style="color: var(--sirc-accent); display:inline-flex;">${Icons.currency(15)}</span>
       </div>
       <div class="sirc-glance-figure">7.245</div>
-      <div class="sirc-glance-sub">打开汇率与 DCC 换算</div>
+      <div class="sirc-glance-sub">${t.glanceCurrencySub}</div>
     `;
-    rateGlance.addEventListener('click', () => onSelect(masterNavItems[1]));
+    rateGlance.addEventListener('click', () => onSelect(items[1]));
 
     const emergencyGlance = document.createElement('button');
     emergencyGlance.type = 'button';
     emergencyGlance.className = 'sirc-glance-card';
     emergencyGlance.innerHTML = `
       <div class="sirc-glance-head">
-        <span>挂失直拨</span>
+        <span>${t.glanceEmergencyHead}</span>
         <span style="color: var(--sirc-error); display:inline-flex;">${Icons.phone(14)}</span>
       </div>
       <div class="sirc-glance-figure mono" style="font-size: 16px; padding-top: 3px;">400-820-0042</div>
-      <div class="sirc-glance-sub">北辰信用社 · 尾号 0042</div>
+      <div class="sirc-glance-sub">${t.glanceEmergencySub}</div>
     `;
-    emergencyGlance.addEventListener('click', () => onSelect(masterNavItems[0]));
+    emergencyGlance.addEventListener('click', () => {
+      window.location.href = 'tel:4008200042';
+    });
 
     grid.appendChild(rateGlance);
     grid.appendChild(emergencyGlance);

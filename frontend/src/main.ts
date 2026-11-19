@@ -4,15 +4,16 @@ import './styles/components.css';
 
 import { SircBridge } from './bridge/sircBridge';
 import { Icons } from './utils/icons';
-import { MasterNavView, masterNavItems, MasterNavItem } from './views/MasterNavView';
-import { EmergencyView, CardItem, sircCards } from './views/EmergencyView';
+import { i18n } from './i18n';
+import { MasterNavView, getMasterNavItems, MasterNavItem } from './views/MasterNavView';
+import { EmergencyView, CardItem, getSircCards } from './views/EmergencyView';
 import { CurrencyView } from './views/CurrencyView';
 import { PrivilegeView } from './views/PrivilegeView';
 
 class SircCompanionApp {
   private activeCategory: string = 'emergency';
   private currentLevel: 1 | 2 | 3 = 1;
-  private selectedCard: CardItem = sircCards[0];
+  private selectedCard: CardItem = getSircCards()[0];
   private selectedCurrencyCode: string = 'USD';
   private isStandalone: boolean = false;
 
@@ -32,13 +33,26 @@ class SircCompanionApp {
   private init() {
     this.appEl = document.getElementById('app')!;
 
-    // 同步系统暗色偏好作为首屏默认值（宿主 sircPresentation 回调后精确覆盖）
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    // 优先尊重 URL 显式传入的主题与语言（消除首屏深浅切换闪烁）
+    const urlParams = new URLSearchParams(window.location.search);
+    const darkParam = urlParams.get('dark');
+    if (darkParam === 'true') {
       document.body.classList.add('dark');
+      document.documentElement.classList.add('dark');
+    } else if (darkParam === 'false') {
+      document.body.classList.remove('dark');
+      document.documentElement.classList.remove('dark');
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.body.classList.add('dark');
+      document.documentElement.classList.add('dark');
+    }
+
+    const langParam = urlParams.get('lang');
+    if (langParam) {
+      i18n.setLang(langParam);
     }
 
     // 解析 URL 参数：是否为独立全屏子页面模式以及指定展示的 view
-    const urlParams = new URLSearchParams(window.location.search);
     const hash = window.location.hash.replace(/^#\/?/, '');
     const mode = urlParams.get('mode');
     const viewParam = urlParams.get('view') || hash;
@@ -57,6 +71,12 @@ class SircCompanionApp {
 
     // 初始化返回键协议与宿主桥接
     SircBridge.init(() => this.handleBack());
+
+    // 监听多语言动态切换
+    i18n.onLangChange(() => {
+      this.selectedCard = getSircCards().find((c) => c.id === this.selectedCard.id) || getSircCards()[0];
+      this.render();
+    });
 
     window.addEventListener('resize', () => {
       this.render();
@@ -152,13 +172,14 @@ class SircCompanionApp {
   }
 
   private getLevel3Title(): string {
+    const isEn = i18n.lang === 'en';
     if (this.activeCategory === 'emergency') {
-      return `${this.selectedCard.bankName} · 紧急处置`;
+      return isEn ? `${this.selectedCard.bankName} · Emergency Lock` : `${this.selectedCard.bankName} · 紧急处置`;
     }
     if (this.activeCategory === 'currency') {
-      return '离线汇率换算';
+      return isEn ? 'FX Converter' : '离线汇率换算';
     }
-    return '离线消费签单';
+    return isEn ? 'Purchase Receipt' : '离线消费签单';
   }
 
   // 渲染整体界面
@@ -166,7 +187,9 @@ class SircCompanionApp {
     this.appEl.innerHTML = '';
     this.topBarEl = null;
 
-    const currentCatItem = masterNavItems.find((i) => i.id === this.activeCategory) || masterNavItems[0];
+    const navItems = getMasterNavItems();
+    const currentCatItem = navItems.find((i) => i.id === this.activeCategory) || navItems[0];
+    const t = i18n.t;
 
     // 1. 顶部 Header（窄屏 Tab 首页由原生 AppBar 承载，避免双重顶栏！）
     if (this.isStandalone) {
@@ -176,15 +199,11 @@ class SircCompanionApp {
 
       topBar.innerHTML = `
         <div class="sirc-top-left">
-          <button class="sirc-native-back-btn" id="sirc-standalone-nav-back" type="button" aria-label="返回">
+          <button class="sirc-native-back-btn" id="sirc-standalone-nav-back" type="button" aria-label="${t.back}">
             ${Icons.arrowBack(24)}
           </button>
           <div class="sirc-title-text" id="sirc-page-title" data-allow-host-title="false">${titleText}</div>
         </div>
-        <span class="sirc-pill sirc-pill-success">
-          <span class="sirc-status-dot"></span>
-          <span>离线</span>
-        </span>
       `;
       this.appEl.appendChild(topBar);
       this.topBarEl = topBar;
@@ -203,12 +222,8 @@ class SircCompanionApp {
       topBar.innerHTML = `
         <div class="sirc-wide-brand">
           <span class="sirc-logo-mark">S</span>
-          <span class="sirc-title-text" id="sirc-page-title" data-allow-host-title="false">Sirc 随行中心</span>
+          <span class="sirc-title-text" id="sirc-page-title" data-allow-host-title="false">Sirc ${t.heroTitle}</span>
         </div>
-        <span class="sirc-pill sirc-pill-success">
-          <span class="sirc-status-dot"></span>
-          <span>离线可用</span>
-        </span>
       `;
       this.appEl.appendChild(topBar);
       this.topBarEl = topBar;
@@ -259,7 +274,9 @@ class SircCompanionApp {
   private renderDetailContent(pane: HTMLElement) {
     pane.innerHTML = '';
 
-    const currentCatItem = masterNavItems.find((i) => i.id === this.activeCategory) || masterNavItems[0];
+    const navItems = getMasterNavItems();
+    const currentCatItem = navItems.find((i) => i.id === this.activeCategory) || navItems[0];
+    const t = i18n.t;
 
     // 轻量面包屑：仅在宽屏模式，或独立全屏三级页时展示，避免与二级顶栏重复
     const shouldShowTrail = this.isWide() || (this.isStandalone && this.currentLevel === 3) || (!this.isWide() && !this.isStandalone);
@@ -269,9 +286,9 @@ class SircCompanionApp {
 
       let html = '';
       if (!this.isWide() && !this.isStandalone) {
-        html += `<button class="sirc-key sirc-key-nav" id="sirc-header-back-btn" type="button" style="margin-right: 4px;">${Icons.chevronLeft(15)}<span>返回</span></button>`;
+        html += `<button class="sirc-key sirc-key-nav" id="sirc-header-back-btn" type="button" style="margin-right: 4px;">${Icons.chevronLeft(15)}<span>${t.back}</span></button>`;
       }
-      html += `<span class="sirc-bc-link" id="bc-home">随行中心</span>`;
+      html += `<span class="sirc-bc-link" id="bc-home">${t.heroTitle}</span>`;
       if (this.currentLevel >= 2) {
         html += `
           <span class="sirc-bc-sep">/</span>
