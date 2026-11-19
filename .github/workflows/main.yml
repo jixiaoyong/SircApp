@@ -3,8 +3,12 @@ name: SircApp Web CI/CD
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - 'frontend/**'
   pull_request:
     branches: [ master ]
+    paths-ignore:
+      - 'frontend/**'
   workflow_dispatch:
 
 permissions:
@@ -69,3 +73,6 @@ jobs:
         with:
           folder: build/web
           branch: gh-pages
+          clean-exclude: |
+            payload
+            payload/**

@@ -1,7 +1,14 @@
 import 'package:flutter/foundation.dart';
 
-/// 宿主更新地址；留空时禁止在线请求，仅使用内置包。
-const payloadUpdateUrl = String.fromEnvironment('SIRC_PAYLOAD_UPDATE_URL');
+/// 宿主离线包更新清单地址。
+///
+/// 默认指向 GitHub Pages 托管的线上版本清单，也可在构建或运行时通过
+/// `--dart-define=SIRC_PAYLOAD_UPDATE_URL=<url>` 自定义覆盖（如指向本地开发测试服务）。
+const payloadUpdateUrl = String.fromEnvironment(
+  'SIRC_PAYLOAD_UPDATE_URL',
+  defaultValue:
+      'https://jixiaoyong.github.io/SircApp/payload/server_manifest.json',
+);
 
 /// 与平台无关的资源会话，隔离管理器的 dart:io 依赖。
 abstract class PayloadRuntime extends ChangeNotifier {
