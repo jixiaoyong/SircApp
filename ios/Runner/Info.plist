@@ -44,6 +44,12 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>用于拍摄纸质消费签单以归档凭据</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>用于选取纸质消费签单照片以归档凭据</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>用于录制离线消费语音备忘</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>

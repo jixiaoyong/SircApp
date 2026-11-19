@@ -119,6 +119,51 @@ export class PrivilegeView {
         </div>
       </div>
 
+      <!-- 原生多模态存根面板：拍照凭单与语音备忘 -->
+      <div class="sirc-panel" style="display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="font-size: 14.5px; font-weight: 600; color: var(--sirc-ink);">归档凭据 (调用原生设备)</div>
+          <span class="sirc-pill sirc-pill-success" style="font-size: 11px;">
+            <span class="sirc-status-dot"></span>
+            <span>原生通道就绪</span>
+          </span>
+        </div>
+
+        <!-- 1. 拍照存单附件 -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 12.5px; color: var(--sirc-muted);">纸质签单照片留存 (相机 / 相册)</div>
+          <div style="display: flex; gap: 8px;">
+            <button id="btn-camera" class="sirc-key" type="button" style="flex: 1;">
+              ${Icons.shield(15)}
+              <span>拍摄纸质小票</span>
+            </button>
+            <button id="btn-gallery" class="sirc-key" type="button" style="flex: 1;">
+              ${Icons.receipt(15)}
+              <span>从相册选取</span>
+            </button>
+          </div>
+          <div id="receipt-photo-preview" style="display: none; margin-top: 6px; position: relative;">
+            <img id="receipt-photo-img" src="" alt="签单存根" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid var(--sirc-border);" />
+            <button id="btn-remove-photo" type="button" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 12px; padding: 2px 8px; font-size: 11px; cursor: pointer;">移除照片</button>
+          </div>
+        </div>
+
+        <!-- 2. 语音备忘附件 -->
+        <div style="display: flex; flex-direction: column; gap: 8px; border-top: 1px dashed var(--sirc-border); padding-top: 12px;">
+          <div style="font-size: 12.5px; color: var(--sirc-muted);">商户口头退税/权益语音备忘 (原生麦克风录音)</div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button id="btn-record-toggle" class="sirc-key" type="button" style="flex: 1;">
+              <span id="record-icon" style="color: var(--sirc-error); display: inline-flex;">●</span>
+              <span id="record-text">开始录音</span>
+            </button>
+            <button id="btn-play-audio" class="sirc-key" type="button" style="display: none; flex: 1;">
+              <span>▶ 播放录音</span>
+            </button>
+          </div>
+          <div id="audio-status" style="font-size: 11.5px; color: var(--sirc-muted); display: none;"></div>
+        </div>
+      </div>
+
       <div style="display: flex; gap: 10px;">
         <button id="btn-copy-voucher" class="sirc-ink-key" type="button" style="flex: 1;">
           ${Icons.copy(15)}
@@ -130,6 +175,103 @@ export class PrivilegeView {
         </button>
       </div>
     `;
+
+    // 绑定原生照片获取
+    const previewContainer = container.querySelector('#receipt-photo-preview') as HTMLElement;
+    const previewImg = container.querySelector('#receipt-photo-img') as HTMLImageElement;
+    const btnRemovePhoto = container.querySelector('#btn-remove-photo') as HTMLElement;
+
+    const handlePick = async (source: 'camera' | 'gallery') => {
+      try {
+        await SircBridge.haptic('light');
+        const dataUrl = await SircBridge.pickImage(source);
+        if (dataUrl) {
+          previewImg.src = dataUrl;
+          previewContainer.style.display = 'block';
+          SircBridge.showToast(source === 'camera' ? '拍照成功' : '已添加小票照片');
+        }
+      } catch (e: any) {
+        if (!e.message?.includes('取消')) {
+          SircBridge.showToast(`获取图片失败: ${e.message}`);
+        }
+      }
+    };
+
+    container.querySelector('#btn-camera')!.addEventListener('click', () => handlePick('camera'));
+    container.querySelector('#btn-gallery')!.addEventListener('click', () => handlePick('gallery'));
+    btnRemovePhoto.addEventListener('click', () => {
+      previewImg.src = '';
+      previewContainer.style.display = 'none';
+      SircBridge.showToast('已移除签单照片');
+    });
+
+    // 绑定原生录音与播放
+    let isRecording = false;
+    let recordedAudio: { dataUrl: string; path: string } | null = null;
+    let isPlaying = false;
+    const btnRecordToggle = container.querySelector('#btn-record-toggle') as HTMLElement;
+    const recordIcon = container.querySelector('#record-icon') as HTMLElement;
+    const recordText = container.querySelector('#record-text') as HTMLElement;
+    const btnPlayAudio = container.querySelector('#btn-play-audio') as HTMLElement;
+    const audioStatus = container.querySelector('#audio-status') as HTMLElement;
+
+    btnRecordToggle.addEventListener('click', async () => {
+      if (!isRecording) {
+        try {
+          await SircBridge.haptic('medium');
+          await SircBridge.startRecord();
+          isRecording = true;
+          recordIcon.textContent = '■';
+          recordIcon.style.color = 'var(--sirc-error)';
+          recordText.textContent = '停止录音并保存';
+          btnPlayAudio.style.display = 'none';
+          audioStatus.style.display = 'block';
+          audioStatus.textContent = '● 正在录制原生音频...';
+        } catch (e: any) {
+          SircBridge.showToast(`录音失败: ${e.message}`);
+        }
+      } else {
+        try {
+          await SircBridge.haptic('light');
+          const res = await SircBridge.stopRecord();
+          isRecording = false;
+          recordedAudio = res;
+          recordIcon.textContent = '●';
+          recordText.textContent = '重新录制';
+          btnPlayAudio.style.display = 'inline-flex';
+          audioStatus.style.display = 'block';
+          audioStatus.textContent = '已保存语音备忘 (可点击播放)';
+          SircBridge.showToast('录音保存完成');
+        } catch (e: any) {
+          isRecording = false;
+          recordIcon.textContent = '●';
+          recordText.textContent = '开始录音';
+          SircBridge.showToast(`保存录音失败: ${e.message}`);
+        }
+      }
+    });
+
+    btnPlayAudio.addEventListener('click', async () => {
+      if (!recordedAudio) return;
+      if (!isPlaying) {
+        try {
+          await SircBridge.haptic('light');
+          isPlaying = true;
+          btnPlayAudio.querySelector('span')!.textContent = '■ 停止播放';
+          audioStatus.textContent = '▶ 正在播放语音备忘...';
+          await SircBridge.playAudio(recordedAudio);
+        } catch (e: any) {
+          isPlaying = false;
+          btnPlayAudio.querySelector('span')!.textContent = '▶ 播放录音';
+          SircBridge.showToast(`播放失败: ${e.message}`);
+        }
+      } else {
+        await SircBridge.stopAudio();
+        isPlaying = false;
+        btnPlayAudio.querySelector('span')!.textContent = '▶ 播放录音';
+        audioStatus.textContent = '已停止播放';
+      }
+    });
 
     container.querySelector('#btn-copy-voucher')!.addEventListener('click', () => {
       SircBridge.copyText(voucherId, '已复制凭单编号');

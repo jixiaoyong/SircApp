@@ -10,6 +10,7 @@ import 'package:sirc/routes/app_routes.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import 'payload_native_bridge.dart';
 import 'payload_runtime.dart';
 import 'payload_service.dart';
 
@@ -27,6 +28,7 @@ class _PayloadPageState extends ConsumerState<PayloadPage>
     with WidgetsBindingObserver {
   PayloadRuntime? get _runtime => widget.runtime ?? payloadRuntime;
   WebViewController? _web;
+  PayloadNativeBridgeHandler? _nativeBridge;
   String? _session;
   bool _loading = true;
   bool _error = false;
@@ -72,6 +74,7 @@ class _PayloadPageState extends ConsumerState<PayloadPage>
     try {
       final isNew = _web == null;
       final web = _web ??= WebViewController();
+      _nativeBridge ??= PayloadNativeBridgeHandler(webViewController: web);
       await web.setJavaScriptMode(JavaScriptMode.unrestricted);
       if (isNew) {
         try {
@@ -106,8 +109,16 @@ class _PayloadPageState extends ConsumerState<PayloadPage>
             if (target != null && isPayloadNavigation(target, local)) {
               return NavigationDecision.navigate;
             }
+            // 外部系统意图协议（打电话、短信、邮件）
+            final scheme = target?.scheme.toLowerCase();
+            if (scheme == 'tel' || scheme == 'sms' || scheme == 'mailto') {
+              try {
+                await launchUrl(target!, mode: LaunchMode.externalApplication);
+              } catch (_) {}
+              return NavigationDecision.prevent;
+            }
             // 不把含鉴权 UA 的 WebView 带到外部站点；只允许 HTTPS 外链。
-            if (target?.scheme == 'https' && request.isMainFrame) {
+            if (scheme == 'https' && request.isMainFrame) {
               try {
                 await launchUrl(target!, mode: LaunchMode.externalApplication);
               } catch (_) {
@@ -161,6 +172,8 @@ class _PayloadPageState extends ConsumerState<PayloadPage>
             extra: {'view': view, 'title': title},
           );
         }
+      } else {
+        _nativeBridge?.handleMessage(jsonStr);
       }
     } catch (_) {
       // 容错非法格式消息
@@ -255,6 +268,7 @@ class _PayloadPageState extends ConsumerState<PayloadPage>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _runtime?.removeListener(_changed);
+    _nativeBridge?.dispose();
     super.dispose();
   }
 

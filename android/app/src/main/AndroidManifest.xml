@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="io.github.jixiaoyong.sirc">
         <uses-permission android:name="android.permission.INTERNET" />
+        <uses-permission android:name="android.permission.CAMERA" />
+        <uses-permission android:name="android.permission.RECORD_AUDIO" />
         <!-- Provide required visibility configuration for API level 30 and above for url_launcher-->
         <queries>
                 <intent>

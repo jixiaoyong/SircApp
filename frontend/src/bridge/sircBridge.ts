@@ -13,6 +13,12 @@ declare global {
   interface Window {
     sircPresentation?: (data: SircPresentationData) => void;
     __tryGoBack?: () => boolean;
+    sircNativeBridgeCallback?: (res: {
+      callbackId: string;
+      success: boolean;
+      data?: any;
+      error?: string;
+    }) => void;
     SircNativeBridge?: {
       postMessage: (message: string) => void;
     };
@@ -27,8 +33,25 @@ declare global {
 
 export class SircBridge {
   private static toastTimer: number | null = null;
+  private static callbackSeq: number = 0;
+  private static pendingCallbacks = new Map<
+    string,
+    { resolve: (val: any) => void; reject: (err: any) => void }
+  >();
 
   public static init(onBackRequested: () => boolean) {
+    // 0. 注册原生 RPC 异步回调接收器
+    window.sircNativeBridgeCallback = (res) => {
+      const handler = this.pendingCallbacks.get(res.callbackId);
+      if (handler) {
+        this.pendingCallbacks.delete(res.callbackId);
+        if (res.success) {
+          handler.resolve(res.data);
+        } else {
+          handler.reject(new Error(res.error || 'Native bridge call failed'));
+        }
+      }
+    };
     // 1. 注册宿主展示契约 (window.sircPresentation)
     window.sircPresentation = (data: SircPresentationData) => {
       if (typeof data.dark === 'boolean') {
@@ -153,6 +176,74 @@ export class SircBridge {
       this.showToast(label);
     } catch {
       this.showToast(`复制失败: ${text}`);
+    }
+  }
+
+  // 通用原生 RPC 调用通道
+  public static callNative<T = any>(action: string, payload: Record<string, any> = {}): Promise<T> {
+    return new Promise((resolve, reject) => {
+      if (!window.SircNativeBridge || typeof window.SircNativeBridge.postMessage !== 'function') {
+        reject(new Error('当前环境不支持 SircNativeBridge 原生通信'));
+        return;
+      }
+      const callbackId = `cb_${Date.now()}_${++this.callbackSeq}`;
+      this.pendingCallbacks.set(callbackId, { resolve, reject });
+
+      // 设置 30 秒超时清理
+      window.setTimeout(() => {
+        if (this.pendingCallbacks.has(callbackId)) {
+          this.pendingCallbacks.delete(callbackId);
+          reject(new Error('原生调用超时'));
+        }
+      }, 30000);
+
+      try {
+        window.SircNativeBridge.postMessage(
+          JSON.stringify({
+            action,
+            callbackId,
+            ...payload,
+          })
+        );
+      } catch (e) {
+        this.pendingCallbacks.delete(callbackId);
+        reject(e);
+      }
+    });
+  }
+
+  // 拍照或相册选图
+  public static async pickImage(source: 'camera' | 'gallery'): Promise<string> {
+    const res = await this.callNative<{ dataUrl: string }>('pickImage', { source });
+    return res.dataUrl;
+  }
+
+  // 开始录音
+  public static async startRecord(): Promise<void> {
+    await this.callNative('startRecord');
+  }
+
+  // 结束录音
+  public static async stopRecord(): Promise<{ dataUrl: string; path: string }> {
+    return await this.callNative<{ dataUrl: string; path: string }>('stopRecord');
+  }
+
+  // 播放音频
+  public static async playAudio(params: { dataUrl?: string; path?: string }): Promise<void> {
+    await this.callNative('playAudio', params);
+  }
+
+  // 停止播放音频
+  public static async stopAudio(): Promise<void> {
+    await this.callNative('stopAudio');
+  }
+
+  // 触发原生触觉震动
+  public static async haptic(type: 'light' | 'medium' | 'heavy' = 'light'): Promise<void> {
+    try {
+      await this.callNative('haptic', { type });
+    } catch (_) {
+      // 容错降级
     }
   }
 }
