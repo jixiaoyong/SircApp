@@ -20,6 +20,7 @@ const mockServerDistDir = path.resolve(sircAppRoot, '../21.21-web_payload_manage
 const args = process.argv.slice(2);
 const versionArg = args.find((a) => a.startsWith('--version='))?.split('=')[1];
 const targetArg = args.find((a) => a.startsWith('--target='))?.split('=')[1] || 'all';
+const baseUrlArg = args.find((a) => a.startsWith('--base-url='))?.split('=')[1] || 'https://jixiaoyong.github.io/SircApp/payload';
 
 // 版本与构建时间
 const now = new Date();
@@ -131,12 +132,20 @@ if (targetArg === 'all' || targetArg === 'release') {
     console.log(`   ✅ 已打包 ZIP: ${releaseZipPath} (${zipSize} bytes)`);
     console.log(`   🔑 ZIP MD5: ${zipMd5}`);
 
+    const downloadUrl = `${baseUrlArg.replace(/\/+$/, '')}/${zipFileName}`;
     const serverManifest = {
       version: releaseVersion,
-      buildLabel: buildLabel,
-      zipFilename: zipFileName,
+      versionStr: String(releaseVersion),
+      downloadUrl: downloadUrl,
+      zipUrl: downloadUrl,
+      md5: zipMd5,
       zipMd5: zipMd5,
+      fileSize: zipSize,
       zipSize: zipSize,
+      zipFilename: zipFileName,
+      timestamp: typeof releaseVersion === 'number' ? releaseVersion : Date.now(),
+      buildLabel: buildLabel,
+      minAppVersion: '1.0.0',
       description: `Sirc Companion v${releaseVersion} (${buildLabel})`,
     };
 
